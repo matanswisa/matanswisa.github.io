@@ -19,7 +19,7 @@ const navConfig = [
   {
     title: 'reports',
     path: '/dashboard/reports',
-    icon: icon(''),
+    icon: icon('report'),
   },
   {
     title: 'blog',

@@ -22,7 +22,11 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material';
+
+
 // components
+ import AddTrade from '../components/addTrade/BasicModal';
+
 
 import Iconify from '../components/iconify';
 
@@ -41,12 +45,16 @@ export default function DailyStatsPage() {
           <Typography variant="h4" gutterBottom>
           Daily Stats
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
+          <Button   variant="contained" startIcon={<Iconify icon="eva:plus-fill"  />}>
+            Add New Trade
           </Button>
         </Stack>
 
+   
+
       </Container>
+
+   
 
  
     </>

@@ -158,17 +158,15 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> Daily Stats </title>
+        <title> Reports </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-          Daily Stats
+          Reports
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
-          </Button>
+         
         </Stack>
 
         <Card>
