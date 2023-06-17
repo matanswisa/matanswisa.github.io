@@ -68,7 +68,7 @@ export default function DashboardAppPage() {
               title="Daily Net Cumulative P&L"
               subheader=""
               chartLabels={[
-                '01/01/2003',
+                '01/01/2022',
                 '02/01/2003',
                 '03/01/2003',
                 '04/01/2003',
