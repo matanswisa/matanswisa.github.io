@@ -13,12 +13,12 @@ const navConfig = [
   },
   {
     title: 'Daily Stats',
-    path: '/dashboard/user',
+    path: '/dashboard/dailystatspage',
     icon: icon('ic_analytics'),
   },
   {
-    title: 'product',
-    path: '/dashboard/products',
+    title: 'reports',
+    path: '/dashboard/reports',
     icon: icon(''),
   },
   {
