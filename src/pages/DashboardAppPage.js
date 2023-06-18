@@ -69,7 +69,7 @@ export default function DashboardAppPage() {
               subheader=""
               chartLabels={[
                 '01/01/2003',
-                '02/01/2003',
+                '02/05/2200',
                 '03/01/2003',
                 '04/01/2003',
                 '05/01/2003',
