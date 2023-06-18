@@ -29,18 +29,13 @@ import {
 
 
 import Iconify from '../components/iconify';
-import AddTrade from '../components/addTrade/BasicModal';
+
 
 
 
 
 export default function DailyStatsPage() {
 
-  const [open, setIsOpen] = useState(false);
-
-  const handleOpenModal = () => {
-    setIsOpen(true);
-  }
 
   return (
     <>
@@ -53,11 +48,9 @@ export default function DailyStatsPage() {
           <Typography variant="h4" gutterBottom>
             Daily Stats
           </Typography>
-          <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            Add New Trade
-          </Button>
+        
 
-          {open && <AddTrade openModal={open} handleOpenModal={setIsOpen} />}
+        
         </Stack>
 
 

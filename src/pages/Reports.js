@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
+
 // @mui
 import {
   Card,
@@ -30,21 +31,20 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
-
+import AddTrade from '../components/addTrade/BasicModal';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+  { id: 'entryDate', label: 'Open Date', alignRight: false },
   { id: 'symbol', label: 'Symbol', alignRight: false },
-  { id: 'minfos', label: 'Leverage', alignRight: false },
+  {id: 'status', label: 'Status', alignRight: false },
+  { id: 'netroi', label: 'Net ROI', alignRight: false },
   { id: 'longShort', label: 'Long / Short', alignRight: false },
-  { id: 'entryDate', label: 'Entry Date', alignRight: false },
-  { id: 'entryTime', label: 'Entry Time', alignRight: false },
-  { id: 'quantity', label: 'Quantity', alignRight: false },
+  { id: 'contracts', label: 'Contracts', alignRight: false },
   { id: 'entryPrice', label: 'Entry Price', alignRight: false },
   { id: 'stopPrice', label: 'Stop Price', alignRight: false },
   { id: 'exitPrice', label: 'Exit Price', alignRight: false },
-  { id: 'exitTime', label: 'Exit Time', alignRight: false },
-  { id: 'exitDate', label: 'Exit Date', alignRight: false },
+  { id: 'duration', label: 'Duration', alignRight: false },
   { id: 'commission', label: 'Commission', alignRight: false },
   { id: 'netPnL', label: 'Net P&L', alignRight: false },
   { id: 'image', label: 'Image', alignRight: false },
@@ -52,6 +52,11 @@ const TABLE_HEAD = [
 
 
 // ----------------------------------------------------------------------
+
+
+
+
+
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -83,6 +88,17 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
+
+
+  const [openmodal, setIsOpenmodal] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsOpenmodal(true);
+  }
+  
+
+
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -161,13 +177,22 @@ export default function UserPage() {
         <title> Reports </title>
       </Helmet>
 
+
       <Container>
+
+     
+
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
           Reports
+
           </Typography>
-         
+          <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            Add New Trade
+          </Button>
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
         </Stack>
+
 
         <Card>
           <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
@@ -186,7 +211,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                    const { id, name, role, status, company, isVerified } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -197,22 +222,45 @@ export default function UserPage() {
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
+                          
+                          18.16.2022
+                           
                           </Stack>
                         </TableCell>
+                        <TableCell align="left">{"NQ"}</TableCell>    {/* COLNAME: Symbol , VALUES: stock name */}
 
-                        <TableCell align="left">{company}</TableCell>
+                        <TableCell align="left">{"Win"}</TableCell>   {/* COLNAME: STATUS , VALUES: WIN OR LOSS */}
 
-                        <TableCell align="left">{role}</TableCell>
+                       
 
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                        <TableCell align="left">{"0.72%"}</TableCell>   {/* COLNAME: Net ROI , VALUES: % of profit */}
 
                         <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
+                          <Label color={(status === 'Short' && 'error') || 'success'}>{sentenceCase(status)}</Label>   {/* COLNAME: LONG / Short */}
                         </TableCell>
+
+                        <TableCell align="left">{"4"}</TableCell>   {/* COLNAME: contracts , VALUES: decimal number */}
+
+
+                        <TableCell align="left">{"15003.25$"}</TableCell>   {/* COLNAME: Entry Price , VALUES: decimal number */}
+
+                        <TableCell align="left">{"15004.25$"}</TableCell>   {/* COLNAME: Stop  Price , VALUES: decimal number */}
+
+                  
+                        <TableCell align="left">{"15001.00$"}</TableCell>   {/* COLNAME: Exit Price , VALUES: decimal number */}
+
+
+                        <TableCell align="left">{"03:25m"}</TableCell>   {/* COLNAME: Duration , VALUES: time of duration */}
+
+
+                        
+                        <TableCell align="left">{"2$"}</TableCell>   {/* COLNAME: Commission , VALUES: Commission */}
+
+
+                        <TableCell align="left">{"194$"}</TableCell>   {/* COLNAME:  Net P&L, VALUES: float */}
+
+
+                        <TableCell align="left">{"image"}</TableCell>   {/* COLNAME: image, VALUES: image of trade */}
 
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
