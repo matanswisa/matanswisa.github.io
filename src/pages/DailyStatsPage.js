@@ -25,7 +25,7 @@ import {
 
 
 // components
-// import AddTrade from '../components/addTrade/BasicModal';
+
 
 
 import Iconify from '../components/iconify';
