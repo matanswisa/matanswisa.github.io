@@ -38,7 +38,7 @@ const TradeSchema = new Mongoose.Schema({
         required: true
     },
     duration: {
-        type: Number,
+        type: String,
         required: true
     },
     commission: {

@@ -7,10 +7,16 @@ const router = Router();
  * This is a test
  */
 router.post("/addTrade", async (req, res) => {
+    try {
+        const data = req.body;
+        const result = await Trade.create(data);
+        res.status(200).send(`Trade ${result._id} added succefully`);
 
-    await Trade.create({ ...req.body });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Error when adding a trade');
+    }
 
-    res.status(200).send(`symbol ${req.body.symbol} added`)
 });
 
 

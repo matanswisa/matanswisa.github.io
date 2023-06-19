@@ -5,11 +5,14 @@ import { normalizePort } from './utils/port.js';
 import TradesRoute from './routes/TradesRoute.js';
 import bodyParser from 'body-parser';
 import connectDB from './utils/db.js';
+import cors from 'cors';
 
 connectDB();
 
+
 const app = express();
 
+app.use(cors());
 app.use(bodyParser());
 app.use(logger('dev'));
 app.use(express.json());
