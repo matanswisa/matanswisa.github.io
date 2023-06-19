@@ -2,7 +2,6 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { useEffect } from 'react';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
@@ -30,6 +29,8 @@ import {
   TablePagination,
   TextField,
 } from '@mui/material';
+import { useReducer, useEffect } from 'react';
+import api from '../../api/api';
 
 const style = {
   position: 'absolute',
@@ -51,28 +52,114 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+
+
+
+const initialState = {
+  positionType: '',
+  positionStatus: '',
+  positionCommision: '',
+  positionDuration: '',
+  entryPrice: 0,
+  exitPrice: 0,
+  contractsCounts: 0,
+  netPnL: 0,
+  netROI: 0,
+  positionDate: null,
+  stopPrice: 0,
+  positionSymbol: ''
+};
+
+const formReducer = (state, action) => {
+  switch (action.type) {
+    case 'UPDATE_FIELD':
+      return {
+        ...state,
+        [action.field]: action.value,
+      };
+    case 'DELETE_FIELD': return {
+      ...state,
+      [action.field]: ''
+    }
+    case 'RESET_FORM':
+      return initialState;
+    default:
+      return state;
+  }
+};
+
+
 export default function BasicModal(props) {
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
 
 
-  // Add other form fields here
-  // For example: openDate: '', symbol: '', ...
+  const [formState, dispatch] = useReducer(formReducer, initialState);
+
+  const { positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
 
 
+  const handlePositionFieldInput = (event, field) => {
+    console.log(`field: ${field}, value: ${event.target.value}`)
+    dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.target.value });
+  };
 
+  const clearPositionFieldInput = (event, field) => {
+    dispatch({ type: 'DELETE_FIELD', field: `${field}`, value: event.target.value });
 
-  const [positionType, setPositionType] = React.useState(''); // Short or Long
-  const [positionStatus, setPositionStatus] = React.useState(''); // win or lose
+  }
+
 
   useEffect(() => {
     handleOpen();
   }, []);
 
   const handleSaveTrade = () => {
-    // Make form saving a new trade in the dataBase by http request {
+    console.log('WHAT INSIDE?', { positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol });
+    if (validateForm()) {
+      console.log("form is validate");
+      api
+        .post('/api/addTrade', {
+          entryDate: positionDate,
+          symbol: positionSymbol,
+          status: positionStatus,
+          netROI,
+          stopPrice,
+          longShort: positionType,
+          contracts: contractsCounts,
+          entryPrice,
+          exitPrice,
+          duration: positionDuration,
+          commission: positionCommision,
+          netPnL,
+          positionType: formState.positionType,
+          positionStatus: formState.positionStatus,
+          // Include other form data here
+        })
+        .then((response) => {
+          // Handle the response from the server
+          console.log("result is success");
+          alert("Success!")
+        })
+        .catch((error) => {
+          // Handle the error
+          alert("Bif oof :(")
 
-  }
+        });
+    } else {
+      console.log('Please fill in all the fields');
+    }
+  };
+
+
+  const validateForm = () => {
+    if (positionType === '' || positionStatus === '' || positionCommision === 0 || entryPrice <= 0 || exitPrice <= 0 || positionDuration === '' ||
+      contractsCounts <= 0 || Number.isNaN(netPnL) || Number.isNaN(netROI) || positionDate === null || positionSymbol === "" || stopPrice <= 0) {
+      return false;
+    }
+
+    return true;
+  };
 
 
   return (
@@ -108,7 +195,10 @@ export default function BasicModal(props) {
           <Grid item xs={6}>
             <Item>
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <TextField id="standard-basic" required="true" label="Open Date" variant="standard" type="date" />
+                <TextField id="standard-basic" required="true"
+                  value={positionDate}
+                  onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
+                  label="Open Date" variant="standard" type="date" />
               </Box>{' '}
             </Item>
           </Grid>
@@ -120,7 +210,7 @@ export default function BasicModal(props) {
                   labelId="demo-simple-select-standard-label"
                   id="demo-simple-select-standard"
                   value={positionType}
-                  onChange={(event) => setPositionType(event.target.value)}
+                  onChange={(e) => handlePositionFieldInput(e, 'positionType')}
                   label="Type"
                   required="true"
                 >
@@ -136,7 +226,8 @@ export default function BasicModal(props) {
           <Grid item xs={6}>
             <Item>
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <TextField id="standard-basic" required="true" label="Symbol" variant="standard" />
+                <TextField id="standard-basic" required="true" value={positionSymbol}
+                  onChange={(e) => handlePositionFieldInput(e, 'positionSymbol')} label="Symbol" variant="standard" />
               </Box>
             </Item>
           </Grid>
@@ -149,7 +240,7 @@ export default function BasicModal(props) {
                   labelId="demo-simple-select-standard-label"
                   id="demo-simple-select-standard"
                   value={positionStatus}
-                  onChange={(event) => setPositionStatus(event.target.value)}
+                  onChange={(e) => handlePositionFieldInput(e, 'positionStatus')}
                   label="Status"
                   required="true"
                 >
@@ -169,7 +260,14 @@ export default function BasicModal(props) {
             <Item>
               {' '}
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <TextField className="standard-basic" label="Duration" variant="standard" />
+                <TextField
+                  className="standard-basic"
+                  value={positionDuration}
+                  onFocus={(e) => clearPositionFieldInput(e, 'positionDuration')}
+                  onChange={(e) => handlePositionFieldInput(e, 'positionDuration')}
+                  label="Duration"
+                  variant="standard"
+                />
               </Box>
             </Item>
           </Grid>
@@ -181,6 +279,9 @@ export default function BasicModal(props) {
                   className="outlined-number"
                   required="true"
                   type="number"
+                  value={positionCommision}
+                  onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'positionCommision')}
                   label="Commission"
                   InputLabelProps={{ shrink: true }}
                 />
@@ -195,7 +296,10 @@ export default function BasicModal(props) {
                 className="outlined-number"
                 required="true"
                 label="Entry Price"
+                value={entryPrice}
                 type="number"
+                onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
+                onFocus={(e) => clearPositionFieldInput(e, 'entryPrice')}
                 InputLabelProps={{ shrink: true }}
               />
             </Item>
@@ -206,6 +310,9 @@ export default function BasicModal(props) {
                 className="outlined-number"
                 required="true"
                 label="Exit Price"
+                value={exitPrice}
+                onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
+                onFocus={(e) => clearPositionFieldInput(e, 'exitPrice')}
                 type="number"
                 InputLabelProps={{ shrink: true }}
               />
@@ -217,6 +324,9 @@ export default function BasicModal(props) {
                 className="outlined-number"
                 required="true"
                 label="Contracts"
+                value={contractsCounts}
+                onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
+                onFocus={(e) => clearPositionFieldInput(e, 'contractsCounts')}
                 type="number"
                 InputLabelProps={{ shrink: true }}
               />
@@ -229,6 +339,10 @@ export default function BasicModal(props) {
                 className="outlined-number"
                 required="true"
                 label="Net P&L"
+                value={netPnL}
+                onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
+                onFocus={(e) => clearPositionFieldInput(e, 'netPnL')}
+
                 type="number"
                 InputLabelProps={{ shrink: true }}
               />
@@ -241,6 +355,25 @@ export default function BasicModal(props) {
                 className="outlined-number"
                 label="Net ROI"
                 type="number"
+                value={netROI}
+                onChange={(e) => handlePositionFieldInput(e, 'netROI')}
+                onFocus={(e) => clearPositionFieldInput(e, 'netROI')}
+
+                required="true"
+                InputLabelProps={{ shrink: true }}
+              />
+            </Item>
+          </Grid>
+          <Grid item xs={6}>
+            <Item>
+              <TextField
+                className="outlined-number"
+                label="Stop loss"
+                type="number"
+                value={stopPrice}
+                onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
+                onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
+
                 required="true"
                 InputLabelProps={{ shrink: true }}
               />
