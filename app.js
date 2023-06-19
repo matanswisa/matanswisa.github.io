@@ -4,6 +4,9 @@ import logger from 'morgan';
 import { normalizePort } from './utils/port.js';
 import TradesRoute from './routes/TradesRoute.js';
 import bodyParser from 'body-parser';
+import connectDB from './utils/db.js';
+
+connectDB();
 
 const app = express();
 
