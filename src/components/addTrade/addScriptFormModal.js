@@ -132,8 +132,6 @@ export default function BasicModal(props) {
           duration: positionDuration,
           commission: positionCommision,
           netPnL,
-          positionType: formState.positionType,
-          positionStatus: formState.positionStatus,
           // Include other form data here
         })
         .then((response) => {
@@ -157,7 +155,6 @@ export default function BasicModal(props) {
       contractsCounts <= 0 || Number.isNaN(netPnL) || Number.isNaN(netROI) || positionDate === null || positionSymbol === "" || stopPrice <= 0) {
       return false;
     }
-
     return true;
   };
 
@@ -217,8 +214,8 @@ export default function BasicModal(props) {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  <MenuItem value={10}>Short</MenuItem>
-                  <MenuItem value={20}>Long</MenuItem>
+                  <MenuItem value={'Short'}>Short</MenuItem>
+                  <MenuItem value={'Long'}>Long</MenuItem>
                 </Select>
               </FormControl>
             </Item>
@@ -247,8 +244,8 @@ export default function BasicModal(props) {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-                  <MenuItem value={10}>Win</MenuItem>
-                  <MenuItem value={20}>Loss</MenuItem>
+                  <MenuItem value={'Win'}>Win</MenuItem>
+                  <MenuItem value={'Loss'}>Loss</MenuItem>
                 </Select>
               </FormControl>
             </Item>
