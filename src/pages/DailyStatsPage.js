@@ -1,7 +1,9 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState,useRef } from 'react';
+
+
 // @mui
 import {
   Card,
@@ -21,21 +23,21 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  DataGrid
 } from '@mui/material';
 
+import DailyStatsCard from '../components/DailyStatsCard/DailyStatsCard'
 
 // components
-
-
 
 import Iconify from '../components/iconify';
 
 
 
 
-
 export default function DailyStatsPage() {
 
+ 
 
   return (
     <>
@@ -50,10 +52,26 @@ export default function DailyStatsPage() {
           </Typography>
         
 
-        
         </Stack>
 
 
+
+
+       
+        <DailyStatsCard/>
+          <DailyStatsCard/>
+          <DailyStatsCard/>
+          <DailyStatsCard/>
+          <DailyStatsCard/>
+          <DailyStatsCard/>
+   
+          <DailyStatsCard/>
+          <DailyStatsCard/>
+          <DailyStatsCard/>
+   
+        
+
+       
 
       </Container>
 
