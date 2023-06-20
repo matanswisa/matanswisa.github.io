@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // @mui
 import {
@@ -32,13 +32,14 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
 import AddTrade from '../components/addTrade/addScriptFormModal';
+import api from '../api/api';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'entryDate', label: 'Open Date', alignRight: false },
   { id: 'symbol', label: 'Symbol', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
-  { id: 'netroi', label: 'Net ROI', alignRight: false },
+  { id: 'netROI', label: 'Net ROI', alignRight: false },
   { id: 'longShort', label: 'Long / Short', alignRight: false },
   { id: 'contracts', label: 'Contracts', alignRight: false },
   { id: 'entryPrice', label: 'Entry Price', alignRight: false },
@@ -139,6 +140,19 @@ export default function UserPage() {
     setIsOpenmodal(true);
   }
 
+  useEffect(() => {
+    const fetchTrades = async () => {
+      const result = await api.get('/api/fetchTrades');
+      return result;
+    }
+
+    fetchTrades().then((res) => {
+      if (res.data) setTrades(res.data);
+    }).catch((err) => {
+      console.error(err);
+    })
+  }, [])
+
 
 
 
@@ -156,7 +170,7 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [trades, setTrades] = useState(createRandomTrades());
+  const [trades, setTrades] = useState([]);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -221,16 +235,11 @@ export default function UserPage() {
       <Helmet>
         <title> Reports </title>
       </Helmet>
-
-
       <Container>
-
-
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Reports
-
           </Typography>
           <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Trade
@@ -267,7 +276,7 @@ export default function UserPage() {
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
 
-                            {trade.entryDate}
+                            {new Date(trade.entryDate).toString().substring(0, 24)}
 
                           </Stack>
                         </TableCell>
@@ -277,7 +286,7 @@ export default function UserPage() {
 
 
 
-                        <TableCell align="center">{trade.netroi}%</TableCell>   {/* COLNAME: Net ROI , VALUES: % of profit */}
+                        <TableCell align="center">{trade.netROI}%</TableCell>   {/* COLNAME: Net ROI , VALUES: % of profit */}
 
                         <TableCell align="center">
                           <Label color={(trade.longShort === 'Short' && 'error') || 'success'}>{sentenceCase(trade.longShort)}</Label>   {/* COLNAME: LONG / Short */}
