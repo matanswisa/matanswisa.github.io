@@ -59,15 +59,8 @@ export default function DailyStatsPage() {
 
        
         <DailyStatsCard/>
-          <DailyStatsCard/>
-          <DailyStatsCard/>
-          <DailyStatsCard/>
-          <DailyStatsCard/>
-          <DailyStatsCard/>
-   
-          <DailyStatsCard/>
-          <DailyStatsCard/>
-          <DailyStatsCard/>
+         
+         
    
         
 

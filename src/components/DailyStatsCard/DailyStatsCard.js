@@ -38,8 +38,9 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+const Text = ["Total Trades : " , "Winners : ", "Profit Factor :","Winrate : ", "Losers : ", "Commissions :"];
 
-const numbers = ["Total Trades : " , "Winners : ", "Profit Factor :","Winrate : ", "Losers : ", "Commissions :"];
+const numbers = ["1 " , "2 ", "1RR","100%  ", "2", "20$"];
 
 export default function DailyStatsCard() {
   return (
@@ -71,16 +72,15 @@ export default function DailyStatsCard() {
         
         
        
-        <Grid container spacing={{ xs: 3, md: 4 }} columns={{ xs: 2, sm: 11, md: 12 }}>
-        {Array.from(Array(6)).map((_, index) => (
-          <Grid  item xs={2} sm={4} md={4} key={index}>
-            {numbers[index] } <h4>values</h4>
-          </Grid>
-      
-        ))}
-            
-        
-      </Grid>
+            <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 10, sm: 10, md: 12 }}>
+  {Array.from(Array(6)).map((_, index) => (
+    <Grid item xs={2} sm={4} md={4} key={index}>
+      <div style={{ display: 'flex', alignItems: 'center', borderRight: index !== 5 ? '1px solid black' : 'none', paddingRight: '10px' }}>
+        {Text[index]} <h3 style={{ marginLeft: '45px' }}>{numbers[index]}</h3>
+      </div>
+    </Grid>
+  ))}
+</Grid>
 
       </Grid>
       <Grid item xs={2}>
