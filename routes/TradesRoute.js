@@ -13,10 +13,20 @@ router.post("/addTrade", async (req, res) => {
         res.status(200).send(`Trade ${result._id} added succefully`);
 
     } catch (err) {
-        console.log(err);
+        console.err(err);
         res.status(500).send('Error when adding a trade');
     }
+});
 
+
+router.get('/fetchTrades', async (req, res) => {
+    try {
+        const trades = await Trade.find({});
+        res.status(200).json(trades);
+    } catch (err) {
+        console.err(err);
+        res.status(500).send(err);
+    }
 });
 
 
