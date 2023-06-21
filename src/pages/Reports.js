@@ -49,7 +49,7 @@ const TABLE_HEAD = [
   { id: 'commission', label: 'Commission', alignRight: false },
   { id: 'netPnL', label: 'Net P&L', alignRight: false },
   { id: 'image', label: 'Image', alignRight: false },
-  { id: 'edit', label: '', alignRight: false },
+  { id: 'edit', label: 'Edit', alignRight: false },
 ];
 
 
@@ -249,7 +249,6 @@ export default function UserPage() {
 
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -259,7 +258,6 @@ export default function UserPage() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={USERLIST.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
@@ -269,10 +267,10 @@ export default function UserPage() {
 
                     return (
                       <TableRow hover key={indx} tabIndex={-1} role="checkbox" selected={trade}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={trade} />
-                        </TableCell>
 
+                        <TableCell>
+                          { }
+                        </TableCell>
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
 
@@ -280,37 +278,33 @@ export default function UserPage() {
 
                           </Stack>
                         </TableCell>
-                        <TableCell align="center">{trade.symbol}</TableCell>    {/* COLNAME: Symbol , VALUES: stock name */}
+                        <TableCell align="center">{trade.symbol}</TableCell>
 
-                        <TableCell align="center">{trade.status}</TableCell>   {/* COLNAME: STATUS , VALUES: WIN OR LOSS */}
+                        <TableCell align="center">{trade.status}</TableCell>
 
 
-
-                        <TableCell align="center">{trade.netROI}%</TableCell>   {/* COLNAME: Net ROI , VALUES: % of profit */}
+                        <TableCell align="center">{trade.netROI}%</TableCell>
 
                         <TableCell align="center">
-                          <Label color={(trade.longShort === 'Short' && 'error') || 'success'}>{sentenceCase(trade.longShort)}</Label>   {/* COLNAME: LONG / Short */}
+                          <Label color={(trade.longShort === 'Short' && 'error') || 'success'}>{sentenceCase(trade.longShort)}</Label>
                         </TableCell>
 
-                        <TableCell align="center">{trade.contracts}</TableCell>   {/* COLNAME: contracts , VALUES: decimal number */}
+                        <TableCell align="center">{trade.contracts}</TableCell>
 
 
-                        <TableCell align="center">{trade.entryPrice}</TableCell>   {/* COLNAME: Entry Price , VALUES: decimal number */}
-
-                        <TableCell align="center">{trade.stopPrice}</TableCell>   {/* COLNAME: Stop  Price , VALUES: decimal number */}
-
-
-                        <TableCell align="center">{trade.exitPrice}</TableCell>   {/* COLNAME: Exit Price , VALUES: decimal number */}
+                        <TableCell align="center">{trade.entryPrice}</TableCell>
+                        <TableCell align="center">{trade.stopPrice}</TableCell>
 
 
-                        <TableCell align="center">{trade.duration}</TableCell>   {/* COLNAME: Duration , VALUES: time of duration */}
+                        <TableCell align="center">{trade.exitPrice}</TableCell>
+
+                        <TableCell align="center">{trade.duration}</TableCell>
 
 
 
-                        <TableCell align="center">{trade.commission}</TableCell>   {/* COLNAME: Commission , VALUES: Commission */}
+                        <TableCell align="center">{trade.commission}</TableCell>
 
-
-                        <TableCell align="center">{trade.netPnL}</TableCell>   {/* COLNAME:  Net P&L, VALUES: float */}
+                        <TableCell align="center">{trade.netPnL}</TableCell>
 
 
                         <TableCell align="center"><IconButton size="large" color="inherit" >
