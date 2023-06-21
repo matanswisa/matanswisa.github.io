@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 
-const localDB = `mongodb://localhost:27017/trading-journal`;
+const localDB = `mongodb://127.0.0.1:27017/trading-journal`;
 
 const connectDB = async () => {
     await Mongoose.connect(localDB, {
