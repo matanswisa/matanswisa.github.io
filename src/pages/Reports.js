@@ -313,7 +313,9 @@ export default function UserPage() {
                         <TableCell align="center">{trade.netPnL}</TableCell>   {/* COLNAME:  Net P&L, VALUES: float */}
 
 
-                        <TableCell align="center">{trade.image}</TableCell>   {/* COLNAME: image, VALUES: image of trade */}
+                        <TableCell align="center"><IconButton size="large" color="inherit" >
+                            <Iconify icon={'eva:image-outline'} />
+                          </IconButton>{trade.image}</TableCell>   {/* COLNAME: image, VALUES: image of trade */}
 
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
