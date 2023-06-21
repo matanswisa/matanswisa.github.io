@@ -301,17 +301,17 @@ export default function UserPage() {
                         <TableCell align="center">{trade.contracts}</TableCell>
 
 
-                        <TableCell align="center">{trade.entryPrice}</TableCell>
-                        <TableCell align="center">{trade.stopPrice}</TableCell>
+                        <TableCell align="center">{trade.entryPrice}$</TableCell>
+                        <TableCell align="center">{trade.stopPrice}$</TableCell>
 
 
-                        <TableCell align="center">{trade.exitPrice}</TableCell>
+                        <TableCell align="center">{trade.exitPrice}$</TableCell>
 
-                        <TableCell align="center">{trade.duration}</TableCell>
+                        <TableCell align="center">{trade.duration}Min</TableCell>
 
 
 
-                        <TableCell align="center">{trade.commission}</TableCell>
+                        <TableCell align="center">{trade.commission}$</TableCell>
 
                         <TableCell align="center">{trade.netPnL}$</TableCell>
 
