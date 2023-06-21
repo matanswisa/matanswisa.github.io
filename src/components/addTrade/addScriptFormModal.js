@@ -31,6 +31,7 @@ import {
 } from '@mui/material';
 import { useReducer, useEffect } from 'react';
 import api from '../../api/api';
+import Iconify from '../iconify/Iconify';
 
 const style = {
   position: 'absolute',
@@ -67,7 +68,8 @@ const initialState = {
   netROI: 0,
   positionDate: null,
   stopPrice: 0,
-  positionSymbol: ''
+  positionSymbol: '',
+  comments: ''
 };
 
 const formReducer = (state, action) => {
@@ -96,7 +98,7 @@ export default function BasicModal(props) {
 
   const [formState, dispatch] = useReducer(formReducer, initialState);
 
-  const { positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
+  const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
 
 
   const handlePositionFieldInput = (event, field) => {
@@ -131,6 +133,7 @@ export default function BasicModal(props) {
           exitPrice,
           duration: positionDuration,
           commission: positionCommision,
+          comments,
           netPnL,
           // Include other form data here
         })
@@ -144,6 +147,7 @@ export default function BasicModal(props) {
           alert("Bif oof :(")
 
         });
+
     } else {
       console.log('Please fill in all the fields');
     }
@@ -151,7 +155,7 @@ export default function BasicModal(props) {
 
 
   const validateForm = () => {
-    if (positionType === '' || positionStatus === '' || positionCommision === 0 || entryPrice <= 0 || exitPrice <= 0 || positionDuration === '' ||
+    if (comments === '' || positionType === '' || positionStatus === '' || positionCommision === 0 || entryPrice <= 0 || exitPrice <= 0 || positionDuration === '' ||
       contractsCounts <= 0 || Number.isNaN(netPnL) || Number.isNaN(netROI) || positionDate === null || positionSymbol === "" || stopPrice <= 0) {
       return false;
     }
@@ -169,6 +173,13 @@ export default function BasicModal(props) {
       <Box sx={style}>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={28}>
+            <Grid item xs={6} md={4}>
+              <Item>
+                <IconButton size="small" color="inherit" >
+                  <Iconify icon={'eva:file-add-outline'} />
+                </IconButton>
+              </Item>
+            </Grid>
             <Grid item xs={6} md={7}>
               <Item>
                 {' '}
@@ -185,10 +196,23 @@ export default function BasicModal(props) {
             </Grid>
           </Grid>
         </Box>
-
         <br />
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
+          <Grid item xs={6}>
+            <Item>
+              <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                <TextField
+                  id="outlined-multiline-flexible"
+                  label="Comments"
+                  value={comments}
+                  multiline
+                  maxRows={7}
+                  onChange={(e) => handlePositionFieldInput(e, 'comments')}
+                />
+              </Box>{' '}
+            </Item>
+          </Grid>
           <Grid item xs={6}>
             <Item>
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">

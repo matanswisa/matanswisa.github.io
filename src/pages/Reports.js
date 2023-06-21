@@ -50,6 +50,7 @@ const TABLE_HEAD = [
   { id: 'netPnL', label: 'Net P&L', alignRight: false },
   { id: 'image', label: 'Image', alignRight: false },
   { id: 'edit', label: 'Edit', alignRight: false },
+  { id: 'comments', label: 'comments', alignRight: false }
 ];
 
 
@@ -131,6 +132,11 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+const fetchTrades = async () => {
+  const result = await api.get('/api/fetchTrades');
+  return result;
+}
+
 export default function UserPage() {
 
 
@@ -141,10 +147,7 @@ export default function UserPage() {
   }
 
   useEffect(() => {
-    const fetchTrades = async () => {
-      const result = await api.get('/api/fetchTrades');
-      return result;
-    }
+
 
     fetchTrades().then((res) => {
       if (res.data) setTrades(res.data);
@@ -230,6 +233,12 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+  const deleteTrade = async (tradeId) => {
+    console.log('Delete trade - ', tradeId);
+    await api.delete('/api/deleteTrade', { data: { tradeId } });
+    const trades = await fetchTrades();
+    setTrades(trades.data);
+  }
   return (
     <>
       <Helmet>
@@ -304,19 +313,52 @@ export default function UserPage() {
 
                         <TableCell align="center">{trade.commission}</TableCell>
 
-                        <TableCell align="center">{trade.netPnL}</TableCell>
+                        <TableCell align="center">{trade.netPnL}$</TableCell>
 
 
                         <TableCell align="center"><IconButton size="large" color="inherit" >
-                            <Iconify icon={'eva:image-outline'} />
-                          </IconButton>{trade.image}</TableCell>   {/* COLNAME: image, VALUES: image of trade */}
+                          <Iconify icon={'eva:image-outline'} />
+                        </IconButton>{trade.image}</TableCell>   {/* COLNAME: image, VALUES: image of trade */}
 
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
+                        <TableCell align="center">{trade.comments}</TableCell>
+                        <Popover
+                          open={Boolean(open)}
+                          anchorEl={open}
+                          onClose={handleCloseMenu}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                          PaperProps={{
+                            sx: {
+                              p: 1,
+                              width: 140,
+                              '& .MuiMenuItem-root': {
+                                px: 1,
+                                typography: 'body2',
+                                borderRadius: 0.75,
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem>
+                            <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                            Edit
+                          </MenuItem>
+
+                          <MenuItem sx={{ color: 'error.main' }}>
+                            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => deleteTrade(trade._id)} />
+                            <button style={buttonStyle} onClick={() => deleteTrade(trade._id)}>
+                              Delete
+                            </button>
+                          </MenuItem>
+                        </Popover>
                       </TableRow>
+
+
                     );
                   })}
                   {emptyRows > 0 && (
@@ -365,34 +407,16 @@ export default function UserPage() {
         </Card>
       </Container>
 
-      <Popover
-        open={Boolean(open)}
-        anchorEl={open}
-        onClose={handleCloseMenu}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: {
-            p: 1,
-            width: 140,
-            '& .MuiMenuItem-root': {
-              px: 1,
-              typography: 'body2',
-              borderRadius: 0.75,
-            },
-          },
-        }}
-      >
-        <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
-          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
-      </Popover>
     </>
   );
 }
+
+
+const buttonStyle = {
+  // marginRight: '1px',
+  border: 'none',
+  backgroundColor: '#FFFFFF', // Replace with the desired background color
+  color: '#000', // Replace with the desired text color
+  padding: '10px 20px', // Adjust the padding as per your needs
+};
