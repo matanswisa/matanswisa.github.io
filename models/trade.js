@@ -52,6 +52,10 @@ const TradeSchema = new Mongoose.Schema({
     image: {
         type: String,
         required: false
+    },
+    comments: {
+        type: String,
+        required: false
     }
 });
 

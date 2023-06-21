@@ -29,5 +29,21 @@ router.get('/fetchTrades', async (req, res) => {
     }
 });
 
+router.delete('/deleteTrade', async (req, res) => {
+    try {
+        const { tradeId } = req.body;
+        if (tradeId) {
+            const result = await Trade.deleteOne({ _id: tradeId });
+            if (result) {
+                res.status(200).send('Trade has been deleted');
+            } else {
+                res.status(400).send('Trade couldn\'t be deleted , there was a problem.');
+            }
+        }
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
+
 
 export default router;
