@@ -33,6 +33,7 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 import USERLIST from '../_mock/user';
 import AddTrade from '../components/addTrade/addScriptFormModal';
 import api from '../api/api';
+import Colors from '../components/color-utils/Colors'
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -52,53 +53,6 @@ const TABLE_HEAD = [
   { id: 'edit', label: 'Edit', alignRight: false },
   { id: 'comments', label: 'comments', alignRight: false }
 ];
-
-
-const createRandomTrades = () => {
-  // Create 10 combinations of positions
-  const positions = [];
-  for (let i = 1; i <= 10; i += 1) {
-    const position = {
-      entryDate: '2023-06-18',
-      symbol: 'NQ',
-      status: 'Open',
-      netroi: '',
-      longShort: '',
-      contracts: '',
-      entryPrice: '',
-      stopPrice: '',
-      exitPrice: '',
-      duration: '',
-      commission: '',
-      netPnL: '',
-      image: 'url',
-    };
-
-    position.entryPrice = getRandomNumber(5000, 10000);
-    position.stopPrice = getRandomNumber(4000, position.entryPrice);
-    position.exitPrice = getRandomNumber(position.stopPrice, position.entryPrice);
-    position.duration = getRandomNumber(1, 10);
-    position.contracts = getRandomNumber(1, 12);
-    position.commission = getRandomNumber(5, 50);
-    position.netPnL = getRandomNumber(-100, 100);
-    position.netroi = getRandomNumber(-500, 500);
-    position.status = getRandomNumber(0, 2) > 1 ? "Win" : "Loss"
-    position.longShort = getRandomNumber(0, 2) > 1 ? "Long" : "Short"
-    positions.push(position);
-  }
-
-  // Utility function to generate random numbers within a range
-  function getRandomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
-  // console.log(positions);
-  return positions;
-}
-
-// ----------------------------------------------------------------------
-
-
 
 
 
@@ -289,14 +243,15 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="center">{trade.symbol}</TableCell>
 
-                        <TableCell align="center">{trade.status}</TableCell>
+                        <TableCell align="center">
+                          <Label color={(trade.status === 'Loss' && 'error') || 'success'}>{sentenceCase(trade.status)}</Label>
+                        </TableCell>
+
 
 
                         <TableCell align="center">{trade.netROI}%</TableCell>
 
-                        <TableCell align="center">
-                          <Label color={(trade.longShort === 'Short' && 'error') || 'success'}>{sentenceCase(trade.longShort)}</Label>
-                        </TableCell>
+                        <TableCell align="center">{trade.longShort}</TableCell>
 
                         <TableCell align="center">{trade.contracts}</TableCell>
 
@@ -313,7 +268,7 @@ export default function UserPage() {
 
                         <TableCell align="center">{trade.commission}$</TableCell>
 
-                        <TableCell align="center">{trade.netPnL}$</TableCell>
+                        <TableCell align="center">{trade.status  === "Loss" ?  trade.netPnL * -1 : trade.netPnL}$</TableCell>
 
 
                         <TableCell align="center"><IconButton size="large" color="inherit" >
@@ -407,10 +362,21 @@ export default function UserPage() {
         </Card>
       </Container>
 
+  <h1 style={totalPlColor}>Total P&L </h1> 
+  <h2 style={totalPlColor}>250$</h2>
+ 
 
     </>
   );
 }
+
+
+
+const totalPlColor = {
+ 
+  color: '#54a38d', // Replace with the desired text color
+ 
+};
 
 
 const buttonStyle = {
