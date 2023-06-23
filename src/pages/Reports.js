@@ -57,13 +57,13 @@ const TABLE_HEAD = [
 
 
 
-  const sumPnL = (trades)=> {
-    let sum = 0;
-    trades.forEach((trade)=>{
-     sum+=trade.netPnL
-    });
-    return sum;
-    }
+const sumPnL = (trades) => {
+  let sum = 0;
+  trades.forEach((trade) => {
+    sum += trade.netPnL
+  });
+  return sum;
+}
 
 
 
@@ -279,7 +279,7 @@ export default function UserPage() {
 
                         <TableCell align="center">{trade.commission}$</TableCell>
 
-                        <TableCell align="center">{trade.status  === "Loss" ?  trade.netPnL * -1 : trade.netPnL}$</TableCell>
+                        <TableCell align="center">{trade.status === "Loss" ? trade.netPnL * -1 : trade.netPnL}$</TableCell>
 
 
                         <TableCell align="center"><IconButton size="large" color="inherit" >
@@ -373,9 +373,9 @@ export default function UserPage() {
         </Card>
       </Container>
 
-  <h1 style={totalPlColor}>Total P&L </h1> 
-  <h2 style={totalPlColor}>{sumPnL(trades)}$</h2>
- 
+      <h1 style={totalPlColor}>Total P&L </h1>
+      <h2 style={totalPlColor}>{sumPnL(trades)}$</h2>
+
 
     </>
   );
@@ -384,9 +384,9 @@ export default function UserPage() {
 
 
 const totalPlColor = {
- 
+
   color: '#54a38d', // Replace with the desired text color
- 
+
 };
 
 
