@@ -240,6 +240,7 @@ export default function BasicModal(props) {
                   </MenuItem>
                   <MenuItem value={'Short'}>Short</MenuItem>
                   <MenuItem value={'Long'}>Long</MenuItem>
+                  <MenuItem value={'Break Even'}>Break Even</MenuItem>
                 </Select>
               </FormControl>
             </Item>
