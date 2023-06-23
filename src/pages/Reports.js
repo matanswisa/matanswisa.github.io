@@ -57,6 +57,17 @@ const TABLE_HEAD = [
 
 
 
+  const sumPnL = (trades)=> {
+    let sum = 0;
+    trades.forEach((trade)=>{
+     sum+=trade.netPnL
+    });
+    return sum;
+    }
+
+
+
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -363,7 +374,7 @@ export default function UserPage() {
       </Container>
 
   <h1 style={totalPlColor}>Total P&L </h1> 
-  <h2 style={totalPlColor}>250$</h2>
+  <h2 style={totalPlColor}>{sumPnL(trades)}$</h2>
  
 
     </>

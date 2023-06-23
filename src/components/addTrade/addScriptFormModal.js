@@ -103,11 +103,6 @@ export default function BasicModal(props) {
 
   const handlePositionFieldInput = (event, field) => {
 
-    if (positionType === "Break Even") {
-      dispatch({ type: 'UPDATE_FIELD', field: `${'positionStatus'}`, value: "None" });
-    }
-
-
     console.log(`field: ${field}, value: ${event.target.value}`)
     dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.target.value });
   };
@@ -161,7 +156,7 @@ export default function BasicModal(props) {
 
 
   const validateForm = () => {
-    if (comments === '' || positionType === '' || positionStatus === '' || positionCommision === 0 || entryPrice <= 0 || exitPrice <= 0 || positionDuration === '' ||
+    if (comments === '' || positionType === '' || positionStatus === ''  || entryPrice <= 0 || exitPrice <= 0 || positionDuration === '' ||
       contractsCounts <= 0 || Number.isNaN(netPnL) || Number.isNaN(netROI) || positionDate === null || positionSymbol === "" || stopPrice <= 0) {
       return false;
     }
@@ -246,7 +241,7 @@ export default function BasicModal(props) {
                   </MenuItem>
                   <MenuItem value={'Short'}>Short</MenuItem>
                   <MenuItem value={'Long'}>Long</MenuItem>
-                  <MenuItem value={'Break Even'}>Break Even</MenuItem>
+                
                 </Select>
               </FormControl>
             </Item>
@@ -261,7 +256,7 @@ export default function BasicModal(props) {
           </Grid>
           <Grid item xs={6}>
 
-            {positionType === "Break Even" ?  <Item> </Item>: <Item>
+           <Item>
               {' '}
               <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
                 <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
@@ -278,9 +273,10 @@ export default function BasicModal(props) {
                   </MenuItem>
                   <MenuItem value={'Win'}>Win</MenuItem>
                   <MenuItem value={'Loss'}>Loss</MenuItem>
+                  <MenuItem value={'Break Even'}>Break Even</MenuItem>
                 </Select>
               </FormControl>
-            </Item> }
+            </Item> 
            
           </Grid>
         </Grid>
