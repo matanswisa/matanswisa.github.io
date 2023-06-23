@@ -102,6 +102,12 @@ export default function BasicModal(props) {
 
 
   const handlePositionFieldInput = (event, field) => {
+
+    if (positionType === "Break Even") {
+      dispatch({ type: 'UPDATE_FIELD', field: `${'positionStatus'}`, value: "None" });
+    }
+
+
     console.log(`field: ${field}, value: ${event.target.value}`)
     dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.target.value });
   };
@@ -254,7 +260,8 @@ export default function BasicModal(props) {
             </Item>
           </Grid>
           <Grid item xs={6}>
-            <Item>
+
+            {positionType === "Break Even" ?  <Item> </Item>: <Item>
               {' '}
               <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
                 <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
@@ -273,7 +280,8 @@ export default function BasicModal(props) {
                   <MenuItem value={'Loss'}>Loss</MenuItem>
                 </Select>
               </FormControl>
-            </Item>
+            </Item> }
+           
           </Grid>
         </Grid>
 
