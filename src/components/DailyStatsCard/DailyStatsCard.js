@@ -84,7 +84,7 @@ export default function DailyStatsCard() {
 
       </Grid>
       <Grid item xs={2}>
-            <Button variant="contained">Edit Note</Button>
+            <Button variant="contained">Show Trades</Button>
 
                 
             </Grid>

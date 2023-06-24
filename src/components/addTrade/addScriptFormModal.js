@@ -55,7 +55,6 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 
-
 const initialState = {
   positionType: '',
   positionStatus: '',
@@ -94,8 +93,10 @@ const formReducer = (state, action) => {
 export default function BasicModal(props) {
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
+  const tradeInfo =  JSON.stringify(props.tradeInfo);
 
 
+  
   const [formState, dispatch] = useReducer(formReducer, initialState);
 
   const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
@@ -206,7 +207,7 @@ export default function BasicModal(props) {
                 <TextField
                   id="outlined-multiline-flexible"
                   label="Comments"
-                  value={comments}
+                  value={tradeInfo? "@22" : comments}
                   multiline
                   maxRows={7}
                   onChange={(e) => handlePositionFieldInput(e, 'comments')}
