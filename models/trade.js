@@ -15,7 +15,7 @@ const TradeSchema = new Mongoose.Schema({
     },
     netROI: {
         type: Number,
-        required: true
+        required: false
     },
     longShort: {
         type: String,
@@ -39,11 +39,11 @@ const TradeSchema = new Mongoose.Schema({
     },
     duration: {
         type: String,
-        required: true
+        required: false
     },
     commission: {
         type: Number,
-        required: true
+        required: false
     },
     netPnL: {
         type: Number,
@@ -61,4 +61,4 @@ const TradeSchema = new Mongoose.Schema({
 
 const Trade = Mongoose.model('Trade', TradeSchema);
 
-export default Trade;
+export default Trade;
