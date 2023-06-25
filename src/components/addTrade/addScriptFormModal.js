@@ -55,48 +55,52 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 
-const initialState = {
-  positionType: '',
-  positionStatus: '',
-  positionCommision: '',
-  positionDuration: '',
-  entryPrice: 0,
-  exitPrice: 0,
-  contractsCounts: 0,
-  netPnL: 0,
-  netROI: 0,
-  positionDate: null,
-  stopPrice: 0,
-  positionSymbol: '',
-  comments: ''
-};
-
-const formReducer = (state, action) => {
-  switch (action.type) {
-    case 'UPDATE_FIELD':
-      return {
-        ...state,
-        [action.field]: action.value,
-      };
-    case 'DELETE_FIELD': return {
-      ...state,
-      [action.field]: ''
-    }
-    case 'RESET_FORM':
-      return initialState;
-    default:
-      return state;
-  }
-};
 
 
 export default function BasicModal(props) {
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
-  const tradeInfo =  JSON.stringify(props.tradeInfo);
+  const tradeInfo = props?.tradeInfo;
 
 
-  
+  const initialState = {
+    positionType: tradeInfo?.longShort || '',
+    positionStatus: tradeInfo?.status || '',
+    positionCommision: tradeInfo?.commission || '',
+    positionDuration: tradeInfo?.duration || '',
+    entryPrice: tradeInfo?.entryPrice || 0,
+    exitPrice: tradeInfo?.exitPrice || 0,
+    contractsCounts: tradeInfo?.contracts || 0,
+    netPnL: tradeInfo?.netPnL || 0,
+    netROI: tradeInfo?.netROI || 0,
+    positionDate: tradeInfo?.entryDate || '',
+    stopPrice: tradeInfo?.stopPrice || 0,
+    positionSymbol: tradeInfo?.symbol || '',
+    comments: tradeInfo?.comments || ''
+  };
+
+  const formReducer = (state, action) => {
+    switch (action.type) {
+      case 'UPDATE_FIELD':
+        return {
+          ...state,
+          [action.field]: action.value,
+        };
+      case 'DELETE_FIELD': return {
+        ...state,
+        [action.field]: ''
+      }
+      case 'RESET_FORM':
+        return initialState;
+      default:
+        return state;
+    }
+  };
+
+
+  console.log("tradeInfo", tradeInfo);
+
+
   const [formState, dispatch] = useReducer(formReducer, initialState);
 
   const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
@@ -207,7 +211,7 @@ export default function BasicModal(props) {
                 <TextField
                   id="outlined-multiline-flexible"
                   label="Comments"
-                  value={tradeInfo? "@22" : comments}
+                  value={comments}
                   multiline
                   maxRows={7}
                   onChange={(e) => handlePositionFieldInput(e, 'comments')}
@@ -409,6 +413,6 @@ export default function BasicModal(props) {
         </Grid>
         <br />
       </Box>
-    </Modal>
+    </Modal >
   );
 }
