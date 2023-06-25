@@ -29,9 +29,12 @@ import {
   TablePagination,
   TextField,
 } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { useReducer, useEffect } from 'react';
+import { addTrade } from '../../hooks/Trades/trdesSlice';
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
+
 
 const style = {
   position: 'absolute',
@@ -62,6 +65,7 @@ export default function BasicModal(props) {
   const handleClose = () => props.handleOpenModal(false);
   const tradeInfo = props?.tradeInfo;
 
+  const reduxDispatch = useDispatch();
 
   const initialState = {
     positionType: tradeInfo?.longShort || '',
@@ -103,6 +107,7 @@ export default function BasicModal(props) {
 
   const [formState, dispatch] = useReducer(formReducer, initialState);
 
+
   const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
 
 
@@ -126,26 +131,29 @@ export default function BasicModal(props) {
     console.log('WHAT INSIDE?', { positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol });
     if (validateForm()) {
       console.log("form is validate");
+      const trade = {
+        entryDate: positionDate,
+        symbol: positionSymbol,
+        status: positionStatus,
+        netROI,
+        stopPrice,
+        longShort: positionType,
+        contracts: contractsCounts,
+        entryPrice,
+        exitPrice,
+        duration: positionDuration,
+        commission: positionCommision,
+        comments,
+        netPnL,
+        // Include other form data here
+      }
       api
-        .post('/api/addTrade', {
-          entryDate: positionDate,
-          symbol: positionSymbol,
-          status: positionStatus,
-          netROI,
-          stopPrice,
-          longShort: positionType,
-          contracts: contractsCounts,
-          entryPrice,
-          exitPrice,
-          duration: positionDuration,
-          commission: positionCommision,
-          comments,
-          netPnL,
-          // Include other form data here
-        })
+        .post('/api/addTrade', trade)
         .then((response) => {
           // Handle the response from the server
           console.log("result is success");
+          reduxDispatch(addTrade(trade))
+          dispatch({ type: 'RESET_FORM' });
           alert("Success!")
         })
         .catch((error) => {
