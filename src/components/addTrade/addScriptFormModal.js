@@ -62,7 +62,6 @@ export default function BasicModal(props) {
   const handleClose = () => props.handleOpenModal(false);
   const tradeInfo = props?.tradeInfo;
 
-
   const initialState = {
     positionType: tradeInfo?.longShort || '',
     positionStatus: tradeInfo?.status || '',
@@ -73,12 +72,13 @@ export default function BasicModal(props) {
     contractsCounts: tradeInfo?.contracts || 0,
     netPnL: tradeInfo?.netPnL || 0,
     netROI: tradeInfo?.netROI || 0,
-    positionDate: tradeInfo?.entryDate || '',
+    positionDate: tradeInfo?.entryDate.split('T')[0] || '',
     stopPrice: tradeInfo?.stopPrice || 0,
     positionSymbol: tradeInfo?.symbol || '',
     comments: tradeInfo?.comments || ''
   };
 
+ 
   const formReducer = (state, action) => {
     switch (action.type) {
       case 'UPDATE_FIELD':
