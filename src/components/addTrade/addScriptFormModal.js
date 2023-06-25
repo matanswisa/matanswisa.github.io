@@ -12,21 +12,13 @@ import Grid from '@mui/material/Grid';
 
 // @mui
 import {
-  Card,
-  Table,
-  Stack,
+ 
   Paper,
-  Avatar,
+  
   Button,
-  Popover,
-  Checkbox,
-  TableRow,
-  TableBody,
-  TableCell,
-  Container,
+
   IconButton,
-  TableContainer,
-  TablePagination,
+ 
   TextField,
 } from '@mui/material';
 import { useReducer, useEffect } from 'react';
@@ -62,6 +54,8 @@ export default function BasicModal(props) {
   const handleClose = () => props.handleOpenModal(false);
   const tradeInfo = props?.tradeInfo;
 
+  const editMode = props?.isEditMode;
+  
   const initialState = {
     positionType: tradeInfo?.longShort || '',
     positionStatus: tradeInfo?.status || '',
@@ -75,7 +69,8 @@ export default function BasicModal(props) {
     positionDate: tradeInfo?.entryDate.split('T')[0] || '',
     stopPrice: tradeInfo?.stopPrice || 0,
     positionSymbol: tradeInfo?.symbol || '',
-    comments: tradeInfo?.comments || ''
+    comments: tradeInfo?.comments || '',
+   
   };
 
  
@@ -126,6 +121,8 @@ export default function BasicModal(props) {
     console.log('WHAT INSIDE?', { positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol });
     if (validateForm()) {
       console.log("form is validate");
+
+     if(!editMode){
       api
         .post('/api/addTrade', {
           entryDate: positionDate,
@@ -153,6 +150,37 @@ export default function BasicModal(props) {
           alert("Bif oof :(")
 
         });
+      }
+      else{
+        api
+        .post('/api/editTrade', {
+          entryDate: positionDate,
+          symbol: positionSymbol,
+          status: positionStatus,
+          netROI,
+          stopPrice,
+          longShort: positionType,
+          contracts: contractsCounts,
+          entryPrice,
+          exitPrice,
+          duration: positionDuration,
+          commission: positionCommision,
+          comments,
+          netPnL,
+          tradeId : tradeInfo?.trade._id || '',
+          // Include other form data here
+        })
+        .then((response) => {
+          // Handle the response from the server
+          console.log("result is success");
+          alert("Success!")
+        })
+        .catch((error) => {
+          // Handle the error
+          alert("Bif oof :(")
+
+        });
+      }
 
     } else {
       console.log('Please fill in all the fields');

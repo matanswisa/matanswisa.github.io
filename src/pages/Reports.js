@@ -314,7 +314,7 @@ export default function UserPage() {
                           <MenuItem>
                             <Iconify  onClick={handleOpenModal} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
                             Edit
-                            {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal}  tradeInfo = {trade} />}
+                            {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal}  tradeInfo = {trade}   isEditMode />}
 
                           </MenuItem>
 
