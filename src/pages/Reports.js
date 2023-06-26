@@ -23,6 +23,22 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material';
+
+
+
+
+import {
+  MDBBtn,
+  MDBModal,
+  MDBModalDialog,
+  MDBModalContent,
+  MDBModalHeader,
+  MDBModalTitle,
+  MDBModalBody,
+  MDBModalFooter,
+} from 'mdb-react-ui-kit';
+
+
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
@@ -68,6 +84,7 @@ const sumPnL = (trades) => {
 
 
 
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -104,6 +121,8 @@ const fetchTrades = async () => {
 
 export default function UserPage() {
 
+  const [basicModal, setBasicModal] = useState(false);
+  const toggleShow = () => setBasicModal(!basicModal);
 
   const [openmodal, setIsOpenmodal] = useState(false);
 
@@ -208,9 +227,12 @@ export default function UserPage() {
     <>
       <Helmet>
         <title> Reports </title>
+        
       </Helmet>
       <Container>
 
+    
+   
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Reports
@@ -240,6 +262,8 @@ export default function UserPage() {
 
 
                     return (
+
+                      
                       <TableRow hover key={indx} tabIndex={-1} role="checkbox" selected={trade}>
 
                         <TableCell>
@@ -312,6 +336,26 @@ export default function UserPage() {
                         >
 
                           <MenuItem>
+
+                          <MDBModal show={basicModal} setShow={setBasicModal} tabIndex='-1'>
+        <MDBModalDialog>
+          <MDBModalContent>
+            <MDBModalHeader>
+              <MDBModalTitle>Remove Trade</MDBModalTitle>
+              <MDBBtn className='btn-close' color='none' onClick={toggleShow}> </MDBBtn>
+            </MDBModalHeader>
+            <MDBModalBody>You sure you want to remove this Trade?</MDBModalBody>
+
+            <MDBModalFooter>
+              <MDBBtn color='secondary' onClick={toggleShow}>
+                Close
+              </MDBBtn>
+              <MDBBtn onClick={()=> deleteTrade(trade._id)}>Remove</MDBBtn>
+            </MDBModalFooter>
+          </MDBModalContent>
+        </MDBModalDialog>
+      </MDBModal>
+
                             <Iconify  onClick={handleOpenModal} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
                             Edit
                             {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal}  tradeInfo = {trade}   isEditMode />}
@@ -319,8 +363,8 @@ export default function UserPage() {
                           </MenuItem>
 
                           <MenuItem sx={{ color: 'error.main' }}>
-                            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => deleteTrade(trade._id)} />
-                            <button style={buttonStyle} onClick={() => deleteTrade(trade._id)}>
+                            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() =>toggleShow()} />
+                            <button style={buttonStyle} onClick={() => toggleShow()}>
                               Delete
                             </button>
                           </MenuItem>
