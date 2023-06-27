@@ -219,13 +219,7 @@ export default function BasicModal(props) {
       <Box sx={style}>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={28}>
-            <Grid item xs={6} md={4}>
-              <Item>
-                <IconButton size="small" color="inherit" >
-                  <Iconify icon={'eva:file-add-outline'} />
-                </IconButton>
-              </Item>
-            </Grid>
+           
             <Grid item xs={6} md={7}>
               <Item>
                 {' '}
@@ -236,9 +230,14 @@ export default function BasicModal(props) {
             </Grid>
 
             <Grid item xs={6} md={4}>
+            <Grid item xs={6} md={4}>
               <Item>
-                <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
+                <IconButton size="small" color="inherit" >
+                  <Iconify  icon={'eva:file-add-outline'} />
+                </IconButton>
               </Item>
+            </Grid>
+             
             </Grid>
           </Grid>
         </Box>
@@ -450,8 +449,12 @@ export default function BasicModal(props) {
               />
             </Item>
           </Grid>
+          <Item>
+          <br />
+                <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
+              </Item>
         </Grid>
-        <br />
+       
         {alert ? <Alert severity="success">This is a success alert — check it out!</Alert> : ""}
       </Box>
      
