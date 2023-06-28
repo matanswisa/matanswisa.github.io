@@ -116,6 +116,7 @@ export default function UserPage() {
 
     fetchTrades().then((res) => {
       if (res.data) setTrades(res.data);
+      console.log(res.data);
     }).catch((err) => {
       console.error(err);
     })
@@ -240,7 +241,7 @@ export default function UserPage() {
 
 
                     return (
-                      <TableRow hover key={indx} tabIndex={-1} role="checkbox" selected={trade}>
+                      <TableRow hover key={trade._id} tabIndex={-1} role="checkbox" selected={trade}>
 
                         <TableCell>
                           { }
@@ -312,9 +313,9 @@ export default function UserPage() {
                         >
 
                           <MenuItem>
-                            <Iconify  onClick={handleOpenModal} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                            <Iconify onClick={handleOpenModal} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
                             Edit
-                            {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal}  tradeInfo = {trade}   isEditMode />}
+                            {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} tradeInfo={trade} isEditMode />}
 
                           </MenuItem>
 

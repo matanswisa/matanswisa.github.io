@@ -12,16 +12,17 @@ import Grid from '@mui/material/Grid';
 
 // @mui
 import {
- 
+
   Paper,
-  
+
   Button,
 
   IconButton,
- 
+
   TextField,
 } from '@mui/material';
 import { useReducer, useEffect } from 'react';
+import axios from 'axios';  
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
 
@@ -55,7 +56,7 @@ export default function BasicModal(props) {
   const tradeInfo = props?.tradeInfo;
 
   const editMode = props?.isEditMode;
-  
+
   const initialState = {
     positionType: tradeInfo?.longShort || '',
     positionStatus: tradeInfo?.status || '',
@@ -70,10 +71,10 @@ export default function BasicModal(props) {
     stopPrice: tradeInfo?.stopPrice || 0,
     positionSymbol: tradeInfo?.symbol || '',
     comments: tradeInfo?.comments || '',
-   
+
   };
 
- 
+
   const formReducer = (state, action) => {
     switch (action.type) {
       case 'UPDATE_FIELD':
@@ -117,43 +118,34 @@ export default function BasicModal(props) {
     handleOpen();
   }, []);
 
-  const handleSaveTrade = () => {
+  const handleSaveTrade = async () => {
     console.log('WHAT INSIDE?', { positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol });
     if (validateForm()) {
       console.log("form is validate");
 
-     if(!editMode){
-      api
-        .post('/api/addTrade', {
-          entryDate: positionDate,
-          symbol: positionSymbol,
-          status: positionStatus,
-          netROI,
-          stopPrice,
-          longShort: positionType,
-          contracts: contractsCounts,
-          entryPrice,
-          exitPrice,
-          duration: positionDuration,
-          commission: positionCommision,
-          comments,
-          netPnL,
-          // Include other form data here
-        })
-        .then((response) => {
-          // Handle the response from the server
-          console.log("result is success");
-          alert("Success!")
-        })
-        .catch((error) => {
-          // Handle the error
-          alert("Bif oof :(")
-
-        });
+      if (!editMode) {
+        await api
+          .post('/api/addTrade', {
+            entryDate: positionDate,
+            symbol: positionSymbol,
+            status: positionStatus,
+            netROI,
+            stopPrice,
+            longShort: positionType,
+            contracts: contractsCounts,
+            entryPrice,
+            exitPrice,
+            duration: positionDuration,
+            commission: positionCommision,
+            comments,
+            netPnL,
+            // Include other form data here
+          })
+        alert('Add new trade');
       }
-      else{
-        api
-        .post('/api/editTrade', {
+      else if (editMode === true) {
+        console.log('inside edit trade!', tradeInfo?._id);
+        await axios.post('http://localhost:8080/api/editTrade', {
           entryDate: positionDate,
           symbol: positionSymbol,
           status: positionStatus,
@@ -167,19 +159,10 @@ export default function BasicModal(props) {
           commission: positionCommision,
           comments,
           netPnL,
-          tradeId : tradeInfo?.trade._id || '',
+          tradeId: tradeInfo?.trade._id || '',
           // Include other form data here
-        })
-        .then((response) => {
-          // Handle the response from the server
-          console.log("result is success");
-          alert("Success!")
-        })
-        .catch((error) => {
-          // Handle the error
-          alert("Bif oof :(")
-
         });
+        alert('Update trade!')
       }
 
     } else {
