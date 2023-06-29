@@ -7,7 +7,10 @@ import ThemeProvider from './theme';
 // components
 import { StyledChart } from './components/chart';
 import ScrollToTop from './components/scroll-to-top';
+import { createStore } from '@reduxjs/toolkit';
+import rootReducer from './redux-toolkit/tradesSlice';
 
+const store = createStore(rootReducer);
 // ----------------------------------------------------------------------
 
 export default function App() {

@@ -2,6 +2,9 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
+
 
 // @mui
 import {
@@ -47,10 +50,11 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
-import AddTrade from '../components/addTrade/addScriptFormModal';
 import api from '../api/api';
 import Colors from '../components/color-utils/Colors'
+import AddTrade from '../components/addTrade/addTradeFormModal';
 // ----------------------------------------------------------------------
+
 
 const TABLE_HEAD = [
   { id: 'entryDate', label: 'Open Date', alignRight: false },
@@ -125,6 +129,12 @@ export default function UserPage() {
   const toggleShow = () => setBasicModal(!basicModal);
 
   const [openmodal, setIsOpenmodal] = useState(false);
+  const dispatch = useDispatch();
+
+  const setTradesList = (trades) => {
+    console.log(trades);
+    dispatch(setTradesRedux(trades));
+  }
 
   const handleOpenModal = () => {
     setIsOpenmodal(true);
@@ -135,6 +145,8 @@ export default function UserPage() {
 
     fetchTrades().then((res) => {
       if (res.data) setTrades(res.data);
+      setTradesList(res.data);
+      console.log(res.data);
     }).catch((err) => {
       console.error(err);
     })
@@ -227,12 +239,12 @@ export default function UserPage() {
     <>
       <Helmet>
         <title> Reports </title>
-        
+
       </Helmet>
       <Container>
 
-    
-   
+
+
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Reports
@@ -262,9 +274,7 @@ export default function UserPage() {
 
 
                     return (
-
-                      
-                      <TableRow hover key={indx} tabIndex={-1} role="checkbox" selected={trade}>
+                      <TableRow hover key={trade._id} tabIndex={-1} role="checkbox" selected={trade}>
 
                         <TableCell>
                           { }
@@ -337,49 +347,51 @@ export default function UserPage() {
 
                           <MenuItem>
 
-                          <MDBModal show={basicModal} setShow={setBasicModal} tabIndex='-1'>
-        <MDBModalDialog>
-          <MDBModalContent>
-            <MDBModalHeader>
-              <MDBModalTitle>Remove Trade</MDBModalTitle>
-              <MDBBtn className='btn-close' color='none' onClick={toggleShow}> </MDBBtn>
-            </MDBModalHeader>
-            <MDBModalBody>You sure you want to remove this Trade?</MDBModalBody>
+                            <MDBModal show={basicModal} setShow={setBasicModal} tabIndex='-1'>
+                              <MDBModalDialog>
+                                <MDBModalContent>
+                                  <MDBModalHeader>
+                                    <MDBModalTitle>Remove Trade</MDBModalTitle>
+                                    <MDBBtn className='btn-close' color='none' onClick={toggleShow}> </MDBBtn>
+                                  </MDBModalHeader>
+                                  <MDBModalBody>You sure you want to remove this Trade?</MDBModalBody>
 
-            <MDBModalFooter>
-              <MDBBtn color='secondary' onClick={toggleShow}>
-                Close
-              </MDBBtn>
-              <MDBBtn onClick={()=> deleteTrade(trade._id)}>Remove</MDBBtn>
-            </MDBModalFooter>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </MDBModal>
+                                  <MDBModalFooter>
+                                    <MDBBtn color='secondary' onClick={toggleShow}>
+                                      Close
+                                    </MDBBtn>
+                                    <MDBBtn onClick={() => deleteTrade(trade._id)}>Remove</MDBBtn>
+                                  </MDBModalFooter>
+                                </MDBModalContent>
+                              </MDBModalDialog>
+                            </MDBModal>
 
-                            <Iconify  onClick={handleOpenModal} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+                            <Iconify onClick={handleOpenModal} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
                             Edit
-                            {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal}  tradeInfo = {trade}   isEditMode />}
+                            {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} tradeInfo={trade} isEditMode />}
 
-                          </MenuItem>
+                          </MenuItem >
 
                           <MenuItem sx={{ color: 'error.main' }}>
-                            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() =>toggleShow()} />
+                            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => toggleShow()} />
                             <button style={buttonStyle} onClick={() => toggleShow()}>
                               Delete
                             </button>
                           </MenuItem>
-                        </Popover>
-                      </TableRow>
+                        </Popover >
+                      </TableRow >
 
 
                     );
                   })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
+                  {
+                    emptyRows > 0 && (
+                      <TableRow style={{ height: 53 * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )
+                  }
+                </TableBody >
 
                 {isNotFound && (
                   <TableBody>
@@ -404,9 +416,9 @@ export default function UserPage() {
                     </TableRow>
                   </TableBody>
                 )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+              </Table >
+            </TableContainer >
+          </Scrollbar >
 
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
@@ -417,8 +429,8 @@ export default function UserPage() {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-        </Card>
-      </Container>
+        </Card >
+      </Container >
 
       <h1 style={totalPlColor}>Total P&L </h1>
       <h2 style={totalPlColor}>{sumPnL(trades)}$</h2>

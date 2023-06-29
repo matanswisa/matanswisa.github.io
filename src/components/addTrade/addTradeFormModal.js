@@ -9,19 +9,18 @@ import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 import Grid from '@mui/material/Grid';
-import { useEffect, useState ,useReducer} from 'react';
+import { useEffect, useState, useReducer } from 'react';
 // @mui
 import {
- 
+
   Paper,
-  
+
   Button,
 
   IconButton,
- 
+
   TextField,
 } from '@mui/material';
-
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
 
@@ -51,7 +50,6 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function BasicModal(props) {
 
-  
   const [alert, setAlert] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
 
@@ -60,7 +58,7 @@ export default function BasicModal(props) {
   const tradeInfo = props?.tradeInfo;
 
   const editMode = props?.isEditMode;
-  
+
   const initialState = {
     positionType: tradeInfo?.longShort || '',
     positionStatus: tradeInfo?.status || '',
@@ -75,10 +73,10 @@ export default function BasicModal(props) {
     stopPrice: tradeInfo?.stopPrice || 0,
     positionSymbol: tradeInfo?.symbol || '',
     comments: tradeInfo?.comments || '',
-   
+
   };
 
- 
+
   const formReducer = (state, action) => {
     switch (action.type) {
       case 'UPDATE_FIELD':
@@ -102,10 +100,11 @@ export default function BasicModal(props) {
 
 
   const [formState, dispatch] = useReducer(formReducer, initialState);
- 
+
   const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
 
-  
+
+
 
   const handlePositionFieldInput = (event, field) => {
 
@@ -123,46 +122,34 @@ export default function BasicModal(props) {
     handleOpen();
   }, []);
 
-  const handleSaveTrade = () => {
+  const handleSaveTrade = async () => {
     console.log('WHAT INSIDE?', { positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol });
     if (validateForm()) {
       console.log("form is validate");
 
-     if(!editMode){
-      api
-        .post('/api/addTrade', {
-          entryDate: positionDate,
-          symbol: positionSymbol,
-          status: positionStatus,
-          netROI,
-          stopPrice,
-          longShort: positionType,
-          contracts: contractsCounts,
-          entryPrice,
-          exitPrice,
-          duration: positionDuration,
-          commission: positionCommision,
-          comments,
-          netPnL,
-          // Include other form data here
-        })
-        .then((response) => {
-          // Handle the response from the server
-          console.log("result is success");
-          setAlert(true);
-          setAlertMsg("Trade add succssfully");
-        
-        })
-        .catch((error) => {
-          // Handle the error
-          setAlert(false);
-          setAlertMsg("failed to add Trade");
-
-        });
+      if (!editMode) {
+        await api
+          .post('/api/addTrade', {
+            entryDate: positionDate,
+            symbol: positionSymbol,
+            status: positionStatus,
+            netROI,
+            stopPrice,
+            longShort: positionType,
+            contracts: contractsCounts,
+            entryPrice,
+            exitPrice,
+            duration: positionDuration,
+            commission: positionCommision,
+            comments,
+            netPnL,
+            // Include other form data here
+          })
+        alert('Add new trade');
       }
-      else{
-        api
-        .post('/api/editTrade', {
+      else if (editMode === true) {
+        console.log('inside edit trade!', tradeInfo?._id);
+        await api.post('/api/editTrade', {
           entryDate: positionDate,
           symbol: positionSymbol,
           status: positionStatus,
@@ -176,22 +163,23 @@ export default function BasicModal(props) {
           commission: positionCommision,
           comments,
           netPnL,
-          tradeId : tradeInfo?.trade._id || '',
+          tradeId: tradeInfo?.trade._id || '',
           // Include other form data here
         })
-        .then((response) => {
-          // Handle the response from the server
-          
-          console.log("result is success");
-          setAlert(true);
-          setAlertMsg("Trade edit succssfully");
-        })
-        .catch((error) => {
-          // Handle the error
-          setAlert(false);
-          setAlertMsg("failed to edit Trade");
+          .then((response) => {
+            // Handle the response from the server
 
-        });
+            console.log("result is success");
+            setAlert(true);
+            setAlertMsg("Trade edit succssfully");
+          })
+          .catch((error) => {
+            // Handle the error
+            setAlert(false);
+            setAlertMsg("failed to edit Trade");
+
+          });
+        alert('Update trade!')
       }
 
     } else {
@@ -219,7 +207,8 @@ export default function BasicModal(props) {
       <Box sx={style}>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={28}>
-           
+
+
             <Grid item xs={6} md={7}>
               <Item>
                 {' '}
@@ -230,17 +219,16 @@ export default function BasicModal(props) {
             </Grid>
 
             <Grid item xs={6} md={4}>
-            <Grid item xs={6} md={4}>
-              <Item>
-                <IconButton size="small" color="inherit" >
-                  <Iconify  icon={'eva:file-add-outline'} />
-                </IconButton>
-              </Item>
+              <Grid item xs={6} md={4}>
+                <Item>
+                  <IconButton size="small" color="inherit" >
+                    <Iconify icon={'eva:file-add-outline'} />
+                  </IconButton>
+                </Item>
+              </Grid>
             </Grid>
-             
-            </Grid>
-          </Grid>
-        </Box>
+          </Grid >
+        </Box >
         <br />
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
@@ -450,14 +438,15 @@ export default function BasicModal(props) {
             </Item>
           </Grid>
           <Item>
-          <br />
-                <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
-              </Item>
-        </Grid>
-       
-        {alert ? <Alert severity="success">This is a success alert — check it out!</Alert> : ""}
-      </Box>
-     
+            <br />
+            <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
+          </Item >
+        </Grid >
+
+        {alert ? <Alert severity="success">This is a success alert — check it out!</Alert> : ""
+        }
+      </Box >
+
     </Modal >
   );
 }
