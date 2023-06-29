@@ -22,7 +22,8 @@ router.post("/addTrade", async (req, res) => {
 router.post("/editTrade", async (req, res) => {
     try {
         const data = req.body;
-        const result = await Trade.findByIdAndUpdate(tradeId,data);
+        console.log(data);
+        const result = await Trade.findByIdAndUpdate(data.tradeId, { data });
         res.status(200).send(`Trade ${result._id} added succefully`);
 
     } catch (err) {
