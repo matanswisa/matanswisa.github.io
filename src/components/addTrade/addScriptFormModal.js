@@ -7,9 +7,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
-
+import Alert from '@mui/material/Alert';
 import Grid from '@mui/material/Grid';
-
+import { useEffect, useState, useReducer } from 'react';
 // @mui
 import {
 
@@ -21,8 +21,6 @@ import {
 
   TextField,
 } from '@mui/material';
-import { useReducer, useEffect } from 'react';
-import axios from 'axios';  
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
 
@@ -51,6 +49,11 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 export default function BasicModal(props) {
+
+
+  const [alert, setAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState("");
+
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const tradeInfo = props?.tradeInfo;
@@ -102,6 +105,7 @@ export default function BasicModal(props) {
   const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
 
 
+
   const handlePositionFieldInput = (event, field) => {
 
     console.log(`field: ${field}, value: ${event.target.value}`)
@@ -145,7 +149,7 @@ export default function BasicModal(props) {
       }
       else if (editMode === true) {
         console.log('inside edit trade!', tradeInfo?._id);
-        await axios.post('http://localhost:8080/api/editTrade', {
+        await api.post('/api/editTrade', {
           entryDate: positionDate,
           symbol: positionSymbol,
           status: positionStatus,
@@ -190,13 +194,7 @@ export default function BasicModal(props) {
       <Box sx={style}>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={28}>
-            <Grid item xs={6} md={4}>
-              <Item>
-                <IconButton size="small" color="inherit" >
-                  <Iconify icon={'eva:file-add-outline'} />
-                </IconButton>
-              </Item>
-            </Grid>
+
             <Grid item xs={6} md={7}>
               <Item>
                 {' '}
@@ -207,9 +205,14 @@ export default function BasicModal(props) {
             </Grid>
 
             <Grid item xs={6} md={4}>
-              <Item>
-                <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
-              </Item>
+              <Grid item xs={6} md={4}>
+                <Item>
+                  <IconButton size="small" color="inherit" >
+                    <Iconify icon={'eva:file-add-outline'} />
+                  </IconButton>
+                </Item>
+              </Grid>
+
             </Grid>
           </Grid>
         </Box>
@@ -421,9 +424,15 @@ export default function BasicModal(props) {
               />
             </Item>
           </Grid>
+          <Item>
+            <br />
+            <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
+          </Item>
         </Grid>
-        <br />
+
+        {alert ? <Alert severity="success">This is a success alert — check it out!</Alert> : ""}
       </Box>
+
     </Modal >
   );
 }
