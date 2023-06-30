@@ -201,8 +201,8 @@ export default function BasicModal(props) {
 
 
   const validateForm = () => {
-    if (comments === '' || positionType === '' || positionStatus === '' || entryPrice <= 0 || exitPrice <= 0 || positionDuration === '' ||
-      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || stopPrice <= 0) {
+    if (  positionType === '' || positionStatus === '' || 
+      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" ) {
       return false;
     }
     return true;
@@ -347,7 +347,7 @@ export default function BasicModal(props) {
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                 <TextField
                   className="outlined-number"
-                  required="true"
+               
                   type="number"
                   value={positionCommision}
                   onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
@@ -364,7 +364,7 @@ export default function BasicModal(props) {
               {' '}
               <TextField
                 className="outlined-number"
-                required="true"
+                
                 label="Entry Price"
                 value={entryPrice}
                 type="number"
@@ -378,7 +378,7 @@ export default function BasicModal(props) {
             <Item>
               <TextField
                 className="outlined-number"
-                required="true"
+                
                 label="Exit Price"
                 value={exitPrice}
                 onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
@@ -429,7 +429,7 @@ export default function BasicModal(props) {
                 onChange={(e) => handlePositionFieldInput(e, 'netROI')}
                 onFocus={(e) => clearPositionFieldInput(e, 'netROI')}
 
-                required="true"
+               
                 InputLabelProps={{ shrink: true }}
               />
             </Item>
@@ -444,7 +444,7 @@ export default function BasicModal(props) {
                 onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
                 onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
 
-                required="true"
+               
                 InputLabelProps={{ shrink: true }}
               />
             </Item>
