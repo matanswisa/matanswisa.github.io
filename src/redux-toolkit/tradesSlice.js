@@ -2,17 +2,19 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export const tradesSlice = createSlice({
     name: 'trades',
-    initialState: [],
+    initialState: {
+        trades: []
+    },
     reducers: {
         setTrades: (state, action) => {
-            const newTradesList = action.payload;
-            return newTradesList;
+            console.log(action.payload);
+            state.trades = action.payload;
         },
         addTrade: (state, action) => {
             const trade = {
                 ...action.payload,
             };
-            state.push(trade);
+            state.trades.push(trade);
         },
         removeTrade: (state, action) => {
             const tradeId = action.payload;
@@ -28,12 +30,17 @@ export const tradesSlice = createSlice({
                 state[index] = updatedTrade;
             }
         },
+        // getTrades: (state, actions) => {
+        //     // const
+        //     console.log(state);
+        //     return state.trades;
+        // }
     },
 });
 
 export const { setTrades, addTrade, removeTrade, updateTrade } = tradesSlice.actions;
 
-export const getTradesList = (state) => state.trades;
+export const getTrades = (state) => state.trades;
 
 export default tradesSlice.reducer;
 

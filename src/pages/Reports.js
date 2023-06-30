@@ -2,8 +2,8 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 
 
 // @mui
@@ -146,7 +146,6 @@ export default function UserPage() {
     fetchTrades().then((res) => {
       if (res.data) setTrades(res.data);
       setTradesList(res.data);
-      console.log(res.data);
     }).catch((err) => {
       console.error(err);
     })

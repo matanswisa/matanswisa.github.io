@@ -2,8 +2,8 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
-import { getTradesList } from '../redux-toolkit/tradesSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTrades } from '../redux-toolkit/tradesSlice';
 
 
 // @mui
@@ -39,8 +39,9 @@ import Iconify from '../components/iconify';
 
 export default function DailyStatsPage() {
 
-  const tradesList = useSelector(getTradesList);
-  console.log("tradesList using redux", tradesList);
+  const trades = useSelector(getTrades)
+
+  console.log("tradesList using redux", trades);
   return (
     <>
       <Helmet>
@@ -51,7 +52,7 @@ export default function DailyStatsPage() {
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             <h1>List of trades</h1>
-            {tradesList !== undefined && tradesList.map((trade) => {
+            {trades !== undefined && trades.map((trade) => {
               return <h3>{trade.symbol} {trade.status} {trade.netPnL}</h3>
             })}
             Daily Stats
