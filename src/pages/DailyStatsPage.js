@@ -1,7 +1,11 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTrades } from '../redux-toolkit/tradesSlice';
+
+
 // @mui
 import {
   Card,
@@ -21,19 +25,23 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  DataGrid
 } from '@mui/material';
 
+import DailyStatsCard from '../components/DailyStatsCard/DailyStatsCard'
 
 // components
- import AddTrade from '../components/addTrade/BasicModal';
-
 
 import Iconify from '../components/iconify';
 
 
 
+
 export default function DailyStatsPage() {
-  
+
+  const trades = useSelector(getTrades)
+
+  console.log("tradesList using redux", trades);
   return (
     <>
       <Helmet>
@@ -43,20 +51,15 @@ export default function DailyStatsPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-          Daily Stats
+            <h1>List of trades</h1>
+            {trades !== undefined && trades.map((trade) => {
+              return <h3>{trade.symbol} {trade.status} {trade.netPnL}</h3>
+            })}
+            Daily Stats
           </Typography>
-          <Button   variant="contained" startIcon={<Iconify icon="eva:plus-fill"  />}>
-            Add New Trade
-          </Button>
         </Stack>
-
-   
-
+        <DailyStatsCard />
       </Container>
-
-   
-
- 
     </>
   );
 }
