@@ -129,11 +129,10 @@ export default function UserPage() {
 
   const showToast = useToast();
 
-  const notifyToast = (Msg,Type) => {
-    console.log(Msg,Type);
+  const notifyToast = (Msg, Type) => {
+    console.log(Msg, Type);
     showToast(Msg, Type);
-
-}
+  }
 
 
   const trades = useSelector(getTrades)
@@ -157,16 +156,16 @@ export default function UserPage() {
 
 
     fetchTrades().then((res) => {
-      if (res.data) 
-      setTradesList(res.data);
+      if (res.data)
+        setTradesList(res.data);
     }).catch((err) => {
       console.error(err);
     })
   }, [])
 
-  
 
- 
+
+
 
   const [open, setOpen] = useState(null);
 
@@ -258,10 +257,10 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Reports
           </Typography>
-          <Button  onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Trade
           </Button>
-          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} showToast= {notifyToast} />}
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} showToast={notifyToast} />}
         </Stack>
 
         <Card>
@@ -439,8 +438,8 @@ export default function UserPage() {
 
       <h1 style={totalPlColor}>Total P&L </h1>
       <h2 style={totalPlColor}>{sumPnL(trades)}$</h2>
-     
-     
+
+
     </>
   );
 }
