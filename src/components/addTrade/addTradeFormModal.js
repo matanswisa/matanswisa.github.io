@@ -144,9 +144,8 @@ export default function BasicModal(props) {
             netPnL,
             // Include other form data here
           })
-          props.setAlert(true);
-          props.setAlertMsg("Trade Added succssfully");
-          props.setAlertType("success");
+     
+          props.showToast("Trade Added succssfully","success")
       }
       else if (editMode === true) {
         console.log('inside edit trade!', tradeInfo?._id);
@@ -170,16 +169,11 @@ export default function BasicModal(props) {
           .then((response) => {
             // Handle the response from the server
 
-            console.log("result is success");
-            props.setAlert(true);
-            props.setAlertMsg("Trade edit succssfully");
-            props.setAlertType("success");
+            props.showToast("Trade Edit succssfully","success")
           })
           .catch((error) => {
             // Handle the error
-            props.setAlert(true);
-            props.setAlertMsg("failed to edit Trade");
-            props.setAlertType("fail");
+            props.showToast("Trade Added succssfully","warning")
 
           });
      

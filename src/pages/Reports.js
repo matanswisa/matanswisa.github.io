@@ -4,8 +4,9 @@ import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
-import Alert from '@mui/material/Alert';
-
+import useToast from '../hooks/alert';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // @mui
 import {
   Card,
@@ -88,7 +89,6 @@ const sumPnL = (trades) => {
 
 
 
-
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -125,6 +125,17 @@ const fetchTrades = async () => {
 
 export default function UserPage() {
 
+
+
+  const showToast = useToast();
+
+  const notifyToast = (Msg,Type) => {
+    console.log(Msg,Type);
+    showToast(Msg, Type);
+
+}
+
+
   const trades = useSelector(getTrades)
 
   const [basicModal, setBasicModal] = useState(false);
@@ -146,19 +157,16 @@ export default function UserPage() {
 
 
     fetchTrades().then((res) => {
-      if (res.data) setTrades(res.data);
+      if (res.data) 
       setTradesList(res.data);
     }).catch((err) => {
       console.error(err);
     })
   }, [])
 
+  
 
-  const [alert, setAlert] = useState(false);
-
-  const [alertMsg, setAlertMsg] = useState("");
-
-  const [alertType,setAlertType] = useState("");
+ 
 
   const [open, setOpen] = useState(null);
 
@@ -253,7 +261,7 @@ export default function UserPage() {
           <Button  onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Trade
           </Button>
-          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} setAlert = {setAlert}  setAlertMsg = {setAlertMsg}  setAlertType = {setAlertType}/>}
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} showToast= {notifyToast} />}
         </Stack>
 
         <Card>
@@ -431,9 +439,8 @@ export default function UserPage() {
 
       <h1 style={totalPlColor}>Total P&L </h1>
       <h2 style={totalPlColor}>{sumPnL(trades)}$</h2>
-      {alert ? <Alert  severity={alertType}>{alertMsg}</Alert> : ""
-        }
-
+     
+     
     </>
   );
 }
