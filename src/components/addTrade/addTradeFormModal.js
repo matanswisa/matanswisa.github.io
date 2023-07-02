@@ -50,10 +50,13 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function BasicModal(props) {
 
- 
+
 
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
+
+  const { notifyToast } = props;
+
   const tradeInfo = props?.tradeInfo;
 
   const editMode = props?.isEditMode;
@@ -143,9 +146,15 @@ export default function BasicModal(props) {
             comments,
             netPnL,
             // Include other form data here
+          }).then((res) => {
+            console.log("lol", "Add Trade", "success")
+            notifyToast("Trade added successfully", "success");
+          }).catch((err) => {
+            notifyToast("Couldn't add trade", "error");
           })
-     
-          props.showToast("Trade Added succssfully","success")
+
+        // props.notifyToast("Trade Added succssfully","success")
+
       }
       else if (editMode === true) {
         console.log('inside edit trade!', tradeInfo?._id);
@@ -169,14 +178,14 @@ export default function BasicModal(props) {
           .then((response) => {
             // Handle the response from the server
 
-            props.showToast("Trade Edit succssfully","success")
+            notifyToast("Trade Edit succssfully", "success")
           })
           .catch((error) => {
             // Handle the error
-            props.showToast("Trade Added succssfully","warning")
+            notifyToast("Trade can't be updated", "error")
 
           });
-     
+
       }
 
     } else {
@@ -186,8 +195,8 @@ export default function BasicModal(props) {
 
 
   const validateForm = () => {
-    if (  positionType === '' || positionStatus === '' || 
-      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" ) {
+    if (positionType === '' || positionStatus === '' ||
+      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "") {
       return false;
     }
     return true;
@@ -332,7 +341,7 @@ export default function BasicModal(props) {
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                 <TextField
                   className="outlined-number"
-               
+
                   type="number"
                   value={positionCommision}
                   onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
@@ -349,7 +358,7 @@ export default function BasicModal(props) {
               {' '}
               <TextField
                 className="outlined-number"
-                
+
                 label="Entry Price"
                 value={entryPrice}
                 type="number"
@@ -363,7 +372,7 @@ export default function BasicModal(props) {
             <Item>
               <TextField
                 className="outlined-number"
-                
+
                 label="Exit Price"
                 value={exitPrice}
                 onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
@@ -414,7 +423,7 @@ export default function BasicModal(props) {
                 onChange={(e) => handlePositionFieldInput(e, 'netROI')}
                 onFocus={(e) => clearPositionFieldInput(e, 'netROI')}
 
-               
+
                 InputLabelProps={{ shrink: true }}
               />
             </Item>
@@ -429,7 +438,7 @@ export default function BasicModal(props) {
                 onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
                 onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
 
-               
+
                 InputLabelProps={{ shrink: true }}
               />
             </Item>
@@ -440,7 +449,7 @@ export default function BasicModal(props) {
           </Item >
         </Grid >
 
-      
+
       </Box >
 
     </Modal >

@@ -249,18 +249,19 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> Reports </title>
+        <title>All Trades</title>
       </Helmet>
       <Container>
 
+        <ToastContainer />
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Reports
+            Trades
           </Typography>
           <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Trade
           </Button>
-          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} showToast={notifyToast} />}
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
         </Stack>
 
         <Card>
@@ -436,8 +437,12 @@ export default function UserPage() {
         </Card >
       </Container >
 
-      <h1 style={totalPlColor}>Total P&L </h1>
-      <h2 style={totalPlColor}>{sumPnL(trades)}$</h2>
+      {/* <h1 style={totalPlColor}>Total P&L </h1>
+      <h2 style={totalPlColor}>{sumPnL(trades)}$</h2> */}
+
+      <Typography variant="h4" >
+        Total PnL  -  <span style={totalPlColor}>{sumPnL(trades)}$</span>
+      </Typography>
 
 
     </>

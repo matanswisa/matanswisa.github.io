@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.min.css';
 
 const useToast = () => {
-    
+
     const [toastId, setToastId] = useState(null);
 
     const showToast = (message, type = 'info', options = {}) => {
         if (toastId) {
-        toast.dismiss(toastId);
+            toast.dismiss(toastId);
         }
 
         const newToastId = toast[type](message, {
