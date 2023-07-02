@@ -7,7 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
-import Alert from '@mui/material/Alert';
+
 import Grid from '@mui/material/Grid';
 import { useEffect, useState, useReducer } from 'react';
 // @mui
@@ -50,8 +50,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function BasicModal(props) {
 
-  const [alert, setAlert] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("");
+ 
 
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
@@ -145,7 +144,9 @@ export default function BasicModal(props) {
             netPnL,
             // Include other form data here
           })
-        alert('Add new trade');
+          props.setAlert(true);
+          props.setAlertMsg("Trade Added succssfully");
+          props.setAlertType("success");
       }
       else if (editMode === true) {
         console.log('inside edit trade!', tradeInfo?._id);
@@ -170,16 +171,18 @@ export default function BasicModal(props) {
             // Handle the response from the server
 
             console.log("result is success");
-            setAlert(true);
-            setAlertMsg("Trade edit succssfully");
+            props.setAlert(true);
+            props.setAlertMsg("Trade edit succssfully");
+            props.setAlertType("success");
           })
           .catch((error) => {
             // Handle the error
-            setAlert(false);
-            setAlertMsg("failed to edit Trade");
+            props.setAlert(true);
+            props.setAlertMsg("failed to edit Trade");
+            props.setAlertType("fail");
 
           });
-        alert('Update trade!')
+     
       }
 
     } else {
@@ -443,8 +446,7 @@ export default function BasicModal(props) {
           </Item >
         </Grid >
 
-        {alert ? <Alert severity="success">This is a success alert — check it out!</Alert> : ""
-        }
+      
       </Box >
 
     </Modal >

@@ -4,7 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
-
+import Alert from '@mui/material/Alert';
 
 // @mui
 import {
@@ -152,7 +152,11 @@ export default function UserPage() {
   }, [])
 
 
+  const [alert, setAlert] = useState(false);
 
+  const [alertMsg, setAlertMsg] = useState("");
+
+  const [alertType,setAlertType] = useState("");
 
   const [open, setOpen] = useState(null);
 
@@ -248,10 +252,10 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Reports
           </Typography>
-          <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button  onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Trade
           </Button>
-          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} setAlert = {setAlert}  setAlertMsg = {setAlertMsg}  setAlertType = {setAlertType}/>}
         </Stack>
 
 
@@ -433,7 +437,8 @@ export default function UserPage() {
 
       <h1 style={totalPlColor}>Total P&L </h1>
       <h2 style={totalPlColor}>{sumPnL(trades)}$</h2>
-
+      {alert ? <Alert  severity={alertType}>{alertMsg}</Alert> : ""
+        }
 
     </>
   );
