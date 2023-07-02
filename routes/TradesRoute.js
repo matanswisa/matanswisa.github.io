@@ -59,4 +59,25 @@ router.delete('/deleteTrade', async (req, res) => {
 })
 
 
+router.get('/getDailyStats', async (req, res) => {
+    try {
+      const tradesByDate = await Trade.aggregate([
+        {
+          $group: {
+            _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
+            trades: { $push: '$$ROOT' },
+          },
+        },
+        { $sort: { _id: -1 } }, // Sort by descending entryDate
+      ]);
+  
+      res.json(tradesByDate);
+    } catch (error) {
+      console.error('Error fetching trades:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  });
+
+
+
 export default router;
