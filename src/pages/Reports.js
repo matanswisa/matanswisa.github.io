@@ -3,7 +3,7 @@ import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
+import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 
 
 // @mui
@@ -125,6 +125,8 @@ const fetchTrades = async () => {
 
 export default function UserPage() {
 
+  const trades = useSelector(getTrades)
+
   const [basicModal, setBasicModal] = useState(false);
   const toggleShow = () => setBasicModal(!basicModal);
 
@@ -139,18 +141,6 @@ export default function UserPage() {
   const handleOpenModal = () => {
     setIsOpenmodal(true);
   }
-
-  useEffect(() => {
-
-
-    fetchTrades().then((res) => {
-      if (res.data) setTrades(res.data);
-      setTradesList(res.data);
-    }).catch((err) => {
-      console.error(err);
-    })
-  }, [])
-
 
 
 
@@ -168,7 +158,6 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [trades, setTrades] = useState([]);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -232,17 +221,14 @@ export default function UserPage() {
     console.log('Delete trade - ', tradeId);
     await api.delete('/api/deleteTrade', { data: { tradeId } });
     const trades = await fetchTrades();
-    setTrades(trades.data);
+    setTradesList(trades.data);
   }
   return (
     <>
       <Helmet>
         <title> Reports </title>
-
       </Helmet>
       <Container>
-
-
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
@@ -254,9 +240,7 @@ export default function UserPage() {
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
         </Stack>
 
-
         <Card>
-
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -270,8 +254,6 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {trades.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((trade, indx) => {
-
-
                     return (
                       <TableRow hover key={trade._id} tabIndex={-1} role="checkbox" selected={trade}>
 
