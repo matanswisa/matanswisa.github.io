@@ -40,9 +40,9 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const Text = ["Total Trades : " , "Winners : ", "Profit Factor :","Winrate : ", "Losers : ", "Commissions :"];
 
-const numbers = ["1 " , "2 ", "1RR","100%  ", "2", "20$"];
+const numbers = [" " , " ", "","", "", ""];
 
-export default function DailyStatsCard() {
+export default function DailyStatsCard(props) {
   return (
     <Box sx={{ flexGrow: 2  , p: 3, border: '2px ridge ', boxShadow:'5px 10px 30px #888888'}}>
         
@@ -54,24 +54,18 @@ export default function DailyStatsCard() {
 
         <Grid container rowSpacing={3} columnSpacing={{ xs: 2, sm: 2, md: 1 }}>
             <Grid item xs={5}>
-                <h2 className="date">Wed, Jul 14 2022</h2>
+                <h2 className="date">{props.entryDate}</h2>
             </Grid>
            
             <Grid item xs={5}>
-                <h2 className="net">Net P&L $1259.46</h2>
+                <h2 className="net">Net P&L ${props.netPnL}</h2>
                 
             </Grid>
 
-            
-             
-           
-         
             </Grid>
             </Grid>
+  
 
-        
-        
-       
             <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 10, sm: 10, md: 12 }}>
   {Array.from(Array(6)).map((_, index) => (
     <Grid item xs={2} sm={4} md={4} key={index}>
