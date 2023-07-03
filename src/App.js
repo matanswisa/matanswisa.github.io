@@ -24,7 +24,7 @@ export default function App() {
     }
 
     fetchTrades().then((result) => {
-      console.log(result.data);
+    
       dispatch(setTrades(result.data));
     }).catch((error) => {
 

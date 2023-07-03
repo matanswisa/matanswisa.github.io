@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
+import { useState, useRef, useEffect } from 'react';
 
 // components
 import Iconify from '../components/iconify';
@@ -20,7 +21,7 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
-
+import api from '../api/api';
 import { ReactComponent as dollarLogo } from '../icons/dollar-symbol.svg';
 
 import { Colors } from '../components/color-utils/Colors';
@@ -30,7 +31,26 @@ import { Colors } from '../components/color-utils/Colors';
 export default function DashboardAppPage() {
   const theme = useTheme();
 
+  const [losingTrades,setLosingTrades] = useState(0);
+  const [winningTrades,setWinningTrades] = useState(0);
 
+
+ 
+
+  const [trades,setTrades] = useState([]);
+
+  useEffect(() => {
+    api.get("/api/WinAndLossTotalTime").then(
+      (res)=>{setTrades(res.data)   
+        
+        console.log(res.data)
+      
+        }
+    ).catch()
+  },[])
+
+
+ 
   return (
     <>
       <Helmet>
@@ -100,8 +120,8 @@ export default function DashboardAppPage() {
             <AppCurrentVisits
               title="Winning % By Trades"
               chartData={[
-                { label: 'Winners', value: 5435 },
-                { label: 'Lossers', value: 4224 },
+                { label: 'Winners', value: 3 },
+                { label: 'Lossers', value: 5 },
 
               ]}
               chartColors={[

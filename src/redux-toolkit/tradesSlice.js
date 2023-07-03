@@ -7,7 +7,7 @@ export const tradesSlice = createSlice({
     },
     reducers: {
         setTrades: (state, action) => {
-            console.log(action.payload);
+        
             state.trades = action.payload;
         },
         addTrade: (state, action) => {
@@ -30,11 +30,7 @@ export const tradesSlice = createSlice({
                 state[index] = updatedTrade;
             }
         },
-        // getTrades: (state, actions) => {
-        //     // const
-        //     console.log(state);
-        //     return state.trades;
-        // }
+       
     },
 });
 
