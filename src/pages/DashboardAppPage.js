@@ -42,13 +42,22 @@ export default function DashboardAppPage() {
   useEffect(() => {
     api.get("/api/WinAndLossTotalTime").then(
       (res)=>{setTrades(res.data)   
-        
-        console.log(res.data)
-      
+       
+        for (const index in res.data) {
+           if (index === "lossCount"){
+            setLosingTrades(res.data["lossCount"]);
+           }
+           else{
+            setWinningTrades(res.data["winCount"]);
+           }
+
+        }
         }
     ).catch()
   },[])
 
+
+ 
 
  
   return (
@@ -120,8 +129,8 @@ export default function DashboardAppPage() {
             <AppCurrentVisits
               title="Winning % By Trades"
               chartData={[
-                { label: 'Winners', value: 3 },
-                { label: 'Lossers', value: 5 },
+                { label: 'Winners', value: winningTrades },
+                { label: 'Lossers', value: losingTrades },
 
               ]}
               chartColors={[

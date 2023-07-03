@@ -42,7 +42,7 @@ export default function DailyStatsPage() {
   useEffect(() => {
     api.get("/api/getDailyStats").then(
       (res)=>{setTrades(res.data)   
-        console.log(res.data) 
+      
       }
     ).catch()
   },[])
