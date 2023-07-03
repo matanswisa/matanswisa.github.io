@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 import { useState, useRef, useEffect } from 'react';
-
+import Calendar from '../components/Calendar/calendar';
 // components
 import Iconify from '../components/iconify';
 
@@ -28,6 +28,8 @@ import { Colors } from '../components/color-utils/Colors';
 
 // ----------------------------------------------------------------------
 
+
+
 export default function DashboardAppPage() {
   const theme = useTheme();
 
@@ -39,6 +41,8 @@ export default function DashboardAppPage() {
   const [winningTradesInDays,setWinningTradesInDays] = useState(0);
 
 
+  const [calendarTrades,setCalendarTrades] = useState([]);
+
   const DailyNetCumulativeDate = () =>
   {
    
@@ -47,8 +51,8 @@ export default function DashboardAppPage() {
 
   const DailyNetCumulativePnl = () =>
   {
-    const t =dailyNetCumulative.map((trade)=>trade.totalPnL);
-    console.log(t);
+    
+    
    return dailyNetCumulative.map((trade)=>trade.totalPnL)
   }
 
@@ -80,7 +84,7 @@ export default function DashboardAppPage() {
   useEffect(() => {
     api.get("/api/ShowInfoByDates").then(
       (res)=>{setDailyNetCumulative(res.data)   
-       console.log(res.data);
+     
         for (const index in res.data) {
 
           if(res.data[index]["totalPnL"] < 0){  //when in some day we have a lose day(P&L < 0) inc variable  
@@ -99,10 +103,27 @@ export default function DashboardAppPage() {
   },[])
 
 
+
+ 
+  useEffect(() => {
+    api.get("/api/ShowNumOfTradeTotalPnlInfoByDates").then(
+      (res)=>{setCalendarTrades(res.data)   
+     
+       
+     
+        }
+    ).catch()
+  },[])
+
+
+
+  
   
   
   return (
     <>
+
+    
       <Helmet>
         <title> Dashboard </title>
       </Helmet>
@@ -113,7 +134,7 @@ export default function DashboardAppPage() {
         </Typography>
 
 
-
+     
         <Grid container spacing={3}>
 
 
@@ -179,7 +200,8 @@ export default function DashboardAppPage() {
 
 
           <Grid item xs={12} md={6} lg={7}>
-            <h2>calender </h2>
+    
+          <Calendar info = {calendarTrades}/>
           </Grid>
 
 
@@ -200,6 +222,9 @@ export default function DashboardAppPage() {
 
           </Grid>
 
+        
+
+          
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
               title="Score"

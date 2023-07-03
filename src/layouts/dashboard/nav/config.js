@@ -21,21 +21,14 @@ const navConfig = [
     path: '/dashboard/reports',
     icon: icon('report'),
   },
-  {
-    title: 'blog',
-    path: '/dashboard/blog',
-    icon: icon(''),
-  },
+  
+ 
   {
     title: 'login',
     path: '/login',
     icon: icon(''),
   },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon(''),
-  },
+  
 ];
 
 export default navConfig;

@@ -144,7 +144,7 @@ export default function UserPage() {
   const dispatch = useDispatch();
 
   const setTradesList = (trades) => {
-    console.log(trades);
+    
     dispatch(setTradesRedux(trades));
   }
 
