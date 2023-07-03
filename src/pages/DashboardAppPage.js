@@ -35,9 +35,28 @@ export default function DashboardAppPage() {
   const [winningTrades,setWinningTrades] = useState(0);
 
 
- 
+  const [losingTradesInDays,setLosingTradesInDays] = useState(0);
+  const [winningTradesInDays,setWinningTradesInDays] = useState(0);
+
+
+  const DailyNetCumulativeDate = () =>
+  {
+   
+   return dailyNetCumulative.map((trade)=>trade._id)
+  }
+
+  const DailyNetCumulativePnl = () =>
+  {
+    const t =dailyNetCumulative.map((trade)=>trade.totalPnL);
+    console.log(t);
+   return dailyNetCumulative.map((trade)=>trade.totalPnL)
+  }
 
   const [trades,setTrades] = useState([]);
+
+
+  const [dailyNetCumulative,setDailyNetCumulative] = useState([]);
+
 
   useEffect(() => {
     api.get("/api/WinAndLossTotalTime").then(
@@ -54,12 +73,34 @@ export default function DashboardAppPage() {
         }
         }
     ).catch()
+  },[]) 
+
+
+ 
+  useEffect(() => {
+    api.get("/api/ShowInfoByDates").then(
+      (res)=>{setDailyNetCumulative(res.data)   
+       console.log(res.data);
+        for (const index in res.data) {
+
+          if(res.data[index]["totalPnL"] < 0){  //when in some day we have a lose day(P&L < 0) inc variable  
+            setLosingTradesInDays(prevState => prevState + 1);  
+          }
+   
+          else{ //when in some day we have a win day(P&L > 0) inc variable  
+            setWinningTradesInDays(prevState => prevState + 1);
+          }
+           
+  
+       }
+     
+        }
+    ).catch()
   },[])
 
 
- 
-
- 
+  
+  
   return (
     <>
       <Helmet>
@@ -96,26 +137,16 @@ export default function DashboardAppPage() {
             <AppWebsiteVisits
               title="Daily Net Cumulative P&L"
               subheader=""
-              chartLabels={[
-                '01/01/2003',
-                '02/05/2200',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
-              ]}
+              chartLabels = { DailyNetCumulativeDate()}
+               
+            
               chartData={[
 
                 {
-                  name: 'Team B',
+                  name: '',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: DailyNetCumulativePnl(),
                   color: Colors.green
                 },
 
@@ -155,8 +186,8 @@ export default function DashboardAppPage() {
             <AppCurrentVisits
               title="Winning % By Days"
               chartData={[
-                { label: 'Winners', value: 4224 },
-                { label: 'Lossers', value: 5435 },
+                { label: 'Winners', value: winningTradesInDays},
+                { label: 'Lossers', value: losingTradesInDays },
               ]}
               chartColors={[
                 Colors.green,
