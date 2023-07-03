@@ -103,7 +103,10 @@ router.get('/getDailyStats', async (req, res) => {
     }
   });
 
-  router.get('/ShowIndoByDates', async (req, res) => {
+  
+
+
+  router.get('/ShowInfoByDates', async (req, res) => {
     try {
       const tradesByDate = await Trade.aggregate([
         {
@@ -111,6 +114,7 @@ router.get('/getDailyStats', async (req, res) => {
             _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
             lossCount: { $sum: { $cond: [{ $eq: ['$status', 'Loss'] }, 1, 0] } },
             winCount: { $sum: { $cond: [{ $eq: ['$status', 'Win'] }, 1, 0] } },
+            totalPnL: { $sum: '$netPnL' },
           },
         },
         { $sort: { _id: -1 } }, // Sort by descending entryDate
