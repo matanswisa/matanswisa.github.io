@@ -298,25 +298,25 @@ export default function UserPage() {
                         </TableCell>
 
 
-
-                        <TableCell align="center">{trade.netROI}%</TableCell>
+                        
+                        <TableCell align="center">{trade.netROI ? trade.netROI + "%" : ""}</TableCell>
 
                         <TableCell align="center">{trade.longShort}</TableCell>
 
                         <TableCell align="center">{trade.contracts}</TableCell>
 
+                        
+                        <TableCell align="center">{trade.entryPrice ? trade.entryPrice + "$" : ""}</TableCell>
+                        <TableCell align="center">{trade.stopPrice ? trade.stopPrice + "$" : ""}</TableCell>
 
-                        <TableCell align="center">{trade.entryPrice}$</TableCell>
-                        <TableCell align="center">{trade.stopPrice}$</TableCell>
+                        
+                        <TableCell align="center">{trade.exitPrice ? trade.exitPrice + "$" : ""}</TableCell>
 
-
-                        <TableCell align="center">{trade.exitPrice}$</TableCell>
-
-                        <TableCell align="center">{trade.duration}Min</TableCell>
+                        <TableCell align="center">{trade.duration ? trade.duration + "Min" : ""}</TableCell>
 
 
 
-                        <TableCell align="center">{trade.commission}$</TableCell>
+                        <TableCell align="center">{trade.commission ? trade.commission + "$" : ""}</TableCell>
 
                         <TableCell align="center">{trade.status === "Loss" ? trade.netPnL * -1 : trade.netPnL}$</TableCell>
 
