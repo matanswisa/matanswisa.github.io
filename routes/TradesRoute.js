@@ -60,4 +60,74 @@ router.delete('/deleteTrade', async (req, res) => {
 })
 
 
+router.get('/getDailyStats', async (req, res) => {
+    try {
+      const tradesByDate = await Trade.aggregate([
+        {
+          $group: {
+            _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
+            trades: { $push: '$$ROOT' },
+          },
+        },
+        { $sort: { _id: -1 } }, // Sort by descending entryDate
+      ]);
+  
+      res.json(tradesByDate);
+    } catch (error) {
+      console.error('Error fetching trades:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  });
+
+
+
+  router.get('/WinAndLossTotalTime', async (req, res) => {
+    try {
+      const tradeStats = await Trade.aggregate([
+        {
+          $group: {
+            _id: null,
+            lossCount: { $sum: { $cond: [{ $eq: ['$status', 'Loss'] }, 1, 0] } },
+            winCount: { $sum: { $cond: [{ $eq: ['$status', 'Win'] }, 1, 0] } },
+          },
+        },
+      ]);
+  
+      // Extract the counts from the first element of the array (since we only have one result)
+      const { lossCount, winCount } = tradeStats[0];
+  
+      res.json({ lossCount, winCount });
+      console.log({ lossCount, winCount });
+    } catch (error) {
+      console.error('Error fetching trade stats:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  });
+
+  
+
+
+  router.get('/ShowInfoByDates', async (req, res) => {
+    try {
+      const tradesByDate = await Trade.aggregate([
+        {
+          $group: {
+            _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
+            lossCount: { $sum: { $cond: [{ $eq: ['$status', 'Loss'] }, 1, 0] } },
+            winCount: { $sum: { $cond: [{ $eq: ['$status', 'Win'] }, 1, 0] } },
+            totalPnL: { $sum: '$netPnL' },
+          },
+        },
+        { $sort: { _id: -1 } }, // Sort by descending entryDate
+      ]);
+  
+      res.json(tradesByDate);
+      console.log(tradesByDate);
+    } catch (error) {
+      console.error('Error fetching trades:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  });
+
+
 export default router;
