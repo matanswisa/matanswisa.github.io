@@ -52,7 +52,7 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
 import api from '../api/api';
-import Colors from '../components/color-utils/Colors'
+import {Colors} from '../components/color-utils/Colors'
 import AddTrade from '../components/addTrade/addTradeFormModal';
 // ----------------------------------------------------------------------
 
@@ -318,7 +318,7 @@ export default function UserPage() {
 
                         <TableCell align="center">{trade.commission ? trade.commission + "$" : ""}</TableCell>
 
-                        <TableCell align="center">{trade.status === "Loss" ? trade.netPnL * -1 : trade.netPnL}$</TableCell>
+                        <TableCell align="center">{ trade.netPnL}$</TableCell>
 
 
                         <TableCell align="center"><IconButton size="large" color="inherit" >
@@ -441,7 +441,7 @@ export default function UserPage() {
       <h2 style={totalPlColor}>{sumPnL(trades)}$</h2> */}
 
       <Typography variant="h4" >
-        Total PnL  -  <span style={totalPlColor}>{sumPnL(trades)}$</span>
+        Total PnL : {sumPnL(trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(trades)}$</span> :  <span style={totalPlColor}>{sumPnL(trades)}$</span>}
       </Typography>
 
 
@@ -449,12 +449,17 @@ export default function UserPage() {
   );
 }
 
+const totalPlRedColor = {
+
+  color: '#d16c71', // Replace with the desired text color
+  
+};
 
 
 const totalPlColor = {
 
   color: '#54a38d', // Replace with the desired text color
-
+  
 };
 
 

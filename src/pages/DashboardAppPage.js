@@ -148,6 +148,8 @@ export default function DashboardAppPage() {
                   fill: 'gradient',
                   data: DailyNetCumulativePnl(),
                   color: Colors.green
+
+                  
                 },
 
               ]}

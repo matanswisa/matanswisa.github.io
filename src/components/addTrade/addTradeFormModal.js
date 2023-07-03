@@ -144,7 +144,7 @@ export default function BasicModal(props) {
             duration: positionDuration,
             commission: positionCommision,
             comments,
-            netPnL,
+            netPnL :positionStatus === "Loss" ?netPnL*-1 : netPnL,
             // Include other form data here
           }).then((res) => {
             console.log("lol", "Add Trade", "success")
