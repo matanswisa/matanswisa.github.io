@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
+import { setTrades } from '../../redux-toolkit/tradesSlice';
 
 const style = {
   position: 'absolute',
@@ -51,6 +52,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function BasicModal(props) {
 
 
+  console.log("props.tradeInfo=", props.tradeInfo);
 
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
@@ -120,8 +122,10 @@ export default function BasicModal(props) {
   }
 
 
+
   useEffect(() => {
     handleOpen();
+
   }, []);
 
   const handleSaveTrade = async () => {
@@ -149,6 +153,18 @@ export default function BasicModal(props) {
           }).then((res) => {
             console.log("lol", "Add Trade", "success")
             notifyToast("Trade added successfully", "success");
+
+            const fetchTrades = async () => {
+              const result = await api.get('/api/fetchTrades');
+              return result;
+            }
+
+            fetchTrades().then((result) => {
+
+              dispatch(setTrades(result.data));
+            }).catch((error) => {
+
+            });
           }).catch((err) => {
             notifyToast("Couldn't add trade", "error");
           })

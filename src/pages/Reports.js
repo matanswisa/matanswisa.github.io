@@ -52,7 +52,6 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
 import api from '../api/api';
-import Colors from '../components/color-utils/Colors'
 import AddTrade from '../components/addTrade/addTradeFormModal';
 // ----------------------------------------------------------------------
 
@@ -148,9 +147,12 @@ export default function UserPage() {
     dispatch(setTradesRedux(trades));
   }
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (tradeId) => {
+    console.log("tradeId", tradeId);
+    setEditTradeId(tradeId);
     setIsOpenmodal(true);
-  }
+  };
+
 
   useEffect(() => {
 
@@ -205,20 +207,20 @@ export default function UserPage() {
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
+  // const handleClick = (event, name) => {
+  //   const selectedIndex = selected.indexOf(name);
+  //   let newSelected = [];
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, name);
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1));
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+  //   }
+  //   setSelected(newSelected);
+  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -229,23 +231,24 @@ export default function UserPage() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
-
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+
   const deleteTrade = async (tradeId) => {
-    console.log('Delete trade - ', tradeId);
     await api.delete('/api/deleteTrade', { data: { tradeId } });
-    const trades = await fetchTrades();
-    setTradesList(trades.data);
+    const tempTrades = await fetchTrades();
+    setTradesList(tempTrades.data);
+    notifyToast(`Delete trade - ${tradeId}`, 'warning');
+    toggleShow();
   }
+
+  const [editTradeId, setEditTradeId] = useState(null);
+
+
   return (
     <>
       <Helmet>
@@ -298,28 +301,16 @@ export default function UserPage() {
                         </TableCell>
 
 
-                        
+
                         <TableCell align="center">{trade.netROI ? trade.netROI + "%" : ""}</TableCell>
-
                         <TableCell align="center">{trade.longShort}</TableCell>
-
                         <TableCell align="center">{trade.contracts}</TableCell>
-
-                        
                         <TableCell align="center">{trade.entryPrice ? trade.entryPrice + "$" : ""}</TableCell>
                         <TableCell align="center">{trade.stopPrice ? trade.stopPrice + "$" : ""}</TableCell>
-
-                        
                         <TableCell align="center">{trade.exitPrice ? trade.exitPrice + "$" : ""}</TableCell>
-
                         <TableCell align="center">{trade.duration ? trade.duration + "Min" : ""}</TableCell>
-
-
-
                         <TableCell align="center">{trade.commission ? trade.commission + "$" : ""}</TableCell>
-
                         <TableCell align="center">{trade.status === "Loss" ? trade.netPnL * -1 : trade.netPnL}$</TableCell>
-
 
                         <TableCell align="center"><IconButton size="large" color="inherit" >
                           <Iconify icon={'eva:image-outline'} />
@@ -352,41 +343,31 @@ export default function UserPage() {
 
                           <MenuItem>
 
-                            <MDBModal show={basicModal} setShow={setBasicModal} tabIndex='-1'>
-                              <MDBModalDialog>
-                                <MDBModalContent>
-                                  <MDBModalHeader>
-                                    <MDBModalTitle>Remove Trade</MDBModalTitle>
-                                    <MDBBtn className='btn-close' color='none' onClick={toggleShow}> </MDBBtn>
-                                  </MDBModalHeader>
-                                  <MDBModalBody>You sure you want to remove this Trade?</MDBModalBody>
-
-                                  <MDBModalFooter>
-                                    <MDBBtn color='secondary' onClick={toggleShow}>
-                                      Close
-                                    </MDBBtn>
-                                    <MDBBtn onClick={() => deleteTrade(trade._id)}>Remove</MDBBtn>
-                                  </MDBModalFooter>
-                                </MDBModalContent>
-                              </MDBModalDialog>
-                            </MDBModal>
-
-                            <Iconify onClick={handleOpenModal} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                            Edit
-                            {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} tradeInfo={trade} isEditMode />}
-
+                            <IconButton
+                              size="large"
+                              color="inherit"
+                              onClick={() => handleOpenModal(trade._id)}
+                            >
+                              <Iconify icon={'eva:edit-fill'} />
+                            </IconButton>
                           </MenuItem >
-
                           <MenuItem sx={{ color: 'error.main' }}>
                             <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => toggleShow()} />
-                            <button style={buttonStyle} onClick={() => toggleShow()}>
+                            <button style={buttonStyle} onClick={() => deleteTrade(trade._id)}>
                               Delete
                             </button>
                           </MenuItem>
                         </Popover >
+                        {editTradeId === trade._id && (
+                          <AddTrade
+                            key={trade._id}
+                            openModal={openmodal}
+                            handleOpenModal={setIsOpenmodal}
+                            tradeInfo={trade}
+                            isEditMode={true}
+                          />
+                        )}
                       </TableRow >
-
-
                     );
                   })}
                   {
@@ -437,14 +418,9 @@ export default function UserPage() {
         </Card >
       </Container >
 
-      {/* <h1 style={totalPlColor}>Total P&L </h1>
-      <h2 style={totalPlColor}>{sumPnL(trades)}$</h2> */}
-
       <Typography variant="h4" >
         Total PnL  -  <span style={totalPlColor}>{sumPnL(trades)}$</span>
       </Typography>
-
-
     </>
   );
 }
