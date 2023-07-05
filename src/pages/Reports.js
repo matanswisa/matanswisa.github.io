@@ -72,6 +72,7 @@ const TABLE_HEAD = [
   { id: 'netPnL', label: 'Net P&L', alignRight: false },
   { id: 'image', label: 'Image', alignRight: false },
   { id: 'edit', label: 'Edit', alignRight: false },
+  { id: 'delete', label: 'Delete', alignRight: false },
   { id: 'comments', label: 'comments', alignRight: false }
 ];
 
@@ -149,8 +150,7 @@ export default function UserPage() {
   }
 
   const handleOpenModal = (tradeId) => {
-    console.log("tradeId", tradeId);
-    setEditTradeId(tradeId);
+    // console.log("tradeId", tradeId);
     setIsOpenmodal(true);
   };
 
@@ -185,14 +185,6 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
 
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -208,20 +200,6 @@ export default function UserPage() {
     setSelected([]);
   };
 
-  // const handleClick = (event, name) => {
-  //   const selectedIndex = selected.indexOf(name);
-  //   let newSelected = [];
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-  //   }
-  //   setSelected(newSelected);
-  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -233,10 +211,9 @@ export default function UserPage() {
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-
   const isNotFound = !filteredUsers.length && !!filterName;
+
 
 
   const deleteTrade = async (tradeId) => {
@@ -248,7 +225,7 @@ export default function UserPage() {
   }
 
   const [editTradeId, setEditTradeId] = useState(null);
-
+  const [editMode, setEditMode] = useState(false);
 
   return (
     <>
@@ -266,6 +243,16 @@ export default function UserPage() {
             Add New Trade
           </Button>
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
+          {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
+            key={editTradeId._id}
+            openModal={openmodal}
+            handleOpenModal={setIsOpenmodal}
+            handleEditTradeLeavePanel={setEditTradeId}
+            tradeInfo={editTradeId}
+            notifyToast={notifyToast}
+            isEditMode={true}
+          /> : null}
+
         </Stack>
 
         <Card>
@@ -283,7 +270,7 @@ export default function UserPage() {
                 <TableBody>
                   {trades.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((trade, indx) => {
                     return (
-                      <TableRow hover key={trade._id} tabIndex={-1} role="checkbox" selected={trade}>
+                      <TableRow onMouseEnter={() => { setEditTradeId(trade) }} hover key={trade._id} tabIndex={-1} role="checkbox" selected={trade}>
 
                         <TableCell>
                           { }
@@ -316,59 +303,25 @@ export default function UserPage() {
 
                         <TableCell align="center"><IconButton size="large" color="inherit" >
                           <Iconify icon={'eva:image-outline'} />
-                        </IconButton>{trade.image}</TableCell>   {/* COLNAME: image, VALUES: image of trade */}
+                        </IconButton>{trade.image}</TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
+                          <button onClick={() => {
+                            setEditMode(true);
+                            setIsOpenmodal(true);
+                            setEditTradeId(trade);
+                          }}>
+                            Edit
+                          </button>
+                        </TableCell>
+                        <TableCell align="right">
+                          <button onClick={() => {
+                            deleteTrade(editTradeId._id)
+                          }}>
+                            Delete
+                          </button>
                         </TableCell>
                         <TableCell align="center">{trade.comments}</TableCell>
-                        <Popover
-                          open={Boolean(open)}
-                          anchorEl={open}
-                          onClose={handleCloseMenu}
-                          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                          PaperProps={{
-                            sx: {
-                              p: 1,
-                              width: 140,
-                              '& .MuiMenuItem-root': {
-                                px: 1,
-                                typography: 'body2',
-                                borderRadius: 0.75,
-                              },
-                            },
-                          }}
-                        >
-
-                          <MenuItem>
-
-                            <IconButton
-                              size="large"
-                              color="inherit"
-                              onClick={() => handleOpenModal(trade._id)}
-                            >
-                              <Iconify icon={'eva:edit-fill'} />
-                            </IconButton>
-                          </MenuItem >
-                          <MenuItem sx={{ color: 'error.main' }}>
-                            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => toggleShow()} />
-                            <button style={buttonStyle} onClick={() => deleteTrade(trade._id)}>
-                              Delete
-                            </button>
-                          </MenuItem>
-                        </Popover >
-                        {editTradeId === trade._id && (
-                          <AddTrade
-                            key={trade._id}
-                            openModal={openmodal}
-                            handleOpenModal={setIsOpenmodal}
-                            tradeInfo={trade}
-                            isEditMode={true}
-                          />
-                        )}
                       </TableRow >
                     );
                   })}
@@ -380,6 +333,16 @@ export default function UserPage() {
                     )
                   }
                 </TableBody >
+
+                {/* {editTradeId && openmodal &&
+                  <AddTrade
+                    key={editTradeId}
+                    openModal={openmodal}
+                    handleOpenModal={setIsOpenmodal}
+                    tradeInfo={editTradeId}
+                    isEditMode={true}
+                  />
+                } */}
 
                 {isNotFound && (
                   <TableBody>

@@ -126,31 +126,37 @@ export default function BasicModal(props) {
   useEffect(() => {
     handleOpen();
 
+    return () => {
+      if (editMode)
+        props?.handleEditTradeLeavePanel(null);
+    }
+
   }, []);
 
   const handleSaveTrade = async () => {
-    console.log('WHAT INSIDE?', { positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol });
+    const data = {
+      entryDate: positionDate,
+      symbol: positionSymbol,
+      status: positionStatus,
+      netROI,
+      stopPrice,
+      longShort: positionType,
+      contracts: contractsCounts,
+      entryPrice,
+      exitPrice,
+      duration: positionDuration,
+      commission: positionCommision,
+      comments,
+      netPnL,
+      tradeId: tradeInfo?._id || '',
+    }
+    console.log('WHAT INSIDE?', data);
     if (validateForm()) {
       console.log("form is validate");
 
       if (!editMode) {
         await api
-          .post('/api/addTrade', {
-            entryDate: positionDate,
-            symbol: positionSymbol,
-            status: positionStatus,
-            netROI,
-            stopPrice,
-            longShort: positionType,
-            contracts: contractsCounts,
-            entryPrice,
-            exitPrice,
-            duration: positionDuration,
-            commission: positionCommision,
-            comments,
-            netPnL :positionStatus === "Loss" ?netPnL*-1 : netPnL,
-            // Include other form data here
-          }).then((res) => {
+          .post('/api/addTrade', data).then((res) => {
             console.log("lol", "Add Trade", "success")
             notifyToast("Trade added successfully", "success");
 
@@ -169,37 +175,16 @@ export default function BasicModal(props) {
             notifyToast("Couldn't add trade", "error");
           })
 
-        // props.notifyToast("Trade Added succssfully","success")
 
       }
       else if (editMode === true) {
         console.log('inside edit trade!', tradeInfo?._id);
-        await api.post('/api/editTrade', {
-          entryDate: positionDate,
-          symbol: positionSymbol,
-          status: positionStatus,
-          netROI,
-          stopPrice,
-          longShort: positionType,
-          contracts: contractsCounts,
-          entryPrice,
-          exitPrice,
-          duration: positionDuration,
-          commission: positionCommision,
-          comments,
-          netPnL,
-          tradeId: tradeInfo?.trade._id || '',
-          // Include other form data here
-        })
+        await api.post('/api/editTrade', data)
           .then((response) => {
-            // Handle the response from the server
-
             notifyToast("Trade Edit succssfully", "success")
           })
           .catch((error) => {
-            // Handle the error
             notifyToast("Trade can't be updated", "error")
-
           });
 
       }
