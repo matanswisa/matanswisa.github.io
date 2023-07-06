@@ -142,7 +142,7 @@ export default function BasicModal(props) {
             entryPrice,
             exitPrice,
             duration: positionDuration,
-            commission: positionCommision,
+            commission: positionCommision > 0 ? positionCommision*-1 : positionCommision,
             comments,
             netPnL :positionStatus === "Loss" ?netPnL*-1 : netPnL,
             // Include other form data here
