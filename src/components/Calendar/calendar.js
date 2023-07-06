@@ -6,6 +6,8 @@ import './styles.css';
 import './calendar.css';
 import api from '../../api/api';
 
+
+
 function getTodoList(info, date) {
   const filteredInfo = info.filter((item) => {
     const itemDate = new Date(item._id); // Convert the _id to a Date object
@@ -30,35 +32,26 @@ const CalendarComponent = () => {
       })
       .catch();
   }, []);
-
   function renderCell(date) {
     const list = getTodoList(calendarTrades, date);
     const displayList = list.filter((item, index) => index < 2);
-
+  
     const desiredDays = calendarTrades
       .filter((trade) => {
         const tradeDate = new Date(trade._id); // Convert the _id to a Date object
         const tradeMonth = tradeDate.getMonth();
-        const tradeYear = tradeDate.getFullYear();
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth();
-        const currentYear = currentDate.getFullYear();
-
+  
         // Filter trades from the current month and the previous month
-        return (
-          (tradeMonth === date.getMonth() && tradeYear === date.getFullYear()) ||
-          (tradeMonth === currentMonth - 1 && tradeYear === currentYear)
-        );
+        return tradeMonth === date.getMonth() || tradeMonth === currentMonth - 1;
       })
-      .map((trade) =>
-        parseInt(trade._id.split('-')[2] > 0 ? trade._id.split('-')[2] : trade._id.split('-')[2] % 10)
-      );
-
+      .map((trade) => parseInt(trade._id.split("-")[2] > 0 ? trade._id.split("-")[2] : trade._id.split("-")[2] % 10));
+  
     const isDesiredDay = desiredDays.includes(date.getDate());
-    const isCurrentMonth =
-      date.getMonth() === new Date().getMonth() && date.getFullYear() === new Date().getFullYear();
-
-    if (isDesiredDay && (isCurrentMonth || list.length)) {
+    const isCurrentMonth = date.getMonth() === new Date().getMonth();
+  
+    if (isDesiredDay && isCurrentMonth && list.length) {
       return (
         <div>
           {displayList.map((item, index) => (
@@ -69,18 +62,19 @@ const CalendarComponent = () => {
               <br />
               {item.amount < 0 ? (
                 <b style={{ color: 'red' }}>-{Math.abs(item.amount)}$</b>
-              ) : (
+              ) : item.amount > 0 ? (
                 <b style={{ color: 'green' }}>+{item.amount}$</b>
+              ) : (
+                <b style={{ color: 'blue' }}>{item.amount}$</b>
               )}
             </div>
           ))}
         </div>
       );
     }
-
+  
     return null;
   }
-
   return <Calendar bordered renderCell={renderCell} />;
 };
 

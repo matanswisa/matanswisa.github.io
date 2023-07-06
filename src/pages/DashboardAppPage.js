@@ -230,7 +230,7 @@ export default function DashboardAppPage() {
               title="Score"
               chartLabels={['Win %', 'Avg win/loss', 'Profit Factor']}
               chartData={[
-                { name: 'Series 1', data: [80, 50, 30] },
+                { name: 'Series 1', data: [winningTradesInDays, (winningTrades + losingTrades)/2 , 2] },
 
 
               ]}
