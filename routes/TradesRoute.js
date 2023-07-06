@@ -129,4 +129,26 @@ router.get('/getDailyStats', async (req, res) => {
   });
 
 
+  router.get('/ShowNumOfTradeTotalPnlInfoByDates', async (req, res) => {
+    try {
+      const tradesByDate = await Trade.aggregate([
+        {
+          $group: {
+            _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
+            trades: { $sum: 1 }, // Count of trades
+            totalPnL: { $sum: '$netPnL' },
+          },
+        },
+        { $sort: { _id: -1 } }, // Sort by descending entryDate
+      ]);
+  
+      res.json(tradesByDate);
+      console.log(tradesByDate);
+    } catch (error) {
+      console.error('Error fetching trades:', error);
+      res.status(500).json({ error: 'An error occurred' });
+    }
+  });
+
+
 export default router;
