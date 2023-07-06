@@ -238,19 +238,7 @@ export default function DashboardAppPage() {
 
         
 
-          
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentSubject
-              title="Score"
-              chartLabels={['Win %', 'Avg win/loss', 'Profit Factor']}
-              chartData={[
-                { name: 'Series 1', data: [winningTradesInDays, (winningTrades + losingTrades)/2 , 2] },
-
-
-              ]}
-              chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
-            />
-          </Grid>
+       
 
 
         </Grid>
