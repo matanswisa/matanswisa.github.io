@@ -145,7 +145,7 @@ export default function BasicModal(props) {
       entryPrice,
       exitPrice,
       duration: positionDuration,
-      commission: positionCommision,
+      commission: positionCommision > 0 ? positionCommision*-1 : positionCommision,
       comments,
       netPnL,
       tradeId: tradeInfo?._id || '',
