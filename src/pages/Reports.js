@@ -52,7 +52,7 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
 import api from '../api/api';
-import {Colors} from '../components/color-utils/Colors'
+import { Colors } from '../components/color-utils/Colors'
 import AddTrade from '../components/addTrade/addTradeFormModal';
 // ----------------------------------------------------------------------
 
@@ -72,6 +72,7 @@ const TABLE_HEAD = [
   { id: 'netPnL', label: 'Net P&L', alignRight: false },
   { id: 'image', label: 'Image', alignRight: false },
   { id: 'edit', label: 'Edit', alignRight: false },
+  { id: 'delete', label: 'Delete', alignRight: false },
   { id: 'comments', label: 'comments', alignRight: false }
 ];
 
@@ -144,13 +145,15 @@ export default function UserPage() {
   const dispatch = useDispatch();
 
   const setTradesList = (trades) => {
-    
+
     dispatch(setTradesRedux(trades));
   }
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (tradeId) => {
+    // console.log("tradeId", tradeId);
     setIsOpenmodal(true);
-  }
+  };
+
 
   useEffect(() => {
 
@@ -182,14 +185,6 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
 
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -205,20 +200,6 @@ export default function UserPage() {
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -229,23 +210,23 @@ export default function UserPage() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
-  };
-
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-
   const isNotFound = !filteredUsers.length && !!filterName;
 
+
+
   const deleteTrade = async (tradeId) => {
-    console.log('Delete trade - ', tradeId);
     await api.delete('/api/deleteTrade', { data: { tradeId } });
-    const trades = await fetchTrades();
-    setTradesList(trades.data);
+    const tempTrades = await fetchTrades();
+    setTradesList(tempTrades.data);
+    notifyToast(`Delete trade - ${tradeId}`, 'warning');
+    toggleShow();
   }
+
+  const [editTradeId, setEditTradeId] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+
   return (
     <>
       <Helmet>
@@ -262,6 +243,16 @@ export default function UserPage() {
             Add New Trade
           </Button>
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
+          {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
+            key={editTradeId._id}
+            openModal={openmodal}
+            handleOpenModal={setIsOpenmodal}
+            handleEditTradeLeavePanel={setEditTradeId}
+            tradeInfo={editTradeId}
+            notifyToast={notifyToast}
+            isEditMode={true}
+          /> : null}
+
         </Stack>
 
         <Card>
@@ -279,7 +270,7 @@ export default function UserPage() {
                 <TableBody>
                   {trades.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((trade, indx) => {
                     return (
-                      <TableRow hover key={trade._id} tabIndex={-1} role="checkbox" selected={trade}>
+                      <TableRow onMouseEnter={() => { setEditTradeId(trade) }} hover key={trade._id} tabIndex={-1} role="checkbox" selected={trade}>
 
                         <TableCell>
                           { }
@@ -298,95 +289,40 @@ export default function UserPage() {
                         </TableCell>
 
 
-                        
+
                         <TableCell align="center">{trade.netROI ? trade.netROI + "%" : ""}</TableCell>
-
                         <TableCell align="center">{trade.longShort}</TableCell>
-
                         <TableCell align="center">{trade.contracts}</TableCell>
-
-                        
                         <TableCell align="center">{trade.entryPrice ? trade.entryPrice + "$" : ""}</TableCell>
                         <TableCell align="center">{trade.stopPrice ? trade.stopPrice + "$" : ""}</TableCell>
-
-                        
                         <TableCell align="center">{trade.exitPrice ? trade.exitPrice + "$" : ""}</TableCell>
-
                         <TableCell align="center">{trade.duration ? trade.duration + "Min" : ""}</TableCell>
-
-
-
                         <TableCell align="center">{trade.commission ? trade.commission + "$" : ""}</TableCell>
 
-                        <TableCell align="center">{ trade.netPnL}$</TableCell>
-
+                        <TableCell align="center">{trade.netPnL}$</TableCell>
 
                         <TableCell align="center"><IconButton size="large" color="inherit" >
                           <Iconify icon={'eva:image-outline'} />
-                        </IconButton>{trade.image}</TableCell>   {/* COLNAME: image, VALUES: image of trade */}
+                        </IconButton>{trade.image}</TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
+                          <button onClick={() => {
+                            setEditMode(true);
+                            setIsOpenmodal(true);
+                            setEditTradeId(trade);
+                          }}>
+                            Edit
+                          </button>
+                        </TableCell>
+                        <TableCell align="right">
+                          <button onClick={() => {
+                            deleteTrade(editTradeId._id)
+                          }}>
+                            Delete
+                          </button>
                         </TableCell>
                         <TableCell align="center">{trade.comments}</TableCell>
-                        <Popover
-                          open={Boolean(open)}
-                          anchorEl={open}
-                          onClose={handleCloseMenu}
-                          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                          PaperProps={{
-                            sx: {
-                              p: 1,
-                              width: 140,
-                              '& .MuiMenuItem-root': {
-                                px: 1,
-                                typography: 'body2',
-                                borderRadius: 0.75,
-                              },
-                            },
-                          }}
-                        >
-
-                          <MenuItem>
-
-                            <MDBModal show={basicModal} setShow={setBasicModal} tabIndex='-1'>
-                              <MDBModalDialog>
-                                <MDBModalContent>
-                                  <MDBModalHeader>
-                                    <MDBModalTitle>Remove Trade</MDBModalTitle>
-                                    <MDBBtn className='btn-close' color='none' onClick={toggleShow}> </MDBBtn>
-                                  </MDBModalHeader>
-                                  <MDBModalBody>You sure you want to remove this Trade?</MDBModalBody>
-
-                                  <MDBModalFooter>
-                                    <MDBBtn color='secondary' onClick={toggleShow}>
-                                      Close
-                                    </MDBBtn>
-                                    <MDBBtn onClick={() => deleteTrade(trade._id)}>Remove</MDBBtn>
-                                  </MDBModalFooter>
-                                </MDBModalContent>
-                              </MDBModalDialog>
-                            </MDBModal>
-
-                            <Iconify onClick={handleOpenModal} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                            Edit
-                            {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} tradeInfo={trade} isEditMode />}
-
-                          </MenuItem >
-
-                          <MenuItem sx={{ color: 'error.main' }}>
-                            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => toggleShow()} />
-                            <button style={buttonStyle} onClick={() => toggleShow()}>
-                              Delete
-                            </button>
-                          </MenuItem>
-                        </Popover >
                       </TableRow >
-
-
                     );
                   })}
                   {
@@ -397,6 +333,16 @@ export default function UserPage() {
                     )
                   }
                 </TableBody >
+
+                {/* {editTradeId && openmodal &&
+                  <AddTrade
+                    key={editTradeId}
+                    openModal={openmodal}
+                    handleOpenModal={setIsOpenmodal}
+                    tradeInfo={editTradeId}
+                    isEditMode={true}
+                  />
+                } */}
 
                 {isNotFound && (
                   <TableBody>
@@ -437,14 +383,9 @@ export default function UserPage() {
         </Card >
       </Container >
 
-      {/* <h1 style={totalPlColor}>Total P&L </h1>
-      <h2 style={totalPlColor}>{sumPnL(trades)}$</h2> */}
-
       <Typography variant="h4" >
-        Total PnL : {sumPnL(trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(trades)}$</span> :  <span style={totalPlColor}>{sumPnL(trades)}$</span>}
+        Total PnL : {sumPnL(trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(trades)}$</span> : <span style={totalPlColor}>{sumPnL(trades)}$</span>}
       </Typography>
-
-
     </>
   );
 }
@@ -452,14 +393,14 @@ export default function UserPage() {
 const totalPlRedColor = {
 
   color: '#d16c71', // Replace with the desired text color
-  
+
 };
 
 
 const totalPlColor = {
 
   color: '#54a38d', // Replace with the desired text color
-  
+
 };
 
 

@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
+import { setTrades } from '../../redux-toolkit/tradesSlice';
 
 const style = {
   position: 'absolute',
@@ -51,6 +52,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function BasicModal(props) {
 
 
+  console.log("props.tradeInfo=", props.tradeInfo);
 
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
@@ -120,70 +122,69 @@ export default function BasicModal(props) {
   }
 
 
+
   useEffect(() => {
     handleOpen();
+
+    return () => {
+      if (editMode)
+        props?.handleEditTradeLeavePanel(null);
+    }
+
   }, []);
 
   const handleSaveTrade = async () => {
-    console.log('WHAT INSIDE?', { positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol });
+    const data = {
+      entryDate: positionDate,
+      symbol: positionSymbol,
+      status: positionStatus,
+      netROI,
+      stopPrice,
+      longShort: positionType,
+      contracts: contractsCounts,
+      entryPrice,
+      exitPrice,
+      duration: positionDuration,
+      commission: positionCommision,
+      comments,
+      netPnL,
+      tradeId: tradeInfo?._id || '',
+    }
+    console.log('WHAT INSIDE?', data);
     if (validateForm()) {
       console.log("form is validate");
 
       if (!editMode) {
         await api
-          .post('/api/addTrade', {
-            entryDate: positionDate,
-            symbol: positionSymbol,
-            status: positionStatus,
-            netROI,
-            stopPrice,
-            longShort: positionType,
-            contracts: contractsCounts,
-            entryPrice,
-            exitPrice,
-            duration: positionDuration,
-            commission: positionCommision > 0 ? positionCommision*-1 : positionCommision,
-            comments,
-            netPnL :positionStatus === "Loss" ?netPnL*-1 : netPnL,
-            // Include other form data here
-          }).then((res) => {
+          .post('/api/addTrade', data).then((res) => {
             console.log("lol", "Add Trade", "success")
             notifyToast("Trade added successfully", "success");
+
+            const fetchTrades = async () => {
+              const result = await api.get('/api/fetchTrades');
+              return result;
+            }
+
+            fetchTrades().then((result) => {
+
+              dispatch(setTrades(result.data));
+            }).catch((error) => {
+
+            });
           }).catch((err) => {
             notifyToast("Couldn't add trade", "error");
           })
 
-        // props.notifyToast("Trade Added succssfully","success")
 
       }
       else if (editMode === true) {
         console.log('inside edit trade!', tradeInfo?._id);
-        await api.post('/api/editTrade', {
-          entryDate: positionDate,
-          symbol: positionSymbol,
-          status: positionStatus,
-          netROI,
-          stopPrice,
-          longShort: positionType,
-          contracts: contractsCounts,
-          entryPrice,
-          exitPrice,
-          duration: positionDuration,
-          commission: positionCommision,
-          comments,
-          netPnL,
-          tradeId: tradeInfo?.trade._id || '',
-          // Include other form data here
-        })
+        await api.post('/api/editTrade', data)
           .then((response) => {
-            // Handle the response from the server
-
             notifyToast("Trade Edit succssfully", "success")
           })
           .catch((error) => {
-            // Handle the error
             notifyToast("Trade can't be updated", "error")
-
           });
 
       }
