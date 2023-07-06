@@ -201,7 +201,7 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={7}>
     
-          <Calendar info = {calendarTrades}/>
+          <Calendar/>
           </Grid>
 
 

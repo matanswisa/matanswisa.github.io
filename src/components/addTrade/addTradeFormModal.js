@@ -147,7 +147,7 @@ export default function BasicModal(props) {
       duration: positionDuration,
       commission: positionCommision > 0 ? positionCommision*-1 : positionCommision,
       comments,
-      netPnL,
+      netPnL:positionStatus === "Loss" ? netPnL*-1 : netPnL,
       tradeId: tradeInfo?._id || '',
     }
     console.log('WHAT INSIDE?', data);
