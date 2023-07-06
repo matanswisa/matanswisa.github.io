@@ -150,14 +150,11 @@ export default function BasicModal(props) {
       netPnL,
       tradeId: tradeInfo?._id || '',
     }
-    console.log('WHAT INSIDE?', data);
-    if (validateForm()) {
-      console.log("form is validate");
 
+    if (validateForm()) {
       if (!editMode) {
         await api
           .post('/api/addTrade', data).then((res) => {
-            console.log("lol", "Add Trade", "success")
             notifyToast("Trade added successfully", "success");
 
             const fetchTrades = async () => {
@@ -407,7 +404,6 @@ export default function BasicModal(props) {
                 value={netPnL}
                 onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
                 onFocus={(e) => clearPositionFieldInput(e, 'netPnL')}
-
                 type="number"
                 InputLabelProps={{ shrink: true }}
               />
@@ -423,8 +419,6 @@ export default function BasicModal(props) {
                 value={netROI}
                 onChange={(e) => handlePositionFieldInput(e, 'netROI')}
                 onFocus={(e) => clearPositionFieldInput(e, 'netROI')}
-
-
                 InputLabelProps={{ shrink: true }}
               />
             </Item>
@@ -438,8 +432,6 @@ export default function BasicModal(props) {
                 value={stopPrice}
                 onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
                 onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
-
-
                 InputLabelProps={{ shrink: true }}
               />
             </Item>
@@ -449,10 +441,7 @@ export default function BasicModal(props) {
             <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
           </Item >
         </Grid >
-
-
       </Box >
-
     </Modal >
   );
 }

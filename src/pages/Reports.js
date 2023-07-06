@@ -288,8 +288,6 @@ export default function UserPage() {
                           <Label color={(trade.status === 'Loss' && 'error') || 'success'}>{sentenceCase(trade.status)}</Label>
                         </TableCell>
 
-
-
                         <TableCell align="center">{trade.netROI ? trade.netROI + "%" : ""}</TableCell>
                         <TableCell align="center">{trade.longShort}</TableCell>
                         <TableCell align="center">{trade.contracts}</TableCell>
@@ -298,9 +296,7 @@ export default function UserPage() {
                         <TableCell align="center">{trade.exitPrice ? trade.exitPrice + "$" : ""}</TableCell>
                         <TableCell align="center">{trade.duration ? trade.duration + "Min" : ""}</TableCell>
                         <TableCell align="center">{trade.commission ? trade.commission + "$" : ""}</TableCell>
-
                         <TableCell align="center">{trade.netPnL}$</TableCell>
-
                         <TableCell align="center"><IconButton size="large" color="inherit" >
                           <Iconify icon={'eva:image-outline'} />
                         </IconButton>{trade.image}</TableCell>
