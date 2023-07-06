@@ -7,17 +7,13 @@ import './calendar.css';
 
 function getTodoList(info) {
   
- console.log(info);
+ console.log(info[1]); 
 
-  switch (15) {
-    case 3:
+  switch (6) {
+   
+    case 6:
       return [
-        { time: '10:30 am', title: 'trades' },
-        { time: '12:00 pm', title: '$' }
-      ];
-    case 15:
-      return [
-        { trade: '1', title: '1' },
+        { numoftrades:  info[1]["trades"], title: 'trades', amount: '-550' },
       
       ];
     default:
@@ -32,7 +28,7 @@ const CalendarComponent = (props) => {
     const displayList = list.filter((item, index) => index < 2);
   
     // Check if the date matches the desired day
-    const desiredDay = 15; // Change this value to the desired day
+    const desiredDay =   props.info[1]["_id"].split('-')[2]%10; // Change this value to the desired day
     const isDesiredDay = date.getDate() === desiredDay;
   
     if (isDesiredDay && list.length) {
@@ -46,7 +42,7 @@ const CalendarComponent = (props) => {
               <Popover>
                 {list.map((item, index) => (
                   <p key={index}>
-                    <b>{item.time}</b> - {item.title}
+                    <b>{item.time}</b> - {item.title} 
                   </p>
                 ))}
               </Popover>
@@ -61,8 +57,11 @@ const CalendarComponent = (props) => {
         <ul className="calendar-todo-list">
           {displayList.map((item, index) => (
             <li key={index}>
-              <Badge /> <b>{item.trade}</b> - {item.title}
+             <b>{item.numoftrades} {item.title}</b>  
+           <br/>
+              <b style={{color: "red"}}>{item.amount + '$'}</b>
             </li>
+            
           ))}
           {moreCount ? moreItem : null}
         </ul>
