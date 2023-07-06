@@ -7,7 +7,8 @@ import { useState, useRef, useEffect } from 'react';
 import Calendar from '../components/Calendar/calendar';
 // components
 import Iconify from '../components/iconify';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 // sections
 import {
   AppTasks,
@@ -29,8 +30,21 @@ import { Colors } from '../components/color-utils/Colors';
 // ----------------------------------------------------------------------
 
 
+const sumPnL = (trades) => {
+  let sum = 0;
+  trades.forEach((trade) => {
+    sum += trade.netPnL
+  });
+  return sum;
+}
+
 
 export default function DashboardAppPage() {
+
+
+  
+  const Alltrades = useSelector(getTrades)
+
   const theme = useTheme();
 
   const [losingTrades,setLosingTrades] = useState(0);
@@ -139,7 +153,7 @@ export default function DashboardAppPage() {
 
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title=" Total Net P&L " total={10000} color="secondary" icon={dollarLogo} />
+            <AppWidgetSummary title=" Total Net P&L " total= {sumPnL(Alltrades)} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -244,3 +258,17 @@ export default function DashboardAppPage() {
     </>
   );
 }
+
+
+const totalPlRedColor = {
+
+  color: '#d16c71', // Replace with the desired text color
+
+};
+
+
+const totalPlColor = {
+
+  color: '#54a38d', // Replace with the desired text color
+
+};
