@@ -38,6 +38,52 @@ const sumPnL = (trades) => {
   return sum;
 }
 
+const avgLosingTrades = (trades) => {
+  let sum = 0;
+  let countTrades = 0;
+  trades.forEach((trade) => {
+    if(trade.netPnL < 0){
+        sum += trade.netPnL;
+        countTrades++;
+    }
+  });
+  return sum/countTrades;
+
+}
+
+
+
+const avgWinningTrades = (trades) => {
+  let sum = 0;
+  let countTrades = 0;
+  trades.forEach((trade) => {
+    if(trade.netPnL > 0){
+        sum += trade.netPnL;
+        countTrades++;
+    }
+  });
+  return sum/countTrades;
+
+}
+
+
+const ProfitFactor = (trades) => {
+  let SumWin = 0;
+  let SumLoss= 0;
+  trades.forEach((trade) => {
+    if(trade.netPnL > 0){
+      SumWin += trade.netPnL;
+      
+    }
+    else{
+      SumLoss += trade.netPnL;
+    }
+  });
+  return SumWin/SumLoss < 0 ? SumWin/SumLoss*-1: SumWin/SumLoss;
+
+}
+
+
 
 export default function DashboardAppPage() {
 
@@ -151,21 +197,21 @@ export default function DashboardAppPage() {
      
         <Grid container spacing={3}>
 
-
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title=" Total Net P&L " total= {sumPnL(Alltrades)} />
+            <AppWidgetSummary title=" Total Net P&L " total= {sumPnL(Alltrades)}  icon ={'eva:pie-chart-outline'}/>
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Profit Factor" total={1352831} color="secondary" />
+            <AppWidgetSummary title="Profit Factor" total={ProfitFactor(Alltrades)} icon ={'eva:grid-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Average Winning Trade" total={1723315} color="secondary" />
+            <AppWidgetSummary title="Average Winning Trade" total={avgWinningTrades(Alltrades)} icon ={'eva:bar-chart-2-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Average Losing Trade" total={234} color="secondary" />
+            <AppWidgetSummary title="Average Losing Trade" total={ avgLosingTrades(Alltrades)}   icon ={'eva:bar-chart-outline'}  color="secondary" />
+           
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
