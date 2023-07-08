@@ -20,10 +20,12 @@ import {
   IconButton,
 
   TextField,
+  Input,
 } from '@mui/material';
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
 import { setTrades } from '../../redux-toolkit/tradesSlice';
+import './addTrade.css';
 
 const style = {
   position: 'absolute',
@@ -145,19 +147,18 @@ export default function BasicModal(props) {
       entryPrice,
       exitPrice,
       duration: positionDuration,
-      commission: positionCommision > 0 ? positionCommision*-1 : positionCommision,
+      commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
       comments,
-      netPnL:positionStatus === "Loss" ? netPnL*-1 : netPnL,
+      netPnL: positionStatus === "Loss" ? netPnL * -1 : netPnL,
       tradeId: tradeInfo?._id || '',
     }
-    console.log('WHAT INSIDE?', data);
+
     if (validateForm()) {
-      console.log("form is validate");
 
       if (!editMode) {
         await api
           .post('/api/addTrade', data).then((res) => {
-            console.log("lol", "Add Trade", "success")
+            handleUpload(res.data.tradeId);
             notifyToast("Trade added successfully", "success");
 
             const fetchTrades = async () => {
@@ -174,8 +175,6 @@ export default function BasicModal(props) {
           }).catch((err) => {
             notifyToast("Couldn't add trade", "error");
           })
-
-
       }
       else if (editMode === true) {
         console.log('inside edit trade!', tradeInfo?._id);
@@ -204,6 +203,51 @@ export default function BasicModal(props) {
   };
 
 
+
+
+
+
+  //Upload image related code:
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+
+  const handleUpload = (tradeId) => {
+    // Create a new FormData object
+    const formData = new FormData();
+    // Append the selected file to the FormData object
+    formData.append('file', selectedFile);
+    formData.append('tradeId', tradeId);
+
+    // Make a POST request to the server with the file data
+    fetch('http://localhost:8000/api/uploadTradeImage', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        console.log(data);
+      })
+      .catch(error => {
+        // Handle any errors that occurred during the upload
+        console.error(error);
+      });
+  };
+
+  const fileInputRef = React.useRef(null);
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  useEffect(() => {
+    console.log(selectedFile);
+  }, [selectedFile])
+
   return (
     <Modal
       open={props.openModal}
@@ -227,16 +271,23 @@ export default function BasicModal(props) {
 
             <Grid item xs={6} md={4}>
               <Grid item xs={6} md={4}>
-                <Item>
-                  <IconButton size="small" color="inherit" >
-                    <Iconify icon={'eva:file-add-outline'} />
-                  </IconButton>
-                </Item>
+                <label htmlFor="file-input">
+                  <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    component="span"
+                    startIcon={<Iconify icon={'eva:file-add-outline'} />}
+                    onClick={handleButtonClick}
+                  >
+                    Upload Image
+                  </Button>
+                </label>
+
               </Grid>
             </Grid>
           </Grid >
         </Box >
-        <br />
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
           <Grid item xs={6}>
