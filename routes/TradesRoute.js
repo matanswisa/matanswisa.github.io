@@ -130,6 +130,7 @@ router.get('/ShowInfoByDates', async (req, res) => {
   }
 });
 
+console.log("tesdt");
 
   router.get('/ShowNumOfTradeTotalPnlInfoByDates', async (req, res) => {
     try {
