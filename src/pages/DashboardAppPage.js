@@ -103,19 +103,64 @@ export default function DashboardAppPage() {
 
   const [calendarTrades,setCalendarTrades] = useState([]);
 
-  const DailyNetCumulativeDate = () =>
+
+
+
+  const DailyNetCumulativeDateProfit = () =>
   {
+    const WinTradesDates = [];
+  
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL > 0) {
+        WinTradesDates.push(trade._id);
+      }
+    });
+   return WinTradesDates;
+  }
+
+
+  const DailyNetCumulativeDateLoss = () =>
+  {
+    const WinTradesDates = [];
+  
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL < 0) {
+        WinTradesDates.push(trade._id);
+      }
+    });
+   return WinTradesDates;
+  }
+
+
+
+  const DailyNetCumulativePnlProfit = () => {
+    const WinTrades = [];
+  
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL > 0) {
+        WinTrades.push(trade.totalPnL);
+      }
+    });
    
-   return dailyNetCumulative.map((trade)=>trade._id)
+    return WinTrades;
   }
 
-  const DailyNetCumulativePnl = () =>
-  {
-    
-    
-   return dailyNetCumulative.map((trade)=>trade.totalPnL)
-  }
 
+  
+
+  const DailyNetCumulativePnlLoss = () => {
+    const LossTrades = [];
+  
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL < 0) {
+        LossTrades.push(trade.totalPnL);
+      }
+    });
+console.log(LossTrades);
+    return LossTrades;
+  }
+  
+  
   const [trades,setTrades] = useState([]);
 
 
@@ -216,9 +261,9 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Daily Net Cumulative P&L"
+              title="Daily Net Cumulative Profit"
               subheader=""
-              chartLabels = { DailyNetCumulativeDate()}
+              chartLabels = { DailyNetCumulativeDateProfit()}
                
             
               chartData={[
@@ -227,8 +272,35 @@ export default function DashboardAppPage() {
                   name: '',
                   type: 'area',
                   fill: 'gradient',
-                  data: DailyNetCumulativePnl(),
+                  data: DailyNetCumulativePnlProfit(),
                   color: Colors.green
+
+                  
+                },
+            
+
+              ]}
+            />
+
+
+          </Grid>
+
+
+          <Grid item xs={12} md={6} lg={8}>
+            <AppWebsiteVisits
+              title="Daily Net Cumulative Loss"
+              subheader=""
+              chartLabels = { DailyNetCumulativeDateLoss()}
+               
+            
+              chartData={[
+
+                {
+                  name: '',
+                  type: 'area',
+                  fill: 'gradient',
+                  data: DailyNetCumulativePnlLoss(),
+                  color: Colors.red
 
                   
                 },

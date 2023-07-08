@@ -334,15 +334,7 @@ export default function UserPage() {
                   }
                 </TableBody >
 
-                {/* {editTradeId && openmodal &&
-                  <AddTrade
-                    key={editTradeId}
-                    openModal={openmodal}
-                    handleOpenModal={setIsOpenmodal}
-                    tradeInfo={editTradeId}
-                    isEditMode={true}
-                  />
-                } */}
+              
 
                 {isNotFound && (
                   <TableBody>
