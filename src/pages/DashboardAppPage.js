@@ -7,7 +7,8 @@ import { useState, useRef, useEffect } from 'react';
 import Calendar from '../components/Calendar/calendar';
 // components
 import Iconify from '../components/iconify';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 // sections
 import {
   AppTasks,
@@ -29,8 +30,67 @@ import { Colors } from '../components/color-utils/Colors';
 // ----------------------------------------------------------------------
 
 
+const sumPnL = (trades) => {
+  let sum = 0;
+  trades.forEach((trade) => {
+    sum += trade.netPnL
+  });
+  return sum;
+}
+
+const avgLosingTrades = (trades) => {
+  let sum = 0;
+  let countTrades = 0;
+  trades.forEach((trade) => {
+    if(trade.netPnL < 0){
+        sum += trade.netPnL;
+        countTrades++;
+    }
+  });
+  return sum/countTrades;
+
+}
+
+
+
+const avgWinningTrades = (trades) => {
+  let sum = 0;
+  let countTrades = 0;
+  trades.forEach((trade) => {
+    if(trade.netPnL > 0){
+        sum += trade.netPnL;
+        countTrades++;
+    }
+  });
+  return sum/countTrades;
+
+}
+
+
+const ProfitFactor = (trades) => {
+  let SumWin = 0;
+  let SumLoss= 0;
+  trades.forEach((trade) => {
+    if(trade.netPnL > 0){
+      SumWin += trade.netPnL;
+      
+    }
+    else{
+      SumLoss += trade.netPnL;
+    }
+  });
+  return SumWin/SumLoss < 0 ? SumWin/SumLoss*-1: SumWin/SumLoss;
+
+}
+
+
 
 export default function DashboardAppPage() {
+
+
+  
+  const Alltrades = useSelector(getTrades)
+
   const theme = useTheme();
 
   const [losingTrades,setLosingTrades] = useState(0);
@@ -43,19 +103,64 @@ export default function DashboardAppPage() {
 
   const [calendarTrades,setCalendarTrades] = useState([]);
 
-  const DailyNetCumulativeDate = () =>
+
+
+
+  const DailyNetCumulativeDateProfit = () =>
   {
+    const WinTradesDates = [];
+  
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL > 0) {
+        WinTradesDates.push(trade._id);
+      }
+    });
+   return WinTradesDates;
+  }
+
+
+  const DailyNetCumulativeDateLoss = () =>
+  {
+    const WinTradesDates = [];
+  
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL < 0) {
+        WinTradesDates.push(trade._id);
+      }
+    });
+   return WinTradesDates;
+  }
+
+
+
+  const DailyNetCumulativePnlProfit = () => {
+    const WinTrades = [];
+  
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL > 0) {
+        WinTrades.push(trade.totalPnL);
+      }
+    });
    
-   return dailyNetCumulative.map((trade)=>trade._id)
+    return WinTrades;
   }
 
-  const DailyNetCumulativePnl = () =>
-  {
-    
-    
-   return dailyNetCumulative.map((trade)=>trade.totalPnL)
-  }
 
+  
+
+  const DailyNetCumulativePnlLoss = () => {
+    const LossTrades = [];
+  
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL < 0) {
+        LossTrades.push(trade.totalPnL);
+      }
+    });
+console.log(LossTrades);
+    return LossTrades;
+  }
+  
+  
   const [trades,setTrades] = useState([]);
 
 
@@ -137,28 +242,28 @@ export default function DashboardAppPage() {
      
         <Grid container spacing={3}>
 
-
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title=" Total Net P&L " total={10000} color="secondary" icon={dollarLogo} />
+            <AppWidgetSummary title=" Total Net P&L " total= {sumPnL(Alltrades)}  icon ={'eva:pie-chart-outline'}/>
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Profit Factor" total={1352831} color="secondary" />
+            <AppWidgetSummary title="Profit Factor" total={ProfitFactor(Alltrades)} icon ={'eva:grid-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Average Winning Trade" total={1723315} color="secondary" />
+            <AppWidgetSummary title="Average Winning Trade" total={avgWinningTrades(Alltrades)} icon ={'eva:bar-chart-2-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Average Losing Trade" total={234} color="secondary" />
+            <AppWidgetSummary title="Average Losing Trade" total={ avgLosingTrades(Alltrades)}   icon ={'eva:bar-chart-outline'}  color="secondary" />
+           
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Daily Net Cumulative P&L"
+              title="Daily Net Cumulative Profit"
               subheader=""
-              chartLabels = { DailyNetCumulativeDate()}
+              chartLabels = { DailyNetCumulativeDateProfit()}
                
             
               chartData={[
@@ -167,8 +272,35 @@ export default function DashboardAppPage() {
                   name: '',
                   type: 'area',
                   fill: 'gradient',
-                  data: DailyNetCumulativePnl(),
+                  data: DailyNetCumulativePnlProfit(),
                   color: Colors.green
+
+                  
+                },
+            
+
+              ]}
+            />
+
+
+          </Grid>
+
+
+          <Grid item xs={12} md={6} lg={8}>
+            <AppWebsiteVisits
+              title="Daily Net Cumulative Loss"
+              subheader=""
+              chartLabels = { DailyNetCumulativeDateLoss()}
+               
+            
+              chartData={[
+
+                {
+                  name: '',
+                  type: 'area',
+                  fill: 'gradient',
+                  data: DailyNetCumulativePnlLoss(),
+                  color: Colors.red
 
                   
                 },
@@ -201,7 +333,7 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={7}>
     
-          <Calendar info = {calendarTrades}/>
+          <Calendar/>
           </Grid>
 
 
@@ -224,19 +356,7 @@ export default function DashboardAppPage() {
 
         
 
-          
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentSubject
-              title="Score"
-              chartLabels={['Win %', 'Avg win/loss', 'Profit Factor']}
-              chartData={[
-                { name: 'Series 1', data: [80, 50, 30] },
-
-
-              ]}
-              chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
-            />
-          </Grid>
+       
 
 
         </Grid>
@@ -244,3 +364,17 @@ export default function DashboardAppPage() {
     </>
   );
 }
+
+
+const totalPlRedColor = {
+
+  color: '#d16c71', // Replace with the desired text color
+
+};
+
+
+const totalPlColor = {
+
+  color: '#54a38d', // Replace with the desired text color
+
+};

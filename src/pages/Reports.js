@@ -288,14 +288,17 @@ export default function UserPage() {
                           <Label color={(trade.status === 'Loss' && 'error') || 'success'}>{sentenceCase(trade.status)}</Label>
                         </TableCell>
 
-                        <TableCell align="center">{trade.netROI ? trade.netROI + "%" : ""}</TableCell>
+
+
+                        <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "N/A"}</TableCell>
                         <TableCell align="center">{trade.longShort}</TableCell>
                         <TableCell align="center">{trade.contracts}</TableCell>
-                        <TableCell align="center">{trade.entryPrice ? trade.entryPrice + "$" : ""}</TableCell>
-                        <TableCell align="center">{trade.stopPrice ? trade.stopPrice + "$" : ""}</TableCell>
-                        <TableCell align="center">{trade.exitPrice ? trade.exitPrice + "$" : ""}</TableCell>
-                        <TableCell align="center">{trade.duration ? trade.duration + "Min" : ""}</TableCell>
-                        <TableCell align="center">{trade.commission ? trade.commission + "$" : ""}</TableCell>
+                        <TableCell align="center">{trade.entryPrice ? trade.entryPrice + "$" : "N/A"}</TableCell>
+                        <TableCell align="center">{trade.stopPrice ? trade.stopPrice + "$" : "N/A"}</TableCell>
+                        <TableCell align="center">{trade.exitPrice ? trade.exitPrice + "$" : "N/A"}</TableCell>
+                        <TableCell align="center">{trade.duration ? trade.duration + "Min" : "N/A"}</TableCell>
+                        <TableCell align="center">{trade.commission ? trade.commission + "$" : "N/A"}</TableCell>
+
                         <TableCell align="center">{trade.netPnL}$</TableCell>
                         <TableCell align="center"><IconButton size="large" color="inherit" >
                           <Iconify icon={'eva:image-outline'} />
@@ -330,15 +333,7 @@ export default function UserPage() {
                   }
                 </TableBody >
 
-                {/* {editTradeId && openmodal &&
-                  <AddTrade
-                    key={editTradeId}
-                    openModal={openmodal}
-                    handleOpenModal={setIsOpenmodal}
-                    tradeInfo={editTradeId}
-                    isEditMode={true}
-                  />
-                } */}
+              
 
                 {isNotFound && (
                   <TableBody>

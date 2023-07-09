@@ -1,78 +1,81 @@
 
 
 import { Calendar, Whisper, Popover, Badge } from 'rsuite';
-
+import { useState, useRef, useEffect } from 'react';
 import './styles.css';
 import './calendar.css';
+import api from '../../api/api';
 
-function getTodoList(info) {
-  
- console.log(info[1]); 
 
-  switch (6) {
-   
-    case 6:
-      return [
-        { numoftrades:  info[1]["trades"], title: 'trades', amount: '-550' },
-      
-      ];
-    default:
-      return [];
-  }
+
+function getTodoList(info, date) {
+  const filteredInfo = info.filter((item) => {
+    const itemDate = new Date(item._id); // Convert the _id to a Date object
+    return itemDate.getDate() === date.getDate(); // Check if the item date matches the provided date
+  });
+
+  return filteredInfo.map((item) => ({
+    numoftrades: item.trades,
+    title: 'trades',
+    amount: item.totalPnL,
+  }));
 }
 
-const CalendarComponent = (props) => {
- 
+const CalendarComponent = () => {
+  const [calendarTrades, setCalendarTrades] = useState([]);
+
+  useEffect(() => {
+    api.get('/api/ShowNumOfTradeTotalPnlInfoByDates')
+      .then((res) => {
+        setCalendarTrades(res.data);
+        console.log(res.data);
+      })
+      .catch();
+  }, []);
   function renderCell(date) {
-    const list = getTodoList(props.info);
+    const list = getTodoList(calendarTrades, date);
     const displayList = list.filter((item, index) => index < 2);
   
-    // Check if the date matches the desired day
-    const desiredDay =   props.info[1]["_id"].split('-')[2]%10; // Change this value to the desired day
-    const isDesiredDay = date.getDate() === desiredDay;
+    const desiredDays = calendarTrades
+      .filter((trade) => {
+        const tradeDate = new Date(trade._id); // Convert the _id to a Date object
+        const tradeMonth = tradeDate.getMonth();
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
   
-    if (isDesiredDay && list.length) {
-      const moreCount = list.length - displayList.length;
-      const moreItem = (
-        <li>
-          <Whisper
-            placement="top"
-            trigger="click"
-            speaker={
-              <Popover>
-                {list.map((item, index) => (
-                  <p key={index}>
-                    <b>{item.time}</b> - {item.title} 
-                  </p>
-                ))}
-              </Popover>
-            }
-          >
-            <a>{moreCount} more</a>
-          </Whisper>
-        </li>
-      );
+        // Filter trades from the current month and the previous month
+        return tradeMonth === date.getMonth() || tradeMonth === currentMonth - 1;
+      })
+      .map((trade) => parseInt(trade._id.split("-")[2] > 0 ? trade._id.split("-")[2] : trade._id.split("-")[2] % 10));
   
+    const isDesiredDay = desiredDays.includes(date.getDate());
+    const isCurrentMonth = date.getMonth() === new Date().getMonth();
+  
+    if (isDesiredDay && isCurrentMonth && list.length) {
       return (
-        <ul className="calendar-todo-list">
+        <div>
           {displayList.map((item, index) => (
-            <li key={index}>
-             <b>{item.numoftrades} {item.title}</b>  
-           <br/>
-              <b style={{color: "red"}}>{item.amount + '$'}</b>
-            </li>
-            
+            <div key={index}>
+              <b>
+                {item.numoftrades} {item.title}
+              </b>
+              <br />
+              {item.amount < 0 ? (
+                <b style={{ color: 'red' }}>-{Math.abs(item.amount)}$</b>
+              ) : item.amount > 0 ? (
+                <b style={{ color: 'green' }}>+{item.amount}$</b>
+              ) : (
+                <b style={{ color: 'blue' }}>{item.amount}$</b>
+              )}
+            </div>
           ))}
-          {moreCount ? moreItem : null}
-        </ul>
+        </div>
       );
     }
   
     return null;
   }
-  
-    return <Calendar bordered renderCell={renderCell} />;
-  };
-  
+  return <Calendar bordered renderCell={renderCell} />;
+};
 
-  export default CalendarComponent 
+export default CalendarComponent;
