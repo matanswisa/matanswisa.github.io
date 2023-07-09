@@ -157,6 +157,7 @@ export default function BasicModal(props) {
             .post('/api/addTrade', data).then((res) => {
               handleUpload(res.data.tradeId);
               notifyToast("Trade added successfully", "success");
+              props.updateTradeLists()
 
               const fetchTrades = async () => {
                 const result = await api.get('/api/fetchTrades');
@@ -165,7 +166,7 @@ export default function BasicModal(props) {
 
               fetchTrades().then((result) => {
 
-                dispatch(setTrades(result.data));
+                props.updateTradeLists()
               }).catch((error) => {
 
               });
@@ -178,6 +179,7 @@ export default function BasicModal(props) {
           await api.post('/api/editTrade', data)
             .then((response) => {
               notifyToast("Trade Edit succssfully", "success")
+              props.updateTradeLists()
             })
             .catch((error) => {
               notifyToast("Trade can't be updated", "error")
@@ -193,7 +195,15 @@ export default function BasicModal(props) {
 
   const validateForm = () => {
     if (positionType === '' || positionStatus === '' ||
-      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "") {
+      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "") {
+
+      if (positionType === '') notifyToast("Position type is missing", "warning");
+      else if (positionStatus === '') notifyToast("Position status is missing", "warning");
+      else if (!netPnL) notifyToast("Net PnL is missing", "warning");
+      else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
+      else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
+      else if (selectedFile === "") notifyToast("Trade image is missing", "warning");
+
       return false;
     }
     return true;
@@ -243,6 +253,9 @@ export default function BasicModal(props) {
 
   useEffect(() => {
     console.log(selectedFile);
+    if (selectedFile) {
+      notifyToast("Image successfully uploaded", "success");
+    }
   }, [selectedFile])
 
   return (

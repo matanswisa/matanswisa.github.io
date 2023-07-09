@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent } from '@mui/material';
 
-const ImageDialog = ({ open, handleClose, imageData }) => {
+const ImageDialog = ({ open, handleClose, imageData, tradeComments }) => {
     const [imageSrc, setImageSrc] = useState('');
 
     // Convert the image data to a data URL and set it as the image source
@@ -14,9 +14,12 @@ const ImageDialog = ({ open, handleClose, imageData }) => {
 
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="md">
-            <DialogTitle>Image</DialogTitle>
+            <DialogTitle>Trade details</DialogTitle>
             <DialogContent>
                 <img src={imageSrc} alt="Trade Image" style={{ maxWidth: '100%', maxHeight: '80vh' }} />
+                <h4>My comments:</h4>
+                <br />
+                <p>{tradeComments}</p>
             </DialogContent>
         </Dialog>
     );

@@ -128,10 +128,7 @@ const fetchTrades = async () => {
 
 export default function UserPage() {
 
-
-
   const showToast = useToast();
-
   const notifyToast = (Msg, Type) => {
     console.log(Msg, Type);
     showToast(Msg, Type);
@@ -152,10 +149,20 @@ export default function UserPage() {
   }
 
   const handleOpenModal = (tradeId) => {
-    // console.log("tradeId", tradeId);
     setIsOpenmodal(true);
   };
 
+
+  const fetchLeastTrades = () => {
+    fetchTrades().then((res) => {
+      if (res.data)
+        setTradesList(res.data);
+      dispatch(setTradesRedux(trades));
+
+    }).catch((err) => {
+      console.error(err);
+    })
+  }
 
   useEffect(() => {
 
@@ -173,17 +180,11 @@ export default function UserPage() {
 
 
   const [open, setOpen] = useState(null);
-
   const [page, setPage] = useState(0);
-
   const [order, setOrder] = useState('asc');
-
   const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('name');
-
   const [filterName, setFilterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
 
@@ -265,8 +266,9 @@ export default function UserPage() {
           <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Trade
           </Button>
-          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
+            updateTradeLists={fetchLeastTrades}
             key={editTradeId._id}
             openModal={openmodal}
             handleOpenModal={setIsOpenmodal}
@@ -402,7 +404,7 @@ export default function UserPage() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-        {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} />}
+        {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} tradeComments={editTradeId.comments} />}
 
 
       </Container >
