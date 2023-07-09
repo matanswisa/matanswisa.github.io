@@ -38,16 +38,17 @@ import api from '../api/api';
 
 
 export default function DailyStatsPage() {
-  const [trades,setTrades] = useState([]);
+  const [trades, setTrades] = useState([]);
   useEffect(() => {
     api.get("/api/getDailyStats").then(
-      (res)=>{setTrades(res.data)   
-      
+      (res) => {
+        setTrades(res.data)
+
       }
     ).catch()
-  },[])
- // const trades = useSelector(getTrades)
-  
+  }, [])
+  // const trades = useSelector(getTrades)
+
   console.log("tradesList using redux", trades);
   return (
     <>
@@ -57,20 +58,20 @@ export default function DailyStatsPage() {
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4" gutterBottom>
+          <Typography variant="h4" gutterBottom>
             <h1>List of trades</h1>
-            
-            {trades !== undefined && trades.map((trade) => {
-          return <DailyStatsCard trade = {trade}/>
-                  })}
 
-      
+            {trades !== undefined && trades.map((trade) => {
+              return <DailyStatsCard trade={trade} />
+            })}
+
+
             Daily Stats
           </Typography>
 
-         
+
         </Stack>
-      
+
       </Container>
     </>
   );

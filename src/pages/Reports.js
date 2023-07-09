@@ -7,6 +7,7 @@ import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-
 import useToast from '../hooks/alert';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 // @mui
 import {
   Card,
@@ -54,6 +55,7 @@ import USERLIST from '../_mock/user';
 import api from '../api/api';
 import { Colors } from '../components/color-utils/Colors'
 import AddTrade from '../components/addTrade/addTradeFormModal';
+import ImageModal from '../components/ImageModal/ImageModal';
 // ----------------------------------------------------------------------
 
 
@@ -227,6 +229,27 @@ export default function UserPage() {
   const [editTradeId, setEditTradeId] = useState(null);
   const [editMode, setEditMode] = useState(false);
 
+
+  //Image modal related code 
+
+
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [imageData, setImageData] = useState('');
+
+  // Function to handle opening the dialog and setting the image data
+  const handleOpenDialog = (imageData) => {
+    setImageModalOpen(true);
+    setImageData(imageData);
+  };
+
+  // Function to handle closing the dialog
+  const handleCloseDialog = () => {
+    setImageModalOpen(false);
+    setImageData('');
+  };
+
+
+
   return (
     <>
       <Helmet>
@@ -270,71 +293,80 @@ export default function UserPage() {
                 <TableBody>
                   {trades.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((trade, indx) => {
                     return (
-                      <TableRow onMouseEnter={() => { setEditTradeId(trade) }} hover key={trade._id} tabIndex={-1} role="checkbox" selected={trade}>
-
+                      <TableRow
+                        onMouseEnter={() => { setEditTradeId(trade) }}
+                        hover
+                        key={trade._id}
+                        tabIndex={-1}
+                        role="checkbox"
+                        selected={trade}
+                      >
                         <TableCell>
                           { }
                         </TableCell>
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-
                             {new Date(trade.entryDate).toString().substring(0, 24)}
-
                           </Stack>
                         </TableCell>
                         <TableCell align="center">{trade.symbol}</TableCell>
-
                         <TableCell align="center">
-                          <Label color={(trade.status === 'Loss' && 'error') || 'success'}>{sentenceCase(trade.status)}</Label>
+                          <Label color={(trade.status === 'Loss' && 'error') || 'success'}>
+                            {sentenceCase(trade.status)}
+                          </Label>
                         </TableCell>
-
-
-
                         <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "N/A"}</TableCell>
                         <TableCell align="center">{trade.longShort}</TableCell>
                         <TableCell align="center">{trade.contracts}</TableCell>
-                        <TableCell align="center">{trade.entryPrice ? trade.entryPrice + "$" : "N/A"}</TableCell>
-                        <TableCell align="center">{trade.stopPrice ? trade.stopPrice + "$" : "N/A"}</TableCell>
-                        <TableCell align="center">{trade.exitPrice ? trade.exitPrice + "$" : "N/A"}</TableCell>
-                        <TableCell align="center">{trade.duration ? trade.duration + "Min" : "N/A"}</TableCell>
-                        <TableCell align="center">{trade.commission ? trade.commission + "$" : "N/A"}</TableCell>
-
+                        <TableCell align="center">
+                          {trade.entryPrice ? trade.entryPrice + "$" : "N/A"}
+                        </TableCell>
+                        <TableCell align="center">
+                          {trade.stopPrice ? trade.stopPrice + "$" : "N/A"}
+                        </TableCell>
+                        <TableCell align="center">
+                          {trade.exitPrice ? trade.exitPrice + "$" : "N/A"}
+                        </TableCell>
+                        <TableCell align="center">
+                          {trade.duration ? trade.duration + "Min" : "N/A"}
+                        </TableCell>
+                        <TableCell align="center">
+                          {trade.commission ? trade.commission + "$" : "N/A"}
+                        </TableCell>
                         <TableCell align="center">{trade.netPnL}$</TableCell>
-                        <TableCell align="center"><IconButton size="large" color="inherit" >
-                          <Iconify icon={'eva:image-outline'} />
-                        </IconButton>{trade.image}</TableCell>
-
+                        <TableCell align="center">
+                          <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true) }}>
+                            <Iconify icon={'eva:image-outline'} />
+                          </IconButton>
+                        </TableCell>
                         <TableCell align="right">
-                          <button onClick={() => {
-                            setEditMode(true);
-                            setIsOpenmodal(true);
-                            setEditTradeId(trade);
-                          }}>
+                          <button
+                            onClick={() => {
+                              setEditMode(true);
+                              setIsOpenmodal(true);
+                              setEditTradeId(trade);
+                            }}
+                          >
                             Edit
                           </button>
                         </TableCell>
                         <TableCell align="right">
                           <button onClick={() => {
-                            deleteTrade(editTradeId._id)
+                            deleteTrade(editTradeId._id);
                           }}>
                             Delete
                           </button>
                         </TableCell>
                         <TableCell align="center">{trade.comments}</TableCell>
-                      </TableRow >
+                      </TableRow>
                     );
                   })}
-                  {
-                    emptyRows > 0 && (
-                      <TableRow style={{ height: 53 * emptyRows }}>
-                        <TableCell colSpan={6} />
-                      </TableRow>
-                    )
-                  }
-                </TableBody >
-
-              
-
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                </TableBody>
                 {isNotFound && (
                   <TableBody>
                     <TableRow>
@@ -347,7 +379,6 @@ export default function UserPage() {
                           <Typography variant="h6" paragraph>
                             Not found
                           </Typography>
-
                           <Typography variant="body2">
                             No results found for &nbsp;
                             <strong>&quot;{filterName}&quot;</strong>.
@@ -358,10 +389,9 @@ export default function UserPage() {
                     </TableRow>
                   </TableBody>
                 )}
-              </Table >
-            </TableContainer >
-          </Scrollbar >
-
+              </Table>
+            </TableContainer>
+          </Scrollbar>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -371,7 +401,10 @@ export default function UserPage() {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-        </Card >
+        </Card>
+        {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} />}
+
+
       </Container >
 
       <Typography variant="h4" >

@@ -53,6 +53,7 @@
     "lodash": "^4.17.21",
     "mdb-react-ui-kit": "^6.1.0",
     "numeral": "^2.0.6",
+    "primeflex": "^3.3.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",
