@@ -7,6 +7,7 @@ const router = Router();
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import fs from 'fs';
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = dirname(currentFilePath);
@@ -41,29 +42,30 @@ router.post("/addTrade", async (req, res) => {
 });
 
 
-router.post("/editTrade", async (req, res) => {
-  try {
-    const data = req.body;
-    console.log(data);
-    const result = await Trade.findByIdAndUpdate(data.tradeId, { data });
-    res.status(200).send(`Trade ${result._id} added succefully`);
-
-  } catch (err) {
-    console.err(err);
-    res.status(500).send('Error when adding a trade');
-  }
-});
-
-
 router.get('/fetchTrades', async (req, res) => {
   try {
     const trades = await Trade.find({});
-    res.status(200).json(trades);
+
+    // Read the image file for each trade and include it in the response
+    const tradesWithImage = await Promise.all(trades.map(async (trade) => {
+      if (!trade.image) return
+      const imageBuffer = await fs.promises.readFile(trade.image);
+      const imageBase64 = imageBuffer.toString('base64');
+
+      return {
+        ...trade.toJSON(),
+        image: imageBase64,
+      };
+    }));
+
+    res.status(200).json(tradesWithImage);
   } catch (err) {
-    console.err(err);
+    console.error(err);
     res.status(500).send(err);
   }
 });
+
+
 
 router.delete('/deleteTrade', async (req, res) => {
   try {
@@ -94,12 +96,24 @@ router.get('/getDailyStats', async (req, res) => {
       { $sort: { _id: -1 } }, // Sort by descending entryDate
     ]);
 
+    // Iterate through the trades and read the image file to include the image data in the response
+    for (const tradeGroup of tradesByDate) {
+      for (const trade of tradeGroup.trades) {
+        if (trade.image) {
+          const imageData = fs.readFileSync(trade.image, 'base64');
+          trade.image = imageData;
+        }
+      }
+    }
+
     res.json(tradesByDate);
   } catch (error) {
     console.error('Error fetching trades:', error);
     res.status(500).json({ error: 'An error occurred' });
   }
 });
+
+
 
 
 
@@ -200,4 +214,4 @@ router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
 
 
 
-export default router;
+export default router;
