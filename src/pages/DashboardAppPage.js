@@ -79,6 +79,10 @@ const ProfitFactor = (trades) => {
       SumLoss += trade.netPnL;
     }
   });
+ 
+  if( SumWin == 0  || SumLoss == 0)return 0;
+
+
   return SumWin/SumLoss < 0 ? SumWin/SumLoss*-1: SumWin/SumLoss;
 
 }
