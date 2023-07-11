@@ -65,6 +65,18 @@ router.get('/fetchTrades', async (req, res) => {
   }
 });
 
+router.post("/editTrade", async (req, res) => {
+  try {
+    const data = req.body;
+    console.log(data);
+    const result = await Trade.findOneAndUpdate({ _id: data.tradeId }, data);
+    res.status(200).send(`Trade ${result._id} added succefully`);
+
+  } catch (err) {
+    console.err(err);
+    res.status(500).send('Error when adding a trade');
+  }
+});
 
 
 router.delete('/deleteTrade', async (req, res) => {
