@@ -186,6 +186,30 @@ router.get('/ShowInfoByDates', async (req, res) => {
 });
 
 
+router.get('/DailyStatsInfo', async (req, res) => {
+  try {
+    const tradesByDate = await Trade.aggregate([
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
+          loss: { $sum: { $cond: [{ $eq: ['$status', 'Loss'] }, 1, 0] } },
+          win: { $sum: { $cond: [{ $eq: ['$status', 'Win'] }, 1, 0] } },
+          numberOfTrades: { $sum: 1 }, // Calculate the total number of trades
+          totalPnL: { $sum: '$netPnL' },
+        },
+      },
+      { $sort: { _id: -1 } }, // Sort by descending entryDate
+    ]);
+
+    res.json(tradesByDate);
+    console.log(tradesByDate);
+  } catch (error) {
+    console.error('Error fetching trades:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+
 
 router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
   console.log(req.body)
