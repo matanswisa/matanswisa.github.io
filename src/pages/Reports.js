@@ -232,8 +232,6 @@ export default function UserPage() {
 
 
   //Image modal related code 
-
-
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [imageData, setImageData] = useState('');
 
@@ -266,9 +264,9 @@ export default function UserPage() {
           <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Trade
           </Button>
-          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={setTradesList} />}
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
-            updateTradeLists={fetchLeastTrades}
+            updateTradeLists={setTradesList}
             key={editTradeId._id}
             openModal={openmodal}
             handleOpenModal={setIsOpenmodal}
