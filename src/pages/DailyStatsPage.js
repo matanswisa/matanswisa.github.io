@@ -28,8 +28,7 @@ import {
   DataGrid
 } from '@mui/material';
 
-import DailyStatsCard from '../components/DailyStatsCard/DailyStatsCard'
-
+import Diveder from '../components/Divider/Diveder';
 // components
 
 import Iconify from '../components/iconify';
@@ -37,19 +36,32 @@ import api from '../api/api';
 
 
 
+
+
+
+
+
+
+
+
 export default function DailyStatsPage() {
+
   const [trades, setTrades] = useState([]);
   useEffect(() => {
-    api.get("/api/getDailyStats").then(
-      (res) => {
-        setTrades(res.data)
-
-      }
+    api.get("/api/DailyStatsInfo").then(
+      (res)=>{setTrades(res.data)   
+     
+      
+     
+        }
     ).catch()
-  }, [])
-  // const trades = useSelector(getTrades)
+  },[])
+  
+  
+  
 
-  console.log("tradesList using redux", trades);
+
+  
   return (
     <>
       <Helmet>
@@ -62,7 +74,7 @@ export default function DailyStatsPage() {
             <h1>List of trades</h1>
 
             {trades !== undefined && trades.map((trade) => {
-              return <DailyStatsCard trade={trade} />
+              return <Diveder trade={trade} />
             })}
 
 
