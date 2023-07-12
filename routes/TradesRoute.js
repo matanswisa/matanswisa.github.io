@@ -48,7 +48,8 @@ router.get('/fetchTrades', async (req, res) => {
 
     // Read the image file for each trade and include it in the response
     const tradesWithImage = await Promise.all(trades.map(async (trade) => {
-      if (!trade.image) return
+      console.log(trade);
+      if (!trade.image) return trade.toJSON();
       const imageBuffer = await fs.promises.readFile(trade.image);
       const imageBase64 = imageBuffer.toString('base64');
 
@@ -138,13 +139,13 @@ router.get('/WinAndLossTotalTime', async (req, res) => {
         },
       },
     ]);
-    
+
     const updatedTradeStats = {
       lossCount: tradeStats[0].lossCount,
       winCount: tradeStats[0].winCount,
       breakEvenCount: tradeStats[0].breakEvenCount
     };
-    
+
     res.json(updatedTradeStats);
   } catch (error) {
     res.status(500).json({ error: 'An error occurred' });
