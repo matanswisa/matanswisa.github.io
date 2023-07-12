@@ -199,7 +199,6 @@ router.get('/ShowInfoByDates', async (req, res) => {
   }
 });
 
-
 router.get('/DailyStatsInfo', async (req, res) => {
   try {
     const tradesByDate = await Trade.aggregate([
@@ -211,6 +210,8 @@ router.get('/DailyStatsInfo', async (req, res) => {
           numberOfTrades: { $sum: 1 }, // Calculate the total number of trades
           totalPnL: { $sum: '$netPnL' },
           Commission: { $sum: '$commission' }, // Add the Commission field and calculate the sum of commission
+          totalWin: { $sum: { $cond: [{ $gt: ['$netPnL', 0] }, '$netPnL', 0] } }, // Calculate the sum of netPnL when above zero
+          totalLoss: { $sum: { $cond: [{ $gt: ['$netPnL', 0] }, 0, '$netPnL'] } }, // Calculate the sum of netPnL when below or equal to zero
         },
       },
       { $sort: { _id: -1 } }, // Sort by descending entryDate
