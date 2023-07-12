@@ -155,8 +155,11 @@ export default function BasicModal(props) {
         if (!editMode) {
           await api
             .post('/api/addTrade', data).then((res) => {
-              handleUpload(res.data.tradeId);
-              notifyToast("Trade added successfully", "success");
+              if (selectedFile !== null) {
+                handleUpload(res.data.tradeId);
+                notifyToast("Trade added successfully", "success");
+              }
+
               props.updateTradeLists()
 
               const fetchTrades = async () => {
@@ -165,7 +168,6 @@ export default function BasicModal(props) {
               }
 
               fetchTrades().then((result) => {
-
                 props.updateTradeLists()
               }).catch((error) => {
 
@@ -195,7 +197,8 @@ export default function BasicModal(props) {
 
   const validateForm = () => {
     if (positionType === '' || positionStatus === '' ||
-      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "") {
+      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
+      console.log(positionDate)
 
       if (positionType === '') notifyToast("Position type is missing", "warning");
       else if (positionStatus === '') notifyToast("Position status is missing", "warning");
@@ -203,6 +206,7 @@ export default function BasicModal(props) {
       else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
       else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
       else if (selectedFile === "") notifyToast("Trade image is missing", "warning");
+      else if (!positionDate) notifyToast("Date field is missing", "warning");
 
       return false;
     }

@@ -84,7 +84,9 @@ const TABLE_HEAD = [
 const sumPnL = (trades) => {
   let sum = 0;
   trades.forEach((trade) => {
-    sum += trade.netPnL
+    if (trade && trade?.netPnL !== null) {
+      sum += trade.netPnL
+    }
   });
   return sum;
 }
@@ -157,8 +159,6 @@ export default function UserPage() {
     fetchTrades().then((res) => {
       if (res.data)
         setTradesList(res.data);
-      dispatch(setTradesRedux(trades));
-
     }).catch((err) => {
       console.error(err);
     })
@@ -313,7 +313,7 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="center">{trade.symbol}</TableCell>
                         <TableCell align="center">
-                          <Label color={(trade.status === 'Loss' && 'error') || 'success'}>
+                          <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
                             {sentenceCase(trade.status)}
                           </Label>
                         </TableCell>
