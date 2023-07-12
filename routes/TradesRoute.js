@@ -126,9 +126,6 @@ router.get('/getDailyStats', async (req, res) => {
 });
 
 
-
-
-
 router.get('/WinAndLossTotalTime', async (req, res) => {
   try {
     const tradeStats = await Trade.aggregate([
@@ -137,20 +134,24 @@ router.get('/WinAndLossTotalTime', async (req, res) => {
           _id: null,
           lossCount: { $sum: { $cond: [{ $eq: ['$status', 'Loss'] }, 1, 0] } },
           winCount: { $sum: { $cond: [{ $eq: ['$status', 'Win'] }, 1, 0] } },
+          breakEvenCount: { $sum: { $cond: [{ $eq: ['$netPnL', 0] }, 1, 0] } }
         },
       },
     ]);
-
-    // Extract the counts from the first element of the array (since we only have one result)
-    const { lossCount, winCount } = tradeStats[0];
-
-    res.json({ lossCount, winCount });
-    console.log({ lossCount, winCount });
+    
+    const updatedTradeStats = {
+      lossCount: tradeStats[0].lossCount,
+      winCount: tradeStats[0].winCount,
+      breakEvenCount: tradeStats[0].breakEvenCount
+    };
+    
+    res.json(updatedTradeStats);
   } catch (error) {
-    console.error('Error fetching trade stats:', error);
     res.status(500).json({ error: 'An error occurred' });
   }
 });
+
+
 
 
 router.get('/ShowNumOfTradeTotalPnlInfoByDates', async (req, res) => {
