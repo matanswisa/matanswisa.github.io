@@ -209,6 +209,7 @@ router.get('/DailyStatsInfo', async (req, res) => {
           win: { $sum: { $cond: [{ $eq: ['$status', 'Win'] }, 1, 0] } },
           numberOfTrades: { $sum: 1 }, // Calculate the total number of trades
           totalPnL: { $sum: '$netPnL' },
+          Commission: { $sum: '$commission' }, // Add the Commission field and calculate the sum of commission
         },
       },
       { $sort: { _id: -1 } }, // Sort by descending entryDate
@@ -221,7 +222,6 @@ router.get('/DailyStatsInfo', async (req, res) => {
     res.status(500).json({ error: 'An error occurred' });
   }
 });
-
 
 
 router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
