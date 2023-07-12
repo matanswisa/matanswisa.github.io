@@ -99,6 +99,7 @@ export default function DashboardAppPage() {
 
   const [losingTrades, setLosingTrades] = useState(0);
   const [winningTrades, setWinningTrades] = useState(0);
+  const [breakEvenTrades, setbreakEvenTrades] = useState(0);
 
 
   const [losingTradesInDays, setLosingTradesInDays] = useState(0);
@@ -158,7 +159,7 @@ export default function DashboardAppPage() {
         LossTrades.push(trade.totalPnL);
       }
     });
-    console.log(LossTrades);
+   
     return LossTrades;
   }
 
@@ -173,10 +174,14 @@ export default function DashboardAppPage() {
     api.get("/api/WinAndLossTotalTime").then(
       (res) => {
         setTrades(res.data)
-
+        console.log(res.data);
         for (const index in res.data) {
           if (index === "lossCount") {
             setLosingTrades(res.data["lossCount"]);
+          }
+          else if(index === "breakEvenCount"){
+
+            setbreakEvenTrades(res.data["breakEvenCount"]);
           }
           else {
             setWinningTrades(res.data["winCount"]);
@@ -322,6 +327,7 @@ export default function DashboardAppPage() {
               chartData={[
                 { label: 'Winners', value: winningTrades },
                 { label: 'Lossers', value: losingTrades },
+                { label: 'Break Even', value: breakEvenTrades },
 
               ]}
               chartColors={[

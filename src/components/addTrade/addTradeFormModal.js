@@ -377,7 +377,7 @@ export default function BasicModal(props) {
                   </MenuItem>
                   <MenuItem value={'Win'}>Win</MenuItem>
                   <MenuItem value={'Loss'}>Loss</MenuItem>
-                  <MenuItem value={'Break Even'}>Break Even</MenuItem>
+                  <MenuItem value={'BreakEven'}>Break Even</MenuItem>
                 </Select>
               </FormControl>
             </Item>
