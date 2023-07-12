@@ -33,7 +33,7 @@ import { Colors } from '../components/color-utils/Colors';
 const sumPnL = (trades) => {
   let sum = 0;
   trades.forEach((trade) => {
-    sum += trade.netPnL
+    if (trade !== null && trade?.netPnL !== null) sum += trade.netPnL
   });
   return sum;
 }
@@ -42,12 +42,12 @@ const avgLosingTrades = (trades) => {
   let sum = 0;
   let countTrades = 0;
   trades.forEach((trade) => {
-    if(trade.netPnL < 0){
-        sum += trade.netPnL;
-        countTrades++;
+    if (trade && trade?.netPnL < 0) {
+      sum += trade.netPnL;
+      countTrades++;
     }
   });
-  return sum/countTrades;
+  return sum / countTrades;
 
 }
 
@@ -57,33 +57,33 @@ const avgWinningTrades = (trades) => {
   let sum = 0;
   let countTrades = 0;
   trades.forEach((trade) => {
-    if(trade.netPnL > 0){
-        sum += trade.netPnL;
-        countTrades++;
+    if (trade && trade.netPnL > 0) {
+      sum += trade.netPnL;
+      countTrades++;
     }
   });
-  return sum/countTrades;
+  return sum / countTrades;
 
 }
 
 
 const ProfitFactor = (trades) => {
   let SumWin = 0;
-  let SumLoss= 0;
+  let SumLoss = 0;
   trades.forEach((trade) => {
-    if(trade.netPnL > 0){
+    if (trade && trade?.netPnL > 0) {
       SumWin += trade.netPnL;
-      
+
     }
-    else{
+    else if (trade && trade?.netPnL < 0) {
       SumLoss += trade.netPnL;
     }
   });
- 
-  if( SumWin == 0  || SumLoss == 0)return 0;
+
+  if (SumWin == 0 || SumLoss == 0) return 0;
 
 
-  return SumWin/SumLoss < 0 ? SumWin/SumLoss*-1: SumWin/SumLoss;
+  return SumWin / SumLoss < 0 ? SumWin / SumLoss * -1 : SumWin / SumLoss;
 
 }
 
@@ -92,147 +92,153 @@ const ProfitFactor = (trades) => {
 export default function DashboardAppPage() {
 
 
-  
+
   const Alltrades = useSelector(getTrades)
 
   const theme = useTheme();
 
-  const [losingTrades,setLosingTrades] = useState(0);
-  const [winningTrades,setWinningTrades] = useState(0);
+  const [losingTrades, setLosingTrades] = useState(0);
+  const [winningTrades, setWinningTrades] = useState(0);
+  const [breakEvenTrades, setbreakEvenTrades] = useState(0);
 
 
-  const [losingTradesInDays,setLosingTradesInDays] = useState(0);
-  const [winningTradesInDays,setWinningTradesInDays] = useState(0);
+  const [losingTradesInDays, setLosingTradesInDays] = useState(0);
+  const [winningTradesInDays, setWinningTradesInDays] = useState(0);
 
 
-  const [calendarTrades,setCalendarTrades] = useState([]);
+  const [calendarTrades, setCalendarTrades] = useState([]);
 
 
 
 
-  const DailyNetCumulativeDateProfit = () =>
-  {
+  const DailyNetCumulativeDateProfit = () => {
     const WinTradesDates = [];
-  
+
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL > 0) {
         WinTradesDates.push(trade._id);
       }
     });
-   return WinTradesDates;
+    return WinTradesDates;
   }
 
 
-  const DailyNetCumulativeDateLoss = () =>
-  {
+  const DailyNetCumulativeDateLoss = () => {
     const WinTradesDates = [];
-  
+
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL < 0) {
         WinTradesDates.push(trade._id);
       }
     });
-   return WinTradesDates;
+    return WinTradesDates;
   }
 
 
 
   const DailyNetCumulativePnlProfit = () => {
     const WinTrades = [];
-  
+
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL > 0) {
         WinTrades.push(trade.totalPnL);
       }
     });
-   
+
     return WinTrades;
   }
 
 
-  
+
 
   const DailyNetCumulativePnlLoss = () => {
     const LossTrades = [];
-  
+
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL < 0) {
         LossTrades.push(trade.totalPnL);
       }
     });
-console.log(LossTrades);
+   
     return LossTrades;
   }
-  
-  
-  const [trades,setTrades] = useState([]);
 
 
-  const [dailyNetCumulative,setDailyNetCumulative] = useState([]);
+  const [trades, setTrades] = useState([]);
+
+
+  const [dailyNetCumulative, setDailyNetCumulative] = useState([]);
 
 
   useEffect(() => {
     api.get("/api/WinAndLossTotalTime").then(
-      (res)=>{setTrades(res.data)   
-       
+      (res) => {
+        setTrades(res.data)
+        
         for (const index in res.data) {
-           if (index === "lossCount"){
+          if (index === "lossCount") {
             setLosingTrades(res.data["lossCount"]);
-           }
-           else{
+          }
+          else if(index === "breakEvenCount"){
+
+            setbreakEvenTrades(res.data["breakEvenCount"]);
+          }
+          else {
             setWinningTrades(res.data["winCount"]);
-           }
+          }
 
         }
-        }
+      }
     ).catch()
-  },[]) 
+  }, [])
 
 
- 
+
   useEffect(() => {
     api.get("/api/ShowInfoByDates").then(
-      (res)=>{setDailyNetCumulative(res.data)   
-     
+      (res) => {
+        setDailyNetCumulative(res.data)
+
         for (const index in res.data) {
 
-          if(res.data[index]["totalPnL"] < 0){  //when in some day we have a lose day(P&L < 0) inc variable  
-            setLosingTradesInDays(prevState => prevState + 1);  
+          if (res.data[index]["totalPnL"] < 0) {  //when in some day we have a lose day(P&L < 0) inc variable  
+            setLosingTradesInDays(prevState => prevState + 1);
           }
-   
-          else{ //when in some day we have a win day(P&L > 0) inc variable  
+
+          else { //when in some day we have a win day(P&L > 0) inc variable  
             setWinningTradesInDays(prevState => prevState + 1);
           }
-           
-  
-       }
-     
+
+
         }
+
+      }
     ).catch()
-  },[])
+  }, [])
 
 
 
- 
+
   useEffect(() => {
     api.get("/api/ShowNumOfTradeTotalPnlInfoByDates").then(
-      (res)=>{setCalendarTrades(res.data)   
-     
-       
-     
-        }
+      (res) => {
+        setCalendarTrades(res.data)
+
+
+
+      }
     ).catch()
-  },[])
+  }, [])
 
 
 
-  
-  
-  
+
+
+
   return (
     <>
 
-    
+
       <Helmet>
         <title> Dashboard </title>
       </Helmet>
@@ -243,33 +249,33 @@ console.log(LossTrades);
         </Typography>
 
 
-     
+
         <Grid container spacing={3}>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title=" Total Net P&L " total= {sumPnL(Alltrades)}  icon ={'eva:pie-chart-outline'}/>
+            <AppWidgetSummary title=" Total Net P&L " total={sumPnL(Alltrades)} icon={'eva:pie-chart-outline'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Profit Factor" total={ProfitFactor(Alltrades)} icon ={'eva:grid-outline'} color="secondary" />
+            <AppWidgetSummary title="Profit Factor" total={ProfitFactor(Alltrades)} icon={'eva:grid-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Average Winning Trade" total={avgWinningTrades(Alltrades)} icon ={'eva:bar-chart-2-outline'} color="secondary" />
+            <AppWidgetSummary title="Average Winning Trade" total={avgWinningTrades(Alltrades)} icon={'eva:bar-chart-2-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Average Losing Trade" total={ avgLosingTrades(Alltrades)}   icon ={'eva:bar-chart-outline'}  color="secondary" />
-           
+            <AppWidgetSummary title="Average Losing Trade" total={avgLosingTrades(Alltrades)} icon={'eva:bar-chart-outline'} color="secondary" />
+
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Daily Net Cumulative Profit"
               subheader=""
-              chartLabels = { DailyNetCumulativeDateProfit()}
-               
-            
+              chartLabels={DailyNetCumulativeDateProfit()}
+
+
               chartData={[
 
                 {
@@ -279,9 +285,9 @@ console.log(LossTrades);
                   data: DailyNetCumulativePnlProfit(),
                   color: Colors.green
 
-                  
+
                 },
-            
+
 
               ]}
             />
@@ -294,9 +300,9 @@ console.log(LossTrades);
             <AppWebsiteVisits
               title="Daily Net Cumulative Loss"
               subheader=""
-              chartLabels = { DailyNetCumulativeDateLoss()}
-               
-            
+              chartLabels={DailyNetCumulativeDateLoss()}
+
+
               chartData={[
 
                 {
@@ -306,7 +312,7 @@ console.log(LossTrades);
                   data: DailyNetCumulativePnlLoss(),
                   color: Colors.red
 
-                  
+
                 },
 
               ]}
@@ -321,6 +327,7 @@ console.log(LossTrades);
               chartData={[
                 { label: 'Winners', value: winningTrades },
                 { label: 'Lossers', value: losingTrades },
+                { label: 'Break Even', value: breakEvenTrades },
 
               ]}
               chartColors={[
@@ -336,8 +343,8 @@ console.log(LossTrades);
 
 
           <Grid item xs={12} md={6} lg={7}>
-    
-          <Calendar/>
+
+            <Calendar />
           </Grid>
 
 
@@ -346,7 +353,7 @@ console.log(LossTrades);
             <AppCurrentVisits
               title="Winning % By Days"
               chartData={[
-                { label: 'Winners', value: winningTradesInDays},
+                { label: 'Winners', value: winningTradesInDays },
                 { label: 'Lossers', value: losingTradesInDays },
               ]}
               chartColors={[
@@ -358,9 +365,9 @@ console.log(LossTrades);
 
           </Grid>
 
-        
 
-       
+
+
 
 
         </Grid>
