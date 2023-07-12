@@ -174,7 +174,7 @@ export default function DashboardAppPage() {
     api.get("/api/WinAndLossTotalTime").then(
       (res) => {
         setTrades(res.data)
-        console.log(res.data);
+        
         for (const index in res.data) {
           if (index === "lossCount") {
             setLosingTrades(res.data["lossCount"]);
