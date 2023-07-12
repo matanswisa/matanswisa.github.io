@@ -35,15 +35,6 @@ import Iconify from '../components/iconify';
 import api from '../api/api';
 
 
-
-
-
-
-
-
-
-
-
 export default function DailyStatsPage() {
 
   const [trades, setTrades] = useState([]);
@@ -57,11 +48,7 @@ export default function DailyStatsPage() {
     ).catch()
   },[])
   
-  
-  
 
-
-  
   return (
     <>
       <Helmet>
@@ -71,8 +58,7 @@ export default function DailyStatsPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            <h1>List of trades</h1>
-
+           
             {trades !== undefined && trades.map((trade) => {
               return <Diveder trade={trade} />
             })}
