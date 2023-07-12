@@ -7,22 +7,21 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
-import Alert from '@mui/material/Alert';
+
 import Grid from '@mui/material/Grid';
 import { useEffect, useState, useReducer } from 'react';
 // @mui
 import {
-
   Paper,
-
   Button,
-
   IconButton,
-
   TextField,
+  Input,
 } from '@mui/material';
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
+import { setTrades } from '../../redux-toolkit/tradesSlice';
+import './addTrade.css';
 
 const style = {
   position: 'absolute',
@@ -50,11 +49,14 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function BasicModal(props) {
 
-  const [alert, setAlert] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("");
+
+  console.log("props.tradeInfo=", props.tradeInfo);
 
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
+
+  const { notifyToast } = props;
+
   const tradeInfo = props?.tradeInfo;
 
   const editMode = props?.isEditMode;
@@ -118,84 +120,143 @@ export default function BasicModal(props) {
   }
 
 
+
   useEffect(() => {
     handleOpen();
+
+    return () => {
+      if (editMode)
+        props?.handleEditTradeLeavePanel(null);
+    }
+
   }, []);
 
   const handleSaveTrade = async () => {
-    console.log('WHAT INSIDE?', { positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol });
-    if (validateForm()) {
-      console.log("form is validate");
-
-      if (!editMode) {
-        await api
-          .post('/api/addTrade', {
-            entryDate: positionDate,
-            symbol: positionSymbol,
-            status: positionStatus,
-            netROI,
-            stopPrice,
-            longShort: positionType,
-            contracts: contractsCounts,
-            entryPrice,
-            exitPrice,
-            duration: positionDuration,
-            commission: positionCommision,
-            comments,
-            netPnL,
-            // Include other form data here
-          })
-        alert('Add new trade');
-      }
-      else if (editMode === true) {
-        console.log('inside edit trade!', tradeInfo?._id);
-        await api.post('/api/editTrade', {
-          entryDate: positionDate,
-          symbol: positionSymbol,
-          status: positionStatus,
-          netROI,
-          stopPrice,
-          longShort: positionType,
-          contracts: contractsCounts,
-          entryPrice,
-          exitPrice,
-          duration: positionDuration,
-          commission: positionCommision,
-          comments,
-          netPnL,
-          tradeId: tradeInfo?.trade._id || '',
-          // Include other form data here
-        })
-          .then((response) => {
-            // Handle the response from the server
-
-            console.log("result is success");
-            setAlert(true);
-            setAlertMsg("Trade edit succssfully");
-          })
-          .catch((error) => {
-            // Handle the error
-            setAlert(false);
-            setAlertMsg("failed to edit Trade");
-
-          });
-        alert('Update trade!')
-      }
-
-    } else {
-      console.log('Please fill in all the fields');
+    const data = {
+      entryDate: positionDate,
+      symbol: positionSymbol,
+      status: positionStatus,
+      netROI,
+      stopPrice,
+      longShort: positionType,
+      contracts: contractsCounts,
+      entryPrice,
+      exitPrice,
+      duration: positionDuration,
+      commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
+      comments,
+      netPnL: positionStatus === "Loss" ? netPnL * -1 : netPnL,
+      tradeId: tradeInfo?._id || '',
     }
-  };
 
+    if (validateForm()) {
+
+      if (validateForm()) {
+        if (!editMode) {
+          await api
+            .post('/api/addTrade', data).then((res) => {
+              handleUpload(res.data.tradeId);
+              notifyToast("Trade added successfully", "success");
+              props.updateTradeLists()
+
+              const fetchTrades = async () => {
+                const result = await api.get('/api/fetchTrades');
+                return result;
+              }
+
+              fetchTrades().then((result) => {
+
+                props.updateTradeLists()
+              }).catch((error) => {
+
+              });
+            }).catch((err) => {
+              notifyToast("Couldn't add trade", "error");
+            })
+        }
+        else if (editMode === true) {
+          console.log('inside edit trade!', tradeInfo?._id);
+          await api.post('/api/editTrade', data)
+            .then((response) => {
+              notifyToast("Trade Edit succssfully", "success")
+              props.updateTradeLists()
+            })
+            .catch((error) => {
+              notifyToast("Trade can't be updated", "error")
+            });
+
+        }
+
+      } else {
+        console.log('Please fill in all the fields');
+      }
+    };
+  }
 
   const validateForm = () => {
-    if (comments === '' || positionType === '' || positionStatus === '' || entryPrice <= 0 || exitPrice <= 0 || positionDuration === '' ||
-      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || stopPrice <= 0) {
+    if (positionType === '' || positionStatus === '' ||
+      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "") {
+
+      if (positionType === '') notifyToast("Position type is missing", "warning");
+      else if (positionStatus === '') notifyToast("Position status is missing", "warning");
+      else if (!netPnL) notifyToast("Net PnL is missing", "warning");
+      else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
+      else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
+      else if (selectedFile === "") notifyToast("Trade image is missing", "warning");
+
       return false;
     }
     return true;
   };
 
+
+
+
+
+
+  //Upload image related code:
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+
+  const handleUpload = (tradeId) => {
+    // Create a new FormData object
+    const formData = new FormData();
+    // Append the selected file to the FormData object
+    formData.append('file', selectedFile);
+    formData.append('tradeId', tradeId);
+
+    // Make a POST request to the server with the file data
+    fetch('http://localhost:8000/api/uploadTradeImage', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        console.log(data);
+      })
+      .catch(error => {
+        // Handle any errors that occurred during the upload
+        console.error(error);
+      });
+  };
+
+  const fileInputRef = React.useRef(null);
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  useEffect(() => {
+    console.log(selectedFile);
+    if (selectedFile) {
+      notifyToast("Image successfully uploaded", "success");
+    }
+  }, [selectedFile])
 
   return (
     <Modal
@@ -220,16 +281,23 @@ export default function BasicModal(props) {
 
             <Grid item xs={6} md={4}>
               <Grid item xs={6} md={4}>
-                <Item>
-                  <IconButton size="small" color="inherit" >
-                    <Iconify icon={'eva:file-add-outline'} />
-                  </IconButton>
-                </Item>
+                <label htmlFor="file-input">
+                  <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    component="span"
+                    startIcon={<Iconify icon={'eva:file-add-outline'} />}
+                    onClick={handleButtonClick}
+                  >
+                    Upload Image
+                  </Button>
+                </label>
+
               </Grid>
             </Grid>
           </Grid >
         </Box >
-        <br />
 
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
           <Grid item xs={6}>
@@ -335,7 +403,7 @@ export default function BasicModal(props) {
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                 <TextField
                   className="outlined-number"
-                  required="true"
+
                   type="number"
                   value={positionCommision}
                   onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
@@ -352,7 +420,7 @@ export default function BasicModal(props) {
               {' '}
               <TextField
                 className="outlined-number"
-                required="true"
+
                 label="Entry Price"
                 value={entryPrice}
                 type="number"
@@ -366,7 +434,7 @@ export default function BasicModal(props) {
             <Item>
               <TextField
                 className="outlined-number"
-                required="true"
+
                 label="Exit Price"
                 value={exitPrice}
                 onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
@@ -400,7 +468,6 @@ export default function BasicModal(props) {
                 value={netPnL}
                 onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
                 onFocus={(e) => clearPositionFieldInput(e, 'netPnL')}
-
                 type="number"
                 InputLabelProps={{ shrink: true }}
               />
@@ -416,8 +483,6 @@ export default function BasicModal(props) {
                 value={netROI}
                 onChange={(e) => handlePositionFieldInput(e, 'netROI')}
                 onFocus={(e) => clearPositionFieldInput(e, 'netROI')}
-
-                required="true"
                 InputLabelProps={{ shrink: true }}
               />
             </Item>
@@ -431,8 +496,6 @@ export default function BasicModal(props) {
                 value={stopPrice}
                 onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
                 onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
-
-                required="true"
                 InputLabelProps={{ shrink: true }}
               />
             </Item>
@@ -442,11 +505,7 @@ export default function BasicModal(props) {
             <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
           </Item >
         </Grid >
-
-        {alert ? <Alert severity="success">This is a success alert — check it out!</Alert> : ""
-        }
       </Box >
-
     </Modal >
   );
 }

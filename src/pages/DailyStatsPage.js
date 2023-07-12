@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTrades } from '../redux-toolkit/tradesSlice';
 
@@ -28,20 +28,40 @@ import {
   DataGrid
 } from '@mui/material';
 
-import DailyStatsCard from '../components/DailyStatsCard/DailyStatsCard'
-
+import Diveder from '../components/Divider/Diveder';
 // components
 
 import Iconify from '../components/iconify';
+import api from '../api/api';
+
+
+
+
+
+
+
 
 
 
 
 export default function DailyStatsPage() {
 
-  const trades = useSelector(getTrades)
+  const [trades, setTrades] = useState([]);
+  useEffect(() => {
+    api.get("/api/DailyStatsInfo").then(
+      (res)=>{setTrades(res.data)   
+     
+      
+     
+        }
+    ).catch()
+  },[])
+  
+  
+  
 
-  console.log("tradesList using redux", trades);
+
+  
   return (
     <>
       <Helmet>
@@ -52,13 +72,18 @@ export default function DailyStatsPage() {
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             <h1>List of trades</h1>
+
             {trades !== undefined && trades.map((trade) => {
-              return <h3>{trade.symbol} {trade.status} {trade.netPnL}</h3>
+              return <Diveder trade={trade} />
             })}
+
+
             Daily Stats
           </Typography>
+
+
         </Stack>
-        <DailyStatsCard />
+
       </Container>
     </>
   );
