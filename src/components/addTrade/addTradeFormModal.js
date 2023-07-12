@@ -49,16 +49,11 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function BasicModal(props) {
 
-
-  console.log("props.tradeInfo=", props.tradeInfo);
-
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
 
   const { notifyToast } = props;
-
   const tradeInfo = props?.tradeInfo;
-
   const editMode = props?.isEditMode;
 
   const initialState = {
@@ -98,11 +93,7 @@ export default function BasicModal(props) {
   };
 
 
-  console.log("tradeInfo", tradeInfo);
-
-
   const [formState, dispatch] = useReducer(formReducer, initialState);
-
   const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
 
 
@@ -157,21 +148,10 @@ export default function BasicModal(props) {
             .post('/api/addTrade', data).then((res) => {
               if (selectedFile !== null) {
                 handleUpload(res.data.tradeId);
-                notifyToast("Trade added successfully", "success");
               }
-
               props.updateTradeLists()
+              notifyToast("Trade added successfully", "success");
 
-              const fetchTrades = async () => {
-                const result = await api.get('/api/fetchTrades');
-                return result;
-              }
-
-              fetchTrades().then((result) => {
-                props.updateTradeLists()
-              }).catch((error) => {
-
-              });
             }).catch((err) => {
               notifyToast("Couldn't add trade", "error");
             })
@@ -205,7 +185,6 @@ export default function BasicModal(props) {
       else if (!netPnL) notifyToast("Net PnL is missing", "warning");
       else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
       else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
-      else if (selectedFile === "") notifyToast("Trade image is missing", "warning");
       else if (!positionDate) notifyToast("Date field is missing", "warning");
 
       return false;

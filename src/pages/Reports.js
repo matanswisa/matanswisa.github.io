@@ -264,9 +264,9 @@ export default function UserPage() {
           <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Trade
           </Button>
-          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={setTradesList} />}
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
-            updateTradeLists={setTradesList}
+            updateTradeLists={fetchLeastTrades}
             key={editTradeId._id}
             openModal={openmodal}
             handleOpenModal={setIsOpenmodal}
