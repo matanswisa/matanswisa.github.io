@@ -176,6 +176,21 @@ router.get('/ShowNumOfTradeTotalPnlInfoByDates', async (req, res) => {
   }
 });
 
+router.get('/ShowInfoBySpecificDate/:date', async (req, res) => {
+  try {
+    const { date } = req.params;
+
+    const tradesByDate = await Trade.find({ entryDate: date });
+
+    res.json(tradesByDate);
+    console.log(tradesByDate);
+  } catch (error) {
+    console.error('Error fetching trades:', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+
 
 router.get('/ShowInfoByDates', async (req, res) => {
   try {
