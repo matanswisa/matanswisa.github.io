@@ -35,15 +35,40 @@ import {
 
 
 // components
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import Iconify from '../components/iconify';
 import api from '../api/api';
+
+
 
 export default function DailyStatsPage() {
   const [trades, setTrades] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [searchOption, setSearchOption] = useState('name');
   const [filteredTrades, setFilteredTrades] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+useEffect(() => {
+  const filteredData = filter(trades, (trade) => {
+    const tradeValue = trade[searchOption]?.toString().toLowerCase() ?? '';
+
+    if (searchOption === 'date' && selectedDate) {
+      const tradeDate = new Date(tradeValue); // Assuming the trade date is stored as a string
+      const selectedDateWithoutTime = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      );
+      return tradeDate.getTime() === selectedDateWithoutTime.getTime();
+    }
+
+    return includes(tradeValue, searchValue.toLowerCase());
+  });
+
+  setFilteredTrades(filteredData);
+}, [searchValue, searchOption, trades, selectedDate]);
+
 
   useEffect(() => {
     api.get('/api/DailyStatsInfo')
@@ -59,11 +84,16 @@ export default function DailyStatsPage() {
     const filteredData = filter(trades, (trade) => {
       const tradeValue = trade[searchOption]?.toString().toLowerCase() ?? '';
 
+      if (searchOption === 'date' && selectedDate) {
+        const tradeDate = new Date(tradeValue); // Assuming the trade date is stored as a string
+        return tradeDate.toDateString() === selectedDate.toDateString();
+      }
+
       return includes(tradeValue, searchValue.toLowerCase());
     });
 
     setFilteredTrades(filteredData);
-  }, [searchValue, searchOption, trades]);
+  }, [searchValue, searchOption, trades, selectedDate]);
 
   return (
     <>
@@ -87,17 +117,19 @@ export default function DailyStatsPage() {
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
       />
+      <DatePicker
+        selected={selectedDate}
+        onChange={date => setSelectedDate(date)}
+        placeholderText="Select Date"
+      />
       <Container>
-        <div style={{ maxHeight: '850px',maxWidth: '1400px', overflowY: 'scroll' }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={8}>
-            <Typography variant="h4" gutterBottom>
-              Daily Stats
-            </Typography>
-
-          </Stack>
-
+        <div style={{ maxHeight: '850px', maxWidth: '1400px', overflowY: 'scroll' }}>
+          <Typography variant="h4" gutterBottom>
+            Daily Stats
+          </Typography>
           {filteredTrades.map((trade) => (
-            <Divider trade={trade} key={trade.id} />
+            <Divider trade={trade} key={trade.id}  />
+           
           ))}
         </div>
       </Container>

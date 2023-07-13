@@ -3,19 +3,36 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-
-
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import {Colors} from '../color-utils/Colors'
-
+import { DataGrid } from '@mui/x-data-grid';
+import TableHead from '@mui/material/TableHead';
+import { useState, useRef, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-
+import api from '../../api/api'
 import Paper from '@mui/material/Paper';
+import Modal from '@mui/material/Modal';
 
+import {
+  Card,
+  Table,
+  
+  Avatar,
+ 
+  Popover,
+  Checkbox,
+  TableRow,
+  MenuItem,
+  TableBody,
+  TableCell,
+  Container,
 
-
+  IconButton,
+  TableContainer,
+  TablePagination,
+} from '@mui/material';
 const ProfitFactor = (trade) => {
   
 
@@ -23,6 +40,24 @@ const ProfitFactor = (trade) => {
 
   return (trade.totalWin / trade.totalLoss < 0 ? trade.totalWin / trade.totalLoss * -1 : trade.totalWin / trade.totalLoss).toFixed(2);
 }
+
+
+
+const columns = [
+  { field: 'id', headerName: 'ID', width: 30 },
+  { field: 'symbol', headerName: 'Symbol', width: 100, editable: true,},
+  { field: 'status', headerName: 'Status', width: 100, editable: true,},
+  { field: 'netROI', headerName: 'Net ROI', width: 100, editable: true,},
+  { field: 'longShort', headerName: 'Long / Short', width: 100, editable: true,},
+  { field: 'contracts', headerName: 'Contracts', width: 100, editable: true,},
+  { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: true,},
+  { field: 'stopPrice', headerName: 'Stop Price', width: 100, editable: true,},
+  { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: true,},
+  { field: 'duration', headerName: 'Duration', width: 100, editable: true,},
+  { field: 'commission', headerName: 'Commission', width: 100, editable: true,},
+  { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: true,},
+  { field: 'comments', headerName: 'comments', width: 100, editable: true,},
+];
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -49,13 +84,65 @@ function getFormattedDate(dateString) {
   return `${abbreviatedWeekday}, ${abbreviatedMonth} ${day} ${year}`;
 }
   
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 1500,
+  height :560,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+
+
 
 export default function Diveder(props) {
+  const date = props.trade._id;
+  const [trades, setTrades] = useState([]);
   const totalPnL = props.trade.totalPnL;
   const isNegative = totalPnL < 0;
   const winRate = ((props.trade.win / (props.trade.win + props.trade.loss)) * 100).toFixed(2);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+
+  
+const rows = trades.map((trade) => ({
+  id: trade._id,
+  symbol: trade.symbol,
+  status: trade.status,
+  netROI: trade.netROI,
+  longShort: trade.longShort,
+  contracts: trade.contracts,
+  entryPrice: trade.entryPrice,
+  stopPrice: trade.stopPrice,
+  exitPrice: trade.exitPrice,
+  duration: trade.duration,
+  commission: trade.commission,
+  netPnL: trade.netPnL,
+  comments: trade.comments,
+}));
+  
+  useEffect(() => {
+    api.get(`/api/ShowInfoBySpecificDate/${date}`).then(
+      (res) => {
+        setTrades(res.data);
+          console.log(res.data);
+      
+
+      }
+    ).catch()
+  }, [])
+
+
 
   return (
+
     <Box sx={{ width: '1400px', maxWidth: 1200, bgcolor: 'background.paper' }}>
       <Box sx={{ my: 8, mx: 2 }}>
         <Grid container rowSpacing={3} alignItems="center">
@@ -75,7 +162,7 @@ export default function Diveder(props) {
         </Typography>
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center'   }}>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Item>
             <Typography color="text.primary" variant="body1">
@@ -116,7 +203,35 @@ export default function Diveder(props) {
 
       <Divider variant="middle" style={{ background: 'grey' }} spacing={25} />
       <Box sx={{ mt: 3, ml: 1, mb: 1 }}>
-        <Button>Edit note</Button>
+        <Button onClick={handleOpen}>Edit note</Button>
+        <Modal
+  open={open}
+  onClose={handleClose}
+  aria-labelledby="modal-modal-title"
+  aria-describedby="modal-modal-description"
+>
+  <Box sx={style}>
+  <Typography gutterBottom variant="h4" component="div">
+              {getFormattedDate(props.trade._id)}
+            </Typography>
+  <Box sx={{ height: 400, width: '100%' }}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 5,
+            },
+          },
+        }}
+        pageSizeOptions={[5]}
+        checkboxSelection
+        disableRowSelectionOnClick
+      />
+    </Box>
+  </Box>
+</Modal>
       </Box>
     </Box>
   );
