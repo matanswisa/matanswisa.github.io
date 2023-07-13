@@ -56,7 +56,10 @@ export default function DailyStatsPage() {
       </Helmet>
 
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+
+      <div style={{ maxHeight: '700px', overflowY: 'scroll' }}>
+   
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={8}>
           <Typography variant="h4" gutterBottom>
            
             {trades !== undefined && trades.map((trade) => {
@@ -69,6 +72,8 @@ export default function DailyStatsPage() {
 
 
         </Stack>
+           
+    </div>
 
       </Container>
     </>
