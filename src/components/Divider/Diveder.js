@@ -66,7 +66,7 @@ export default function Diveder(props) {
           </Grid>
           <Grid item xs={6}>
             <Typography gutterBottom variant="h4" component="div" sx={{ color: isNegative ? Colors.red : Colors.green }}>
-              Net P&L ${props.trade.Commission < 0 ? totalPnL + props.trade.Commission : totalPnL}
+              Net P&L ${totalPnL }
             </Typography>
           </Grid>
         </Grid>
@@ -96,7 +96,7 @@ export default function Diveder(props) {
           </Item>
           <Item>
             <Typography color="text.primary" variant="body1">
-              Gross P&L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>${totalPnL}</b>
+              Gross P&L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>${ props.trade.Commission < 0 ? totalPnL - props.trade.Commission : totalPnL}</b>
             </Typography>
           </Item>
         </Box>

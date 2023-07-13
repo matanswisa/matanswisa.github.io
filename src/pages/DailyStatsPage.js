@@ -88,7 +88,7 @@ export default function DailyStatsPage() {
         onChange={(e) => setSearchValue(e.target.value)}
       />
       <Container>
-        <div style={{ maxHeight: '700px', overflowY: 'scroll' }}>
+        <div style={{ maxHeight: '850px',maxWidth: '1400px', overflowY: 'scroll' }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={8}>
             <Typography variant="h4" gutterBottom>
               Daily Stats

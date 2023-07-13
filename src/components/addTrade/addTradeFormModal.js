@@ -51,11 +51,11 @@ export default function BasicModal(props) {
 
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
-
   const { notifyToast } = props;
   const tradeInfo = props?.tradeInfo;
   const editMode = props?.isEditMode;
-
+  const prevStatusState = props?.prevState;
+  
   const initialState = {
     positionType: tradeInfo?.longShort || '',
     positionStatus: tradeInfo?.status || '',
@@ -158,8 +158,10 @@ export default function BasicModal(props) {
         }
         else if (editMode === true) {
           console.log('inside edit trade!', tradeInfo?._id);
+          data.netPnL =  data.status !== prevStatusState?  data.netPnL *-1 :  data.netPnL;
           await api.post('/api/editTrade', data)
             .then((response) => {
+         
               notifyToast("Trade Edit succssfully", "success")
               props.updateTradeLists()
             })

@@ -88,7 +88,7 @@ const sumPnL = (trades) => {
       sum += trade.netPnL
     }
   });
-  return sum;
+  return sum.toFixed(2);
 }
 
 
@@ -274,6 +274,7 @@ export default function UserPage() {
             tradeInfo={editTradeId}
             notifyToast={notifyToast}
             isEditMode={true}
+            prevState = {editTradeId.status}
           /> : null}
 
         </Stack>
