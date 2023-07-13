@@ -357,7 +357,8 @@ export default function UserPage() {
                             Delete
                           </button>
                         </TableCell>
-                        <TableCell align="center">{trade.comments}</TableCell>
+                        <TableCell align="center">{trade.comments.length > 20 ? `${trade.comments.substring(0, 20)}...` : trade.comments}</TableCell>
+
                       </TableRow>
                     );
                   })}
