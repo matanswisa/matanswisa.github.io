@@ -134,18 +134,20 @@ const fetchTrades = async () => {
 export default function UserPage() {
 
 
-  
+
 
 
   //Upload image related code:
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-     console.log(imageId);
-   // handleUpload(tradeId);
-    
-  }; 
+    if (editTradeId?._id) {
+      setSelectedFile(event.target.files[0]);
+      console.log("imageId", editTradeId._id);
+      handleUpload(editTradeId._id);
+      fetchLeastTrades();
+    }
+  };
 
   const handleUpload = (tradeId) => {
     // Create a new FormData object
@@ -188,7 +190,7 @@ export default function UserPage() {
 
 
 
-////
+  ////
 
 
 
@@ -196,7 +198,7 @@ export default function UserPage() {
 
   const showToast = useToast();
   const notifyToast = (Msg, Type) => {
-   
+
     showToast(Msg, Type);
   }
 
@@ -299,7 +301,7 @@ export default function UserPage() {
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [imageData, setImageData] = useState('');
   const [imageId, setimageId] = useState('');
-  
+
   // Function to handle opening the dialog and setting the image data
   const handleOpenDialog = (imageData) => {
     setImageModalOpen(true);
@@ -339,7 +341,7 @@ export default function UserPage() {
             tradeInfo={editTradeId}
             notifyToast={notifyToast}
             isEditMode={true}
-            prevState = {editTradeId.status}
+            prevState={editTradeId.status}
           /> : null}
 
         </Stack>
@@ -401,13 +403,13 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="center">{trade.netPnL}$</TableCell>
                         <TableCell align="center">
-                        <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
-                              {trade.image ? (
-                                <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true) ; setimageId(trade.id); }}>
-                                  <Iconify icon={'eva:image-outline'} />
-                                </IconButton>
-                              ) :  <Iconify icon={'eva:plus-square-outline'}   onClick={handleButtonClick} />}
-                            </TableCell>
+                          <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                          {trade.image ? (
+                            <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true); setimageId(trade._id); }}>
+                              <Iconify icon={'eva:image-outline'} />
+                            </IconButton>
+                          ) : <Iconify icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
+                        </TableCell>
                         <TableCell align="right">
                           <button
                             onClick={() => {
