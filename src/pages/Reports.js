@@ -281,7 +281,7 @@ export default function UserPage() {
 
         <Card>
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
+            <TableContainer sx={{ minWidth: 800, maxWidth: 2000 }}>
               <Table>
                 <UserListHead
                   order={order}
@@ -302,7 +302,7 @@ export default function UserPage() {
                         role="checkbox"
                         selected={trade}
                       >
-                        <TableCell>
+                        <TableCell >
                           { }
                         </TableCell>
                         <TableCell component="th" scope="row" padding="none">
