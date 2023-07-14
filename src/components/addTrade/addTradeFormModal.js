@@ -7,9 +7,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
-
+import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import { useEffect, useState, useReducer } from 'react';
+import {futuresTickers} from './Tickers';
+
 // @mui
 import {
   Paper,
@@ -45,10 +47,8 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 
-
-
 export default function BasicModal(props) {
-
+  console.log(futuresTickers)
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
@@ -334,8 +334,17 @@ export default function BasicModal(props) {
           <Grid item xs={6}>
             <Item>
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <TextField id="standard-basic" required="true" value={positionSymbol}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionSymbol')} label="Symbol" variant="standard" />
+
+                              <Autocomplete
+                      disablePortal
+                      id="combo-box-demo"
+                      required="true"
+                      options={futuresTickers}
+                      sx={{ width: 600 }}
+                      renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol}   onChange={(e) => handlePositionFieldInput(e, 'positionSymbol')}  variant="standard"/>}
+                    />
+
+             
               </Box>
             </Item>
           </Grid>
