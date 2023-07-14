@@ -1,13 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useEffect, useState } from 'react';
+import React, { useRef } from 'react';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 import useToast from '../hooks/alert';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { useEffect, useState, useReducer } from 'react';
 // @mui
 import {
   Card,
@@ -81,6 +82,8 @@ const TABLE_HEAD = [
 
 
 
+
+
 const sumPnL = (trades) => {
   let sum = 0;
   trades.forEach((trade) => {
@@ -129,6 +132,69 @@ const fetchTrades = async () => {
 }
 
 export default function UserPage() {
+
+
+  
+
+///test/
+
+
+
+
+
+  //Upload image related code:
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+
+  const handleUpload = (tradeId) => {
+    // Create a new FormData object
+    const formData = new FormData();
+    // Append the selected file to the FormData object
+    formData.append('file', selectedFile);
+    formData.append('tradeId', tradeId);
+
+    // Make a POST request to the server with the file data
+    fetch('http://localhost:8000/api/uploadTradeImage', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        console.log(data);
+      })
+      .catch(error => {
+        // Handle any errors that occurred during the upload
+        console.error(error);
+      });
+  };
+
+  const fileInputRef = React.useRef(null);
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  useEffect(() => {
+    console.log(selectedFile);
+    if (selectedFile) {
+      notifyToast("Image successfully uploaded", "success");
+    }
+  }, [selectedFile])
+
+
+
+
+
+////
+
+
+
+
 
   const showToast = useToast();
   const notifyToast = (Msg, Type) => {
@@ -336,10 +402,13 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="center">{trade.netPnL}$</TableCell>
                         <TableCell align="center">
-                          <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true) }}>
-                            <Iconify icon={'eva:image-outline'} />
-                          </IconButton>
-                        </TableCell>
+                        <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                              {trade.image ? (
+                                <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true) }}>
+                                  <Iconify icon={'eva:image-outline'} />
+                                </IconButton>
+                              ) :  <Iconify icon={'eva:plus-square-outline'}   onClick={handleButtonClick} />}
+                            </TableCell>
                         <TableCell align="right">
                           <button
                             onClick={() => {
