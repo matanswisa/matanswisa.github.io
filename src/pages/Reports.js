@@ -145,8 +145,11 @@ export default function UserPage() {
   //Upload image related code:
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const handleFileChange = (event) => {
+  const handleFileChange = (event,tradeId) => {
     setSelectedFile(event.target.files[0]);
+    console.log(tradeId);
+    handleUpload(tradeId);
+    
   };
 
 
@@ -181,6 +184,7 @@ export default function UserPage() {
 
   useEffect(() => {
     console.log(selectedFile);
+
     if (selectedFile) {
       notifyToast("Image successfully uploaded", "success");
     }
@@ -402,7 +406,7 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="center">{trade.netPnL}$</TableCell>
                         <TableCell align="center">
-                        <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                        <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange(trade.id)} />
                               {trade.image ? (
                                 <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true) }}>
                                   <Iconify icon={'eva:image-outline'} />
