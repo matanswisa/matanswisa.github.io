@@ -230,150 +230,108 @@ console.log(res.data);
     ).catch()
   }, [])
 
-
-
-
-
-
   return (
     <>
-
-
       <Helmet>
-        <title> Dashboard </title>
+        <title>Dashboard</title>
       </Helmet>
-
+  
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 3 }}>
           Hi, Welcome back
         </Typography>
-
-
-
+  
         <Grid container spacing={3}>
-
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title=" Total Net P&L " total={sumPnL(Alltrades)} icon={'eva:pie-chart-outline'} />
+            <AppWidgetSummary title="Total Net P&L" total={sumPnL(Alltrades)} icon={'eva:pie-chart-outline'} />
           </Grid>
-
+  
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Profit Factor" total={ProfitFactor(Alltrades)} icon={'eva:grid-outline'} color="secondary" />
           </Grid>
-
+  
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Average Winning Trade" total={avgWinningTrades(Alltrades)} icon={'eva:bar-chart-2-outline'} color="secondary" />
           </Grid>
-
+  
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Average Losing Trade" total={avgLosingTrades(Alltrades)} icon={'eva:bar-chart-outline'} color="secondary" />
-
           </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
-            <AppWebsiteVisits
-              title="Daily Net Cumulative Profit"
-              subheader=""
-              chartLabels={DailyNetCumulativeDateProfit()}
-
-
-              chartData={[
-
-                {
-                  name: '',
-                  type: 'area',
-                  fill: 'gradient',
-                  data: DailyNetCumulativePnlProfit(),
-                  color: Colors.green
-
-
-                },
-
-
-              ]}
-            />
-
-
-          </Grid>
-
-
-          <Grid item xs={12} md={6} lg={8}>
-            <AppWebsiteVisits
-              title="Daily Net Cumulative Loss"
-              subheader=""
-              chartLabels={DailyNetCumulativeDateLoss()}
-
-
-              chartData={[
-
-                {
-                  name: '',
-                  type: 'area',
-                  fill: 'gradient',
-                  data: DailyNetCumulativePnlLoss(),
-                  color: Colors.red
-
-
-                },
-
-              ]}
-            />
-
-
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits
-              title="Winning % By Trades"
-              chartData={[
-                { label: 'Winners', value: winningTrades },
-                { label: 'Lossers', value: losingTrades },
-                { label: 'Break Even', value: breakEvenTrades },
-
-              ]}
-              chartColors={[
-                Colors.green,
-                Colors.red,
-              ]}
-            />
-
-
-
-          </Grid>
-
-
-
-          <Grid item xs={12} md={6} lg={7}>
-
-            <Calendar />
-          </Grid>
-
-
-          <Grid item s={12} md={6} lg={5}>
-
-            <AppCurrentVisits
-              title="Winning % By Days"
-              chartData={[
-                { label: 'Winners', value: winningTradesInDays },
-                { label: 'Lossers', value: losingTradesInDays },
-              ]}
-              chartColors={[
-                Colors.green,
-                Colors.red,
-
-              ]}
-            />
-
-          </Grid>
-
-
-
-
-
-
         </Grid>
+  
+        <Grid container spacing={5}>
+          <Grid item xs={12} md={6} lg={8}>
+            <Grid container spacing={6}>
+              <Grid item xs={12}>
+                <AppWebsiteVisits
+                  title="Daily Net Cumulative Profit"
+                  subheader=""
+                  chartLabels={DailyNetCumulativeDateProfit()}
+                  chartData={[
+                    {
+                      name: '',
+                      type: 'area',
+                      fill: 'gradient',
+                      data: DailyNetCumulativePnlProfit(),
+                      color: Colors.green
+                    },
+                  ]}
+                />
+   <AppWebsiteVisits
+                  title="Daily Net Cumulative Loss"
+                  subheader=""
+                  chartLabels={DailyNetCumulativeDateLoss()}
+                  chartData={[
+                    {
+                      name: '',
+                      type: 'area',
+                      fill: 'gradient',
+                      data: DailyNetCumulativePnlLoss(),
+                      color: Colors.red
+                    },
+                  ]}
+                />
+  
+           
+              </Grid>
+            </Grid>
+          </Grid>
+  
+          <Grid item xs={12} md={6} lg={4}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                     
+              <AppCurrentVisits
+                  title="Winning % By Trades"
+                  chartData={[
+                    { label: 'Winners', value: winningTrades },
+                    { label: 'Losers', value: losingTrades },
+                    { label: 'Break Even', value: breakEvenTrades },
+                  ]}
+                  chartColors={[Colors.green, Colors.red]}
+                />
+             
+                <AppCurrentVisits
+                  title="Winning % By Days"
+                  chartData={[
+                    { label: 'Winners', value: winningTradesInDays },
+                    { label: 'Losers', value: losingTradesInDays },
+                  ]}
+                  chartColors={[Colors.green, Colors.red]}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid container spacing={4}>
+  <Grid item xs={12}>
+    <Calendar />
+  </Grid>
+</Grid>
       </Container>
     </>
   );
+  
 }
 
 
