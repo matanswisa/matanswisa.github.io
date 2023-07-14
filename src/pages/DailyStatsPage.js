@@ -44,31 +44,7 @@ import api from '../api/api';
 
 export default function DailyStatsPage() {
   const [trades, setTrades] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
-  const [searchOption, setSearchOption] = useState('name');
-  const [filteredTrades, setFilteredTrades] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
-
-useEffect(() => {
-  const filteredData = filter(trades, (trade) => {
-    const tradeValue = trade[searchOption]?.toString().toLowerCase() ?? '';
-
-    if (searchOption === 'date' && selectedDate) {
-      const tradeDate = new Date(tradeValue); // Assuming the trade date is stored as a string
-      const selectedDateWithoutTime = new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth(),
-        selectedDate.getDate()
-      );
-      return tradeDate.getTime() === selectedDateWithoutTime.getTime();
-    }
-
-    return includes(tradeValue, searchValue.toLowerCase());
-  });
-
-  setFilteredTrades(filteredData);
-}, [searchValue, searchOption, trades, selectedDate]);
-
+  const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
 
   useEffect(() => {
     api.get('/api/DailyStatsInfo')
@@ -80,20 +56,10 @@ useEffect(() => {
       });
   }, []);
 
-  useEffect(() => {
-    const filteredData = filter(trades, (trade) => {
-      const tradeValue = trade[searchOption]?.toString().toLowerCase() ?? '';
 
-      if (searchOption === 'date' && selectedDate) {
-        const tradeDate = new Date(tradeValue); // Assuming the trade date is stored as a string
-        return tradeDate.toDateString() === selectedDate.toDateString();
-      }
-
-      return includes(tradeValue, searchValue.toLowerCase());
-    });
-
-    setFilteredTrades(filteredData);
-  }, [searchValue, searchOption, trades, selectedDate]);
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
 
   return (
     <>
@@ -101,36 +67,33 @@ useEffect(() => {
         <title>Daily Stats</title>
       </Helmet>
       <FormControl variant="outlined" style={{ minWidth: 120 }}>
-        <InputLabel>Search By</InputLabel>
-        <Select
-          value={searchOption}
-          onChange={(e) => setSearchOption(e.target.value)}
-          label="Search By"
-        >
-          <MenuItem value="name">Name</MenuItem>
-          <MenuItem value="numberOfTrades">Number of Trades</MenuItem>
-          <MenuItem value="date">Date</MenuItem>
-        </Select>
-      </FormControl>
-      <TextField
-        label="Search"
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
-      />
       <DatePicker
-        selected={selectedDate}
-        onChange={date => setSelectedDate(date)}
-        placeholderText="Select Date"
-      />
+          selected={selectedDate}
+          onChange={handleDateChange}
+          dateFormat="E, MMM d, yyyy" // Format for displaying the date
+          placeholderText="Select a date"
+        />
+    
+      </FormControl>
+   
+    
       <Container>
         <div style={{ maxHeight: '850px', maxWidth: '1400px', overflowY: 'scroll' }}>
           <Typography variant="h4" gutterBottom>
             Daily Stats
           </Typography>
-          {filteredTrades.map((trade) => (
-            <Divider trade={trade} key={trade.id}  />
-           
-          ))}
+          {trades
+            .filter((trade) => {
+              // Filter trades based on the selected date
+              if (!selectedDate) {
+                return true; // Show all trades if no date is selected
+              }
+              const tradeDate = new Date(trade._id);
+              return tradeDate.toDateString() === selectedDate.toDateString();
+            })
+            .map((trade) => (
+              <Divider trade={trade} key={trade.id} />
+            ))}
         </div>
       </Container>
     </>
