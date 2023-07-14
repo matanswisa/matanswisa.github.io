@@ -18,7 +18,10 @@ import Modal from '@mui/material/Modal';
 import {
   Card,
   Table,
-  
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Avatar,
  
   Popover,
@@ -107,10 +110,23 @@ export default function Diveder(props) {
   const isNegative = totalPnL < 0;
   const winRate = ((props.trade.win / (props.trade.win + props.trade.loss)) * 100).toFixed(2);
   const [open, setOpen] = React.useState(false);
+  const [openCommend, setCommendOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [selectedComment, setSelectedComment] = useState('');
 
+
+  const handleCellClick = (params) => {
+    if (params.field === 'comments') {
+      setSelectedComment(params.value);
+      setCommendOpen(true);
+    }
+  };
+
+  const handleCloseCommend = () => {
+    setCommendOpen(false);
+  };
   
 const rows = trades.map((trade) => ({
   id: trade._id,
@@ -171,11 +187,11 @@ const rows = trades.map((trade) => ({
           </Item>
           <Item>
             <Typography color="text.primary" variant="body1">
-              Losers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{props.trade.loss}</b>
+              Losers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{props.trade.loss}</b>
             </Typography>
           </Item>
         </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: '60px', marginRight: '60px' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: '250px', marginRight: '240px' }}>
           <Item>
             <Typography color="text.primary" variant="body1">
               Win rate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{winRate} %</b>
@@ -183,19 +199,19 @@ const rows = trades.map((trade) => ({
           </Item>
           <Item>
             <Typography color="text.primary" variant="body1">
-              Gross P&L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>${ props.trade.Commission < 0 ? totalPnL - props.trade.Commission : totalPnL}</b>
+              Gross P&L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>${ props.trade.Commission < 0 ? totalPnL - props.trade.Commission : totalPnL}</b>
             </Typography>
           </Item>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Item>
             <Typography color="text.primary" variant="body1">
-              Commission&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>${props.trade.Commission}</b>
+              Commission&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>${props.trade.Commission}</b>
             </Typography>
           </Item>
           <Item>
             <Typography color="text.primary" variant="body1">
-              Profit Factor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{ProfitFactor(props.trade)}</b>
+              Profit Factor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{ProfitFactor(props.trade)}</b>
             </Typography>
           </Item>
         </Box>
@@ -226,9 +242,16 @@ const rows = trades.map((trade) => ({
           },
         }}
         pageSizeOptions={[5]}
-        checkboxSelection
-        disableRowSelectionOnClick
+          onCellClick={handleCellClick}
+       
       />
+          <Dialog open={openCommend} onClose={handleCloseCommend}>
+        <DialogTitle>Comment</DialogTitle>
+        <DialogContent>{selectedComment}</DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCommend} color="primary">Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   </Box>
 </Modal>
