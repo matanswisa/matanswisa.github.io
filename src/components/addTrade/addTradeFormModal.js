@@ -10,7 +10,7 @@ import { styled } from '@mui/material/styles';
 import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import { useEffect, useState, useReducer } from 'react';
-import {futuresTickers} from './Tickers';
+import { futuresTickers } from './Tickers';
 
 // @mui
 import {
@@ -55,7 +55,7 @@ export default function BasicModal(props) {
   const tradeInfo = props?.tradeInfo;
   const editMode = props?.isEditMode;
   const prevStatusState = props?.prevState;
-  
+
   const initialState = {
     positionType: tradeInfo?.longShort || '',
     positionStatus: tradeInfo?.status || '',
@@ -100,9 +100,12 @@ export default function BasicModal(props) {
 
 
   const handlePositionFieldInput = (event, field) => {
-
-    console.log(`field: ${field}, value: ${event.target.value}`)
-    dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.target.value });
+    if (field === 'positionSymbol' && event !== null) {
+      dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.year });
+    } else if (event !== null) {
+      console.log(`field: ${field}, value: ${event.target.value}`)
+      dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.target.value });
+    }
   };
 
   const clearPositionFieldInput = (event, field) => {
@@ -158,10 +161,10 @@ export default function BasicModal(props) {
         }
         else if (editMode === true) {
           console.log('inside edit trade!', tradeInfo?._id);
-          data.netPnL =  data.status !== prevStatusState?  data.netPnL *-1 :  data.netPnL;
+          data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
           await api.post('/api/editTrade', data)
             .then((response) => {
-         
+
               notifyToast("Trade Edit succssfully", "success")
               props.updateTradeLists()
             })
@@ -334,17 +337,15 @@ export default function BasicModal(props) {
           <Grid item xs={6}>
             <Item>
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-
-                              <Autocomplete
-                      disablePortal
-                      id="combo-box-demo"
-                      required="true"
-                      options={futuresTickers}
-                      sx={{ width: 600 }}
-                      renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol}   onChange={(e) => handlePositionFieldInput(e, 'positionSymbol')}  variant="standard"/>}
-                    />
-
-             
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  required="true"
+                  options={futuresTickers}
+                  onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
+                  sx={{ width: 600 }}
+                  renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol} variant="standard" />}
+                />
               </Box>
             </Item>
           </Grid>
