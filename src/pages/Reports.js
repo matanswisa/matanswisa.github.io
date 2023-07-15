@@ -24,6 +24,11 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  
 } from '@mui/material';
 
 
@@ -119,6 +124,31 @@ const fetchTrades = async () => {
 export default function UserPage() {
 
 
+
+  const [openCommend, setCommendOpen] = React.useState(false);
+  const [selectedComment, setSelectedComment] = useState('');
+
+  // const handleCellClick = (label,info) => {
+    
+  //   if (label === 'comments') {
+  //     setSelectedComment(info);
+  //     setCommendOpen(true);
+  //   }
+  // };
+  function handleCellClick(parameter,info) {
+    return function () {
+      if (parameter === 'comments') {
+       
+           setSelectedComment(info);
+           setCommendOpen(true);
+          }
+    };
+  }
+  
+  const handleCloseCommend = () => {
+    setCommendOpen(false);
+  };
+  
 
 
 
@@ -413,7 +443,8 @@ export default function UserPage() {
                             Delete
                           </button>
                         </TableCell>
-                        <TableCell align="center">{trade.comments.length > 20 ? `${trade.comments.substring(0, 20)}...` : trade.comments}</TableCell>
+                        
+                        <TableCell  onClick={handleCellClick("comments", trade.comments)}  align="center">{trade.comments.length > 20 ? `${trade.comments.substring(0, 20)}...` : trade.comments}</TableCell>
 
                       </TableRow>
                     );
@@ -460,7 +491,13 @@ export default function UserPage() {
           />
         </Card>
         {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} tradeComments={editTradeId.comments} />}
-
+        <Dialog open={openCommend} onClose={handleCloseCommend}>
+        <DialogTitle>Comment</DialogTitle>
+        <DialogContent>{selectedComment}</DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseCommend} color="primary">Close</Button>
+        </DialogActions>
+      </Dialog>
 
       </Container >
 
