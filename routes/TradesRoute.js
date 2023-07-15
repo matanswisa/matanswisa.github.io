@@ -48,7 +48,6 @@ router.get('/fetchTrades', async (req, res) => {
 
     // Read the image file for each trade and include it in the response
     const tradesWithImage = await Promise.all(trades.map(async (trade) => {
-      console.log(trade);
       if (!trade.image) return trade.toJSON();
       const imageBuffer = await fs.promises.readFile(trade.image);
       const imageBase64 = imageBuffer.toString('base64');
@@ -169,7 +168,6 @@ router.get('/ShowNumOfTradeTotalPnlInfoByDates', async (req, res) => {
     ]);
 
     res.json(tradesByDate);
-    console.log(tradesByDate);
   } catch (error) {
     console.error('Error fetching trades:', error);
     res.status(500).json({ error: 'An error occurred' });
@@ -207,7 +205,6 @@ router.get('/ShowInfoByDates', async (req, res) => {
     ]);
 
     res.json(tradesByDate);
-    console.log(tradesByDate);
   } catch (error) {
     console.error('Error fetching trades:', error);
     res.status(500).json({ error: 'An error occurred' });
@@ -233,7 +230,6 @@ router.get('/DailyStatsInfo', async (req, res) => {
     ]);
 
     res.json(tradesByDate);
-    console.log(tradesByDate);
   } catch (error) {
     console.error('Error fetching trades:', error);
     res.status(500).json({ error: 'An error occurred' });
@@ -245,20 +241,20 @@ router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
   console.log(req.body)
   try {
     const { tradeId } = req.body;
+    if (!req.file) return res.status(400).send("No image file to upload");
     const { path, originalname } = req.file;
-
     // Handle the uploaded image as needed
     // For example, you can save the image path or perform image processing
 
     // Update the Trade document with the image details
-    const imagePath = Path.join(uploadsDirPath, originalname)
-    const trade = await Trade.findByIdAndUpdate(tradeId, {
-      $set: {
-        image: imagePath
-      }
+    const imagePath = Path.join(uploadsDirPath, originalname);
+    const trade = await Trade.findOneAndUpdate({ _id: tradeId }, {
+      image: imagePath
     });
-    if (trade) { res.status(200).json({ message: 'Image uploaded successfully' }); return; }
-    res.status(400).send("Can't save trading image");
+
+    const trades = await Trade.find({});
+    if (trade) { return res.status(200).json(trades) }
+    return res.status(400).send("Can't save trading image");
 
   } catch (err) {
     console.error('Error uploading trade image:', err);
