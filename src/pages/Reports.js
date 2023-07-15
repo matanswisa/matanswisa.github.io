@@ -1,26 +1,22 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import React, { useRef } from 'react';
+import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
+import { getTrades,  setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 import useToast from '../hooks/alert';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState, useReducer } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
   Card,
   Table,
   Stack,
   Paper,
-  Avatar,
   Button,
-  Popover,
-  Checkbox,
   TableRow,
-  MenuItem,
   TableBody,
   TableCell,
   Container,
@@ -33,16 +29,6 @@ import {
 
 
 
-import {
-  MDBBtn,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-  MDBModalTitle,
-  MDBModalBody,
-  MDBModalFooter,
-} from 'mdb-react-ui-kit';
 
 
 // components
@@ -50,11 +36,10 @@ import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import { UserListHead } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
 import api from '../api/api';
-import { Colors } from '../components/color-utils/Colors'
 import AddTrade from '../components/addTrade/addTradeFormModal';
 import ImageModal from '../components/ImageModal/ImageModal';
 // ----------------------------------------------------------------------

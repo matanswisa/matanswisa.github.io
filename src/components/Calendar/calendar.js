@@ -1,7 +1,7 @@
 
 
-import { Calendar, Whisper, Popover, Badge } from 'rsuite';
-import { useState, useRef, useEffect } from 'react';
+import { Calendar } from 'rsuite';
+import { useState,  useEffect } from 'react';
 import './styles.css';
 import './calendar.css';
 import api from '../../api/api';
