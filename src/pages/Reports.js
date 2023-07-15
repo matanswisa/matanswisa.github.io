@@ -123,7 +123,7 @@ const fetchTrades = async () => {
 
 export default function UserPage() {
 
-
+  
 
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
@@ -220,6 +220,8 @@ export default function UserPage() {
 
   const trades = useSelector(getTrades)
 
+  const totalTrades = Object.keys(trades).length;
+  
   const [basicModal, setBasicModal] = useState(false);
   const toggleShow = () => setBasicModal(!basicModal);
 
@@ -483,7 +485,7 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={totalTrades}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
