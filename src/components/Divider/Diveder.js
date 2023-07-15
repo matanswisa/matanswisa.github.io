@@ -204,7 +204,7 @@ const rows = trades.map((trade) => ({
 
       <Divider variant="middle" style={{ background: 'grey' }} spacing={25} />
       <Box sx={{ mt: 3, ml: 1, mb: 1 }}>
-        <Button onClick={handleOpen}>Edit note</Button>
+        <Button onClick={handleOpen}>Show trades</Button>
         <Modal
   open={open}
   onClose={handleClose}
