@@ -4,7 +4,7 @@ import { sentenceCase } from 'change-case';
 import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getTrades,  setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
+import { getTrades, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 import useToast from '../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -28,7 +28,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  
+
 } from '@mui/material';
 
 
@@ -123,32 +123,32 @@ const fetchTrades = async () => {
 
 export default function UserPage() {
 
-  
+
 
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
 
   // const handleCellClick = (label,info) => {
-    
+
   //   if (label === 'comments') {
   //     setSelectedComment(info);
   //     setCommendOpen(true);
   //   }
   // };
-  function handleCellClick(parameter,info) {
+  function handleCellClick(parameter, info) {
     return function () {
       if (parameter === 'comments') {
-       
-           setSelectedComment(info);
-           setCommendOpen(true);
-          }
+
+        setSelectedComment(info);
+        setCommendOpen(true);
+      }
     };
   }
-  
+
   const handleCloseCommend = () => {
     setCommendOpen(false);
   };
-  
+
 
 
 
@@ -156,15 +156,12 @@ export default function UserPage() {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
-    if (editTradeId?._id) {
+    if (event.target.files.length > 0)
       setSelectedFile(event.target.files[0]);
-      console.log("imageId", editTradeId._id);
-      handleUpload(editTradeId._id);
-      fetchLeastTrades();
-    }
   };
 
   const handleUpload = (tradeId) => {
+    if (!selectedFile) { notifyToast("Couldn't upload the image", "error"); return; }
     // Create a new FormData object
     const formData = new FormData();
     // Append the selected file to the FormData object
@@ -179,10 +176,17 @@ export default function UserPage() {
       .then(response => response.json())
       .then(data => {
         // Handle the response from the server
+        notifyToast("Trade image uploaded successfully", "success");
+        console.log(data);
+        setTradesList(data);
+
+        // fetchLeastTrades();
+
         console.log(data);
       })
       .catch(error => {
         // Handle any errors that occurred during the upload
+        notifyToast("Error uploading trade image", "error");
         console.error(error);
       });
   };
@@ -194,20 +198,10 @@ export default function UserPage() {
   };
 
   useEffect(() => {
-    console.log(selectedFile);
-
-    if (selectedFile) {
-      notifyToast("Image successfully uploaded", "success");
+    if (editTradeId?._id && selectedFile) {
+      handleUpload(editTradeId._id);
     }
   }, [selectedFile])
-
-
-
-
-
-  ////
-
-
 
 
 
@@ -221,7 +215,7 @@ export default function UserPage() {
   const trades = useSelector(getTrades)
 
   const totalTrades = Object.keys(trades).length;
-  
+
   const [basicModal, setBasicModal] = useState(false);
   const toggleShow = () => setBasicModal(!basicModal);
 
@@ -239,7 +233,7 @@ export default function UserPage() {
 
 
   const fetchLeastTrades = () => {
-    fetchTrades().then((res) => {
+    return fetchTrades().then((res) => {
       if (res.data)
         setTradesList(res.data);
     }).catch((err) => {
@@ -445,8 +439,8 @@ export default function UserPage() {
                             Delete
                           </button>
                         </TableCell>
-                        
-                        <TableCell  onClick={handleCellClick("comments", trade.comments)}  align="center">{trade.comments.length > 20 ? `${trade.comments.substring(0, 20)}...` : trade.comments}</TableCell>
+
+                        <TableCell onClick={handleCellClick("comments", trade.comments)} align="center">{trade.comments.length > 20 ? `${trade.comments.substring(0, 20)}...` : trade.comments}</TableCell>
 
                       </TableRow>
                     );
@@ -494,12 +488,12 @@ export default function UserPage() {
         </Card>
         {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} tradeComments={editTradeId.comments} />}
         <Dialog open={openCommend} onClose={handleCloseCommend}>
-        <DialogTitle>Comment</DialogTitle>
-        <DialogContent>{selectedComment}</DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCommend} color="primary">Close</Button>
-        </DialogActions>
-      </Dialog>
+          <DialogTitle>Comment</DialogTitle>
+          <DialogContent>{selectedComment}</DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseCommend} color="primary">Close</Button>
+          </DialogActions>
+        </Dialog>
 
       </Container >
 
