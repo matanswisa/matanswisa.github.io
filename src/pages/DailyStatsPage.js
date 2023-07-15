@@ -61,18 +61,33 @@ export default function DailyStatsPage() {
     setSelectedDate(date);
   };
 
+  const handleClearDate = () => {
+    setSelectedDate(null);
+  };
+
   return (
     <>
       <Helmet>
         <title>Daily Stats</title>
       </Helmet>
       <FormControl variant="outlined" style={{ minWidth: 120 }}>
-      <DatePicker
+      <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ marginRight: "10px" }}>
+        <DatePicker
           selected={selectedDate}
           onChange={handleDateChange}
-          dateFormat="E, MMM d, yyyy" // Format for displaying the date
+          dateFormat="E, MMM d, yyyy"
           placeholderText="Select a date"
         />
+      </div>
+      <Button
+        variant="contained"
+        onClick={handleClearDate}
+        style={{ fontSize: "12px", minWidth: "80px" }}
+      >
+        Clear
+      </Button>
+    </div>
     
       </FormControl>
    
