@@ -138,7 +138,7 @@ const rows = trades.map((trade) => ({
 
       }
     ).catch()
-  }, [])
+  }, [date])
 
 
 
