@@ -122,19 +122,9 @@ const fetchTrades = async () => {
 }
 
 export default function UserPage() {
-
-
-
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
 
-  // const handleCellClick = (label,info) => {
-
-  //   if (label === 'comments') {
-  //     setSelectedComment(info);
-  //     setCommendOpen(true);
-  //   }
-  // };
   function handleCellClick(parameter, info) {
     return function () {
       if (parameter === 'comments') {
@@ -148,8 +138,6 @@ export default function UserPage() {
   const handleCloseCommend = () => {
     setCommendOpen(false);
   };
-
-
 
 
   //Upload image related code:
@@ -175,14 +163,8 @@ export default function UserPage() {
     })
       .then(response => response.json())
       .then(data => {
-        // Handle the response from the server
         notifyToast("Trade image uploaded successfully", "success");
-        console.log(data);
         setTradesList(data);
-
-        // fetchLeastTrades();
-
-        console.log(data);
       })
       .catch(error => {
         // Handle any errors that occurred during the upload
@@ -198,7 +180,7 @@ export default function UserPage() {
   };
 
   useEffect(() => {
-    if (editTradeId?._id && selectedFile) {
+    if (editTradeId?._id && selectedFile !== null) {
       handleUpload(editTradeId._id);
     }
   }, [selectedFile])
@@ -419,7 +401,7 @@ export default function UserPage() {
                             <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true); setimageId(trade._id); }}>
                               <Iconify icon={'eva:image-outline'} />
                             </IconButton>
-                          ) : <Iconify icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
+                          ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
                         </TableCell>
                         <TableCell align="right">
                           <button

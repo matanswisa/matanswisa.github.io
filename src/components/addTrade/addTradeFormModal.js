@@ -164,9 +164,10 @@ export default function BasicModal(props) {
           data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
           await api.post('/api/editTrade', data)
             .then((response) => {
-
               notifyToast("Trade Edit succssfully", "success")
+              handleUpload(tradeInfo?._id);
               props.updateTradeLists()
+
             })
             .catch((error) => {
               notifyToast("Trade can't be updated", "error")
@@ -197,11 +198,6 @@ export default function BasicModal(props) {
     return true;
   };
 
-
-
-
-
-
   //Upload image related code:
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -211,6 +207,7 @@ export default function BasicModal(props) {
 
 
   const handleUpload = (tradeId) => {
+    if (!selectedFile) { notifyToast("Don't have image file to upload", "error"); return; }
     // Create a new FormData object
     const formData = new FormData();
     // Append the selected file to the FormData object
@@ -226,6 +223,7 @@ export default function BasicModal(props) {
       .then(data => {
         // Handle the response from the server
         console.log(data);
+        props.updateTradeLists()
       })
       .catch(error => {
         // Handle any errors that occurred during the upload
@@ -342,6 +340,7 @@ export default function BasicModal(props) {
                   id="combo-box-demo"
                   required="true"
                   options={futuresTickers}
+                  value={positionSymbol}
                   onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
                   sx={{ width: 600 }}
                   renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol} variant="standard" />}
