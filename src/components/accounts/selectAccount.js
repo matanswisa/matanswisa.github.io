@@ -16,24 +16,29 @@ import { useEffect, useState } from 'react';
 export default function MultipleSelectPlaceholder(props) {
   const [accounts, setAccounts] = useState([]);
  
-
+ 
   const [selectedAccount, setSelectedAccount] = useState('');
   const [selectedAccountColor, setSelectedAccountColor] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     fetchAccounts();
-    
+      setSelectedAccount(getSelectedAccountName(accounts))
+      setSelectedAccountColor(getSelectedAccountLabel(accounts))
   }, []);
+  
 
-
+  
   const fetchAccounts = async () => {
     try {
       const response = await api.get('/api/accounts');
       setAccounts(response.data);
-      setSelectedAccount(getSelectedAccountName(accounts))
-      setSelectedAccountColor(getSelectedAccountLabel(accounts))
       
+      const initialSelectedAccount = getSelectedAccountName(response.data);
+      setSelectedAccount(initialSelectedAccount);
+      
+      const initialSelectedAccountColor = getSelectedAccountLabel(response.data);
+      setSelectedAccountColor(initialSelectedAccountColor);
     } catch (error) {
       console.error(error);
     }
