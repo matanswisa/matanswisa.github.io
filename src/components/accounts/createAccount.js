@@ -32,12 +32,6 @@ export default function BasicModal(props) {
 
     
 
-    
-
-
-  
-
-
     const handleCreateAccount = async () => {
 
       if (validateForm()) {
@@ -53,6 +47,7 @@ export default function BasicModal(props) {
         
          
           notifyToast("Account added successfully", "success");
+          props.handleOpenModal(false);
           return false;
 
         }).catch((err) => {
