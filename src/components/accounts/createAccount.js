@@ -25,7 +25,7 @@ export default function BasicModal(props) {
     const handleOpen = () => props.handleOpenModal(true);
     const handleClose = () => props.handleOpenModal(false);
     const [accountName, setAccountName] = useState('');
-    const [selectedColor, setSelectedColor] = useState('');
+    const [selectedColor, setSelectedColor] = useState(red[500]);
 
 
     const handleCreateAccount = async () => {
