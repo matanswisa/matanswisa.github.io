@@ -30,6 +30,14 @@ export default function BasicModal(props) {
     const { notifyToast } = props;
 
 
+    
+
+    
+
+
+  
+
+
     const handleCreateAccount = async () => {
 
       if (validateForm()) {
@@ -42,7 +50,7 @@ export default function BasicModal(props) {
           }
         await api
         .post('/api/createAccount', data).then((res) => {
-     
+        
          
           notifyToast("Account added successfully", "success");
           return false;
