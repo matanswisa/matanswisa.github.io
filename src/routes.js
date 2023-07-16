@@ -13,6 +13,8 @@ import DashboardAppPage from './pages/DashboardAppPage';
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const token = localStorage.getItem('token');
+
   const routes = useRoutes([
     {
       path: '/dashboard',

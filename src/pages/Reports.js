@@ -120,6 +120,7 @@ const fetchTrades = async () => {
   const result = await api.get('/api/fetchTrades');
   return result;
 }
+// export let globalAlert;
 
 export default function UserPage() {
   const [openCommend, setCommendOpen] = React.useState(false);
