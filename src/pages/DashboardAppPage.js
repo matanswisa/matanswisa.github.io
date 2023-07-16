@@ -291,8 +291,9 @@ console.log(res.data);
       </Helmet>
   
 
-    <Grid>
-      <MultipleSelectPlaceholder accounts = {accounts} />
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginRight: '10px' }}>
+    
+      <MultipleSelectPlaceholder accounts = {accounts}   size="small"/>
       <Button  onClick={handleOpenCreateAccountModal} variant="contained" size="small" startIcon={<Iconify icon="eva:person-add-outline"  />}></Button>
       {openmodal && <ChildModal openModal={openmodal} handleOpenModal={setIsOpenmodal}  />}
           {(openmodal ) === true ? <ChildModal notifyToast={notifyToast}
@@ -300,8 +301,14 @@ console.log(res.data);
             handleOpenModal={setIsOpenmodal}
        
           /> : null}
-    </Grid>
+      </div>
+  
       <Container maxWidth="xl">
+
+      <Grid>
+
+
+    </Grid>
       <ToastContainer />
         <Typography variant="h4" sx={{ mb: 3 }}>
           Hi, Welcome back

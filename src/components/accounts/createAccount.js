@@ -66,15 +66,16 @@ export default function BasicModal(props) {
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '60%',
+        width: '30%',
         minWidth: '400px', // Adjust the size as needed
-        height: '30vh', // Increase the height to 80% of the viewport height
+        height: '20vh', // Increase the height to 80% of the viewport height
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 4,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-end', // Align buttons to the right
+        
       };
     
       
@@ -114,22 +115,15 @@ export default function BasicModal(props) {
 
         </Grid>
       
-
-      <Grid sx={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-
-             
-                <TextField
-                  required
-                  id="outlined-required"
-                  label="Account Name"
-                
-                  sx={{ mr: 2 }}
-                  defaultValue={accountName}
-                  onChange={(e) => setAccountName(e.target.value)}
-               
-                />
-        
-
+        <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+  <TextField
+    required
+    id="outlined-required"
+    label="Account Name"
+    sx={{ mr: 2 }}
+    defaultValue={accountName}
+    onChange={(e) => setAccountName(e.target.value)}
+  />
 
          
     
