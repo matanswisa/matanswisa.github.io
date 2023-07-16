@@ -21,11 +21,20 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
+import Button from '@mui/material/Button';
 
 import api from '../api/api';
 import { ReactComponent as dollarLogo } from '../icons/dollar-symbol.svg';
 
 import { Colors } from '../components/color-utils/Colors';
+
+
+
+//accounts 
+import MultipleSelectPlaceholder from '../components/accounts/selectAccount';
+import ChildModal from  '../components/accounts/createAccount';
+
+///
 
 // ----------------------------------------------------------------------
 
@@ -109,6 +118,18 @@ export default function DashboardAppPage() {
   const [calendarTrades, setCalendarTrades] = useState([]);
 
 
+
+
+
+  ///create account modal
+
+  const [openmodal, setIsOpenmodal] = useState(false);
+  const handleOpenCreateAccountModal = (tradeId) => {
+    setIsOpenmodal(true);
+  };
+
+
+  //
 
 
   const DailyNetCumulativeDateProfit = () => {
@@ -236,10 +257,23 @@ console.log(res.data);
         <title>Dashboard</title>
       </Helmet>
   
+
+    <Grid>
+      <MultipleSelectPlaceholder/>
+      <Button  onClick={handleOpenCreateAccountModal} variant="contained" startIcon={<Iconify icon="eva:person-add-outline"  />}></Button>
+      {openmodal && <ChildModal openModal={openmodal} handleOpenModal={setIsOpenmodal}  />}
+          {(openmodal ) === true ? <ChildModal
+            openModal={openmodal}
+            handleOpenModal={setIsOpenmodal}
+       
+          /> : null}
+    </Grid>
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 3 }}>
           Hi, Welcome back
+         
         </Typography>
+    
   
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
@@ -347,3 +381,4 @@ const totalPlColor = {
   color: '#54a38d', // Replace with the desired text color
 
 };
+
