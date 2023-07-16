@@ -22,13 +22,17 @@ const style = {
 };
 
 export default function BasicModal(props) {
+  
     const handleOpen = () => props.handleOpenModal(true);
     const handleClose = () => props.handleOpenModal(false);
     const [accountName, setAccountName] = useState('');
     const [selectedColor, setSelectedColor] = useState(red[500]);
+    const { notifyToast } = props;
 
 
     const handleCreateAccount = async () => {
+
+      if (validateForm()) {
         const data = {
 
             AccountName: accountName,
@@ -38,16 +42,23 @@ export default function BasicModal(props) {
           }
         await api
         .post('/api/createAccount', data).then((res) => {
-        console.log("ok");
      
-       //  notifyToast("Trade added successfully", "success");
+         
+          notifyToast("Account added successfully", "success");
+          return false;
 
         }).catch((err) => {
-            console.log(err);
-        //  notifyToast("Couldn't add trade", "error");
+          
+            notifyToast("Couldn't add Account", "error");
+            return false;
         })
 
     }
+  }
+
+
+
+ 
 
 
     const style = {
@@ -66,6 +77,20 @@ export default function BasicModal(props) {
         alignItems: 'flex-end', // Align buttons to the right
       };
     
+      
+
+ 
+  const validateForm = () => {
+    if (accountName === ''){
+      notifyToast("Account type is missing", "warning");
+
+      
+      return false;
+    
+    }
+    else 
+    return true;
+  }
       return (
         <div>
           <Button onClick={handleOpen}>Open modal</Button>
@@ -178,7 +203,7 @@ export default function BasicModal(props) {
             right: '16px',
           }}
         >
-          <Button variant="outlined" size="medium">
+          <Button variant="outlined" size="medium" onClick={handleClose}>
             Cancel
           </Button>
           <Button onClick={handleCreateAccount} variant="contained" size="medium">

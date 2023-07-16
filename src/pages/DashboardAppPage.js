@@ -22,7 +22,9 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 import Button from '@mui/material/Button';
-
+import { ToastContainer, } from 'react-toastify';
+import useToast from '../hooks/alert';
+import 'react-toastify/dist/ReactToastify.css';
 import api from '../api/api';
 import { ReactComponent as dollarLogo } from '../icons/dollar-symbol.svg';
 
@@ -30,13 +32,21 @@ import { Colors } from '../components/color-utils/Colors';
 
 
 
+
+
 //accounts 
+
+
 import MultipleSelectPlaceholder from '../components/accounts/selectAccount';
 import ChildModal from  '../components/accounts/createAccount';
 
-///
 
 // ----------------------------------------------------------------------
+
+
+
+
+
 
 
 const sumPnL = (trades) => {
@@ -102,6 +112,12 @@ export default function DashboardAppPage() {
 
 
 
+  const showToast = useToast();
+  const notifyToast = (Msg, Type) => {
+  
+    showToast(Msg, Type);
+  }
+
   const Alltrades = useSelector(getTrades)
 
   const theme = useTheme();
@@ -117,8 +133,25 @@ export default function DashboardAppPage() {
 
   const [calendarTrades, setCalendarTrades] = useState([]);
 
+  const [accounts, setAccounts] = useState([]);
 
 
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const response = await api.get('/api/accounts');
+        const accounts = response.data;
+        setAccounts(accounts);
+   
+      
+      } catch (err) {
+        console.error(err);
+
+      }
+    };
+  
+    fetchAccounts();
+  }, []);
 
 
   ///create account modal
@@ -259,16 +292,17 @@ console.log(res.data);
   
 
     <Grid>
-      <MultipleSelectPlaceholder/>
+      <MultipleSelectPlaceholder accounts = {accounts} />
       <Button  onClick={handleOpenCreateAccountModal} variant="contained" size="small" startIcon={<Iconify icon="eva:person-add-outline"  />}></Button>
       {openmodal && <ChildModal openModal={openmodal} handleOpenModal={setIsOpenmodal}  />}
-          {(openmodal ) === true ? <ChildModal
+          {(openmodal ) === true ? <ChildModal notifyToast={notifyToast}
             openModal={openmodal}
             handleOpenModal={setIsOpenmodal}
        
           /> : null}
     </Grid>
       <Container maxWidth="xl">
+      <ToastContainer />
         <Typography variant="h4" sx={{ mb: 3 }}>
           Hi, Welcome back
          
