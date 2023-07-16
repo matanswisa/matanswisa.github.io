@@ -6,9 +6,11 @@ import TradesRoute from './routes/TradesRoute.js';
 import bodyParser from 'body-parser';
 import connectDB from './utils/db.js';
 import cors from 'cors';
+import userRoute from './routes/UserRoute.js';
+import adminSeeder from './utils/adminSeeder.js';
 
 connectDB();
-
+adminSeeder();
 
 const app = express();
 
@@ -19,6 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/api", TradesRoute);
+app.use("/api/auth", userRoute);
 
 
 

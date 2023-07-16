@@ -8,6 +8,8 @@ const router = Router();
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
+import { fetchTradesWithImages } from "../services/trades.service.js";
+// import { fetchTradesWithImages } from "./services";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = dirname(currentFilePath);
@@ -44,20 +46,8 @@ router.post("/addTrade", async (req, res) => {
 
 router.get('/fetchTrades', async (req, res) => {
   try {
-    const trades = await Trade.find({});
-
-    // Read the image file for each trade and include it in the response
-    const tradesWithImage = await Promise.all(trades.map(async (trade) => {
-      if (!trade.image) return trade.toJSON();
-      const imageBuffer = await fs.promises.readFile(trade.image);
-      const imageBase64 = imageBuffer.toString('base64');
-
-      return {
-        ...trade.toJSON(),
-        image: imageBase64,
-      };
-    }));
-
+    const tradesWithImage = await fetchTradesWithImages();
+    if (!tradesWithImage.length) return res.status(400).send("There isn't any trades to display");
     res.status(200).json(tradesWithImage);
   } catch (err) {
     console.error(err);
@@ -252,8 +242,8 @@ router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
       image: imagePath
     });
 
-    const trades = await Trade.find({});
-    if (trade) { return res.status(200).json(trades) }
+    const tradesWithImage = fetchTradesWithImages();
+    if (trade) { return res.status(200).json(tradesWithImage) }
     return res.status(400).send("Can't save trading image");
 
   } catch (err) {

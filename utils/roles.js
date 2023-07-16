@@ -1,0 +1,1 @@
+export const roles = { basic: 0, admin: 1 };
