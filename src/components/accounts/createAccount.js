@@ -4,6 +4,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
+import { useState } from 'react';
+import api from '../../api/api';
 import { Select, MenuItem, ListItemIcon } from '@mui/material';
 import { red, blue, green, yellow, orange, purple, pink, cyan } from '@mui/material/colors';
 import { Grid } from 'rsuite';
@@ -22,6 +24,32 @@ const style = {
 export default function BasicModal(props) {
     const handleOpen = () => props.handleOpenModal(true);
     const handleClose = () => props.handleOpenModal(false);
+    const [accountName, setAccountName] = useState('');
+    const [selectedColor, setSelectedColor] = useState('');
+
+
+    const handleCreateAccount = async () => {
+        const data = {
+
+            AccountName: accountName,
+            Label:selectedColor,
+            IsSelected: "true",
+        
+          }
+        await api
+        .post('/api/createAccount', data).then((res) => {
+        console.log("ok");
+     
+       //  notifyToast("Trade added successfully", "success");
+
+        }).catch((err) => {
+            console.log(err);
+        //  notifyToast("Couldn't add trade", "error");
+        })
+
+    }
+
+
     const style = {
         position: 'absolute',
         top: '50%',
@@ -69,16 +97,20 @@ export default function BasicModal(props) {
                   required
                   id="outlined-required"
                   label="Account Name"
-                  defaultValue=""
+                
                   sx={{ mr: 2 }}
+                  defaultValue={accountName}
+                  onChange={(e) => setAccountName(e.target.value)}
+               
                 />
         
 
 
          
     
-    <Select size="small" defaultValue={red[500]}>
-      <MenuItem value="">
+    <Select size="small" value={selectedColor}
+  onChange={(event) => setSelectedColor(event.target.value)}>
+      <MenuItem  value={red[500]}>
        
       </MenuItem>
       <MenuItem value={red[500]}>
@@ -149,7 +181,7 @@ export default function BasicModal(props) {
           <Button variant="outlined" size="medium">
             Cancel
           </Button>
-          <Button variant="contained" size="medium">
+          <Button onClick={handleCreateAccount} variant="contained" size="medium">
             Create
           </Button>
         </Box>
