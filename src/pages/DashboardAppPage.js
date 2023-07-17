@@ -30,7 +30,7 @@ import { ReactComponent as dollarLogo } from '../icons/dollar-symbol.svg';
 
 import { Colors } from '../components/color-utils/Colors';
 
-
+import AppBar from '../components/profile/AppBar'
 
 
 
@@ -290,19 +290,13 @@ console.log(res.data);
         <title>Dashboard</title>
       </Helmet>
   
-
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginRight: '10px' }}>
-    
-      <MultipleSelectPlaceholder accounts = {accounts}   size="small"/>
-      <Button  onClick={handleOpenCreateAccountModal} variant="contained" size="small" startIcon={<Iconify icon="eva:person-add-outline"  />}></Button>
-      {openmodal && <ChildModal openModal={openmodal} handleOpenModal={setIsOpenmodal}  />}
-          {(openmodal ) === true ? <ChildModal notifyToast={notifyToast}
-            openModal={openmodal}
-            handleOpenModal={setIsOpenmodal}
-       
-          /> : null}
-      </div>
   
+  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', marginRight: '10px' }}>
+      <AppBar />
+      <MultipleSelectPlaceholder accounts = {accounts}   size="small"/>
+
+     
+      </div> 
       <Container maxWidth="xl">
 
       <Grid>

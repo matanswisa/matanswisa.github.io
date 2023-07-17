@@ -6,7 +6,8 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import api from '../../api/api';
-import { Select, MenuItem, ListItemIcon } from '@mui/material';
+import {  useEffect } from 'react';
+import { Select, MenuItem, ListItemIcon, Alert } from '@mui/material';
 import { red, blue, green, yellow, orange, purple, pink, cyan } from '@mui/material/colors';
 import { Grid } from 'rsuite';
 const style = {
@@ -22,13 +23,42 @@ const style = {
 };
 
 export default function BasicModal(props) {
-  
+    const [accounts, setAccounts] = useState([]);
     const handleOpen = () => props.handleOpenModal(true);
     const handleClose = () => props.handleOpenModal(false);
     const [accountName, setAccountName] = useState('');
     const [selectedColor, setSelectedColor] = useState(red[500]);
     const { notifyToast } = props;
 
+    useEffect(() => {
+      fetchAccounts();
+       
+    }, []);
+  
+  
+    
+    
+    const fetchAccounts = async () => {
+      try {
+        const response = await api.get('/api/accounts');
+        setAccounts(response.data);
+  
+     
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    
+    const checkAccountExists = (accountList, accountName) => {
+
+      
+      const selectedAccount = accountList.find(account => account.AccountName === accountName);
+    
+      return selectedAccount !== undefined;
+    };
+    
+
+    
 
     
 
@@ -42,6 +72,10 @@ export default function BasicModal(props) {
             IsSelected: "true",
         
           }
+
+   
+
+      
       
         await api
         .post('/api/createAccount', data).then((res) => {
@@ -86,15 +120,18 @@ export default function BasicModal(props) {
 
  
   const validateForm = () => {
-    if (accountName === ''){
+    if (accountName === '')
       notifyToast("Account type is missing", "warning");
 
       
+    else if(checkAccountExists(accounts,accountName)){
+       notifyToast("Account already exist", "warning");
       return false;
-    
     }
+  
     else 
-    return true;
+      return true;
+     
   }
       return (
         <div>
