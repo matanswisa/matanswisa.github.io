@@ -33,6 +33,7 @@ export default function MultipleSelectPlaceholder(props) {
     try {
       const response = await api.get('/api/accounts');
       setAccounts(response.data);
+
       
       const initialSelectedAccount = getSelectedAccountName(response.data);
       setSelectedAccount(initialSelectedAccount);

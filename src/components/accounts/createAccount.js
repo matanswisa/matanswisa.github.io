@@ -42,6 +42,7 @@ export default function BasicModal(props) {
             IsSelected: "true",
         
           }
+      
         await api
         .post('/api/createAccount', data).then((res) => {
         
