@@ -12,6 +12,10 @@ const navConfig = [
     icon: icon('dashboard'),
   },
   {
+    title: 'admins only',
+    path: '/manage-users'
+  },
+  {
     title: 'Daily Stats',
     path: '/dashboard/dailystatspage',
     icon: icon('ic_analytics'),
@@ -21,14 +25,14 @@ const navConfig = [
     path: '/dashboard/reports',
     icon: icon('report'),
   },
-  
- 
+
+
   {
     title: 'login',
     path: '/login',
     icon: icon(''),
   },
-  
+
 ];
 
 export default navConfig;
