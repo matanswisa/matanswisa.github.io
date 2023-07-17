@@ -8,6 +8,7 @@ import connectDB from './utils/db.js';
 import cors from 'cors';
 import userRoute from './routes/UserRoute.js';
 import adminSeeder from './utils/adminSeeder.js';
+import authRouter from './routes/auth.js';
 
 connectDB();
 adminSeeder();
@@ -22,9 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api", TradesRoute);
 app.use("/api/auth", userRoute);
-
-
-
+app.use("/api/auth", authRouter);
 
 
 const port = normalizePort(process.env.PORT || '8000');

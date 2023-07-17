@@ -1,5 +1,6 @@
 import User from '../models/user.js';
 import { roles } from './roles.js';
+import bcrypt from 'bcrypt';
 
 const adminSeeder = async () => {
     try {
@@ -15,11 +16,21 @@ const adminSeeder = async () => {
         }
 
         // Create a new admin user
-        const admin = await User.create({
-            email,
-            username,
-            password,
-            role: roles.admin,
+        bcrypt.hash(password, 10).then(async (hash) => {
+            await User.create({
+                username,
+                password: hash,
+                email
+            }).then((user) => {
+                const maxAge = 24 * 60 * 60;
+                const token = jwt.sign(
+                    { id: user._id, username, email: user.email, role: user.role },
+                    JWT_SECRET_KEY,
+                    {
+                        expiresIn: maxAge, // 24hrs
+                    }
+                );
+            })
         });
 
         console.log('Admin user created successfully:', admin);
