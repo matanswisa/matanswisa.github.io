@@ -11,6 +11,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import { useEffect, useState, useReducer } from 'react';
 import { futuresTickers } from './Tickers';
+import {idxOfStock} from './TickersLineSign'
 
 // @mui
 import {
@@ -48,6 +49,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 export default function BasicModal(props) {
+  
   console.log(futuresTickers)
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
@@ -113,6 +115,25 @@ export default function BasicModal(props) {
     // dispatch({ type: 'DELETE_FIELD', field: `${field}`, value: event.target.value });
   }
 
+  const [positionSymbol1, setPositionSymbol1] = React.useState('');
+
+  
+  const handlePositionFieldInput2 = (newValue) => {
+    setPositionSymbol1(newValue.year);
+    
+
+    const selectedTickerIndex = futuresTickers.findIndex((item) => item.year === newValue.year);
+    const selectedTypeObj = idxOfStock.find(
+      (obj) => selectedTickerIndex >= obj.startIdx && selectedTickerIndex <= obj.endIdx
+    );
+
+    if (selectedTypeObj) {
+      setSelectedType(selectedTypeObj.name);
+    } else {
+      setSelectedType('');
+    }
+  };
+  
 
 
   useEffect(() => {
@@ -198,6 +219,8 @@ export default function BasicModal(props) {
   };
 
 
+ 
+  const [selectedType, setSelectedType] = React.useState('');
 
 
 
@@ -210,6 +233,8 @@ export default function BasicModal(props) {
   };
 
 
+
+  
   const handleUpload = (tradeId) => {
     // Create a new FormData object
     const formData = new FormData();
@@ -337,15 +362,24 @@ export default function BasicModal(props) {
           <Grid item xs={6}>
             <Item>
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  required="true"
-                  options={futuresTickers}
-                  onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
-                  sx={{ width: 600 }}
-                  renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol} variant="standard" />}
-                />
+              <Autocomplete
+      disablePortal
+      id="combo-box-demo"
+      required
+      options={futuresTickers}
+      onChange={(e, newValue) => {
+        handlePositionFieldInput2(newValue ? newValue : '');
+      }}
+      sx={{ width: 600 }}
+      renderInput={(params) => (
+        <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
+          {selectedType && (
+            <div style={{ marginRight: '8px', fontWeight: 'bold' }}>{selectedType}</div>
+          )}
+          <TextField {...params} label="Symbol" value={positionSymbol1} variant="standard" />
+        </div>
+      )}
+    />
               </Box>
             </Item>
           </Grid>
