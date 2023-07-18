@@ -4,12 +4,12 @@ import bcrypt from 'bcrypt';
 
 const adminSeeder = async () => {
     try {
-        const email = `admin@example.com`; // Generate a random email address
+        const email = `admin@admin.com`; // Generate a random email address
         const username = 'admin';
         const password = 'adminpassword'; // You can set a desired password here
 
         // Check if an admin user already exists
-        const adminUser = await User.findOne({ username: 'admin' });
+        const adminUser = await User.findOne({ username: username });
         if (adminUser) {
             console.log('Admin user already exists');
             return;
@@ -20,16 +20,8 @@ const adminSeeder = async () => {
             await User.create({
                 username,
                 password: hash,
-                email
-            }).then((user) => {
-                const maxAge = 24 * 60 * 60;
-                const token = jwt.sign(
-                    { id: user._id, username, email: user.email, role: user.role },
-                    JWT_SECRET_KEY,
-                    {
-                        expiresIn: maxAge, // 24hrs
-                    }
-                );
+                email,
+                role: roles.basic
             })
         });
 
