@@ -15,7 +15,7 @@ import NavSection from '../../../components/nav-section';
 import navConfig from './config';
 import { useDispatch, useSelector } from 'react-redux';
 import SvgColor from '../../../components/svg-color';
-import { selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
+import { initializeUser, selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
 import useTokenValidation from '../../../hooks/validateToken';
 
 // ----------------------------------------------------------------------
@@ -52,11 +52,13 @@ Nav.propTypes = {
 
 export default function Nav({ openNav, onCloseNav }) {
 
-  // const account = {
-  //   displayName: 'User',
-  //   email: 'demo@minimals.cc',
-  //   photoURL: '/assets/images/avatars/avatar_default.jpg',
-  // };
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Dispatch the action to initialize the user details from local storage
+    dispatch(initializeUser());
+  }, [dispatch]);
 
 
   // const dispatch = useDispatch();
@@ -145,11 +147,11 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none">
           <StyledAccount>
-            <Avatar src={account.photoURL} alt="photoURL" />
+            <Avatar src={account?.photoURL} alt="photoURL" />
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.username}
+                {account?.username}
               </Typography>
             </Box>
           </StyledAccount>

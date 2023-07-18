@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, Route, useRoutes } from 'react-router-dom';
 
 // layouts
@@ -16,11 +16,16 @@ import UsersManagementPage from './pages/AdminDashboard'; // Import the UsersMan
 import useTokenValidation from './hooks/validateToken';
 import { useSelector } from 'react-redux';
 import { selectUserAdmin } from './redux-toolkit/userSlice';
+import api from './api/api';
 
 export default function Router() {
   const [tokenIsValid] = useTokenValidation();
   const isAdmin = useSelector(selectUserAdmin);
   const isAuthenticated = !!tokenIsValid; // Check if token exists
+
+  useEffect(() => {
+    
+  }, []);
 
   const routes = useRoutes([
     {

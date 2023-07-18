@@ -1,17 +1,11 @@
-// import { createSlice } from '@reduxjs/toolkit';
-/* Workaround for error:
-Uncaught SyntaxError: The requested module '/node_modules/@reduxjs/toolkit/dist/index.js' does not provide an export named 'createSlice' (at authSlice.js:1:10)
-FROM: https://github.com/reduxjs/redux-toolkit/issues/1960
-*/
 import { roles } from '../utils/roles';
 import { createSlice } from '@reduxjs/toolkit';
 
-
 const initialState = {
-    user: {},
+    user: null,
     role: 0,
     isAuthenticated: false,
-    isAdmin: false  // New state to check if user is SUPER_ADMIN
+    isAdmin: false,
 };
 
 const authSlice = createSlice({
@@ -21,7 +15,7 @@ const authSlice = createSlice({
         login(state, action) {
             state.user = action.payload.user;
             state.isAuthenticated = true;
-            state.isAdmin = action.payload.user.role === roles.admin
+            state.isAdmin = action.payload.user.role === roles.admin;
         },
         logout(state) {
             state.user = null;
@@ -33,14 +27,23 @@ const authSlice = createSlice({
         },
         selectIsAdmin(state) {
             return state.isAdmin;
-        }
-    }
+        },
+        initializeUser(state) {
+            console.log(state);
+            const persistedUser = JSON.parse(localStorage.getItem('persist:root'))?.auth?.user;
+            console.log(persistedUser);
+            if (persistedUser) {
+                state.user = persistedUser;
+                state.isAuthenticated = true;
+                state.isAdmin = persistedUser.role === roles.admin;
+            }
+        },
+    },
 });
 
+export const { login, logout, selectIsAdmin, initializeUser } = authSlice.actions;
 
-export const { login, logout, selectIsAdmin } = authSlice.actions;
-
-export const selectUserName = (state) => state.auth.user.username;
+export const selectUserName = (state) => state.auth.user?.username;
 export const selectUser = (state) => state.auth.user;
 export const selectUserAdmin = (state) => state.auth.isAdmin;
 
