@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, IconButton, Menu, MenuItem } from '@mui/material';
 import { AccountCircle, ExitToApp, Settings } from '@mui/icons-material';
-import BasicModal from './LabelsPage';
+import BasicModal from '../accounts/AccountsPage';
 import ChildModal from  '../accounts/createAccount'
 
 const AppNavbar = () => {
