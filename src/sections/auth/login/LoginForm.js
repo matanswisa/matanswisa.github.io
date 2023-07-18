@@ -6,10 +6,13 @@ import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
 import api from '../../../api/api';
+import { login } from '../../../redux-toolkit/userSlice';
+import { useDispatch } from 'react-redux';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
@@ -18,8 +21,8 @@ export default function LoginForm() {
   const handleLoginForm = () => {
     if (!username || !password) return
     api.post('/api/auth/login', { username, password }).then((res) => {
-
       localStorage.setItem('token', res.data.token);
+      dispatch(login(res.data));
       navigate('/dashboard', { replace: true });
 
     }).catch((err) => {

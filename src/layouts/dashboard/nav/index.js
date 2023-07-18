@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 import { styled, alpha } from '@mui/material/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@mui/material';
 // mock
-import account from '../../../_mock/account';
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
 // components
@@ -14,6 +13,10 @@ import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
 //
 import navConfig from './config';
+import { useDispatch, useSelector } from 'react-redux';
+import SvgColor from '../../../components/svg-color';
+import { selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
+import useTokenValidation from '../../../hooks/validateToken';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +30,19 @@ const StyledAccount = styled('div')(({ theme }) => ({
   backgroundColor: alpha(theme.palette.grey[500], 0.12),
 }));
 
+//account
+
+
+
+
+
+// ----------------------------------------------------------------------
+
+const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
+
+
+
+
 // ----------------------------------------------------------------------
 
 Nav.propTypes = {
@@ -35,9 +51,81 @@ Nav.propTypes = {
 };
 
 export default function Nav({ openNav, onCloseNav }) {
+
+  // const account = {
+  //   displayName: 'User',
+  //   email: 'demo@minimals.cc',
+  //   photoURL: '/assets/images/avatars/avatar_default.jpg',
+  // };
+
+
+  // const dispatch = useDispatch();
+  const [tokenIsValid] = useTokenValidation();
+  const account = useSelector(selectUser)
+  console.log(account);
+
+  const isAdmin = useSelector(selectUserAdmin);
+  console.log("isAdmin", isAdmin)
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
+
+
+
+
+  let navConfig
+  if (tokenIsValid && isAdmin) {
+    navConfig = [
+      {
+        title: 'dashboard',
+        path: '/dashboard/app',
+        icon: icon('dashboard'),
+      },
+      {
+        title: 'admins only',
+        path: '/manage-users'
+      },
+      {
+        title: 'Daily Stats',
+        path: '/dashboard/dailystatspage',
+        icon: icon('ic_analytics'),
+      },
+      {
+        title: 'reports',
+        path: '/dashboard/reports',
+        icon: icon('report'),
+      },
+
+
+      {
+        title: 'login',
+        path: '/login',
+        icon: icon(''),
+      },
+
+    ]
+  }
+  else if (!isAdmin && tokenIsValid) {
+    navConfig = [{
+      title: 'dashboard',
+      path: '/dashboard/app',
+      icon: icon('dashboard'),
+    },
+    {
+      title: 'Daily Stats',
+      path: '/dashboard/dailystatspage',
+      icon: icon('ic_analytics'),
+    },
+    {
+      title: 'reports',
+      path: '/dashboard/reports',
+      icon: icon('report'),
+    },
+    ];
+  }
+
+
+
 
   useEffect(() => {
     if (openNav) {
@@ -61,7 +149,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
+                {account.username}
               </Typography>
             </Box>
           </StyledAccount>

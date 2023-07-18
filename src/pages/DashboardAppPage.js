@@ -94,6 +94,7 @@ export default function DashboardAppPage() {
 
 
   const Alltrades = useSelector(getTrades)
+  console.log("AllTrades!!", Alltrades);
 
   const theme = useTheme();
 
@@ -159,7 +160,7 @@ export default function DashboardAppPage() {
         LossTrades.push(trade.totalPnL);
       }
     });
-   
+
     return LossTrades;
   }
 
@@ -174,12 +175,12 @@ export default function DashboardAppPage() {
     api.get("/api/WinAndLossTotalTime").then(
       (res) => {
         setTrades(res.data)
-        
+
         for (const index in res.data) {
           if (index === "lossCount") {
             setLosingTrades(res.data["lossCount"]);
           }
-          else if(index === "breakEvenCount"){
+          else if (index === "breakEvenCount") {
 
             setbreakEvenTrades(res.data["breakEvenCount"]);
           }
@@ -198,7 +199,7 @@ export default function DashboardAppPage() {
     api.get("/api/ShowInfoByDates").then(
       (res) => {
         setDailyNetCumulative(res.data)
-console.log(res.data);
+        console.log(res.data);
         for (const index in res.data) {
 
           if (res.data[index]["totalPnL"] < 0) {  //when in some day we have a lose day(P&L < 0) inc variable  
@@ -235,30 +236,30 @@ console.log(res.data);
       <Helmet>
         <title>Dashboard</title>
       </Helmet>
-  
+
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 3 }}>
           Hi, Welcome back
         </Typography>
-  
+
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Total Net P&L" total={sumPnL(Alltrades)} icon={'eva:pie-chart-outline'} />
           </Grid>
-  
+
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Profit Factor" total={ProfitFactor(Alltrades)} icon={'eva:grid-outline'} color="secondary" />
           </Grid>
-  
+
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Average Winning Trade" total={avgWinningTrades(Alltrades)} icon={'eva:bar-chart-2-outline'} color="secondary" />
           </Grid>
-  
+
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Average Losing Trade" total={avgLosingTrades(Alltrades)} icon={'eva:bar-chart-outline'} color="secondary" />
           </Grid>
         </Grid>
-  
+
         <Grid container spacing={5}>
           <Grid item xs={12} md={6} lg={8}>
             <Grid container spacing={6}>
@@ -277,7 +278,7 @@ console.log(res.data);
                     },
                   ]}
                 />
-   <AppWebsiteVisits
+                <AppWebsiteVisits
                   title="Daily Net Cumulative Loss"
                   subheader=""
                   chartLabels={DailyNetCumulativeDateLoss()}
@@ -291,17 +292,17 @@ console.log(res.data);
                     },
                   ]}
                 />
-  
-           
+
+
               </Grid>
             </Grid>
           </Grid>
-  
+
           <Grid item xs={12} md={6} lg={4}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                     
-              <AppCurrentVisits
+
+                <AppCurrentVisits
                   title="Winning % By Trades"
                   chartData={[
                     { label: 'Winners', value: winningTrades },
@@ -310,7 +311,7 @@ console.log(res.data);
                   ]}
                   chartColors={[Colors.green, Colors.red]}
                 />
-             
+
                 <AppCurrentVisits
                   title="Winning % By Days"
                   chartData={[
@@ -324,14 +325,14 @@ console.log(res.data);
           </Grid>
         </Grid>
         <Grid container spacing={4}>
-  <Grid item xs={12}>
-    <Calendar />
-  </Grid>
-</Grid>
+          <Grid item xs={12}>
+            <Calendar />
+          </Grid>
+        </Grid>
       </Container>
     </>
   );
-  
+
 }
 
 

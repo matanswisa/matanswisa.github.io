@@ -1,5 +1,7 @@
 // component
+import { useSelector } from 'react-redux';
 import SvgColor from '../../../components/svg-color';
+
 
 // ----------------------------------------------------------------------
 

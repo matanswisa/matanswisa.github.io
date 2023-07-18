@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
+import { useDispatch } from "react-redux";
 
 export default function useTokenValidation() {
     const navigate = useNavigate();
+
     const [tokenIsValid, setIsTokenValid] = useState(false);
 
     useEffect(() => {
@@ -16,7 +18,9 @@ export default function useTokenValidation() {
                             Authorization: `Bearer ${token}`,
                         },
                     });
-                    if (response.status === 200) setIsTokenValid(true);
+                    if (response.status === 200) {
+                        setIsTokenValid(true)
+                    }
                     else setIsTokenValid(false)
 
                 } catch (error) {
@@ -32,5 +36,5 @@ export default function useTokenValidation() {
         validateToken();
     }, [navigate]);
 
-    return [tokenIsValid];
+    return [tokenIsValid, setIsTokenValid];
 }

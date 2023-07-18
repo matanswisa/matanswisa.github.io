@@ -14,9 +14,12 @@ import Reports from './pages/Reports';
 import DashboardAppPage from './pages/DashboardAppPage';
 import UsersManagementPage from './pages/AdminDashboard'; // Import the UsersManagementPage component
 import useTokenValidation from './hooks/validateToken';
+import { useSelector } from 'react-redux';
+import { selectUserAdmin } from './redux-toolkit/userSlice';
 
 export default function Router() {
   const [tokenIsValid] = useTokenValidation();
+  const isAdmin = useSelector(selectUserAdmin);
   const isAuthenticated = !!tokenIsValid; // Check if token exists
 
   const routes = useRoutes([
@@ -37,7 +40,7 @@ export default function Router() {
     },
     {
       path: 'manage-users', // Add a new route for UsersManagementPage called "manage-users"
-      element: isAuthenticated ? <UsersManagementPage /> : <Navigate to="/login" replace />,
+      element: isAuthenticated && isAdmin ? <UsersManagementPage /> : <Navigate to="/login" replace />,
     },
     {
       path: '404',
