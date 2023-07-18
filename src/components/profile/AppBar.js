@@ -34,10 +34,11 @@ const AppNavbar = () => {
   };
 
 
+
   return (
        
     <div  style={{ width: '8%'  , borderRadius: '8px'}}> {/* Set a smaller width value */}
-      <AppBar position="static">
+      <AppBar  position="static">
         <Toolbar>
           <IconButton
             edge="start"
@@ -68,7 +69,7 @@ const AppNavbar = () => {
               <Settings sx={{ mr: 1 }} fontSize="small" />
               Settings
             </MenuItem>
-            {openmodal && <BasicModal openModal={openmodal}/>}
+            {openmodal && <BasicModal openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
        
           </Menu>
         </Toolbar>
