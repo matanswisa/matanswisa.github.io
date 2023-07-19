@@ -44,7 +44,7 @@ export default function BasicModal(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-  const [licenseTime, setLicenseTime] = React.useState('');
+  const [licenseTime, setLicenseTime] = useState(1);
 
   const handleGenerateUser = () => {
     const generatedUsername = generatePassword();
@@ -67,6 +67,8 @@ export default function BasicModal(props) {
       })
       .then((response) => {
         console.log('User created successfully:', response.data);
+        notifyToast("User added successfully", "success");
+        props.handleOpenModal(false);
         // Fetch list of users from "/api/users" route
         api
           .get('/api/auth/users', {
@@ -78,9 +80,10 @@ export default function BasicModal(props) {
             if (props?.handleFetchUsers)
               props.handleFetchUsers();
             console.log('List of users:', response.data);
-            // Perform any further actions with the list of users
+            // Perform any further actions with the list of users`
           })
           .catch((error) => {
+            
             console.error('Failed to fetch list of users:', error);
           });
       })
@@ -112,8 +115,8 @@ export default function BasicModal(props) {
   return (
     <div>
       <Modal
-        open={props.openModal}
-        onClose={handleClose}
+         open={props.openModal}
+         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >

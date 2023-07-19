@@ -112,7 +112,9 @@ const UsersManagementPage = () => {
     }
 
     return (
+        
         <Container maxWidth="lg">
+             <ToastContainer />
             <Typography variant="h4" align="center" mt={4}>
                 Users Management
             </Typography>
