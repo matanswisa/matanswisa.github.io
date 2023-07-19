@@ -17,7 +17,12 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
 import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
-
+import UsersManage from '../components/createUser/createUser';
+import Iconify from '../components/iconify';
+import { useEffect, useState } from 'react';
+import useToast from '../hooks/alert'
+import { ToastContainer, } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // Sample data for existing users
 const users = [
     { id: 1, username: 'user1', email: 'user1@example.com' },
@@ -25,8 +30,10 @@ const users = [
     { id: 3, username: 'user3', email: 'user3@example.com' },
 ];
 
+
 // Component to display existing users
 const UsersList = ({ users, onDelete, onUpdate }) => (
+    
     <TableContainer component={Paper} sx={{ mt: 3 }}>
         <Table>
             <TableHead>
@@ -93,6 +100,23 @@ const UserRegistration = ({ onRegister }) => {
 
 // Main component for Users Management Page
 const UsersManagementPage = () => {
+    
+const [openmodal, setIsOpenmodal] = useState(false);
+
+
+
+const handleOpenModal = (tradeId) => {
+    setIsOpenmodal(true);
+  };
+
+
+  const showToast = useToast();
+  const notifyToast = (Msg, Type) => {
+
+    showToast(Msg, Type);
+  }
+
+
     // Function to handle user deletion
     const handleDeleteUser = (userId) => {
         // Implement the logic to delete the user based on the userId
@@ -116,6 +140,20 @@ const UsersManagementPage = () => {
             <Typography variant="h4" align="center" mt={4}>
                 Users Management
             </Typography>
+           
+            <Button onClick={handleOpenModal}  startIcon={<Iconify icon="eva:plus-fill" />}  variant='contained'>Create User</Button>
+            {openmodal && <UsersManage openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast}  />}
+          {(openmodal ) === true ? <UsersManage
+          
+          
+            openModal={openmodal}
+            handleOpenModal={setIsOpenmodal}
+          
+         
+            notifyToast={notifyToast}
+         
+          /> : null}
+
             <UsersList users={users} onDelete={handleDeleteUser} onUpdate={handleUpdateUser} />
             {/* Display UserRegistration component only for admin users */}
             {/* Replace 'isAdmin' with your logic to check if the user is an admin */}
