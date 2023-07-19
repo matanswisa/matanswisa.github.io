@@ -13,7 +13,7 @@ console.log("JWT_SECRET_KEY", JWT_SECRET_KEY)
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-    const { username, password, email,license } = req.body;
+    const { username, password, email, license } = req.body;
     if (password.length < 6) {
         return res.status(400).json({ message: "Password less than 6 characters" });
     }
@@ -27,7 +27,7 @@ router.post('/register', async (req, res) => {
             .then((user) => {
                 const maxAge = 24 * 60 * 60;
                 const token = jwt.sign(
-                    { id: user._id, username, email: user.email, role: user.role , license: user.license},
+                    { id: user._id, username, email: user.email, role: user.role, license: user.license },
                     JWT_SECRET_KEY,
                     {
                         expiresIn: maxAge, // 24hrs
@@ -44,7 +44,7 @@ router.post('/register', async (req, res) => {
                     user: user._id,
                     role: user.role,
                     email: user.email,
-                    license:user.license
+                    license: user.license
                 });
             })
             .catch((error) =>
@@ -145,6 +145,16 @@ router.post("/fetchUsers", authenticateToken, authorizeRole(roles.admin), async 
         };
 
         const users = await User.paginate({}, options);
+        res.status(200).json(users);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server Error" });
+    }
+});
+
+router.get('/users', authenticateToken, authorizeRole(roles.admin), async (req, res) => {
+    try {
+        const users = await User.find({});
         res.status(200).json(users);
     } catch (err) {
         console.error(err);
