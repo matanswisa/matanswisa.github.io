@@ -80,11 +80,16 @@ const UsersManagementPage = () => {
     }
 
 
-    // Function to handle user deletion
-    const handleDeleteUser = (userId) => {
-        // Implement the logic to delete the user based on the userId
-        console.log(`Deleting user with ID ${userId}`);
-    };
+    
+  const handleDeleteUser = async (id) => {
+
+    console.log(id);
+    await api.delete('auth/api/deleteUser', { data: { id } });
+  
+    notifyToast(`Delete account - ${id}`, 'warning');
+   
+  }
+
 
     // Function to handle user update
     const handleUpdateUser = (userId) => {
