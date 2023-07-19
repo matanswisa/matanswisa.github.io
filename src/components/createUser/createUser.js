@@ -3,9 +3,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { TextField } from '@mui/material';
+import { TextField,MenuItem } from '@mui/material';
 import axios from 'axios';
 import { Grid } from 'rsuite';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import InputAdornment from '@mui/material/InputAdornment';
+import Select from '@mui/material/Select';
 
 const style = {
     position: 'absolute',
@@ -40,7 +43,8 @@ export default function BasicModal(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-
+  const [licenseTime, setLicenseTime] = React.useState('');
+  
   const handleGenerateUser = () => {
     const generatedUsername = generatePassword();
     const generatedPassword = generatePassword();
@@ -87,6 +91,14 @@ export default function BasicModal(props) {
     setEmail(event.target.value);
   };
 
+
+  const handleChange = (event) => {
+    const selectedMonths = event.target.value;
+    const currentDate = new Date();
+    const endDate = new Date(currentDate.setMonth(currentDate.getMonth() + selectedMonths));
+    setLicenseTime(selectedMonths);
+  };
+
   return (
     <div>
       <Modal
@@ -101,10 +113,31 @@ export default function BasicModal(props) {
           </Typography>
           <div>
 
-      <TextField label="Username" value={username} onChange={handleUsernameChange}  />
+      <TextField  label="Username" value={username} onChange={handleUsernameChange} InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <AccountCircle />
+            </InputAdornment>
+          ),
+        }} />
       <TextField label="Password" value={password} onChange={handlePasswordChange} style={{ marginLeft: '15px' }} />
       <TextField label="Email" value={email} onChange={handleEmailChange} style={{ marginLeft: '15px' }} />
- 
+
+      <Select
+  labelId="demo-simple-select-label"
+  id="demo-simple-select"
+  value={licenseTime}
+  label="License time"
+  onChange={handleChange}
+  defaultValue= {licenseTime}
+>
+  {[...Array(12)].map((_, index) => (
+    <MenuItem key={index + 1} value={index + 1}>
+      {index + 1} month
+    </MenuItem>
+  ))}
+</Select>
+
             <Grid>  <Button variant="contained" onClick={handleGenerateUser}>
               Generate
             </Button>
