@@ -60,6 +60,7 @@ export default function BasicModal(props) {
         username: username,
         email: email,
         password: password,
+        license: licenseTime
       })
       .then((response) => {
         console.log('User created successfully:', response.data);
