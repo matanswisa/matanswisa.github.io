@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 6,
     },
+    license :{
+        type: Date,
+        required: true,
+    },
     role: {
         type: Number,
         enum: [roles.basic, roles.admin], // basic = 0 , admin = 1 
