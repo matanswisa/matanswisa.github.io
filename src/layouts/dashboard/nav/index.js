@@ -70,8 +70,8 @@ export default function Nav({ openNav, onCloseNav }) {
         path: '/dashboard/app',
         icon: icon('dashboard'),
       },
-    
-      
+
+
       {
         title: 'Daily Stats',
         path: '/dashboard/dailystatspage',
@@ -88,7 +88,7 @@ export default function Nav({ openNav, onCloseNav }) {
         path: '/manage-users',
         icon: icon('settings')
       },
-    
+
       //temp change 
       {
         title: 'signout',

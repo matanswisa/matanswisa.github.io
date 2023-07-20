@@ -11,7 +11,7 @@ import DailyStatsPage from './pages/DailyStatsPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import Reports from './pages/Reports';
-import FirstLoginPage from './pages/FirstLoginPage';
+import FirstLoginPage from './pages/firstLoginPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import UsersManagementPage from './pages/AdminDashboard'; // Import the UsersManagementPage component
 import useTokenValidation from './hooks/validateToken';
@@ -52,7 +52,7 @@ export default function Router() {
       path: 'signout',
       element: isAuthenticated ? <Navigate to="/dashboard/app" replace /> : <LoginPage />,
     },
-    
+
     {
       element: isAuthenticated ? <Tabs /> : <Navigate to="/login" replace />,
       children: [
