@@ -48,7 +48,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 export default function BasicModal(props) {
-  console.log(futuresTickers)
+  
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
@@ -184,8 +184,7 @@ export default function BasicModal(props) {
   const validateForm = () => {
     if (positionType === '' || positionStatus === '' ||
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
-      console.log(positionDate)
-
+   
       if (positionType === '') notifyToast("Position type is missing", "warning");
       else if (positionStatus === '') notifyToast("Position status is missing", "warning");
       else if (!netPnL) notifyToast("Net PnL is missing", "warning");
@@ -222,7 +221,7 @@ export default function BasicModal(props) {
       .then(response => response.json())
       .then(data => {
         // Handle the response from the server
-        console.log(data);
+   
         props.updateTradeLists()
       })
       .catch(error => {
