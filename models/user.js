@@ -22,10 +22,7 @@ const userSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
-    isGenerated :{
-        type: Boolean,
-        required: true,
-    },
+  
     role: {
         type: Number,
         enum: [roles.basic, roles.admin], // basic = 0 , admin = 1 

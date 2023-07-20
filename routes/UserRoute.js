@@ -13,7 +13,7 @@ console.log("JWT_SECRET_KEY", JWT_SECRET_KEY)
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-    const { username, password, email, license ,isGenerated} = req.body;
+    const { username, password, email, license } = req.body;
     if (password.length < 6) {
         return res.status(400).json({ message: "Password less than 6 characters" });
     }
@@ -23,12 +23,12 @@ router.post('/register', async (req, res) => {
             password: hash,
             email,
             license,
-            isGenerated
+          
         })
             .then((user) => {
                 const maxAge = 24 * 60 * 60;
                 const token = jwt.sign(
-                    { id: user._id, username, email: user.email, role: user.role, license: user.license ,isGenerated:user.isGenerated},
+                    { id: user._id, username, email: user.email, role: user.role, license: user.license },
                     JWT_SECRET_KEY,
                     {
                         expiresIn: maxAge, // 24hrs
@@ -46,7 +46,7 @@ router.post('/register', async (req, res) => {
                     role: user.role,
                     email: user.email,
                     license: user.license,
-                    isGenerated:user.isGenerated
+                  
                 });
             })
             .catch((error) =>
@@ -97,7 +97,7 @@ router.post('/login', async (req, res, next) => {
                             username: user.username,
                             role: user.role,
                             email: user.email,
-                            isGenerated:user.isGenerated
+                          
                         },
                         token: token
                     });
