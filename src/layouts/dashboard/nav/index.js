@@ -84,6 +84,12 @@ export default function Nav({ openNav, onCloseNav }) {
         icon: icon('dashboard'),
       },
       {
+        title: 'firstLogin',
+        path: '/dashboard/firstloginpage',
+        icon: icon('dashboard'),
+      },
+
+      {
         title: 'admins only',
         path: '/manage-users'
       },
