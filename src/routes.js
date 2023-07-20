@@ -11,7 +11,7 @@ import DailyStatsPage from './pages/DailyStatsPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import Reports from './pages/Reports';
-import firstLoginPage from './pages/firstLoginPage'
+import FirstLoginPage from './pages/FirstLoginPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import UsersManagementPage from './pages/AdminDashboard'; // Import the UsersManagementPage component
 import useTokenValidation from './hooks/validateToken';
@@ -34,7 +34,7 @@ export default function Router() {
       element: isAuthenticated ? <DashboardLayout /> : <Navigate to="/login" replace />,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
-        { path: 'firstloginpage', element: isAuthenticated ? <firstLoginPage /> : <Navigate to="/login" replace /> },
+        { path: 'firstloginpage', element: isAuthenticated ? <FirstLoginPage /> : <Navigate to="/login" replace /> },
         { path: 'app', element: isAuthenticated ? <DashboardAppPage /> : <Navigate to="/login" replace /> },
         { path: 'dailystatspage', element: isAuthenticated ? <DailyStatsPage /> : <Navigate to="/login" replace /> },
         { path: 'reports', element: isAuthenticated ? <Reports /> : <Navigate to="/login" replace /> },
