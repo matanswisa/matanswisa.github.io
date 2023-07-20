@@ -37,7 +37,7 @@ export default function FirstLoginPage (props) {
     api
       .post('/api/auth/register', {
         password: password,
-        isGenerated:false,
+       
       })
       .then((response) => {
        

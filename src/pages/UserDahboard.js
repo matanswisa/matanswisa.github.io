@@ -25,7 +25,7 @@ export default function U (props) {
     api
       .post('/api/auth/register', {
         password: password,
-        isGenerated:false,
+        
       })
       .then((response) => {
        

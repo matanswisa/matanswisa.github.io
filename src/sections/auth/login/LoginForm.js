@@ -23,7 +23,7 @@ export default function LoginForm() {
     api.post('/api/auth/login', { username, password }).then((res) => {
       localStorage.setItem('token', res.data.token);
       dispatch(login(res.data));
-      console.log("isGenerated", res.data["user"].isGenerated);
+    
       localStorage.setItem("user", JSON.stringify(res.data));
       navigate('/dashboard/firstloginpage', { replace: true });
     }).catch((err) => {
