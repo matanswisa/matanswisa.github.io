@@ -74,21 +74,22 @@ const UsersManagementPage = () => {
 
 
     const showToast = useToast();
+
     const notifyToast = (Msg, Type) => {
 
         showToast(Msg, Type);
     }
 
 
-    
-  const handleDeleteUser = async (id) => {
 
-    console.log(id);
-    await api.delete('auth/api/deleteUser', { data: { id } });
-  
-    notifyToast(`Delete account - ${id}`, 'warning');
-   
-  }
+    const handleDeleteUser = async (id) => {
+
+        console.log(id);
+        await api.delete('auth/api/deleteUser', { data: { id } });
+
+        notifyToast(`Delete account - ${id}`, 'warning');
+
+    }
 
 
     // Function to handle user update
@@ -117,9 +118,9 @@ const UsersManagementPage = () => {
     }
 
     return (
-        
+
         <Container maxWidth="lg">
-             <ToastContainer />
+            <ToastContainer />
             <Typography variant="h4" align="center" mt={4}>
                 Users Management
             </Typography>
@@ -141,7 +142,7 @@ const UsersManagementPage = () => {
             {/* Display UserRegistration component only for admin users */}
             {/* Replace 'isAdmin' with your logic to check if the user is an admin */}
             {/* {isAdmin && <UserRegistration onRegister={handleRegisterUser} />} */}
-        
+
         </Container>
     );
 };
