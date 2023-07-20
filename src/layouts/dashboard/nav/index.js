@@ -54,10 +54,9 @@ export default function Nav({ openNav, onCloseNav }) {
   // const dispatch = useDispatch();
   const [tokenIsValid] = useTokenValidation();
   const account = useSelector(selectUser)
-  console.log(account);
-
+ 
   const isAdmin = useSelector(selectUserAdmin);
-  console.log("isAdmin", isAdmin)
+
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');

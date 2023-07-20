@@ -20,7 +20,7 @@ export default function NavSection({ data = [], ...other }) {
   const handleSignout = () => {
     localStorage.removeItem("token");
     dispatch(logout());
-    console.log("signout!!")
+  
   }
 
 

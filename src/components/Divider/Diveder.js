@@ -133,7 +133,7 @@ const rows = trades.map((trade) => ({
     api.get(`/api/ShowInfoBySpecificDate/${date}`).then(
       (res) => {
         setTrades(res.data);
-          console.log(res.data);
+        
       
 
       }

@@ -28,7 +28,7 @@ const CalendarComponent = () => {
     api.get('/api/ShowNumOfTradeTotalPnlInfoByDates')
       .then((res) => {
         setCalendarTrades(res.data);
-        console.log(res.data);
+     
       })
       .catch();
   }, []);
