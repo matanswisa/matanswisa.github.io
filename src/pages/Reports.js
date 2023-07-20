@@ -367,9 +367,9 @@ export default function UserPage() {
                           { }
                         </TableCell>
                         <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            {new Date(trade.entryDate).toString().substring(0, 24)}
-                          </Stack>
+                        <Stack direction="row" alignItems="center" spacing={2}>
+  {new Date(trade.entryDate).toLocaleDateString('en-GB')}
+</Stack>
                         </TableCell>
                         <TableCell align="center">{trade.symbol}</TableCell>
                         <TableCell align="center">
