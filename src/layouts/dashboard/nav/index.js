@@ -70,16 +70,8 @@ export default function Nav({ openNav, onCloseNav }) {
         path: '/dashboard/app',
         icon: icon('dashboard'),
       },
-      {
-        title: 'firstLogin',
-        path: '/dashboard/firstloginpage',
-        icon: icon('dashboard'),
-      },
-      {
-        title: 'admins only',
-        path: '/manage-users',
-        icon: icon('dashboard')
-      },
+    
+      
       {
         title: 'Daily Stats',
         path: '/dashboard/dailystatspage',
@@ -90,6 +82,13 @@ export default function Nav({ openNav, onCloseNav }) {
         path: '/dashboard/reports',
         icon: icon('report'),
       },
+
+      {
+        title: 'Settings',
+        path: '/manage-users',
+        icon: icon('settings')
+      },
+    
       //temp change 
       {
         title: 'signout',
@@ -114,6 +113,16 @@ export default function Nav({ openNav, onCloseNav }) {
       title: 'reports',
       path: '/dashboard/reports',
       icon: icon('report'),
+    },
+    {
+      title: 'Settings',
+      path: '/manage-users',
+      icon: icon('settings')
+    },
+    {
+      title: 'signout',
+      // path: '/login',
+      icon: icon(''),
     },
     ];
   }

@@ -11,13 +11,13 @@ import DailyStatsPage from './pages/DailyStatsPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import Reports from './pages/Reports';
-import FirstLoginPage from './pages/firstLoginPage';
+import FirstLoginPage from './pages/FirstLoginPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import UsersManagementPage from './pages/AdminDashboard'; // Import the UsersManagementPage component
 import useTokenValidation from './hooks/validateToken';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, selectUserAdmin } from './redux-toolkit/userSlice';
-
+import Tabs from './components/Tabs/Tabs';
 export default function Router() {
   const [tokenIsValid] = useTokenValidation();
   const isAdmin = useSelector(selectUserAdmin);
@@ -47,10 +47,20 @@ export default function Router() {
       path: 'login',
       element: isAuthenticated ? <Navigate to="/dashboard/app" replace /> : <LoginPage />,
     },
+
     {
-      element: isAuthenticated ? <DashboardLayout /> : <Navigate to="/login" replace />,
+      path: 'signout',
+      element: isAuthenticated ? <Navigate to="/dashboard/app" replace /> : <LoginPage />,
+    },
+    
+    {
+      element: isAuthenticated ? <Tabs /> : <Navigate to="/login" replace />,
       children: [
 
+        // {
+        //   path: 'manage-users', // Add a new route for UsersManagementPage called "manage-users"
+        //   element: isAuthenticated && isAdmin ? <UsersManagementPage /> : <Navigate to="/login" replace />
+        // },
         {
           path: 'manage-users', // Add a new route for UsersManagementPage called "manage-users"
           element: isAuthenticated && isAdmin ? <UsersManagementPage /> : <Navigate to="/login" replace />

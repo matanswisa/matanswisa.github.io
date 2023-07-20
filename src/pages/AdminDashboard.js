@@ -141,6 +141,7 @@ const UsersManagementPage = () => {
             {/* Display UserRegistration component only for admin users */}
             {/* Replace 'isAdmin' with your logic to check if the user is an admin */}
             {/* {isAdmin && <UserRegistration onRegister={handleRegisterUser} />} */}
+        
         </Container>
     );
 };
