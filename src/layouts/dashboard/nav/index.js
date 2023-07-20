@@ -51,16 +51,6 @@ Nav.propTypes = {
 };
 
 export default function Nav({ openNav, onCloseNav }) {
-
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    // Dispatch the action to initialize the user details from local storage
-    dispatch(initializeUser());
-  }, [dispatch]);
-
-
   // const dispatch = useDispatch();
   const [tokenIsValid] = useTokenValidation();
   const account = useSelector(selectUser)
@@ -71,9 +61,6 @@ export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
-
-
-
 
   let navConfig
   if (tokenIsValid && isAdmin) {
@@ -88,10 +75,10 @@ export default function Nav({ openNav, onCloseNav }) {
         path: '/dashboard/firstloginpage',
         icon: icon('dashboard'),
       },
-
       {
         title: 'admins only',
-        path: '/manage-users'
+        path: '/manage-users',
+        icon: icon('dashboard')
       },
       {
         title: 'Daily Stats',
@@ -103,11 +90,10 @@ export default function Nav({ openNav, onCloseNav }) {
         path: '/dashboard/reports',
         icon: icon('report'),
       },
-
-
+      //temp change 
       {
-        title: 'login',
-        path: '/login',
+        title: 'signout',
+        // path: '/login',
         icon: icon(''),
       },
 

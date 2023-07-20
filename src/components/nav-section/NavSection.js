@@ -4,6 +4,8 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { Box, List, ListItemText } from '@mui/material';
 //
 import { StyledNavItem, StyledNavItemIcon } from './styles';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../redux-toolkit/userSlice';
 
 // ----------------------------------------------------------------------
 
@@ -11,12 +13,23 @@ NavSection.propTypes = {
   data: PropTypes.array,
 };
 
+
 export default function NavSection({ data = [], ...other }) {
+  const dispatch = useDispatch();
+
+  const handleSignout = () => {
+    localStorage.removeItem("token");
+    dispatch(logout());
+    console.log("signout!!")
+  }
+
+
   return (
     <Box {...other}>
       <List disablePadding sx={{ p: 1 }}>
         {data.map((item) => (
-          <NavItem key={item.title} item={item} />
+          item.title.toLowerCase() === 'signout' ?
+            <NavItem key={item.title} item={item} onClick={handleSignout} /> : <NavItem key={item.title} item={item} />
         ))}
       </List>
     </Box>
