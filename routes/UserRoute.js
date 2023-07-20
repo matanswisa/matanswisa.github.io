@@ -13,7 +13,7 @@ console.log("JWT_SECRET_KEY", JWT_SECRET_KEY)
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-    const { username, password, email, license } = req.body;
+    const { username, password, email, license ,isGenerated} = req.body;
     if (password.length < 6) {
         return res.status(400).json({ message: "Password less than 6 characters" });
     }
@@ -22,12 +22,13 @@ router.post('/register', async (req, res) => {
             username,
             password: hash,
             email,
-            license
+            license,
+            isGenerated
         })
             .then((user) => {
                 const maxAge = 24 * 60 * 60;
                 const token = jwt.sign(
-                    { id: user._id, username, email: user.email, role: user.role, license: user.license },
+                    { id: user._id, username, email: user.email, role: user.role, license: user.license ,isGenerated:user.isGenerated},
                     JWT_SECRET_KEY,
                     {
                         expiresIn: maxAge, // 24hrs
@@ -44,7 +45,8 @@ router.post('/register', async (req, res) => {
                     user: user._id,
                     role: user.role,
                     email: user.email,
-                    license: user.license
+                    license: user.license,
+                    isGenerated:user.isGenerated
                 });
             })
             .catch((error) =>
@@ -94,7 +96,8 @@ router.post('/login', async (req, res, next) => {
                         user: {
                             username: user.username,
                             role: user.role,
-                            email: user.email
+                            email: user.email,
+                            isGenerated:user.isGenerated
                         },
                         token: token
                     });
@@ -161,6 +164,28 @@ router.get('/users', authenticateToken, authorizeRole(roles.admin), async (req, 
         res.status(500).json({ message: "Server Error" });
     }
 });
+
+
+
+
+router.delete('/deleteUser', authenticateToken, authorizeRole(roles.admin), async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deletedUser = await User.findByIdAndDelete(id);
+  
+      if (!deletedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.status(200).json({ message: 'User deleted successfully' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server Error' });
+    }
+  });
+  
+
+
 
 
 //Update username or email etc.
