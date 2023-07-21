@@ -4,7 +4,9 @@ import AdminManagementPage from '../../pages/AdminDashboard'; // Import the User
 import UsersManagementPage from '../../pages/UserDahboard'
 import AccountPage from '../../pages/AccountsPage';
 import { useNavigate } from 'react-router-dom';
-
+import useToast from '../../hooks/alert'
+import { ToastContainer, } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
 
@@ -28,6 +30,13 @@ const MyTabs = () => {
     // Parse the JSON data to get the JavaScript object
     const parsedData = JSON.parse(dataFromLocalStorage);
 
+    const showToast = useToast();
+
+    const notifyToast = (Msg, Type) => {
+
+        showToast(Msg, Type);
+    }
+
    
     
   const [selectedTab, setSelectedTab] = React.useState(0);
@@ -41,6 +50,7 @@ const MyTabs = () => {
   };
   return (
     <div>
+       <ToastContainer />
             <Button onClick={handleNavigateToDashboard}>Back</Button>
       <Tabs value={selectedTab} onChange={handleTabChange} centered>
 
@@ -62,7 +72,7 @@ const MyTabs = () => {
       {parsedData.user.role == 1 ? <TabPanel value={selectedTab} index={0}>
         <AdminManagementPage />
       </TabPanel> : <TabPanel value={selectedTab} index={0}>
-        <UsersManagementPage />
+        <UsersManagementPage notifyToast={notifyToast} />
       </TabPanel>}
 
 

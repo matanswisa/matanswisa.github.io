@@ -84,12 +84,27 @@ const UsersManagementPage = () => {
 
     const handleDeleteUser = async (id) => {
 
-        console.log(id);
-        await api.delete('auth/api/deleteUser', { data: { id } });
+        const token = localStorage.getItem("token");
+        try {
+          console.log(id);
+          // Assuming the correct endpoint is '/api/auth/deleteUser'
+          await api.delete('/api/auth/deleteUser', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            data: { id }, // Make sure this is the correct format for the API
+          });
+      
+          notifyToast(`Delete account - ${id}`, 'warning');
+          
+          // Optionally, you can fetch the updated list of users after deletion
+      
+        } catch (error) {
+          console.error('Failed to delete user:', error);
+        }
+      };
+    
 
-        notifyToast(`Delete account - ${id}`, 'warning');
-
-    }
 
 
     // Function to handle user update
