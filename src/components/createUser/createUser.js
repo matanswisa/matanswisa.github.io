@@ -17,7 +17,7 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 800,
-  height: 230,
+  height: 260,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
@@ -35,6 +35,8 @@ const generatePassword = () => {
 
   return password;
 };
+
+
 
 export default function BasicModal(props) {
   const handleOpen = () => props.handleOpenModal(true);
@@ -55,9 +57,47 @@ export default function BasicModal(props) {
   };
 
 
+  const validateForm = () => {
+    // Assuming password, email, and username are defined and assigned values somewhere above this function
+  
+    // Email validation regex pattern
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+    if (password === '' || email === '' || username === '') {
+      if (password === '') notifyToast("Password is missing", "warning");
+      if (email === '') notifyToast("Email is missing", "warning");
+      if (username === '') notifyToast("Username is missing", "warning");
+      return false;
+      
+    } 
+    
+    if (password.length < 6) {
+      notifyToast("Password less than 6 characters", "warning");
+      return false;
+    } else if (!emailRegex.test(email)) {
+      notifyToast("Invalid email format", "warning");
+      return false;
+    } else {
+      // Your code for successful form submission goes here
+      // If everything is valid, you can proceed with the form submission
+      // For example: submitForm();
+      return true;
+    }
+  };
+  
+  
+
+
+
+
   const handleCreateUser = () => {
     const token = localStorage.getItem("token");
     // Send user details to "/api/auth/register" route
+
+
+
+    if(validateForm()){
+
     api
       .post('/api/auth/register', {
         username: username,
@@ -91,6 +131,7 @@ export default function BasicModal(props) {
       .catch((error) => {
         console.error('Failed to create user:', error);
       });
+    }
   };
 
   const handleUsernameChange = (event) => {
@@ -151,13 +192,14 @@ export default function BasicModal(props) {
                 </MenuItem>
               ))}
             </Select>
-
-            <Grid>  <Button variant="contained" onClick={handleGenerateUser}>
-              Generate
-            </Button>
-              <Button variant="contained" onClick={handleCreateUser}>
-                Create
-              </Button></Grid>
+            <Grid container justify="flex-end" style={{ marginRight: '15px' }}>
+      <Button variant="contained" onClick={handleGenerateUser}>
+        Generate
+      </Button>
+      <Button variant="contained" onClick={handleCreateUser}>
+        Create
+      </Button>
+    </Grid>
 
           </div>
         </Box>
