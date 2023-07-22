@@ -14,11 +14,13 @@ function getTodoList(info, date) {
     return itemDate.getDate() === date.getDate(); // Check if the item date matches the provided date
   });
 
+ 
   return filteredInfo.map((item) => ({
     numoftrades: item.trades,
-    title: 'trades',
+    title: item.trades > 1 ? 'trades' : 'trade',
     amount: item.totalPnL,
   }));
+  
 }
 
 const CalendarComponent = () => {

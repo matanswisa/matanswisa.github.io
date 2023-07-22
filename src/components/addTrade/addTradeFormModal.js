@@ -182,6 +182,19 @@ export default function BasicModal(props) {
   }
 
   const validateForm = () => {
+
+    const currentDate = new Date().toISOString().slice(0, 10); // Get today's date in the format "YYYY-MM-DD"
+   
+    if(positionDate > currentDate)
+      { 
+        const errorMessage = "the selected date is above today's date.";
+ 
+        notifyToast(errorMessage, "warning");
+
+        return false;
+
+       } 
+
     if (positionType === '' || positionStatus === '' ||
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
    
@@ -192,6 +205,9 @@ export default function BasicModal(props) {
       else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
       else if (!positionDate) notifyToast("Date field is missing", "warning");
 
+      console.log(positionDate > currentDate);
+      
+        
       return false;
     }
     return true;

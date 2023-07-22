@@ -84,7 +84,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
       {
         title: 'Settings',
-        path: '/manage-users',
+        path: '/dashboard/manage-users',
         icon: icon('settings')
       },
 
@@ -115,7 +115,7 @@ export default function Nav({ openNav, onCloseNav }) {
     },
     {
       title: 'Settings',
-      path: '/manage-users',
+      path: '/dashboard/manage-users',
       icon: icon('settings')
     },
     {

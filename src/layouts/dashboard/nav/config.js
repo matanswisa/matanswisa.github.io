@@ -13,15 +13,10 @@ const navConfig = [
     path: '/dashboard/app',
     icon: icon('dashboard'),
   },
-  {
-    title: 'firstLogin',
-    path: '/dashboard/firstloginpage',
-    icon: icon('settings'),
-  },
-
+ 
   {
     title: 'Settings',
-    path: '/manage-users',
+    path: '/dashboard/manage-users',
     icon: icon('settings'),
   },
   {

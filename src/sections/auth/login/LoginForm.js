@@ -25,7 +25,7 @@ export default function LoginForm() {
       dispatch(login(res.data));
     
       localStorage.setItem("user", JSON.stringify(res.data));
-      navigate('/dashboard/firstloginpage', { replace: true });
+      navigate('/dashboard/app', { replace: true });
     }).catch((err) => {
       alert(err);
     })
