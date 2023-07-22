@@ -151,9 +151,19 @@ const UsersManagementPage = () => {
 
     const handleopenEditUser = (userId) => {
         setUserId(userId);
+        getUserById(userId);
         handleOpen();
     };
 
+
+    const getUserById = (userId) => {
+       
+        const user = users.find((user) => user._id === userId);
+
+        setUsername(user.username);
+        setEmail(user.email);
+        setLicenseTime(user.license); 
+    }
 
 
     const handleUpdateUser = async () => {
@@ -179,6 +189,8 @@ const UsersManagementPage = () => {
         }
 
     };
+
+    
 
 
     const fetchUsers = () => {
@@ -254,7 +266,7 @@ const UsersManagementPage = () => {
                             variant="standard"
                             type="date"
                             // Update the state when the input changes
-                            value={licenseTime}
+                            value={licenseTime.split("T")[0]}
                             onChange={(e) => setLicenseTime(e.target.value)}
                         />
 

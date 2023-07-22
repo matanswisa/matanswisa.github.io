@@ -42,7 +42,7 @@ export default function BasicModal(props) {
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast, fetchUsers } = props;
-  console.log("props", props);
+ 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -178,11 +178,16 @@ export default function BasicModal(props) {
             <TextField label="Password" value={password} onChange={handlePasswordChange} style={{ marginLeft: '15px' }} />
             <TextField label="Email" value={email} onChange={handleEmailChange} style={{ marginLeft: '15px' }} />
 
+
+            <Typography id="modal-modal-title" variant="h6" component="h5" style={{fontSize:"12px" ,color:'grey' , marginLeft:'14px'}}>
+           License Time
+          </Typography>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={licenseTime}
               label="License time"
+
               onChange={handleChange}
               defaultValue={licenseTime}
             >
