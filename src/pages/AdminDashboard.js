@@ -41,13 +41,18 @@ const UsersList = ({ users, onDelete, onUpdate }) => (
                     <TableRow key={user.id}>
                         <TableCell>{user.username}</TableCell>
                         <TableCell>{user.email}</TableCell>
+                        
                         <TableCell>
-                            <IconButton onClick={() => onDelete(user.id)} aria-label="Delete">
-                                <DeleteIcon />
+                    
+                            
+                            <IconButton  aria-label="Delete">
+                                <DeleteIcon onClick={() => onDelete(user._id)} />
                             </IconButton>
-                            <IconButton onClick={() => onUpdate(user.id)} aria-label="Edit">
+     
+                            <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
                                 <EditIcon />
                             </IconButton>
+                            
                         </TableCell>
                     </TableRow>
                 ))}
