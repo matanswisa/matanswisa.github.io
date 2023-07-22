@@ -266,7 +266,7 @@ const UsersManagementPage = () => {
                             variant="standard"
                             type="date"
                             // Update the state when the input changes
-                            value={licenseTime.split("T")[0]}
+                            value={licenseTime.length  > 12 ? licenseTime.split("T")[0] :licenseTime }
                             onChange={(e) => setLicenseTime(e.target.value)}
                         />
 
