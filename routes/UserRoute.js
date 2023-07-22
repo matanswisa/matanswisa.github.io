@@ -189,8 +189,38 @@ router.delete('/deleteUser', authenticateToken, authorizeRole(roles.admin), asyn
 
 
 
-//Update username or email etc.
+
+
+
+
+
+
 router.put("/updateUser", authenticateToken, async (req, res) => {
+    try {  
+        if (!req.body) {
+            return res.status(400).send('data is missing');
+        }    
+        const { username, email,license  } = req.body;
+        const result = await User.updateOne({ _id: req.body.userId }, { username, email, license });
+
+            if (result) {
+                res.status(200).send(`User ${username} been updated.`);
+            }      
+            else {
+                res.status(400).send(`Can't update the user ${username}.`);
+            } 
+    } catch (err) {
+        console.log(err);
+        res.status(500).send(err.toString());
+    }
+})
+
+
+
+
+
+//Update username or email etc.
+router.put("/updateUserPassword", authenticateToken, async (req, res) => {
     try {
         
         if (!req.body) {
