@@ -94,7 +94,7 @@ export default function BasicModal(props) {
     const token = localStorage.getItem("token");
     // Send user details to "/api/auth/register" route
 
-
+    
 
     if(validateForm()){
 
@@ -151,7 +151,7 @@ export default function BasicModal(props) {
     const selectedMonths = event.target.value;
     const currentDate = new Date();
     const endDate = new Date(currentDate.setMonth(currentDate.getMonth() + selectedMonths));
-    setLicenseTime(selectedMonths);
+    setLicenseTime(endDate);
   };
 
   return (

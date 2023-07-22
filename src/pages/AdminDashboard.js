@@ -44,44 +44,48 @@ const style = {
 };
 
 
-
-
-// Component to display existing users
-const UsersList = ({ users, onDelete, onUpdate }) => (
-
-    <TableContainer component={Paper} sx={{ mt: 3 }}>
+const UsersList = ({ users, onDelete, onUpdate }) => {
+    const convertDate = (dateString) => {
+      const date = new Date(dateString);
+      const day = date.getDate();
+      const month = date.getMonth() + 1; // Months are zero-indexed, so we add 1.
+      const year = date.getFullYear();
+  
+      return `${day}/${month}/${year}`;
+    };
+  
+    return (
+      <TableContainer component={Paper} sx={{ mt: 3 }}>
         <Table>
-            <TableHead>
-                <TableRow>
-                    <TableCell>Username</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Actions</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {users.map((user) => (
-                    <TableRow key={user.id}>
-                        <TableCell>{user.username}</TableCell>
-                        <TableCell>{user.email}</TableCell>
-
-                        <TableCell>
-
-
-                            <IconButton aria-label="Delete">
-                                <DeleteIcon onClick={() => onDelete(user._id)} />
-                            </IconButton>
-
-                            <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
-                                <EditIcon />
-                            </IconButton>
-
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
+          <TableHead>
+            <TableRow>
+              <TableCell>Username</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>License</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>{user.username}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{convertDate(user.license)}</TableCell>
+                <TableCell>
+                  <IconButton aria-label="Delete">
+                    <DeleteIcon onClick={() => onDelete(user._id)} />
+                  </IconButton>
+                  <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
-    </TableContainer>
-);
+      </TableContainer>
+    );
+  };
 
 // Main component for Users Management Page
 const UsersManagementPage = () => {
