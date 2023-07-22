@@ -46,7 +46,7 @@ export default function BasicModal(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-  const [licenseTime, setLicenseTime] = useState(1);
+  const [licenseTime, setLicenseTime] = useState();
 
   const handleGenerateUser = () => {
     const generatedUsername = generatePassword();

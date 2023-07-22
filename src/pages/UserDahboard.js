@@ -58,7 +58,7 @@ export default function U(props) {
 
     if (validateForm()){
     api
-      .put('/api/auth/updateUser', {
+      .put('/api/auth/updateUserPassword', {
         username: username,
         password: password,
       }, {
