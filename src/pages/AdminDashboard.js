@@ -151,7 +151,7 @@ const UsersManagementPage = () => {
 
         const token = localStorage.getItem("token");
         try {
-            console.log(id);
+            console.log("id", id);
             // Assuming the correct endpoint is '/api/auth/deleteUser'
             await api.delete('/api/auth/deleteUser', {
                 headers: {
@@ -200,10 +200,11 @@ const UsersManagementPage = () => {
         const token = localStorage.getItem("token");
         try {
             await api.put('/api/auth/updateUser', {
+                data: { userId, username, email, licenseTime },
+            }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                },
-                data: { userId },
+                }
             });
 
             notifyToast(`update account - ${userId}`, 'warning');
@@ -305,7 +306,7 @@ const UsersManagementPage = () => {
                             variant="standard"
                             type="date"
                             // Update the state when the input changes
-                            value={licenseTime.length > 12 ? licenseTime.split("T")[0] : licenseTime}
+                            value={licenseTime}
                             onChange={(e) => setLicenseTime(e.target.value)}
                         />
 
