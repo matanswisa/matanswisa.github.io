@@ -1,12 +1,3 @@
-
-
-
-
-
-
-
-
-
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';

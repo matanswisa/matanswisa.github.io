@@ -4,12 +4,12 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { TextField, MenuItem } from '@mui/material';
-import axios from 'axios';
 import { Grid } from 'rsuite';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import InputAdornment from '@mui/material/InputAdornment';
 import Select from '@mui/material/Select';
 import api from '../../api/api';
+import PropTypes from 'prop-types';
 
 const style = {
   position: 'absolute',
@@ -23,6 +23,9 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
+
+
 const generatePassword = () => {
   const length = 10;
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
@@ -38,11 +41,10 @@ const generatePassword = () => {
 
 
 
-export default function BasicModal(props) {
-  const handleOpen = () => props.handleOpenModal(true);
+function BasicModal(props) {
   const handleClose = () => props.handleOpenModal(false);
-  const { notifyToast, fetchUsers } = props;
- 
+  const { notifyToast } = props;
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -57,20 +59,21 @@ export default function BasicModal(props) {
   };
 
 
+
   const validateForm = () => {
     // Assuming password, email, and username are defined and assigned values somewhere above this function
-  
+
     // Email validation regex pattern
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  
+
     if (password === '' || email === '' || username === '') {
       if (password === '') notifyToast("Password is missing", "warning");
       if (email === '') notifyToast("Email is missing", "warning");
       if (username === '') notifyToast("Username is missing", "warning");
       return false;
-      
-    } 
-    
+
+    }
+
     if (password.length < 6) {
       notifyToast("Password less than 6 characters", "warning");
       return false;
@@ -84,53 +87,29 @@ export default function BasicModal(props) {
       return true;
     }
   };
-  
-  
-
-
 
 
   const handleCreateUser = () => {
-    const token = localStorage.getItem("token");
-    // Send user details to "/api/auth/register" route
 
-    
+    if (validateForm()) {
 
-    if(validateForm()){
+      api
+        .post('/api/auth/register', {
+          username: username,
+          email: email,
+          password: password,
+          license: licenseTime,
 
-    api
-      .post('/api/auth/register', {
-        username: username,
-        email: email,
-        password: password,
-        license: licenseTime,
-       
-      })
-      .then((response) => {
-        console.log('User created successfully:', response.data);
-        notifyToast("User added successfully", "success");
-        props.handleOpenModal(false);
-        // Fetch list of users from "/api/users" route
-        api
-          .get('/api/auth/users', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            if (props?.handleFetchUsers)
-              props.handleFetchUsers();
-            console.log('List of users:', response.data);
-            // Perform any further actions with the list of users`
-          })
-          .catch((error) => {
-            
-            console.error('Failed to fetch list of users:', error);
-          });
-      })
-      .catch((error) => {
-        console.error('Failed to create user:', error);
-      });
+        })
+        .then(async (response) => {
+          console.log('User created successfully:', response.data);
+          await props.handleOpenModal(false);
+          await notifyToast("User added successfully", "success");
+          // Fetch list of users from "/api/users" route
+        })
+        .catch((error) => {
+          console.error('Failed to create user:', error);
+        });
     }
   };
 
@@ -157,8 +136,8 @@ export default function BasicModal(props) {
   return (
     <div>
       <Modal
-         open={props.openModal}
-         onClose={handleClose}
+        open={props.openModal}
+        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -179,9 +158,9 @@ export default function BasicModal(props) {
             <TextField label="Email" value={email} onChange={handleEmailChange} style={{ marginLeft: '15px' }} />
 
 
-            <Typography id="modal-modal-title" variant="h6" component="h5" style={{fontSize:"12px" ,color:'grey' , marginLeft:'14px'}}>
-           License Time
-          </Typography>
+            <Typography id="modal-modal-title" variant="h6" component="h5" style={{ fontSize: "12px", color: 'grey', marginLeft: '14px' }}>
+              License Time
+            </Typography>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -198,13 +177,14 @@ export default function BasicModal(props) {
               ))}
             </Select>
             <Grid container justify="flex-end" style={{ marginRight: '15px' }}>
-      <Button variant="contained" onClick={handleGenerateUser}>
-        Generate
-      </Button>
-      <Button variant="contained" onClick={handleCreateUser}>
-        Create
-      </Button>
-    </Grid>
+              <Button variant="contained" onClick={handleGenerateUser}>
+                Generate
+              </Button>
+
+              <Button variant="contained" onClick={handleCreateUser}>
+                Create
+              </Button>
+            </Grid>
 
           </div>
         </Box>
@@ -212,3 +192,14 @@ export default function BasicModal(props) {
     </div>
   );
 }
+
+
+
+BasicModal.propTypes = {
+  openModal: PropTypes.bool,
+  fetchUsers: PropTypes.func,
+  handleOpenModal: PropTypes.func,
+  notifyToast: PropTypes.func,
+}
+
+export default BasicModal;

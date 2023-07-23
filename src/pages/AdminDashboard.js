@@ -124,7 +124,7 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
                                     <DeleteIcon onClick={handleClickDialogOpen} />
                                 </IconButton>
 
-                                
+
                                 <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
                                     <EditIcon />
                                 </IconButton>
@@ -178,9 +178,10 @@ const UsersManagementPage = () => {
 
 
 
+
     useEffect(() => {
         fetchUsers();
-    }, [])
+    }, [openmodal])
 
 
     const handleOpenModal = (tradeId) => {
@@ -196,6 +197,10 @@ const UsersManagementPage = () => {
     }
 
 
+
+    useEffect(() => {
+
+    }, [fetchUsers])
 
     const handleDeleteUser = async (id) => {
 
@@ -286,17 +291,10 @@ const UsersManagementPage = () => {
 
     const handleUpdateUser = async () => {
 
-
-
-
-
         if (validateForm()) {
             const token = localStorage.getItem("token");
 
             const formattedLicenseTime = new Date(licenseTime + "T00:00:00.000Z");
-
-
-            // Check if the variables have values and add them to the data object
 
 
             try {
@@ -320,7 +318,7 @@ const UsersManagementPage = () => {
 
 
 
-    const fetchUsers = () => {
+    function fetchUsers() {
         const token = localStorage.getItem("token");
         api
             .get('/api/auth/users', {
@@ -328,7 +326,8 @@ const UsersManagementPage = () => {
                     Authorization: `Bearer ${token}`,
                 },
             }).then((res) => {
-                setUsers(prev => res.data);
+                console.log("Fetch!", res.data);
+                setUsers([...res.data]);
             })
     }
 
@@ -353,7 +352,7 @@ const UsersManagementPage = () => {
 
 
 
-            {openmodal && <UsersManage openModal={openmodal} handleFetchUsers={fetchUsers} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
+            {openmodal && <UsersManage openModal={openmodal} fetchUsers={fetchUsers} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
             {(openmodal) === true ? <UsersManage
                 openModal={openmodal}
                 handleOpenModal={setIsOpenmodal}
