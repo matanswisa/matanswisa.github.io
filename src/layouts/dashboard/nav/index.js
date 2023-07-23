@@ -15,7 +15,7 @@ import NavSection from '../../../components/nav-section';
 import navConfig from './config';
 import { useDispatch, useSelector } from 'react-redux';
 import SvgColor from '../../../components/svg-color';
-import { initializeUser, selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
+import { initializeUser, logout, selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
 import useTokenValidation from '../../../hooks/validateToken';
 
 // ----------------------------------------------------------------------
@@ -54,9 +54,9 @@ export default function Nav({ openNav, onCloseNav }) {
   // const dispatch = useDispatch();
   const [tokenIsValid] = useTokenValidation();
   const account = useSelector(selectUser)
- 
   const isAdmin = useSelector(selectUserAdmin);
 
+  const dispatch = useDispatch();
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
@@ -87,14 +87,6 @@ export default function Nav({ openNav, onCloseNav }) {
         path: '/dashboard/manage-users',
         icon: icon('settings')
       },
-
-      //temp change 
-      {
-        title: 'signout',
-        // path: '/login',
-        icon: icon(''),
-      },
-
     ]
   }
   else if (!isAdmin && tokenIsValid) {
@@ -118,14 +110,17 @@ export default function Nav({ openNav, onCloseNav }) {
       path: '/dashboard/manage-users',
       icon: icon('settings')
     },
-    {
-      title: 'signout',
-      // path: '/login',
-      icon: icon(''),
-    },
     ];
   }
 
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    console.log(e);
+
+    localStorage.removeItem('token');
+    dispatch(logout());
+  }
 
 
 
@@ -160,6 +155,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
       <NavSection data={navConfig} />
 
+      <button onClick={handleLogout}>logout</button>
       <Box sx={{ flexGrow: 1 }} />
 
     </Scrollbar>

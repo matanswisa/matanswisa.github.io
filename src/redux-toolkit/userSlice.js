@@ -41,10 +41,12 @@ const authSlice = createSlice({
     },
 });
 
-export const { login, logout, selectIsAdmin, initializeUser } = authSlice.actions;
+export const { login, logout, selectIsAdmin, initializeUser  } = authSlice.actions;
 
 export const selectUserName = (state) => state.auth.user?.username;
 export const selectUser = (state) => state.auth.user;
 export const selectUserAdmin = (state) => state.auth.isAdmin;
+export const isUserAuthenticated = (state) => state.auth.isAuthenticated;
+
 
 export default authSlice.reducer;
