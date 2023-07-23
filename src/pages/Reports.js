@@ -283,7 +283,7 @@ export default function UserPage() {
     await api.delete('/api/deleteTrade', { data: { tradeId } });
     const tempTrades = await fetchTrades();
     setTradesList(tempTrades.data);
-    notifyToast(`Delete trade - ${tradeId}`, 'warning');
+    notifyToast("Delete trade Successfully", 'warning');
     toggleShow();
   }
 

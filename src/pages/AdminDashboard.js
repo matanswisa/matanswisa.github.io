@@ -160,7 +160,7 @@ const UsersManagementPage = () => {
                 data: { id }, // Make sure this is the correct format for the API
             });
 
-            notifyToast(`Delete account - ${id}`, 'warning');
+            notifyToast("Delete account Successfully ", 'warning');
 
             // Optionally, you can fetch the updated list of users after deletion
 
@@ -258,7 +258,7 @@ const UsersManagementPage = () => {
                     }
                 });
 
-                notifyToast(`update account - ${userId}`, 'success');
+                notifyToast("update account Successfully  ", 'success');
 
             } catch (error) {
                 console.error('Failed to update user:', error);
