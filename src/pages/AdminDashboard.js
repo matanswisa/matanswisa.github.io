@@ -12,6 +12,7 @@ import {
     TableRow,
     TextField,
     Typography,
+    Divider
 
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
@@ -37,6 +38,7 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
+    height: 400,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -205,15 +207,27 @@ const UsersManagementPage = () => {
             })
     }
 
+    const containerStyle = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    };
+
     return (
 
         <Container maxWidth="lg">
             <ToastContainer />
-            <Typography variant="h4" align="center" mt={4}>
+
+            <div style={containerStyle}>
+                   
+            <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
                 Users Management
             </Typography>
-
             <Button onClick={handleOpenModal} startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'>Create User</Button>
+                </div>
+
+
+          
             {openmodal && <UsersManage openModal={openmodal} handleFetchUsers={fetchUsers} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
             {(openmodal) === true ? <UsersManage
                 openModal={openmodal}
@@ -221,10 +235,13 @@ const UsersManagementPage = () => {
                 notifyToast={notifyToast}
             /> : null}
 
+<Divider sx={{ my: 3, backgroundColor: 'grey' }} />
+                <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
             <UsersList users={users} onDelete={handleDeleteUser} onUpdate={handleopenEditUser} />
             {/* Display UserRegistration component only for admin users */}
             {/* Replace 'isAdmin' with your logic to check if the user is an admin */}
             {/* {isAdmin && <UserRegistration onRegister={handleRegisterUser} />} */}
+            </div>
             <Modal
                 open={open}
                 onClose={handleClose}

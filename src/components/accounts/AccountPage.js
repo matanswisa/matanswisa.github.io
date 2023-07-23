@@ -9,7 +9,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Divider, IconButton, Menu, MenuItem, Stack } from '@mui/material';
+import { Divider, IconButton, Menu, MenuItem, Stack ,Container} from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import ChildModal from './createAccount'
 
@@ -88,12 +88,16 @@ export default function BasicModal() {
         alignItems: 'center',
     };
 
+    
+
     return (
-        <div>
+     
+
+<Container maxWidth="lg">
             <ToastContainer />
 
 
-            <Box sx={modalStyle}>
+          
                 <div style={containerStyle}>
                     <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
                         Accounts Management
@@ -104,17 +108,18 @@ export default function BasicModal() {
                 </div>
 
                 <Divider sx={{ my: 3, backgroundColor: 'grey' }} />
-                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
                     <TableContainer>
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>
+                                    <TableCell >
                                         <Typography color="black" variant="subtitle1" fontWeight="bold">
                                             Name
                                         </Typography>
                                     </TableCell>
-                                    <TableCell>
+                              
+                                    <TableCell >
                                         <Typography color="black" variant="subtitle1" fontWeight="bold">
                                             Label
                                         </Typography>
@@ -126,8 +131,8 @@ export default function BasicModal() {
                                 {accounts.map((account) => (
                                     <TableRow key={account._id}>
                                         <TableCell style={{ fontSize: '17px', color: 'black' }}>{account.AccountName}</TableCell>
-                                        <TableCell style={{ backgroundColor: account.Label, width: '1%' }}></TableCell>
-                                        <TableCell>
+                                        <TableCell style={{ backgroundColor: account.Label, width: '1%' , }}></TableCell>
+                                        <TableCell > 
                                             <IconButton
                                                 onClick={handleClick}
                                                 aria-controls="edit-menu"
@@ -169,21 +174,8 @@ export default function BasicModal() {
                         notifyToast={notifyToast}
                     /> : null}
                 </Stack>
-            </Box>
-
-        </div>
+           
+                </Container>
     );
 }
 
-const modalStyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 1200,
-    height: 530,
-    bgcolor: 'background.paper',
-    border: '1px solid #000',
-    boxShadow: 50,
-    p: 4,
-};
