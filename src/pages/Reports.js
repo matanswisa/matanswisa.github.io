@@ -495,7 +495,7 @@ export default function UserPage() {
             </TableContainer>
           </Scrollbar>
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[10, 15, 25]}
             component="div"
             count={totalTrades}
             rowsPerPage={rowsPerPage}
