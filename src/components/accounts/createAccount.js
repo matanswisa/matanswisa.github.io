@@ -83,6 +83,7 @@ export default function BasicModal(props) {
          
           notifyToast("Account added successfully", "success");
           props.handleOpenModal(false);
+          props.fetchAccounts();
           return false;
 
         }).catch((err) => {

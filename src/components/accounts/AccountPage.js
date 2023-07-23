@@ -31,7 +31,7 @@ export default function BasicModal() {
     const [accounts, setAccounts] = useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
 
-    console.log(accounts);
+ 
     useEffect(() => {
         fetchAccounts();
 
@@ -57,7 +57,20 @@ export default function BasicModal() {
 
         await api.delete('/api/deleteAccount', { data: { accountId } });
         notifyToast(`Delete Account - ${accountId}`, 'warning');
+        fetchAccounts();     
 
+
+        setAnchorEl(null);
+    }
+
+
+    
+    const handleEditCloseMenu = async (accountId) => {
+
+
+        await api.post('/api/deleteAccount', { data: { accountId } });
+        notifyToast(`Delete Account - ${accountId}`, 'warning');
+        fetchAccounts();     
 
 
         setAnchorEl(null);
@@ -163,7 +176,7 @@ export default function BasicModal() {
                                         <IconButton aria-label="Delete">
                                             <DeleteIcon onClick={() => handleCloseMenu(account._id)} />
                                         </IconButton>
-                                        <IconButton onClick={handleCloseMenu} aria-label="Edit">
+                                        <IconButton onClick={handleEditCloseMenu} aria-label="Edit">
                                             <EditIcon />
                                         </IconButton>
                                      
@@ -182,7 +195,7 @@ export default function BasicModal() {
                 {openmodal && <ChildModal openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
                 {(openmodal) === true ? <ChildModal
                     openModal={openmodal}
-
+                    fetchAccounts = {fetchAccounts}
                     handleOpenModal={setIsOpenmodal}
                     notifyToast={notifyToast}
                 /> : null}
