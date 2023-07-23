@@ -169,13 +169,13 @@ router.get('/users', authenticateToken, authorizeRole(roles.admin), async (req, 
 
 
 router.delete('/deleteUser', authenticateToken, authorizeRole(roles.admin), async (req, res) => {
-    console.log(req.params);
+    console.log(req.body);
     try {
-        const { id } = req.params;
+        const { id } = req.body;
         const deletedUser = await User.findByIdAndDelete(id);
 
         if (!deletedUser) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(400).json({ message: 'User not found' });
         }
 
         res.status(200).json({ message: 'User deleted successfully' });
@@ -187,28 +187,22 @@ router.delete('/deleteUser', authenticateToken, authorizeRole(roles.admin), asyn
 
 
 
-
-
-
-
-
-
-
-
 router.put("/updateUser", authenticateToken, async (req, res) => {
-    try {  
+    try {
         if (!req.body) {
             return res.status(400).send('data is missing');
-        }    
-        const { username, email,license  } = req.body;
-        const result = await User.updateOne({ _id: req.body.userId }, { username, email, license });
+        }
+        console.log(req.body)
+        const { username, email, license } = req.body.data;
+        console.log({ username, email, license })
+        const result = await User.updateOne({ _id: req.body.data.userId }, { username, email, license });
 
-            if (result) {
-                res.status(200).send(`User ${username} been updated.`);
-            }      
-            else {
-                res.status(400).send(`Can't update the user ${username}.`);
-            } 
+        if (result) {
+            res.status(200).send(`User ${username} been updated.`);
+        }
+        else {
+            res.status(400).send(`Can't update the user ${username}.`);
+        }
     } catch (err) {
         console.log(err);
         res.status(500).send(err.toString());
@@ -217,43 +211,41 @@ router.put("/updateUser", authenticateToken, async (req, res) => {
 
 
 
-
-
 //Update username or email etc.
 router.put("/updateUserPassword", authenticateToken, async (req, res) => {
     try {
-        
+
         if (!req.body) {
             return res.status(400).send('data is missing');
         }
 
-       
-        const { username, email, role,password } = req.body;
+
+        const { username, email, role, password } = req.body;
         const result = await User.updateOne({ _id: req.body.userId }, { username, email, role });
 
 
 
-        
-        if(password  === "222222"){
+
+        if (password === "222222") {
 
             res.status(500).send(`same password`);
         }
-        else{
+        else {
 
             if (result) {
 
                 res.status(200).send(`User ${username} been updated.`);
             }
-    
-    
-            
+
+
+
             else {
                 res.status(400).send(`Can't update the user ${username}.`);
             }
 
         }
-     
-    
+
+
 
     } catch (err) {
         console.log(err);
