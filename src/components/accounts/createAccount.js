@@ -8,7 +8,7 @@ import { useState } from 'react';
 import api from '../../api/api';
 import { useEffect } from 'react';
 import { Select, MenuItem, ListItemIcon, Alert } from '@mui/material';
-import { red, blue, green, yellow, orange, purple, pink, cyan,brown ,lightGreen,lime,blueGrey} from '@mui/material/colors';
+import { red, blue, green, yellow, orange, purple, pink, cyan, brown, lightGreen, lime, blueGrey } from '@mui/material/colors';
 import { Grid } from 'rsuite';
 const style = {
   position: 'absolute',
@@ -88,7 +88,7 @@ export default function BasicModal(props) {
 
 
 
-  
+
   const handleEditAccount = async () => {
     if (validateForm()) {
       const data = {
@@ -97,9 +97,9 @@ export default function BasicModal(props) {
         Label: selectedColor,
         IsSelected: "true",
       };
-  
+
       console.log(data);
-  
+
       await api
         .put(`/api/editAccount/${accountInfo._id}`, data) // Use api.put and pass the account id in the URL
         .then((res) => {
@@ -112,7 +112,7 @@ export default function BasicModal(props) {
         });
     }
   };
-  
+
 
 
 
@@ -155,148 +155,148 @@ export default function BasicModal(props) {
   return (
     <div>
       <Button onClick={handleOpen}>Open modal</Button>
-      <Modal
+      {/* <Modal
         open={handleOpen}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-      >
-        <Box sx={style} >
-          <Grid>
-            {edit === true ? <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              sx={{ textAlign: 'left', marginTop: 0 }}
-            >
-              Update Account
-            </Typography> : <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              sx={{ textAlign: 'left', marginTop: 0 }}
-            >
-              Create Account
-            </Typography>}
-
-
-
-          </Grid>
-
-          <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-            <TextField
-              required
-              id="outlined-required"
-              label="Account Name"
-              sx={{ mr: 2 }}
-              defaultValue={accountName}
-              onChange={(e) => setAccountName(e.target.value)}
-            />
-
-
-
-            <Select size="small" value={selectedColor}
-              onChange={(event) => setSelectedColor(event.target.value)}>
-              <MenuItem value={red[500]}>
-
-              </MenuItem>
-              <MenuItem value={red[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: red[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-
-              </MenuItem>
-              <MenuItem value={blue[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: blue[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-
-              </MenuItem>
-              <MenuItem value={green[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: green[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-              </MenuItem>
-              <MenuItem value={brown[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: brown[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-              </MenuItem>
-
-              <MenuItem value={yellow[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: yellow[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-
-              </MenuItem>
-              <MenuItem value={orange[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: orange[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-
-              </MenuItem>
-              <MenuItem value={purple[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: purple[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-
-              </MenuItem>
-              <MenuItem value={pink[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: pink[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-
-              </MenuItem>
-              <MenuItem value={cyan[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: cyan[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-
-              </MenuItem>
-              <MenuItem value={lightGreen[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: lightGreen[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-
-              </MenuItem>
-              <MenuItem value={lime[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: lime[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-
-              </MenuItem>
-              <MenuItem value={blueGrey[500]}>
-                <ListItemIcon>
-                  <div style={{ backgroundColor: blueGrey[500], width: '24px', height: '24px' }}></div>
-                </ListItemIcon>
-
-              </MenuItem>
-            </Select>
-          </Grid>
-
-
- 
-
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '8px',
-              position: 'absolute',
-              bottom: '16px',
-              right: '16px',
-            }}
+      > */}
+      <Box sx={style} >
+        <Grid>
+          {edit === true ? <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            sx={{ textAlign: 'left', marginTop: 0 }}
           >
-            <Button variant="outlined" size="medium" onClick={handleClose}>
-              Cancel
-            </Button>
-            
-            <Button onClick={edit === true ? handleEditAccount : handleCreateAccount} variant="contained" size="medium">
+            Update Account
+          </Typography> : <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            sx={{ textAlign: 'left', marginTop: 0 }}
+          >
+            Create Account
+          </Typography>}
+
+
+
+        </Grid>
+
+        <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+          <TextField
+            required
+            id="outlined-required"
+            label="Account Name"
+            sx={{ mr: 2 }}
+            defaultValue={accountName}
+            onChange={(e) => setAccountName(e.target.value)}
+          />
+
+
+
+          <Select size="small" value={selectedColor}
+            onChange={(event) => setSelectedColor(event.target.value)}>
+            <MenuItem value={red[500]}>
+
+            </MenuItem>
+            <MenuItem value={red[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: red[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+
+            </MenuItem>
+            <MenuItem value={blue[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: blue[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+
+            </MenuItem>
+            <MenuItem value={green[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: green[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={brown[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: brown[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+
+            <MenuItem value={yellow[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: yellow[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+
+            </MenuItem>
+            <MenuItem value={orange[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: orange[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+
+            </MenuItem>
+            <MenuItem value={purple[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: purple[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+
+            </MenuItem>
+            <MenuItem value={pink[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: pink[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+
+            </MenuItem>
+            <MenuItem value={cyan[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: cyan[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+
+            </MenuItem>
+            <MenuItem value={lightGreen[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: lightGreen[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+
+            </MenuItem>
+            <MenuItem value={lime[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: lime[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+
+            </MenuItem>
+            <MenuItem value={blueGrey[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: blueGrey[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+
+            </MenuItem>
+          </Select>
+        </Grid>
+
+
+
+
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '8px',
+            position: 'absolute',
+            bottom: '16px',
+            right: '16px',
+          }}
+        >
+          <Button variant="outlined" size="medium" onClick={handleClose}>
+            Cancel
+          </Button>
+
+          <Button onClick={edit === true ? handleEditAccount : handleCreateAccount} variant="contained" size="medium">
             {edit === true ? "Update" : "Create"}
-            </Button>
-          </Box>
+          </Button>
         </Box>
-      </Modal>
+      </Box>
+      {/* </Modal> */}
     </div>
   );
 }
