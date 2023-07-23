@@ -119,12 +119,23 @@ export default function BasicModal() {
                                         Name
                                     </Typography>
                                 </TableCell>
-
+                                <TableCell >   </TableCell>
+                                <TableCell >   </TableCell>
+                                <TableCell >   </TableCell>
+                                <TableCell >   </TableCell>
+                                <TableCell >   </TableCell>
+                                <TableCell >   </TableCell>
                                 <TableCell >
                                     <Typography color="black" variant="subtitle1" fontWeight="bold">
                                         Label
                                     </Typography>
                                 </TableCell>
+                                <TableCell >   </TableCell>
+                                <TableCell >   </TableCell>
+                                <TableCell >   </TableCell>
+                                <TableCell >   </TableCell>
+                                <TableCell >   </TableCell>
+                                <TableCell >   </TableCell>
                                 <TableCell >   <Typography color="black" variant="subtitle1" fontWeight="bold">
                                     Actions
                                 </Typography></TableCell>
@@ -134,7 +145,19 @@ export default function BasicModal() {
                             {accounts.map((account) => (
                                 <TableRow key={account._id}>
                                     <TableCell style={{  }}>{account.AccountName}</TableCell>
+                                    <TableCell >   </TableCell>
+                                    <TableCell >   </TableCell>
+                                    <TableCell >   </TableCell>
+                                    <TableCell >   </TableCell>
+                                    <TableCell >   </TableCell>
+                                    <TableCell >   </TableCell>
                                     <TableCell style={{ backgroundColor: account.Label, width: '1%', }}></TableCell>
+                                    <TableCell >   </TableCell>
+                                    <TableCell ></TableCell>
+                                    <TableCell >   </TableCell>
+                                    <TableCell >   </TableCell>
+                                    <TableCell >   </TableCell>
+                                    <TableCell >   </TableCell>
                                     <TableCell >
 
                                         <IconButton aria-label="Delete">
@@ -143,29 +166,9 @@ export default function BasicModal() {
                                         <IconButton onClick={handleCloseMenu} aria-label="Edit">
                                             <EditIcon />
                                         </IconButton>
-                                        {/* <IconButton
-                                                onClick={handleClick}
-                                                aria-controls="edit-menu"
-                                                aria-haspopup="true"
-                                                aria-label="Edit"
-                                            >
-                                                <MoreVert />
-                                            </IconButton>
-                                            <Menu
-                                                id="edit-menu"
-                                                anchorEl={anchorEl}
-                                                open={Boolean(anchorEl)}
-                                                onClose={handleCloseMenu}
-                                                MenuListProps={{
-                                                    'aria-labelledby': 'edit-menu',
-                                                }}
-                                            >
-                                                <MenuItem onClick={handleCloseMenu}>Edit</MenuItem>
-
-                                                <MenuItem onClick={() => handleCloseMenu(account._id)}>Delete</MenuItem>
-
-                                            </Menu> */}
+                                     
                                     </TableCell>
+                                    
                                 </TableRow>
                             ))}
                         </TableBody>
