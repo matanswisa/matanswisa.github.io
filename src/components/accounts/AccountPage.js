@@ -16,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
 import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
 
 import { useState, useRef, useEffect } from 'react';
-
+import Iconify from '../../components/iconify/Iconify';
 
 import useToast from '../../hooks/alert';
 import 'react-toastify/dist/ReactToastify.css';
@@ -103,7 +103,7 @@ export default function BasicModal() {
                 <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
                     Accounts Management
                 </Typography>
-                <Button onClick={handleOpenCreateAccountModal} variant="contained">
+                <Button startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenCreateAccountModal} variant="contained">
                     Create Account
                 </Button>
             </div>
