@@ -9,10 +9,11 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Divider, IconButton, Menu, MenuItem, Stack ,Container} from '@mui/material';
+import { Divider, IconButton, Menu, MenuItem, Stack, Container } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import ChildModal from './createAccount'
-
+import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
+import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
 
 import { useState, useRef, useEffect } from 'react';
 
@@ -88,52 +89,61 @@ export default function BasicModal() {
         alignItems: 'center',
     };
 
-    
+
 
     return (
-     
 
-<Container maxWidth="lg">
+
+        <Container maxWidth="lg">
             <ToastContainer />
 
 
-          
-                <div style={containerStyle}>
-                    <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
-                        Accounts Management
-                    </Typography>
-                    <Button onClick={handleOpenCreateAccountModal} variant="contained">
-                        Create Account
-                    </Button>
-                </div>
 
-                <Divider sx={{ my: 3, backgroundColor: 'grey' }} />
-                <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                    <TableContainer >  
-                        <Table>
-                            <TableHead>
-                                <TableRow>
+            <div style={containerStyle}>
+                <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
+                    Accounts Management
+                </Typography>
+                <Button onClick={handleOpenCreateAccountModal} variant="contained">
+                    Create Account
+                </Button>
+            </div>
+
+            <Divider sx={{ my: 3, backgroundColor: 'grey' }} />
+            <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                <TableContainer >
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell >
+                                    <Typography color="black" variant="subtitle1" fontWeight="bold">
+                                        Name
+                                    </Typography>
+                                </TableCell>
+
+                                <TableCell >
+                                    <Typography color="black" variant="subtitle1" fontWeight="bold">
+                                        Label
+                                    </Typography>
+                                </TableCell>
+                                <TableCell >   <Typography color="black" variant="subtitle1" fontWeight="bold">
+                                    Actions
+                                </Typography></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {accounts.map((account) => (
+                                <TableRow key={account._id}>
+                                    <TableCell style={{  }}>{account.AccountName}</TableCell>
+                                    <TableCell style={{ backgroundColor: account.Label, width: '1%', }}></TableCell>
                                     <TableCell >
-                                        <Typography color="black" variant="subtitle1" fontWeight="bold">
-                                            Name
-                                        </Typography>
-                                    </TableCell>
-                              
-                                    <TableCell >
-                                        <Typography color="black" variant="subtitle1" fontWeight="bold">
-                                            Label
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {accounts.map((account) => (
-                                    <TableRow key={account._id}>
-                                        <TableCell style={{ fontSize: '17px', color: 'black' }}>{account.AccountName}</TableCell>
-                                        <TableCell style={{ backgroundColor: account.Label, width: '1%' , }}></TableCell>
-                                        <TableCell > 
-                                            <IconButton
+
+                                        <IconButton aria-label="Delete">
+                                            <DeleteIcon onClick={() => handleCloseMenu(account._id)} />
+                                        </IconButton>
+                                        <IconButton onClick={handleCloseMenu} aria-label="Edit">
+                                            <EditIcon />
+                                        </IconButton>
+                                        {/* <IconButton
                                                 onClick={handleClick}
                                                 aria-controls="edit-menu"
                                                 aria-haspopup="true"
@@ -154,28 +164,28 @@ export default function BasicModal() {
 
                                                 <MenuItem onClick={() => handleCloseMenu(account._id)}>Delete</MenuItem>
 
-                                            </Menu>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </div>
+                                            </Menu> */}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </div>
 
-                <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
+            <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
 
 
-                    {openmodal && <ChildModal openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
-                    {(openmodal) === true ? <ChildModal
-                        openModal={openmodal}
+                {openmodal && <ChildModal openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
+                {(openmodal) === true ? <ChildModal
+                    openModal={openmodal}
 
-                        handleOpenModal={setIsOpenmodal}
-                        notifyToast={notifyToast}
-                    /> : null}
-                </Stack>
-           
-                </Container>
+                    handleOpenModal={setIsOpenmodal}
+                    notifyToast={notifyToast}
+                /> : null}
+            </Stack>
+
+        </Container>
     );
 }
 

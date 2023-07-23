@@ -48,46 +48,68 @@ const style = {
 
 const UsersList = ({ users, onDelete, onUpdate }) => {
     const convertDate = (dateString) => {
-      const date = new Date(dateString);
-      const day = date.getDate();
-      const month = date.getMonth() + 1; // Months are zero-indexed, so we add 1.
-      const year = date.getFullYear();
-  
-      return `${day}/${month}/${year}`;
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.getMonth() + 1; // Months are zero-indexed, so we add 1.
+        const year = date.getFullYear();
+
+        return `${day}/${month}/${year}`;
     };
-  
+
     return (
-      <TableContainer component={Paper} sx={{ mt: 3 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Username</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>License</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.username}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{convertDate(user.license)}</TableCell>
-                <TableCell>
-                  <IconButton aria-label="Delete">
-                    <DeleteIcon onClick={() => onDelete(user._id)} />
-                  </IconButton>
-                  <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
-                    <EditIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <TableContainer component={Paper} sx={{ mt: 3 }}>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>
+                            <Typography color="black" variant="subtitle1" fontWeight="bold">
+                                Username
+                            </Typography>
+
+                        </TableCell>
+                        <TableCell>
+                            <Typography color="black" variant="subtitle1" fontWeight="bold">
+                                Email
+                            </Typography>
+                        </TableCell>
+                        <TableCell>
+                            <Typography color="black" variant="subtitle1" fontWeight="bold">
+                                License
+                            </Typography></TableCell>
+                        <TableCell>
+                            <Typography color="black" variant="subtitle1" fontWeight="bold">
+                                Actions
+                            </Typography></TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {users.map((user) => (
+                        <TableRow key={user.id}>
+
+                            <TableCell>
+
+
+                                {user.username}
+
+
+                            </TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell>{convertDate(user.license)}</TableCell>
+                            <TableCell>
+                                <IconButton aria-label="Delete">
+                                    <DeleteIcon onClick={() => onDelete(user._id)} />
+                                </IconButton>
+                                <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
+                                    <EditIcon />
+                                </IconButton>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
-  };
+};
 
 // Main component for Users Management Page
 const UsersManagementPage = () => {
@@ -159,12 +181,12 @@ const UsersManagementPage = () => {
 
 
     const getUserById = (userId) => {
-       
+
         const user = users.find((user) => user._id === userId);
 
         setUsername(user.username);
         setEmail(user.email);
-        setLicenseTime(user.license); 
+        setLicenseTime(user.license);
     }
 
 
@@ -172,16 +194,16 @@ const UsersManagementPage = () => {
 
         console.log(userId);
         console.log(username);
-        console.log(email);  
+        console.log(email);
         console.log(licenseTime);
-        
+
         const token = localStorage.getItem("token");
         try {
             await api.put('/api/auth/updateUser', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-                data: { userId }, 
+                data: { userId },
             });
 
             notifyToast(`update account - ${userId}`, 'warning');
@@ -192,7 +214,7 @@ const UsersManagementPage = () => {
 
     };
 
-    
+
 
 
     const fetchUsers = () => {
@@ -219,15 +241,15 @@ const UsersManagementPage = () => {
             <ToastContainer />
 
             <div style={containerStyle}>
-                   
-            <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
-                Users Management
-            </Typography>
-            <Button onClick={handleOpenModal} startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'>Create User</Button>
-                </div>
+
+                <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
+                    Users Management
+                </Typography>
+                <Button onClick={handleOpenModal} startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'>Create User</Button>
+            </div>
 
 
-          
+
             {openmodal && <UsersManage openModal={openmodal} handleFetchUsers={fetchUsers} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
             {(openmodal) === true ? <UsersManage
                 openModal={openmodal}
@@ -235,12 +257,12 @@ const UsersManagementPage = () => {
                 notifyToast={notifyToast}
             /> : null}
 
-<Divider sx={{ my: 3, backgroundColor: 'grey' }} />
-                <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-            <UsersList users={users} onDelete={handleDeleteUser} onUpdate={handleopenEditUser} />
-            {/* Display UserRegistration component only for admin users */}
-            {/* Replace 'isAdmin' with your logic to check if the user is an admin */}
-            {/* {isAdmin && <UserRegistration onRegister={handleRegisterUser} />} */}
+            <Divider sx={{ my: 3, backgroundColor: 'grey' }} />
+            <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                <UsersList users={users} onDelete={handleDeleteUser} onUpdate={handleopenEditUser} />
+                {/* Display UserRegistration component only for admin users */}
+                {/* Replace 'isAdmin' with your logic to check if the user is an admin */}
+                {/* {isAdmin && <UserRegistration onRegister={handleRegisterUser} />} */}
             </div>
             <Modal
                 open={open}
@@ -278,12 +300,12 @@ const UsersManagementPage = () => {
 
                         <TextField
                             id="standard-basic"
-                            
+
                             label="licenseTime"
                             variant="standard"
                             type="date"
                             // Update the state when the input changes
-                            value={licenseTime.length  > 12 ? licenseTime.split("T")[0] :licenseTime }
+                            value={licenseTime.length > 12 ? licenseTime.split("T")[0] : licenseTime}
                             onChange={(e) => setLicenseTime(e.target.value)}
                         />
 
