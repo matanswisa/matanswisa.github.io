@@ -31,7 +31,8 @@ import {
 
 } from '@mui/material';
 
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 
@@ -246,7 +247,7 @@ export default function UserPage() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -263,6 +264,13 @@ export default function UserPage() {
     setSelected([]);
   };
 
+  const handleClearDate = () => {
+    setSelectedDate(null);
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -316,6 +324,21 @@ export default function UserPage() {
         <title>All Trades</title>
       </Helmet>
       <Container>
+        <div style={{ marginRight: "10px" }}>
+          <DatePicker
+            selected={selectedDate}
+            onChange={handleDateChange}
+            dateFormat="E, MMM d, yyyy"
+            placeholderText="Select a date"
+          />
+           <Button
+        variant="contained"
+        onClick={handleClearDate}
+        style={{ fontSize: "12px", minWidth: "80px" }}
+      >
+        Clear
+      </Button>
+        </div>
 
         <ToastContainer />
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -353,81 +376,93 @@ export default function UserPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {trades.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((trade, indx) => {
-                    return (
-                      <TableRow
-                        onMouseEnter={() => { setEditTradeId(trade) }}
-                        hover
-                        key={trade._id}
-                        tabIndex={-1}
-                        role="checkbox"
-                        selected={trade}
-                      >
-                        <TableCell >
-                          { }
-                        </TableCell>
-                        <TableCell component="th" scope="row" padding="none">
-                        <Stack direction="row" alignItems="center" spacing={2}>
-  {new Date(trade.entryDate).toLocaleDateString('en-GB')}
-</Stack>
-                        </TableCell>
-                        <TableCell align="center">{trade.symbol}</TableCell>
-                        <TableCell align="center">
-                          <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
-                            {sentenceCase(trade.status)}
-                          </Label>
-                        </TableCell>
-                        <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "N/A"}</TableCell>
-                        <TableCell align="center">{trade.longShort}</TableCell>
-                        <TableCell align="center">{trade.contracts}</TableCell>
-                        <TableCell align="center">
-                          {trade.entryPrice ? trade.entryPrice + "$" : "N/A"}
-                        </TableCell>
-                        <TableCell align="center">
-                          {trade.stopPrice ? trade.stopPrice + "$" : "N/A"}
-                        </TableCell>
-                        <TableCell align="center">
-                          {trade.exitPrice ? trade.exitPrice + "$" : "N/A"}
-                        </TableCell>
-                        <TableCell align="center">
-                          {trade.duration ? trade.duration + "Min" : "N/A"}
-                        </TableCell>
-                        <TableCell align="center">
-                          {trade.commission ? trade.commission + "$" : "N/A"}
-                        </TableCell>
-                        <TableCell align="center">{trade.netPnL}$</TableCell>
-                        <TableCell align="center">
-                          <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
-                          {trade.image ? (
-                            <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true); setimageId(trade._id); }}>
-                              <Iconify icon={'eva:image-outline'} />
-                            </IconButton>
-                          ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
-                        </TableCell>
-                        <TableCell align="right">
-                          <button
-                            onClick={() => {
-                              setEditMode(true);
-                              setIsOpenmodal(true);
-                              setEditTradeId(trade);
-                            }}
-                          >
-                            Edit
-                          </button>
-                        </TableCell>
-                        <TableCell align="right">
-                          <button onClick={() => {
-                            deleteTrade(editTradeId._id);
-                          }}>
-                            Delete
-                          </button>
-                        </TableCell>
 
-                        <TableCell onClick={handleCellClick("comments", trade.comments)} align="center">{trade.comments.length > 20 ? `${trade.comments.substring(0, 20)}...` : trade.comments}</TableCell>
+                  {trades
+                    .filter((trade) => {
+                      // Check if there's a selected date and if it matches the trade's entry date
+                      return (
+                        !selectedDate || // If no selected date, show all trades
+                        new Date(trade.entryDate).toLocaleDateString('en-GB') ===
+                        selectedDate.toLocaleDateString('en-GB')
+                      );
+                    })
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((trade, indx) => {
 
-                      </TableRow>
-                    );
-                  })}
+                      return (
+                        <TableRow
+                          onMouseEnter={() => { setEditTradeId(trade) }}
+                          hover
+                          key={trade._id}
+                          tabIndex={-1}
+                          role="checkbox"
+                          selected={trade}
+                        >
+                          <TableCell >
+                            { }
+                          </TableCell>
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              {new Date(trade.entryDate).toLocaleDateString('en-GB')}
+                            </Stack>
+                          </TableCell>
+                          <TableCell align="center">{trade.symbol}</TableCell>
+                          <TableCell align="center">
+                            <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
+                              {sentenceCase(trade.status)}
+                            </Label>
+                          </TableCell>
+                          <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "N/A"}</TableCell>
+                          <TableCell align="center">{trade.longShort}</TableCell>
+                          <TableCell align="center">{trade.contracts}</TableCell>
+                          <TableCell align="center">
+                            {trade.entryPrice ? trade.entryPrice + "$" : "N/A"}
+                          </TableCell>
+                          <TableCell align="center">
+                            {trade.stopPrice ? trade.stopPrice + "$" : "N/A"}
+                          </TableCell>
+                          <TableCell align="center">
+                            {trade.exitPrice ? trade.exitPrice + "$" : "N/A"}
+                          </TableCell>
+                          <TableCell align="center">
+                            {trade.duration ? trade.duration + "Min" : "N/A"}
+                          </TableCell>
+                          <TableCell align="center">
+                            {trade.commission ? trade.commission + "$" : "N/A"}
+                          </TableCell>
+                          <TableCell align="center">{trade.netPnL}$</TableCell>
+                          <TableCell align="center">
+                            <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                            {trade.image ? (
+                              <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true); setimageId(trade._id); }}>
+                                <Iconify icon={'eva:image-outline'} />
+                              </IconButton>
+                            ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
+                          </TableCell>
+                          <TableCell align="right">
+                            <button
+                              onClick={() => {
+                                setEditMode(true);
+                                setIsOpenmodal(true);
+                                setEditTradeId(trade);
+                              }}
+                            >
+                              Edit
+                            </button>
+                          </TableCell>
+                          <TableCell align="right">
+                            <button onClick={() => {
+                              deleteTrade(editTradeId._id);
+                            }}>
+                              Delete
+                            </button>
+                          </TableCell>
+
+                          <TableCell onClick={handleCellClick("comments", trade.comments)} align="center">{trade.comments.length > 20 ? `${trade.comments.substring(0, 20)}...` : trade.comments}</TableCell>
+
+                        </TableRow>
+                      );
+                    })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
@@ -485,6 +520,9 @@ export default function UserPage() {
       </Typography>
     </>
   );
+
+
+
 }
 
 const totalPlRedColor = {
