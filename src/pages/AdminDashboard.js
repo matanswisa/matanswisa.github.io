@@ -12,7 +12,12 @@ import {
     TableRow,
     TextField,
     Typography,
-    Divider
+    Divider,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Slide
 
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
@@ -28,6 +33,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import InputAdornment from '@mui/material/InputAdornment';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
+import DialogContentText from '@mui/material/DialogContentText';
 
 import { Grid } from 'rsuite';
 
@@ -46,6 +52,12 @@ const style = {
 };
 
 
+//Related to dialog error - has to be outside of the component
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
+
 const UsersList = ({ users, onDelete, onUpdate }) => {
     const convertDate = (dateString) => {
         const date = new Date(dateString);
@@ -54,6 +66,18 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
         const year = date.getFullYear();
 
         return `${day}/${month}/${year}`;
+    };
+
+
+    const [opendialog, setDialogOpen] = useState(false);
+
+    const handleClickDialogOpen = () => {
+        setDialogOpen(true);
+    };
+
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
     };
 
     return (
@@ -97,11 +121,37 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
                             <TableCell>{convertDate(user.license)}</TableCell>
                             <TableCell>
                                 <IconButton aria-label="Delete">
-                                    <DeleteIcon onClick={() => onDelete(user._id)} />
+                                    <DeleteIcon onClick={handleClickDialogOpen} />
                                 </IconButton>
+
+                                
                                 <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
                                     <EditIcon />
                                 </IconButton>
+                                <Dialog
+                                    open={opendialog}
+                                    TransitionComponent={Transition}
+
+                                    onClose={handleDialogClose}
+                                    aria-describedby="alert-dialog-slide-description"
+                                >
+                                    <DialogTitle>{"Confirm Deletion"}</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText id="alert-dialog-slide-description">
+                                            Are you sure you want to delete this user?
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleDialogClose}>Cancel</Button>
+                                        <Button onClick={() => {
+                                            onDelete(user._id);
+
+                                            handleDialogClose(); // Close the dialog first
+                                        }} color="primary">
+                                            Confirm
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -213,20 +263,20 @@ const UsersManagementPage = () => {
         if (email !== '' && !emailRegex.test(email)) {
             notifyToast("Invalid email format", "warning");
             return false;
-          }
+        }
 
         if (username.length < 8) {
             notifyToast("user name less than 8 characters", "warning");
             return false;
         }
 
-        if (!checkLicenseTime(licenseTime)){
+        if (!checkLicenseTime(licenseTime)) {
             notifyToast("Invalid date! Please choose a future date.", "warning");
-        return false;
+            return false;
         }
 
 
-    return true;
+        return true;
     }
 
 
@@ -237,17 +287,17 @@ const UsersManagementPage = () => {
     const handleUpdateUser = async () => {
 
 
-     
+
 
 
         if (validateForm()) {
             const token = localStorage.getItem("token");
 
             const formattedLicenseTime = new Date(licenseTime + "T00:00:00.000Z");
-         
+
 
             // Check if the variables have values and add them to the data object
-       
+
 
             try {
                 await api.put('/api/auth/updateUser', {
