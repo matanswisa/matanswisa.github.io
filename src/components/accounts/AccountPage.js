@@ -30,13 +30,19 @@ export default function BasicModal() {
     //const toggleShow = () => setBasicModal(!basicModal);
     const [accounts, setAccounts] = useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [editMode, setEditMode] = React.useState(false);
+    const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
+    
 
- 
     useEffect(() => {
         fetchAccounts();
 
     }, []);
 
+
+
+
+    
 
 
     const fetchAccounts = async () => {
@@ -52,28 +58,32 @@ export default function BasicModal() {
 
 
 
+    const getAccountInfoById = (accountList, accountid) => {
+        const selectedAccount = accountList.find(account => account._id === accountid);
+        setAccountInfoInEdit(selectedAccount);
+      };
+      
+      
+    
+
     const handleCloseMenu = async (accountId) => {
 
 
         await api.delete('/api/deleteAccount', { data: { accountId } });
         notifyToast(`Delete Account - ${accountId}`, 'warning');
-        fetchAccounts();     
+        fetchAccounts();
 
 
         setAnchorEl(null);
     }
 
 
-    
+
     const handleEditCloseMenu = async (accountId) => {
-
-
-        await api.post('/api/deleteAccount', { data: { accountId } });
-        notifyToast(`Delete Account - ${accountId}`, 'warning');
-        fetchAccounts();     
-
-
-        setAnchorEl(null);
+        getAccountInfoById(accounts,accountId);
+        setEditMode(true);
+        setIsOpenmodal(true);
+     
     }
 
 
@@ -86,6 +96,7 @@ export default function BasicModal() {
 
     const [openmodal, setIsOpenmodal] = useState(false);
     const handleOpenCreateAccountModal = (tradeId) => {
+        setEditMode(false);
         setIsOpenmodal(true);
     };
 
@@ -157,7 +168,7 @@ export default function BasicModal() {
                         <TableBody>
                             {accounts.map((account) => (
                                 <TableRow key={account._id}>
-                                    <TableCell style={{  }}>{account.AccountName}</TableCell>
+                                    <TableCell style={{}}>{account.AccountName}</TableCell>
                                     <TableCell >   </TableCell>
                                     <TableCell >   </TableCell>
                                     <TableCell >   </TableCell>
@@ -176,12 +187,12 @@ export default function BasicModal() {
                                         <IconButton aria-label="Delete">
                                             <DeleteIcon onClick={() => handleCloseMenu(account._id)} />
                                         </IconButton>
-                                        <IconButton onClick={handleEditCloseMenu} aria-label="Edit">
+                                        <IconButton onClick={() =>handleEditCloseMenu(account._id)} aria-label="Edit">
                                             <EditIcon />
                                         </IconButton>
-                                     
+
                                     </TableCell>
-                                    
+
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -192,13 +203,19 @@ export default function BasicModal() {
             <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
 
 
-                {openmodal && <ChildModal openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
-                {(openmodal) === true ? <ChildModal
+                {openmodal && editMode === false && <ChildModal  edit = {editMode }    notifyToast={notifyToast}  fetchAccounts={fetchAccounts}  openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
+                {(openmodal) === true && editMode === true ? <ChildModal
                     openModal={openmodal}
-                    fetchAccounts = {fetchAccounts}
+                    fetchAccounts={fetchAccounts}
                     handleOpenModal={setIsOpenmodal}
                     notifyToast={notifyToast}
+                    edit = {editMode}
+                    accountInfo = {accountInfoInEdit}
+                    
+                    
                 /> : null}
+
+             
             </Stack>
 
         </Container>
