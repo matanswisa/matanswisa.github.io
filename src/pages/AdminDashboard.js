@@ -190,29 +190,81 @@ const UsersManagementPage = () => {
     }
 
 
-    const handleUpdateUser = async () => {
 
-        console.log(userId);
-        console.log(username);
-        console.log(email);
-        console.log(licenseTime);
+    const checkLicenseTime = (licenseTime) => {
+        // Get the current date
+        const currentDate = new Date();
 
-        const token = localStorage.getItem("token");
-        try {
-            await api.put('/api/auth/updateUser', {
-                data: { userId, username, email, licenseTime },
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            });
+        // Convert the input date to a Date object
+        const inputDate = new Date(licenseTime);
 
-            notifyToast(`update account - ${userId}`, 'warning');
+        // Compare the input date with the current date
+        if (inputDate <= currentDate) {
+            // If the input date is in the past or is the same as the current date, return false
+            return false;
+        } else {
+            // Otherwise, the input date is in the future, return true
+            return true;
+        }
+    };
 
-        } catch (error) {
-            console.error('Failed to update user:', error);
+    const validateForm = () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email !== '' && !emailRegex.test(email)) {
+            notifyToast("Invalid email format", "warning");
+            return false;
+          }
+
+        if (username.length < 8) {
+            notifyToast("user name less than 8 characters", "warning");
+            return false;
         }
 
+        if (!checkLicenseTime(licenseTime)){
+            notifyToast("Invalid date! Please choose a future date.", "warning");
+        return false;
+        }
+
+
+    return true;
+    }
+
+
+
+
+
+
+    const handleUpdateUser = async () => {
+
+
+     
+
+
+        if (validateForm()) {
+            const token = localStorage.getItem("token");
+
+            const formattedLicenseTime = new Date(licenseTime + "T00:00:00.000Z");
+         
+
+            // Check if the variables have values and add them to the data object
+       
+
+            try {
+                await api.put('/api/auth/updateUser', {
+                    data: { userId, username, email, formattedLicenseTime },
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                });
+
+                notifyToast(`update account - ${userId}`, 'warning');
+
+            } catch (error) {
+                console.error('Failed to update user:', error);
+            }
+
+        }
     };
 
 
