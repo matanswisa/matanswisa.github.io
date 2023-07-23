@@ -97,4 +97,35 @@ router.post("/createAccount", async (req, res) => {
   }
 });
 
+
+
+
+
+// Update an existing account by ID
+router.put("/editAccount/:id", async (req, res) => {
+    const accountId = req.params.id;
+    const data = req.body;
+  
+    try {
+      // Update the account with the provided data
+      await Account.findByIdAndUpdate(accountId, data);
+  
+      // If you want to update other accounts' IsSelected field to "false" except the updated account
+      await Account.updateMany(
+        { _id: { $ne: accountId } },
+        { $set: { IsSelected: "false" } }
+      );
+  
+      // Update the updated account's IsSelected field to "true"
+      await Account.findByIdAndUpdate(accountId, { $set: { IsSelected: "true" } });
+  
+      res.status(200).json({ message: "Account updated successfully" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error when updating the account");
+    }
+  });
+  
+
+
 export default router;
