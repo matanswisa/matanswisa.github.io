@@ -45,13 +45,13 @@ const MyTabs = () => {
     setSelectedTab(newValue);
   };
 
-  const handleNavigateToDashboard = () => {
-    navigate('/dashboard'); // Replace '/dashboard' with the path to your dashboard page
-  };
+  // const handleNavigateToDashboard = () => {
+  //   navigate('/dashboard'); // Replace '/dashboard' with the path to your dashboard page
+  // };
   return (
     <div>
        <ToastContainer />
-            <Button onClick={handleNavigateToDashboard}>Back</Button>
+            {/* <Button onClick={handleNavigateToDashboard}>Back</Button> */}
       <Tabs value={selectedTab} onChange={handleTabChange} centered>
 
         

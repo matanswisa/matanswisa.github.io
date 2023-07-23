@@ -109,7 +109,7 @@ export default function BasicModal() {
 
                 <Divider sx={{ my: 3, backgroundColor: 'grey' }} />
                 <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                    <TableContainer>
+                    <TableContainer >  
                         <Table>
                             <TableHead>
                                 <TableRow>
