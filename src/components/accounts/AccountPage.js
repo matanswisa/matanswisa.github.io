@@ -9,8 +9,17 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Divider, IconButton, Menu, MenuItem, Stack, Container } from '@mui/material';
+import {
+    Divider, IconButton, Stack, Container,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Slide,
+    Dialog
+} from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
+import DialogContentText from '@mui/material/DialogContentText';
+
 import ChildModal from './createAccount'
 import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
 import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
@@ -24,6 +33,10 @@ import api from '../../api/api';
 import { ToastContainer, } from 'react-toastify';
 
 
+//Related to dialog error - has to be outside of the component
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 export default function BasicModal() {
 
@@ -32,7 +45,7 @@ export default function BasicModal() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
-    
+
 
     useEffect(() => {
         fetchAccounts();
@@ -42,7 +55,7 @@ export default function BasicModal() {
 
 
 
-    
+
 
 
     const fetchAccounts = async () => {
@@ -61,10 +74,10 @@ export default function BasicModal() {
     const getAccountInfoById = (accountList, accountid) => {
         const selectedAccount = accountList.find(account => account._id === accountid);
         setAccountInfoInEdit(selectedAccount);
-      };
-      
-      
-    
+    };
+
+
+
 
     const handleCloseMenu = async (accountId) => {
 
@@ -80,13 +93,23 @@ export default function BasicModal() {
 
 
     const handleEditCloseMenu = async (accountId) => {
-        getAccountInfoById(accounts,accountId);
+        getAccountInfoById(accounts, accountId);
         setEditMode(true);
         setIsOpenmodal(true);
-     
+
     }
 
 
+    const [opendialog, setDialogOpen] = useState(false);
+
+    const handleClickDialogOpen = () => {
+        setDialogOpen(true);
+    };
+
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
 
 
     const handleClick = (event) => {
@@ -185,9 +208,33 @@ export default function BasicModal() {
                                     <TableCell >
 
                                         <IconButton aria-label="Delete">
-                                            <DeleteIcon onClick={() => handleCloseMenu(account._id)} />
+                                            <DeleteIcon onClick={handleClickDialogOpen} />
                                         </IconButton>
-                                        <IconButton onClick={() =>handleEditCloseMenu(account._id)} aria-label="Edit">
+                                        <Dialog
+                                            open={opendialog}
+                                            TransitionComponent={Transition}
+
+                                            onClose={handleDialogClose}
+                                            aria-describedby="alert-dialog-slide-description"
+                                        >
+                                            <DialogTitle>{"Confirm Deletion"}</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText id="alert-dialog-slide-description">
+                                                    Are you sure you want to delete this Account?
+                                                </DialogContentText>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleDialogClose}>Cancel</Button>
+                                                <Button onClick={() => {
+                                                    handleCloseMenu(account._id);
+
+                                                    handleDialogClose(); // Close the dialog first
+                                                }} color="primary">
+                                                    Confirm
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                        <IconButton onClick={() => handleEditCloseMenu(account._id)} aria-label="Edit">
                                             <EditIcon />
                                         </IconButton>
 
@@ -203,19 +250,19 @@ export default function BasicModal() {
             <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
 
 
-                {openmodal && editMode === false && <ChildModal  edit = {editMode }    notifyToast={notifyToast}  fetchAccounts={fetchAccounts}  openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
+                {openmodal && editMode === false && <ChildModal edit={editMode} notifyToast={notifyToast} fetchAccounts={fetchAccounts} openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
                 {(openmodal) === true && editMode === true ? <ChildModal
                     openModal={openmodal}
                     fetchAccounts={fetchAccounts}
                     handleOpenModal={setIsOpenmodal}
                     notifyToast={notifyToast}
-                    edit = {editMode}
-                    accountInfo = {accountInfoInEdit}
-                    
-                    
+                    edit={editMode}
+                    accountInfo={accountInfoInEdit}
+
+
                 /> : null}
 
-             
+
             </Stack>
 
         </Container>
