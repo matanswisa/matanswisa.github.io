@@ -258,7 +258,7 @@ const UsersManagementPage = () => {
                     }
                 });
 
-                notifyToast(`update account - ${userId}`, 'warning');
+                notifyToast(`update account - ${userId}`, 'success');
 
             } catch (error) {
                 console.error('Failed to update user:', error);
