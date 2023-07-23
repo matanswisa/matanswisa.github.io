@@ -22,10 +22,10 @@ export default function LoginForm() {
     if (!username || !password) return
     api.post('/api/auth/login', { username, password }).then((res) => {
       localStorage.setItem('token', res.data.token);
-      dispatch(login(res.data));
-    
+
       localStorage.setItem("user", JSON.stringify(res.data));
       navigate('/dashboard/app', { replace: true });
+      dispatch(login(res.data));
     }).catch((err) => {
       alert(err);
     })

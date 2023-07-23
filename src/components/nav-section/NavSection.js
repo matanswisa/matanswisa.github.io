@@ -18,9 +18,9 @@ export default function NavSection({ data = [], ...other }) {
   const dispatch = useDispatch();
 
   const handleSignout = () => {
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
     dispatch(logout());
-  
   }
 
 
