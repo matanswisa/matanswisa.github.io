@@ -8,7 +8,7 @@ import { useState } from 'react';
 import api from '../../api/api';
 import { useEffect } from 'react';
 import { Select, MenuItem, ListItemIcon, Alert } from '@mui/material';
-import { red, blue, green, yellow, orange, purple, pink, cyan } from '@mui/material/colors';
+import { red, blue, green, yellow, orange, purple, pink, cyan,brown ,lightGreen,lime,blueGrey} from '@mui/material/colors';
 import { Grid } from 'rsuite';
 const style = {
   position: 'absolute',
@@ -216,8 +216,13 @@ export default function BasicModal(props) {
                 <ListItemIcon>
                   <div style={{ backgroundColor: green[500], width: '24px', height: '24px' }}></div>
                 </ListItemIcon>
-
               </MenuItem>
+              <MenuItem value={brown[500]}>
+                <ListItemIcon>
+                  <div style={{ backgroundColor: brown[500], width: '24px', height: '24px' }}></div>
+                </ListItemIcon>
+              </MenuItem>
+
               <MenuItem value={yellow[500]}>
                 <ListItemIcon>
                   <div style={{ backgroundColor: yellow[500], width: '24px', height: '24px' }}></div>
@@ -248,12 +253,29 @@ export default function BasicModal(props) {
                 </ListItemIcon>
 
               </MenuItem>
+              <MenuItem value={lightGreen[500]}>
+                <ListItemIcon>
+                  <div style={{ backgroundColor: lightGreen[500], width: '24px', height: '24px' }}></div>
+                </ListItemIcon>
+
+              </MenuItem>
+              <MenuItem value={lime[500]}>
+                <ListItemIcon>
+                  <div style={{ backgroundColor: lime[500], width: '24px', height: '24px' }}></div>
+                </ListItemIcon>
+
+              </MenuItem>
+              <MenuItem value={blueGrey[500]}>
+                <ListItemIcon>
+                  <div style={{ backgroundColor: blueGrey[500], width: '24px', height: '24px' }}></div>
+                </ListItemIcon>
+
+              </MenuItem>
             </Select>
           </Grid>
 
 
-
-
+ 
 
           <Box
             sx={{
