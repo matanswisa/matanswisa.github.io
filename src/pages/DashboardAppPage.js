@@ -26,7 +26,7 @@ import api from '../api/api';
 import { ReactComponent as dollarLogo } from '../icons/dollar-symbol.svg';
 
 import { Colors } from '../components/color-utils/Colors';
-
+import SelectAccount from '../components/accounts/selectAccount'
 // ----------------------------------------------------------------------
 
 
@@ -235,11 +235,11 @@ export default function DashboardAppPage() {
       <Helmet>
         <title>Dashboard</title>
       </Helmet>
-
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 3 }}>
           Hi, Welcome back
         </Typography>
+    <SelectAccount/>
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>

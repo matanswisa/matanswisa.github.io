@@ -2,7 +2,7 @@ import React from 'react';
 import { Tabs, Tab, Box,Button } from '@mui/material';
 import AdminManagementPage from '../../pages/AdminDashboard'; // Import the UsersManagementPage component
 import UsersManagementPage from '../../pages/UserDahboard'
-import AccountPage from '../../pages/AccountsPage';
+import AccountPage from '../../components/accounts/AccountPage';
 import { useNavigate } from 'react-router-dom';
 import useToast from '../../hooks/alert'
 import { ToastContainer, } from 'react-toastify';
@@ -60,8 +60,10 @@ const MyTabs = () => {
        
 
         <Tab label="Accounts" />
-        <Tab label="Languages" />
-        <Tab label="Colors" />
+
+        
+        {/* <Tab label="Languages" />    #############Version 2##############
+        <Tab label="Colors" /> */}
         
         {/* Add more tabs here if needed */}
       </Tabs>
@@ -80,14 +82,14 @@ const MyTabs = () => {
        
       <AccountPage/>
       </TabPanel>
-
-      <TabPanel value={selectedTab} index={2}>
+{/* 
+      <TabPanel value={selectedTab} index={2}>    #############Version 2##############
        
 
       </TabPanel>
       <TabPanel value={selectedTab} index={3}>
      
-      </TabPanel>
+      </TabPanel> */}
       {/* Add more TabPanels here for additional tabs */}
 
     </div>
