@@ -18,20 +18,17 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: 6,
     },
-    license :{
+    license: {
         type: Date,
         required: true,
     },
-  
+
     role: {
         type: Number,
         enum: [roles.basic, roles.admin], // basic = 0 , admin = 1 
         default: 0,
     },
-    trades: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Trade',
-    }],
+    accounts: [{ type: Object, ref: 'Account', default: [], required: false }]
 });
 
 userSchema.plugin(mongoosePaginate); // pagination for later use when the dashboard in the ui is ready.

@@ -33,10 +33,10 @@ const upload = multer({ storage });
  */
 router.post("/addTrade", async (req, res) => {
   try {
+
     const data = req.body;
     const result = await Trade.create(data);
     res.status(200).json({ tradeId: result._id });
-
   } catch (err) {
     console.error(err);
     res.status(500).send('Error when adding a trade');
