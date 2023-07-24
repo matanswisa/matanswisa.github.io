@@ -17,7 +17,13 @@ router.delete('/deleteAccount', async (req, res) => {
   
     // Perform the deletion logic using the accountId
     await Account.findByIdAndDelete(accountId);
-  
+    await Account.updateMany({}, { $set: { IsSelected: false } });
+    
+
+    const firstAccount = await Account.findOne({});
+    if (firstAccount) {
+      await Account.updateOne({ _id: firstAccount._id }, { $set: { IsSelected: true } });
+    }
     // Return a success response
     res.status(200).json({ message: `Account deleted - ${accountId}` });
   } catch (error) {
