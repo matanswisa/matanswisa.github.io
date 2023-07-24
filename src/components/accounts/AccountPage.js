@@ -83,7 +83,7 @@ export default function BasicModal() {
 
 
         await api.delete('/api/deleteAccount', { data: { accountId } });
-        notifyToast(`Delete Account - ${accountId}`, 'warning');
+        notifyToast("Delete Account successfully", 'warning');
         fetchAccounts();
 
 
