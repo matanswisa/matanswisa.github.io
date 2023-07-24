@@ -220,7 +220,7 @@ export default function BasicModal() {
                                             <DialogTitle>{"Confirm Deletion"}</DialogTitle>
                                             <DialogContent>
                                                 <DialogContentText id="alert-dialog-slide-description">
-                                                    Are you sure you want to delete this Account?
+                                                When deleting the account, all the trades under that account will be deleted. Are you sure?
                                                 </DialogContentText>
                                             </DialogContent>
                                             <DialogActions>
