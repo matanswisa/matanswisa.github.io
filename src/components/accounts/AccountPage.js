@@ -31,6 +31,8 @@ import useToast from '../../hooks/alert';
 import 'react-toastify/dist/ReactToastify.css';
 import api from '../../api/api';
 import { ToastContainer, } from 'react-toastify';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../redux-toolkit/userSlice';
 
 
 //Related to dialog error - has to be outside of the component
@@ -45,6 +47,7 @@ export default function BasicModal() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
+    const user = useSelector(selectUser);
 
 
     useEffect(() => {
@@ -82,7 +85,7 @@ export default function BasicModal() {
     const handleCloseMenu = async (accountId) => {
 
 
-        await api.delete('/api/deleteAccount', { data: { accountId } });
+        await api.delete('/api/deleteAccount', { data: { accountId, userId: user._id } });
         notifyToast(`Delete Account - ${accountId}`, 'warning');
         fetchAccounts();
 
