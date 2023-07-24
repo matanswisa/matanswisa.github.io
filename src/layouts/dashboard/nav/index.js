@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 // @mui
 import { styled, alpha } from '@mui/material/styles';
-import { Box, Link, Drawer, Typography, Avatar } from '@mui/material';
+import { Box, Link, Drawer, Typography, Avatar, Button } from '@mui/material';
 // mock
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
@@ -11,7 +11,7 @@ import useResponsive from '../../../hooks/useResponsive';
 import Logo from '../../../components/logo';
 import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
-//
+
 import navConfig from './config';
 import { useDispatch, useSelector } from 'react-redux';
 import SvgColor from '../../../components/svg-color';
@@ -155,7 +155,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
       <NavSection data={navConfig} />
 
-      <button onClick={handleLogout}>logout</button>
+      <Button icon={'eva:pie-chart-outline'} onClick={handleLogout}>logout</Button>
       <Box sx={{ flexGrow: 1 }} />
 
     </Scrollbar>
