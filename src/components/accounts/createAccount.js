@@ -50,6 +50,8 @@ export default function BasicModal(props) {
   const user = useSelector(selectUser);
   const token = localStorage.getItem('token');
 
+  console.log("props", props);
+
 
   useEffect(() => {
     if (accountInfo && typeof accountInfo === 'object') {
@@ -60,7 +62,6 @@ export default function BasicModal(props) {
 
   const checkAccountExists = (accountList, accountName) => {
     const selectedAccount = accountList.find((account) => account.AccountName === accountName);
-
     return selectedAccount !== undefined;
   };
 
@@ -80,10 +81,10 @@ export default function BasicModal(props) {
             Authorization: `Bearer ${token}`,
           }
         })
-        .then((res) => {
+        .then(async (res) => {
           notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
-          props.fetchAccounts();
+          await props.fetchAccounts();
           return false;
         })
         .catch((err) => {
@@ -101,10 +102,7 @@ export default function BasicModal(props) {
         Label: selectedColor,
         IsSelected: 'true',
         userId: user._id,
-      };
-
-      console.log(data);
-      console.log(token);
+      }; 
 
       await api
         .put('/api/editAccount', data, {

@@ -90,7 +90,7 @@ export default function BasicModal() {
             }
         });
         notifyToast(`Delete Account - ${accountId}`, 'warning');
-        fetchAccounts();
+        await fetchAccounts();
 
 
         setAnchorEl(null);
