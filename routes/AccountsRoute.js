@@ -2,11 +2,12 @@ import { Router } from "express";
 import Account from "../models/accounts.js";
 import User from "../models/user.js";
 import Mongoose from "mongoose";
+import { authenticateToken } from "../auth/jwt.js";
 
 const router = Router();
 
 
-router.delete('/deleteAccount', async (req, res) => {
+router.delete('/deleteAccount', authenticateToken, async (req, res) => {
   try {
     const { accountId, userId } = req.body; // Assuming the ID is passed in the request body
 
@@ -85,7 +86,7 @@ router.post('/updateIsSelectedAccount', (req, res) => {
 });
 
 
-router.get("/accounts", async (req, res) => {
+router.get("/accounts", authenticateToken, async (req, res) => {
   try {
     const accounts = await Account.find(); // Assuming you're using a MongoDB database and the Account model
 
@@ -98,7 +99,7 @@ router.get("/accounts", async (req, res) => {
 
 
 
-router.post("/createAccount", async (req, res) => {
+router.post("/createAccount", authenticateToken, async (req, res) => {
   try {
     const { userId, data } = req.body;
 
@@ -140,29 +141,48 @@ router.post("/createAccount", async (req, res) => {
 });
 
 
-// Update an existing account by ID
-router.put("/editAccount/:id", async (req, res) => {
-  const accountId = req.params.id;
-  const data = req.body;
+router.put("/editAccount", authenticateToken, async (req, res) => {
+
+  const { userId, accountId, AccountName, Label, IsSelected } = req.body;
 
   try {
-    // Update the account with the provided data
-    await Account.findByIdAndUpdate(accountId, data);
+    // Find the user by ID
+    const user = await User.findById(userId);
 
-    // If you want to update other accounts' IsSelected field to "false" except the updated account
+    if (!user) {
+      return res.status(400).json({ error: 'User not found' });
+    }
+
+    // Find the account to update in the user's accounts array
+    const accountToUpdate = user.accounts.find((account) => account._id == accountId);
+
+    if (!accountToUpdate) {
+      return res.status(400).json({ error: 'Account not found for this user' });
+    }
+
+    // Update the account properties
+    accountToUpdate.AccountName = AccountName;
+    accountToUpdate.Label = Label;
+    accountToUpdate.IsSelected = IsSelected;
+
+    await Account.findByIdAndUpdate(accountId, { $set: { AccountName, Label, IsSelected: "true" } });
+
     await Account.updateMany(
       { _id: { $ne: accountId } },
       { $set: { IsSelected: "false" } }
     );
 
-    // Update the updated account's IsSelected field to "true"
-    await Account.findByIdAndUpdate(accountId, { $set: { IsSelected: "true" } });
+    //   // Update the updated account's IsSelected field to "true"
 
-    res.status(200).json({ message: "Account updated successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error when updating the account");
+    // Save the updated user document
+    await user.save();
+
+    return res.json({ message: 'Account updated successfully' });
+  } catch (error) {
+    console.error('Error updating account:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
+
 });
 
 

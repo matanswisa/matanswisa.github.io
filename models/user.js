@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     },
     license: {
         type: Date,
-        required: true,
+        required: false,
     },
 
     role: {
