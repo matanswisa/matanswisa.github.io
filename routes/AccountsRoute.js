@@ -88,7 +88,10 @@ router.post('/updateIsSelectedAccount', (req, res) => {
 
 router.get("/accounts", authenticateToken, async (req, res) => {
   try {
-    const accounts = await Account.find(); // Assuming you're using a MongoDB database and the Account model
+    const { userId } = req.body;
+    console.log(req.body);
+    const user = await User.findById(userId)
+    const accounts = user.accounts; // Assuming you're using a MongoDB database and the Account model
 
     res.status(200).json(accounts);
   } catch (err) {
