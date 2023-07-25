@@ -192,10 +192,11 @@ router.put("/updateUser", authenticateToken, async (req, res) => {
         if (!req.body) {
             return res.status(400).send('data is missing');
         }
-        console.log(req.body)
-        const { username, email, license } = req.body.data;
-        console.log({ username, email, license })
-        const result = await User.updateOne({ _id: req.body.data.userId }, { username, email, license });
+      
+        const { username, email, licenseTime } = req.body.data;
+        const dateObj = new Date(licenseTime);   
+
+        const result = await User.updateOne({ _id: req.body.data.userId }, { username, email, license: dateObj });
 
         if (result) {
             res.status(200).send(`User ${username} been updated.`);
