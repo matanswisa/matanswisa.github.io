@@ -238,10 +238,10 @@ const UsersManagementPage = () => {
     const getUserById = (userId) => {
 
         const user = users.find((user) => user._id === userId);
-
+       
         setUsername(user.username);
         setEmail(user.email);
-        setLicenseTime(user.license);
+        setLicenseTime(user.license.split('T')[0]);
     }
 
 
