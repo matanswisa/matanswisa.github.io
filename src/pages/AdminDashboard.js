@@ -214,7 +214,7 @@ const UsersManagementPage = () => {
                 },
                 data: { id }, // Make sure this is the correct format for the API
             });
-
+            fetchUsers();
             notifyToast("Delete account Successfully ", 'warning');
 
             // Optionally, you can fetch the updated list of users after deletion
@@ -305,7 +305,8 @@ const UsersManagementPage = () => {
                         Authorization: `Bearer ${token}`,
                     }
                 });
-
+                fetchUsers();
+                handleClose();
                 notifyToast("update account Successfully  ", 'success');
 
             } catch (error) {
@@ -362,9 +363,6 @@ const UsersManagementPage = () => {
             <Divider sx={{ my: 3, backgroundColor: 'grey' }} />
             <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
                 <UsersList users={users} onDelete={handleDeleteUser} onUpdate={handleopenEditUser} />
-                {/* Display UserRegistration component only for admin users */}
-                {/* Replace 'isAdmin' with your logic to check if the user is an admin */}
-                {/* {isAdmin && <UserRegistration onRegister={handleRegisterUser} />} */}
             </div>
             <Modal
                 open={open}
