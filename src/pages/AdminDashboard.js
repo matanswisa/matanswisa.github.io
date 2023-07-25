@@ -294,12 +294,11 @@ const UsersManagementPage = () => {
         if (validateForm()) {
             const token = localStorage.getItem("token");
 
-            const formattedLicenseTime = new Date(licenseTime + "T00:00:00.000Z");
 
 
             try {
                 await api.put('/api/auth/updateUser', {
-                    data: { userId, username, email, formattedLicenseTime },
+                    data: { userId, username, email, licenseTime },
                 }, {
                     headers: {
                         Authorization: `Bearer ${token}`,
