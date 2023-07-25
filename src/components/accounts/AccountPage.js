@@ -58,7 +58,11 @@ export default function BasicModal() {
 
     const fetchAccounts = async () => {
         try {
-            const response = await api.get('/api/accounts');
+            const response = await api.get('/api/accounts', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            }, { userId: user._id });
             setAccounts(response.data);
 
 
