@@ -80,21 +80,35 @@ export default function BasicModal() {
 
 
 
-
     const handleCloseMenu = async (accountId) => {
+        const token = localStorage.getItem("token");
+        console.log("token", token);
+        try {
+            // Prepare the request body data to be sent with the DELETE request
+            const requestData = {
+                accountId: accountId,
+                userId: user._id,
+            };
 
+            // Send the DELETE request with the data in the request body and authorization header
+            await api.delete('/api/deleteAccount', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                data: requestData,
+            });
 
-        await api.delete('/api/deleteAccount', { data: { accountId, userId: user._id } }, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        });
-        notifyToast(`Delete Account - ${accountId}`, 'warning');
-        await fetchAccounts();
+            // Notify and fetch accounts
+            notifyToast(`Delete Account - ${accountId}`, 'warning');
+            await fetchAccounts();
 
+            setAnchorEl(null);
+        } catch (error) {
+            // Handle errors if any
+            console.error(error);
+        }
+    };
 
-        setAnchorEl(null);
-    }
 
 
 
