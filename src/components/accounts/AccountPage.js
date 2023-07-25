@@ -48,17 +48,12 @@ export default function BasicModal() {
     const [editMode, setEditMode] = React.useState(false);
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
     const user = useSelector(selectUser);
-
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         fetchAccounts();
 
     }, []);
-
-
-
-
-
 
 
     const fetchAccounts = async () => {
@@ -85,7 +80,11 @@ export default function BasicModal() {
     const handleCloseMenu = async (accountId) => {
 
 
-        await api.delete('/api/deleteAccount', { data: { accountId, userId: user._id } });
+        await api.delete('/api/deleteAccount', { data: { accountId, userId: user._id } }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
         notifyToast(`Delete Account - ${accountId}`, 'warning');
         fetchAccounts();
 

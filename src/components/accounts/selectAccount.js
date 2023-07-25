@@ -10,34 +10,43 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import { useEffect, useState } from 'react';
+import { selectUser } from '../../redux-toolkit/userSlice';
+import { useSelector } from 'react-redux';
 
 
 
 export default function MultipleSelectPlaceholder(props) {
   const [accounts, setAccounts] = useState([]);
- 
- 
+
+
   const [selectedAccount, setSelectedAccount] = useState('');
   const [selectedAccountColor, setSelectedAccountColor] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const user = useSelector(selectUser);
+  const token = localStorage.getItem('token');
+
   useEffect(() => {
     fetchAccounts();
-      setSelectedAccount(getSelectedAccountName(accounts))
-      setSelectedAccountColor(getSelectedAccountLabel(accounts))
+    setSelectedAccount(getSelectedAccountName(accounts))
+    setSelectedAccountColor(getSelectedAccountLabel(accounts))
   }, []);
-  
 
-  
+
+
   const fetchAccounts = async () => {
     try {
-      const response = await api.get('/api/accounts');
+      const response = await api.get('/api/accounts', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }, { userId: user._id });
       setAccounts(response.data);
 
-      
+
       const initialSelectedAccount = getSelectedAccountName(response.data);
       setSelectedAccount(initialSelectedAccount);
-      
+
       const initialSelectedAccountColor = getSelectedAccountLabel(response.data);
       setSelectedAccountColor(initialSelectedAccountColor);
     } catch (error) {
@@ -47,7 +56,7 @@ export default function MultipleSelectPlaceholder(props) {
 
   const getSelectedAccountLabel = (accountList) => {
     const selectedAccount = accountList.find(account => account.IsSelected === 'true');
-    
+
     return selectedAccount ? selectedAccount.Label : '';
   };
   const getSelectedAccountName = (accountList) => {
@@ -56,7 +65,7 @@ export default function MultipleSelectPlaceholder(props) {
   };
 
 
-  
+
   const handleChange = (event) => {
     console.log(event.target.value);
     setSelectedAccount(event.target.value);
@@ -73,7 +82,7 @@ export default function MultipleSelectPlaceholder(props) {
   };
 
   const updateSelectedAccount = async (accountName) => {
-    
+
     const data = {
       AccountName: accountName,
     };

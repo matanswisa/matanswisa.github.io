@@ -48,6 +48,8 @@ export default function BasicModal(props) {
   const { accountInfo } = props;
 
   const user = useSelector(selectUser);
+  const token = localStorage.getItem('token');
+
 
   useEffect(() => {
     if (accountInfo && typeof accountInfo === 'object') {
@@ -73,7 +75,11 @@ export default function BasicModal(props) {
       console.log("user", user);
 
       await api
-        .post('/api/createAccount', { userId: user._id, data })
+        .post('/api/createAccount', { userId: user._id, data }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        })
         .then((res) => {
           notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
@@ -90,16 +96,22 @@ export default function BasicModal(props) {
   const handleEditAccount = async () => {
     if (validateForm()) {
       const data = {
-        _id: accountInfo._id, // Include the _id property for updating the correct account
+        accountId: accountInfo._id, // Include the _id property for updating the correct account
         AccountName: accountName,
         Label: selectedColor,
         IsSelected: 'true',
+        userId: user._id,
       };
 
       console.log(data);
+      console.log(token);
 
       await api
-        .put(`/api/editAccount/${accountInfo._id}`, data) // Use api.put and pass the account id in the URL
+        .put('/api/editAccount', data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }) // Use api.put and pass the account id in the URL
         .then((res) => {
           notifyToast('Account updated successfully', 'success');
           props.handleOpenModal(false);
@@ -137,12 +149,6 @@ export default function BasicModal(props) {
   return (
     <div>
       <Button onClick={handleOpen}>Open modal</Button>
-      {/* <Modal
-        open={handleOpen}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      > */}
       <Box sx={style}>
         <Grid>
           {edit === true ? (
