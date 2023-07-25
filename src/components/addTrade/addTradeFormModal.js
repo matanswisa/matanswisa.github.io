@@ -154,14 +154,19 @@ export default function BasicModal(props) {
               }
               props.updateTradeLists()
               notifyToast("Trade added successfully", "success");
+              handleClose();
 
             }).catch((err) => {
               notifyToast("Couldn't add trade", "error");
             })
         }
         else if (editMode === true) {
-          console.log('inside edit trade!', tradeInfo?._id);
-          data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
+
+          const netPnL = prevStatusState !== data.status && data.status === "Win" && data.netPnL < 0
+          ? -data.netPnL 
+          : data.netPnL;
+ 
+         data.netPnL = netPnL;
           await api.post('/api/editTrade', data)
             .then((response) => {
               notifyToast("Trade Edit succssfully", "success")
@@ -253,7 +258,7 @@ export default function BasicModal(props) {
   };
 
   useEffect(() => {
-    console.log(selectedFile);
+    
     if (selectedFile) {
       notifyToast("Image successfully uploaded", "success");
     }
