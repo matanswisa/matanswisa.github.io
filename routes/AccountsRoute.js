@@ -86,9 +86,12 @@ router.post('/updateIsSelectedAccount', (req, res) => {
 });
 
 
-router.get("/accounts", authenticateToken, async (req, res) => {
+router.post("/accounts", authenticateToken, async (req, res) => {
   try {
-    const accounts = await Account.find(); // Assuming you're using a MongoDB database and the Account model
+    const { userId } = req.body;
+    console.log(req.body);
+    const user = await User.findById(userId);
+    const accounts = user.accounts;
 
     res.status(200).json(accounts);
   } catch (err) {
@@ -140,13 +143,10 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
   }
 });
 
-
 router.put("/editAccount", authenticateToken, async (req, res) => {
-
   const { userId, accountId, AccountName, Label, IsSelected } = req.body;
 
   try {
-    // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
@@ -165,17 +165,16 @@ router.put("/editAccount", authenticateToken, async (req, res) => {
     accountToUpdate.Label = Label;
     accountToUpdate.IsSelected = IsSelected;
 
-    await Account.findByIdAndUpdate(accountId, { $set: { AccountName, Label, IsSelected: "true" } });
+    const accounts = user.accounts.filter(account => account._id != accountId);
+
+    accounts.push(accountToUpdate);
+    await Account.findOneAndUpdate({ _id: accountId }, { AccountName, Label, IsSelected: "true" });
+    await User.findByIdAndUpdate(userId, { accounts });
 
     await Account.updateMany(
       { _id: { $ne: accountId } },
       { $set: { IsSelected: "false" } }
     );
-
-    //   // Update the updated account's IsSelected field to "true"
-
-    // Save the updated user document
-    await user.save();
 
     return res.json({ message: 'Account updated successfully' });
   } catch (error) {
