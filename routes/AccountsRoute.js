@@ -21,11 +21,9 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
     let accounts = user.accounts;
     if (!accounts.length) return res.status(400).json({ message: "No accounts to delete" });
 
-    // Convert the accountId to a Mongoose ObjectId
-    const accountToDeleteId = accountId;
 
     // Filter out the account to be deleted
-    accounts = accounts.filter(account => !account._id == accountToDeleteId);
+    accounts = accounts.filter(account => account._id != accountId);
     await User.updateOne({ _id: userId }, { accounts });
 
     // Check if the account exists
