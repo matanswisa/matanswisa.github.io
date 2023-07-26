@@ -11,13 +11,14 @@ import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import { useEffect, useState } from 'react';
 import { selectUser } from '../../redux-toolkit/userSlice';
-import { useSelector } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getAccounts, setCurrentAccount, setUserAccounts } from '../../redux-toolkit/accountsSlice';
 
 
 export default function MultipleSelectPlaceholder(props) {
   const [accounts, setAccounts] = useState([]);
 
+  // const accounts = useSelector(getAccounts)
 
   const [selectedAccount, setSelectedAccount] = useState('');
   const [selectedAccountColor, setSelectedAccountColor] = useState('');
@@ -26,11 +27,19 @@ export default function MultipleSelectPlaceholder(props) {
   const user = useSelector(selectUser);
   const token = localStorage.getItem('token');
 
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     fetchAccounts();
-    setSelectedAccount(getSelectedAccountName(accounts))
-    setSelectedAccountColor(getSelectedAccountLabel(accounts))
   }, []);
+
+  useEffect(() => {
+    if (accounts) {
+      setSelectedAccount(getSelectedAccountName(accounts))
+      setSelectedAccountColor(getSelectedAccountLabel(accounts))
+    }
+  }, [accounts])
 
 
 
@@ -42,15 +51,16 @@ export default function MultipleSelectPlaceholder(props) {
         }
       });
 
-      console.log("Response:", response.data);
-      setAccounts(response.data);
-
-
       const initialSelectedAccount = getSelectedAccountName(response.data);
+      setAccounts(response.data);
       setSelectedAccount(initialSelectedAccount);
 
       const initialSelectedAccountColor = getSelectedAccountLabel(response.data);
       setSelectedAccountColor(initialSelectedAccountColor);
+
+      dispatch(setUserAccounts(response.data));
+      console.log(initialSelectedAccount);
+      dispatch(setCurrentAccount(getSelectedAccountObject(response.data)));
     } catch (error) {
       console.error(error);
     }
@@ -66,6 +76,9 @@ export default function MultipleSelectPlaceholder(props) {
     return selectedAccount ? selectedAccount.AccountName : '';
   };
 
+  const getSelectedAccountObject = (accountList) => {
+    return accountList.find(account => account.IsSelected === 'true');
+  }
 
 
   const handleChange = (event) => {
@@ -104,8 +117,6 @@ export default function MultipleSelectPlaceholder(props) {
     );
     return account ? account.Label : '';
   };
-
-  const open = Boolean(anchorEl);
 
   return (
     <Box>

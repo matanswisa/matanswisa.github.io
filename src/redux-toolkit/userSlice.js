@@ -29,9 +29,7 @@ const authSlice = createSlice({
             return state.isAdmin;
         },
         initializeUser(state) {
-            console.log(state);
-            const persistedUser = JSON.parse(localStorage.getItem('persist:root'))?.auth?.user;
-            console.log(persistedUser);
+            const persistedUser = JSON.parse(localStorage.getItem('user'));
             if (persistedUser) {
                 state.user = persistedUser;
                 state.isAuthenticated = true;
@@ -42,7 +40,7 @@ const authSlice = createSlice({
 });
 
 export const { login, logout, selectIsAdmin, initializeUser } = authSlice.actions;
-
+export const selectUserAccounts = (state) => state.user.accounts;
 export const selectUserName = (state) => state.auth.user?.username;
 export const selectUser = (state) => state.auth.user;
 export const selectUserAdmin = (state) => state.auth.isAdmin;
