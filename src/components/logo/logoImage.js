@@ -1,5 +1,5 @@
 import React from 'react';
-import imageSrc from './tradeExalt.jpg'; // Replace with the actual path to your image
+import imageSrc from './tradeExalt.png'; // Replace with the actual path to your image
 
 const MyComponentWithImage = () => {
   return (
