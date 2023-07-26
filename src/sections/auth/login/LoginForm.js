@@ -8,9 +8,22 @@ import Iconify from '../../../components/iconify';
 import api from '../../../api/api';
 import { login } from '../../../redux-toolkit/userSlice';
 import { useDispatch } from 'react-redux';
+
+import useToast from '../../../hooks/alert';
+import { ToastContainer, } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
+
+
+  
+  const showToast = useToast();
+  const notifyToast = (Msg, Type) => {
+
+    showToast(Msg, Type);
+  }
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -27,13 +40,14 @@ export default function LoginForm() {
       navigate('/dashboard/app', { replace: true });
       dispatch(login(res.data));
     }).catch((err) => {
-      alert(err);
+      notifyToast( "Sorry, the password you entered is incorrect. Please try again.", "error");
     })
   };
 
   return (
     <>
       <Stack spacing={3}>
+      <ToastContainer />
         <TextField name="User Name" label="User Name" value={username} onChange={(e) => setUsername(e.target.value)} />
 
         <TextField
