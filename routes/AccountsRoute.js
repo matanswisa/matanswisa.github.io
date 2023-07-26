@@ -91,7 +91,7 @@ router.post("/accounts", authenticateToken, async (req, res) => {
     const user = await User.findById(userId);
     const accounts = user.accounts;
 
-    res.status(200).json(accounts);
+    res.status(200).json(accounts); 
   } catch (err) {
     console.error(err);
     res.status(500).send('Error when retrieving accounts');
