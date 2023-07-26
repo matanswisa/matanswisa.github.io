@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import SvgColor from '../../../components/svg-color';
 import { initializeUser, logout, selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
 import useTokenValidation from '../../../hooks/validateToken';
-
+import LogoImage from '../../../components/logo/logoImage'
 // ----------------------------------------------------------------------
 
 const NAV_WIDTH = 280;
@@ -138,20 +138,8 @@ export default function Nav({ openNav, onCloseNav }) {
         '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
       }}
     >
-
-      <Box sx={{ mb: 5, mx: 2.5 }}>
-        <Link underline="none">
-          <StyledAccount>
-            <Avatar src={account?.photoURL} alt="photoURL" />
-
-            <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account?.username}
-              </Typography>
-            </Box>
-          </StyledAccount>
-        </Link>
-      </Box>
+    <LogoImage/>
+      
 
       <NavSection data={navConfig} />
 
