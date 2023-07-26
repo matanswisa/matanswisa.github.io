@@ -1,0 +1,19 @@
+{
+    "userId": "64bd33bd8b6f9fe43ed5bd28",
+    "accountId": "64c0b17cb283acd2ad2092c0",
+    "tradeData": {
+        "symbol": "nqu20223",
+        "status": "Loss",
+        "netROI": 0,
+        "longShort": "Short",
+        "contracts": 2,
+        "entryPrice": 0,
+        "entryDate": "2023-07-09T00:00:00.000+00:00",
+        "stopPrice": 0,
+        "exitPrice": 0,
+        "duration": "",
+        "commission": null,
+        "netPnL": -152,
+        "comments": "ob+supply"
+    }
+}

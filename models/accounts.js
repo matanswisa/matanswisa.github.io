@@ -16,7 +16,7 @@ const AccountsSchema = new Mongoose.Schema({
         required: true
     },
     trades: [{
-        type: Mongoose.Schema.Types.ObjectId,
+        type: Mongoose.Schema.Types.Array,
         ref: 'Trade',
     }],
 });

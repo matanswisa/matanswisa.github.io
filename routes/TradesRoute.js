@@ -9,6 +9,9 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
 import { fetchTradesWithImages } from "../services/trades.service.js";
+import User from "../models/user.js";
+import Account from "../models/accounts.js";
+import { authenticateToken } from "../auth/jwt.js";
 // import { fetchTradesWithImages } from "./services";
 
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -29,13 +32,22 @@ const upload = multer({ storage });
 
 
 /**
- * This is a test
- */
-router.post("/addTrade", async (req, res) => {
+ * //TODO: when adding a trade need to make sure i get the account ID and userId for related trades.
+  */
+router.post("/addTrade", authenticateToken, async (req, res) => {
   try {
+    const { userId, accountId, tradeData } = req.body;
+    const user = await User.findById(userId);
+    const account = await Account.findById(accountId);
+    const accounts = user.accounts.find(account => account._id == accountId);
+    if (!accounts) return res.status(400).send("Can't find account");
 
-    const data = req.body;
-    const result = await Trade.create(data);
+    accounts.trades.push(tradeData);
+    // account.trades = accounts;
+    await Account.findByIdAndUpdate(accountId, { trades: accounts.trades });
+    await User.updateOne({ _id: userId }, { accounts: accounts });
+    // await account.save();
+    const result = await Trade.create(tradeData);
     res.status(200).json({ tradeId: result._id });
   } catch (err) {
     console.error(err);
@@ -44,9 +56,14 @@ router.post("/addTrade", async (req, res) => {
 });
 
 
-router.get('/fetchTrades', async (req, res) => {
+router.get('/fetchTrades', authenticateToken, async (req, res) => {
   try {
-    const tradesWithImage = await fetchTradesWithImages();
+    const { userId, accountId } = req.body;
+    const user = await User.findById(userId);
+    const accounts = user.accounts.find(account => account._id == accountId);
+    if (!accounts?.trades) return res.status(400).send("No trades exists for this account");
+
+    const tradesWithImage = await fetchTradesWithImages(accounts.trades);
     if (!tradesWithImage.length) return res.status(400).send("There isn't any trades to display");
     res.status(200).json(tradesWithImage);
   } catch (err) {
@@ -55,7 +72,7 @@ router.get('/fetchTrades', async (req, res) => {
   }
 });
 
-router.post("/editTrade", async (req, res) => {
+router.post("/editTrade", authenticateToken, async (req, res) => {
   try {
     const data = req.body;
     console.log(data);
@@ -69,7 +86,7 @@ router.post("/editTrade", async (req, res) => {
 });
 
 
-router.delete('/deleteTrade', async (req, res) => {
+router.delete('/deleteTrade', authenticateToken, async (req, res) => {
   try {
     const { tradeId } = req.body;
     if (tradeId) {
