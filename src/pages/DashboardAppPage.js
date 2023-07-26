@@ -26,7 +26,7 @@ import api from '../api/api';
 import { ReactComponent as dollarLogo } from '../icons/dollar-symbol.svg';
 
 import { Colors } from '../components/color-utils/Colors';
-import SelectAccount from '../components/accounts/selectAccount'
+
 // ----------------------------------------------------------------------
 
 
@@ -239,8 +239,8 @@ export default function DashboardAppPage() {
       <Container maxWidth="xl">
       <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0px' ,marginRight:'3px'}}>
       {/* Your SelectAccount component content goes here */}
-    <SelectAccount/>
-      
+
+   
     </div>
         <Typography variant="h4" sx={{ mb: 3 }}>
           Hi, Welcome back
