@@ -37,7 +37,7 @@ export default function ButtonAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-       <AppBar position="static" sx={{ backgroundColor: '#ffffff', boxShadow: 'none',  }}>
+       <AppBar position="static" sx={{ backgroundColor: '#f9fafb', boxShadow: 'none',  }}>
        <Toolbar sx={{ display: 'flex', justifyContent: 'flex-end'  }}>
 
 
