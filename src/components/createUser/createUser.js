@@ -88,6 +88,40 @@ function BasicModal(props) {
     }
   };
 
+  
+
+  const handleSendMail = async () => {
+
+    const welcomeMessage = `Your login credentials: 
+    Username: ${username}
+    Password: ${password}
+    
+    For security purposes, we recommend changing your password after your first login. 
+    
+    To get started, simply visit www.TradeExalt.co.il and sign in using your credentials. 
+    
+    Happy trading! 
+    
+    Best regards, 
+    [Your Trading Journal App Name] Team`;
+
+    const data = {
+      to: email,
+      subject: 'Welcome to TradeExalt!',
+      text: welcomeMessage,
+     
+      }
+
+    await api.post('/api/sendEmail', data).then((res) => {
+      
+    }).catch((err) => {
+
+       notifyToast("Mail now send", "error");
+      console.log(err);
+      return false;
+    })
+
+  }
 
   const handleCreateUser = () => {
 
@@ -103,6 +137,7 @@ function BasicModal(props) {
         })
         .then(async (response) => {
           console.log('User created successfully:', response.data);
+          handleSendMail();
           await props.handleOpenModal(false);
           await notifyToast("User added successfully", "success");
           // Fetch list of users from "/api/users" route
