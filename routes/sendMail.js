@@ -6,10 +6,12 @@ const router = Router();
 
 
 const transporter = nodemailer.createTransport({
-  service: 'Gmail', // e.g., 'Gmail', 'Outlook', etc.
+    host: 'smtp.office365.com',
+    port: 587,
+  secure: false,
   auth: {
-    user: 'ttradingjournal@gmail.com',
-    pass: 'tradingJournal852216',
+    user: 'tradeExalt@outlook.co.il',
+    pass: 'trade1125462$#567',
   },
 });
 
@@ -19,7 +21,7 @@ router.post('/sendEmail', (req, res) => {
   const { to, subject, text } = req.body;
 
   const mailOptions = {
-    from: 'ttradingjournal@gmail.com',
+    from: 'tradeExalt@outlook.co.il',
     to,
     subject,
     text,
