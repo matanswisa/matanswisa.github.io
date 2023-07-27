@@ -65,8 +65,17 @@ export default function U(props) {
         headers: {
           Authorization: `Bearer ${token}`,
         }
+      }) .catch((err) => {
+        if (err.response && err.response.data && err.response.data.samePassword) {
+          notifyToast("Please enter a different password.", "info");
+          
+          return;
+        }
+    
+      
+      
       }).then((response) => {
-
+        console.log(response);
         notifyToast("Password Updated successfully", "success");
         props.handleOpenModal(false);
         // Fetch list of users from "/api/users" route
@@ -88,6 +97,7 @@ export default function U(props) {
           });
       })
       .catch((error) => {
+        console.log(error);
         console.error('Failed to create user:', error);
       });
     }
