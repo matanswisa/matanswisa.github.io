@@ -247,8 +247,8 @@ router.put("/updateUserPassword", authenticateToken, async (req, res) => {
 
 
         if (password === "222222") {
-
-            res.status(500).send(`same password`);
+            return res.status(400).json({ message: "same password", samePassword: true });
+        //    res.status(500).send(`same password`);
         }
         else {
 
