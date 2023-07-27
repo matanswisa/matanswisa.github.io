@@ -88,13 +88,20 @@ function BasicModal(props) {
     }
   };
 
-  
+
 
   const handleSendMail = async () => {
+    const formattedLicenseDate = licenseTime.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
 
     const welcomeMessage = `Your login credentials: 
     Username: ${username}
     Password: ${password}
+
+    License Expiration Date: ${formattedLicenseDate}
     
     For security purposes, we recommend changing your password after your first login. 
     
@@ -103,7 +110,7 @@ function BasicModal(props) {
     Happy trading! 
     
     Best regards, 
-    [Your Trading Journal App Name] Team`;
+    TradeExalt Team`;
 
     const data = {
       to: email,
@@ -113,7 +120,7 @@ function BasicModal(props) {
       }
 
     await api.post('/api/sendEmail', data).then((res) => {
-      
+      notifyToast("mail Send successfully", "success");
     }).catch((err) => {
 
        notifyToast("Mail now send", "error");
