@@ -97,7 +97,7 @@ function BasicModal(props) {
       day: 'numeric',
     });
 
-    const welcomeMessage = `Your login credentials: 
+    const welcomeMessage = `:Your login credentials 
     Username: ${username}
     Password: ${password}
 
@@ -107,9 +107,9 @@ function BasicModal(props) {
     
     To get started, simply visit www.TradeExalt.co.il and sign in using your credentials. 
     
-    Happy trading! 
+    !Happy trading 
     
-    Best regards, 
+    ,Best regards 
     TradeExalt Team`;
 
     const data = {
