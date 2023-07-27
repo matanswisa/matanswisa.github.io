@@ -61,4 +61,4 @@ const TradeSchema = new Mongoose.Schema({
 
 const Trade = Mongoose.model('Trade', TradeSchema);
 
-export default Trade;
+export default Trade;

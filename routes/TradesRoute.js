@@ -31,6 +31,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
+//need to split to other file - 
+async function getAccountOfUserById(userId, accountId) {
+  const user = await User.findById(userId);
+  const accounts = user.accounts.find(account => account._id == accountId);
+  return accounts;
+}
+
 /**
  * //TODO: when adding a trade need to make sure i get the account ID and userId for related trades.
   */
@@ -42,7 +49,8 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
     const accounts = user.accounts.find(account => account._id == accountId);
     if (!accounts) return res.status(400).send("Can't find account");
 
-    accounts.trades.push(tradeData);
+    const createdTrade = await Trade.create(tradeData);
+    accounts.trades.push(createdTrade);
     // account.trades = accounts;
     await Account.findByIdAndUpdate(accountId, { trades: accounts.trades });
     await User.updateOne({ _id: userId }, { accounts: accounts });
@@ -73,12 +81,19 @@ router.get('/fetchTrades', authenticateToken, async (req, res) => {
 });
 
 router.post("/editTrade", authenticateToken, async (req, res) => {
-  try {
-    const data = req.body;
-    console.log(data);
-    const result = await Trade.findOneAndUpdate({ _id: data.tradeId }, data);
-    res.status(200).send(`Trade ${result._id} added succefully`);
 
+  try {
+    const { userId, accountId, tradeId, tradeData } = req.body;
+    //first updating the trade object and get it back
+    const result = await Trade.findByIdAndUpdate(tradeId, tradeData);
+    console.log(result);
+    const account = await getAccountOfUserById(userId, accountId);
+    const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id == tradeId);
+    tradesWithoutCurrTrade.push(tradeData);
+    account.trades = tradesWithoutCurrTrade;
+    await User.findByIdAndUpdate(userId, { accounts: account });
+    await Account.findOneAndUpdate({ _id: accountId }, account);
+    res.status(200).send(`Trade ${result._id} added succefully`);
   } catch (err) {
     console.err(err);
     res.status(500).send('Error when adding a trade');
@@ -88,15 +103,23 @@ router.post("/editTrade", authenticateToken, async (req, res) => {
 
 router.delete('/deleteTrade', authenticateToken, async (req, res) => {
   try {
-    const { tradeId } = req.body;
-    if (tradeId) {
-      const result = await Trade.deleteOne({ _id: tradeId });
-      if (result) {
-        res.status(200).send('Trade has been deleted');
-      } else {
-        res.status(400).send('Trade couldn\'t be deleted , there was a problem.');
-      }
+    const { tradeId, accountId, userId } = req.body;
+    const result = await Trade.findByIdAndDelete(tradeId);
+
+    if (result) {
+
+      const account = await getAccountOfUserById(userId, accountId);
+      const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id == tradeId);
+      account.trades = tradesWithoutCurrTrade;
+
+      await User.findByIdAndUpdate(userId, { accounts: account });
+      await Account.findOneAndUpdate({ _id: accountId }, account);
+
+      res.status(200).send(`Trade ${tradeId} has been deleted`);
+    } else {
+      res.status(400).send('Trade couldn\'t be deleted , there was a problem.');
     }
+
   } catch (err) {
     res.status(500).send(err);
   }
