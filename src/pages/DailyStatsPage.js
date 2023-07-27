@@ -5,7 +5,6 @@ import { filter, includes, lowerCase } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTrades } from '../redux-toolkit/tradesSlice';
 
 // @mui
 import {

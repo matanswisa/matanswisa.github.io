@@ -5,66 +5,58 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import api from '../../api/api';
-import { red, blue } from '@mui/material/colors';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Menu from '@mui/material/Menu';
-import Button from '@mui/material/Button';
 import { useEffect, useState } from 'react';
 import { selectUser } from '../../redux-toolkit/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAccounts, setCurrentAccount, setUserAccounts } from '../../redux-toolkit/accountsSlice';
+import { getAccounts, setCurrentAccount } from '../../redux-toolkit/userSlice';
 
 
 export default function MultipleSelectPlaceholder(props) {
-  const [accounts, setAccounts] = useState([]);
-
-  // const accounts = useSelector(getAccounts)
-
   const [selectedAccount, setSelectedAccount] = useState('');
   const [selectedAccountColor, setSelectedAccountColor] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const dispatch = useDispatch();
 
   const user = useSelector(selectUser);
   const token = localStorage.getItem('token');
 
 
-  const dispatch = useDispatch();
+  const accounts = user.accounts;
 
-  useEffect(() => {
-    fetchAccounts();
-  }, []);
 
   useEffect(() => {
     if (accounts) {
       setSelectedAccount(getSelectedAccountName(accounts))
       setSelectedAccountColor(getSelectedAccountLabel(accounts))
+      dispatch(setCurrentAccount(getSelectedAccountObject(accounts)));
     }
   }, [accounts])
 
 
+  // const fetchAccounts = async () => {
+  //   try {
+  //     // const response = await api.post('/api/accounts', { userId: user._id }, {
+  //     //   headers: {
+  //     //     Authorization: `Bearer ${token}`,
+  //     //   }
+  //     // });
 
-  const fetchAccounts = async () => {
-    try {
-      const response = await api.post('/api/accounts', { userId: user._id }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
+  //     const initialSelectedAccount = getSelectedAccountName(response.data);
+  //     setAccounts(response.data);
+  //     setSelectedAccount(initialSelectedAccount);
 
-      const initialSelectedAccount = getSelectedAccountName(response.data);
-      setAccounts(response.data);
-      setSelectedAccount(initialSelectedAccount);
+  //     const initialSelectedAccountColor = getSelectedAccountLabel(response.data);
+  //     setSelectedAccountColor(initialSelectedAccountColor);
 
-      const initialSelectedAccountColor = getSelectedAccountLabel(response.data);
-      setSelectedAccountColor(initialSelectedAccountColor);
+  //     dispatch(setUserAccounts(response.data));
+  //     console.log(initialSelectedAccount);
+  //     dispatch(setCurrentAccount(getSelectedAccountObject(response.data)));
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
 
-      dispatch(setUserAccounts(response.data));
-      console.log(initialSelectedAccount);
-      dispatch(setCurrentAccount(getSelectedAccountObject(response.data)));
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const getSelectedAccountLabel = (accountList) => {
     const selectedAccount = accountList.find(account => account.IsSelected === 'true');

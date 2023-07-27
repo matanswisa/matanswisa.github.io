@@ -4,7 +4,6 @@ import { sentenceCase } from 'change-case';
 import React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getTrades, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 import useToast from '../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -49,7 +48,7 @@ import USERLIST from '../_mock/user';
 import api from '../api/api';
 import AddTrade from '../components/addTrade/addTradeFormModal';
 import ImageModal from '../components/ImageModal/ImageModal';
-// ----------------------------------------------------------------------
+import { selectCurrentAccount } from '../redux-toolkit/userSlice';
 
 
 const TABLE_HEAD = [
@@ -71,11 +70,6 @@ const TABLE_HEAD = [
   { id: 'comments', label: 'comments', alignRight: false }
 ];
 
-
-
-
-
-
 const sumPnL = (trades) => {
   let sum = 0;
   trades.forEach((trade) => {
@@ -85,9 +79,6 @@ const sumPnL = (trades) => {
   });
   return sum.toFixed(2);
 }
-
-
-
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -205,7 +196,8 @@ export default function UserPage() {
   }
 
 
-  const trades = useSelector(getTrades)
+  const currentAccount = useSelector(selectCurrentAccount);
+  const trades = currentAccount.trades;
 
   const totalTrades = Object.keys(trades).length;
 
@@ -217,7 +209,7 @@ export default function UserPage() {
 
   const setTradesList = (trades) => {
 
-    dispatch(setTradesRedux(trades));
+    // dispatch(setTradesRedux(trades));
   }
 
   const handleOpenModal = (tradeId) => {

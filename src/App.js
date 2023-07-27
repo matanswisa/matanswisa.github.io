@@ -7,11 +7,6 @@ import ThemeProvider from './theme';
 // components
 import { StyledChart } from './components/chart';
 import ScrollToTop from './components/scroll-to-top';
-import { setTrades } from './redux-toolkit/tradesSlice';
-import { useEffect } from 'react';
-import api from './api/api';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from './redux-toolkit/userSlice';
 
 // ----------------------------------------------------------------------
 

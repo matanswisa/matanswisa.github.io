@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUserName } from '../redux-toolkit/userSlice';
 
 
-export default function U(props) {
+export default function UserDahsboard(props) {
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
@@ -105,10 +105,7 @@ export default function U(props) {
           </Typography>
         <div>
        
-
-       
         </div>
-  
         <TextField 
             disabled
             id="outlined-disabled"

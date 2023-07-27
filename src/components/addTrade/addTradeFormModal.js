@@ -22,7 +22,6 @@ import {
 } from '@mui/material';
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
-import { setTrades } from '../../redux-toolkit/tradesSlice';
 import './addTrade.css';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../redux-toolkit/userSlice';
@@ -153,7 +152,7 @@ export default function BasicModal(props) {
       if (validateForm()) {
         if (!editMode) {
           await api
-            .post('/api/addTrade', { userId: user._id, data }).then((res) => {
+            .post('/api/addTrade', { userId: user._id, data } , {}).then((res) => {
               if (selectedFile !== null) {
                 handleUpload(res.data.tradeId);
               }
