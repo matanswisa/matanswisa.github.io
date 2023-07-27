@@ -40,7 +40,13 @@ export default function LoginForm() {
       navigate('/dashboard/app', { replace: true });
       dispatch(login(res.data));
     }).catch((err) => {
-      notifyToast( "Sorry, the password you entered is incorrect. Please try again.", "error");
+      console.log(err.response.data.isLicenseExpired);
+      if (err.response && err.response.data && err.response.data.isLicenseExpried) {
+        notifyToast("Your license has expired. Please renew it to continue using the service.", "info");
+    } else {
+        notifyToast("Sorry, the password you entered is incorrect. Please try again.", "error");
+    }
+    
     })
   };
 
