@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api", TradesRoute);
 app.use("/api/auth", userRoute);
 app.use("/api/auth", authRouter);
-app.use("/api/auth", SendMailRoute);
+app.use("/api", SendMailRoute);
 app.use("/api", AccountRoute);
 
 
