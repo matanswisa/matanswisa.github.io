@@ -5,7 +5,7 @@ const MyComponentWithImage = () => {
   return (
     <div>
       
-      <img  style={{ width: '240px', height: '120px' }}  src={imageSrc} alt="Description of the image" />
+      <img  style={{ width: '240px', height: '170px' }}  src={imageSrc} alt="Description of the image" />
      
     </div>
   );
