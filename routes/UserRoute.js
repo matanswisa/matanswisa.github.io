@@ -78,7 +78,25 @@ router.post('/login', async (req, res, next) => {
         } else {
             // comparing given password with hashed password
             bcrypt.compare(password, user.password).then(function (result) {
+
+
+
                 if (result) {
+
+                      if (user.license && user.role == 0) {
+                        const currentDate = new Date(); // Get the current date
+                        const userLicenseDate = new Date(user.license); // Convert the user's license date to a Date object
+
+                      
+                        if (userLicenseDate <= currentDate) {
+                            console.log("Your license has expired. Please renew it to continue using the service.");
+                            res.status(400).json({ message: "Login not succesful" });
+                        }
+                        else{
+                            console.log("Your license is valid. Enjoy using the service!");
+                        }
+                    }
+
                     const maxAge = 24 * 60 * 60;
                     const token = jwt.sign(
                         { id: user._id, username, role: user.role },
