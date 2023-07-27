@@ -123,7 +123,7 @@ function BasicModal(props) {
       notifyToast("mail Send successfully", "success");
     }).catch((err) => {
 
-       notifyToast("Mail now send", "error");
+       notifyToast("Mail not send", "error");
       console.log(err);
       return false;
     })
