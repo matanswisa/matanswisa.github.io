@@ -18,8 +18,6 @@ import SvgColor from '../../../components/svg-color';
 import { initializeUser, logout, selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
 import useTokenValidation from '../../../hooks/validateToken';
 
-// ----------------------------------------------------------------------
-
 const NAV_WIDTH = 280;
 
 const StyledAccount = styled('div')(({ theme }) => ({
@@ -30,20 +28,8 @@ const StyledAccount = styled('div')(({ theme }) => ({
   backgroundColor: alpha(theme.palette.grey[500], 0.12),
 }));
 
-//account
-
-
-
-
-
-// ----------------------------------------------------------------------
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
-
-
-
-
-// ----------------------------------------------------------------------
 
 Nav.propTypes = {
   openNav: PropTypes.bool,

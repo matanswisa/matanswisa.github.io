@@ -24,6 +24,8 @@ import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
 import { setTrades } from '../../redux-toolkit/tradesSlice';
 import './addTrade.css';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../redux-toolkit/userSlice';
 
 const style = {
   position: 'absolute',
@@ -48,7 +50,10 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 export default function BasicModal(props) {
-  
+
+  const user = useSelector(selectUser);
+
+
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
@@ -148,7 +153,7 @@ export default function BasicModal(props) {
       if (validateForm()) {
         if (!editMode) {
           await api
-            .post('/api/addTrade', data).then((res) => {
+            .post('/api/addTrade', { userId: user._id, data }).then((res) => {
               if (selectedFile !== null) {
                 handleUpload(res.data.tradeId);
               }
@@ -184,20 +189,19 @@ export default function BasicModal(props) {
   const validateForm = () => {
 
     const currentDate = new Date().toISOString().slice(0, 10); // Get today's date in the format "YYYY-MM-DD"
-   
-    if(positionDate > currentDate)
-      { 
-        const errorMessage = "the selected date is above today's date.";
- 
-        notifyToast(errorMessage, "warning");
 
-        return false;
+    if (positionDate > currentDate) {
+      const errorMessage = "the selected date is above today's date.";
 
-       } 
+      notifyToast(errorMessage, "warning");
+
+      return false;
+
+    }
 
     if (positionType === '' || positionStatus === '' ||
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
-   
+
       if (positionType === '') notifyToast("Position type is missing", "warning");
       else if (positionStatus === '') notifyToast("Position status is missing", "warning");
       else if (!netPnL) notifyToast("Net PnL is missing", "warning");
@@ -206,8 +210,8 @@ export default function BasicModal(props) {
       else if (!positionDate) notifyToast("Date field is missing", "warning");
 
       console.log(positionDate > currentDate);
-      
-        
+
+
       return false;
     }
     return true;
@@ -237,7 +241,7 @@ export default function BasicModal(props) {
       .then(response => response.json())
       .then(data => {
         // Handle the response from the server
-   
+
         props.updateTradeLists()
       })
       .catch(error => {

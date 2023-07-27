@@ -16,23 +16,10 @@ export default function U(props) {
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
- 
-  // const dispatch = useDispatch();
   const username = useSelector(selectUserName);
-
   const [password, setPassword] = useState('');
-
-
   
   const validateForm = () => {
-
-   
-  
-    // if (password === props.password) {
-    //   notifyToast("New password cannot be the same as the current password.", "warning");
-    //   return false;
-    // } 
-
   
     if (password === '') {
       if (password === '') notifyToast("Password is missing", "warning");
