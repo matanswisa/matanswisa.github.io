@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -45,7 +45,7 @@ function BasicModal(props) {
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
   const [users, setUsers] = useState([]);
-  
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -77,33 +77,33 @@ function BasicModal(props) {
   useEffect(() => {
     fetchUsers(); // Call the fetchUsers function to fetch data and update the users state
   }, []);
-  
- 
+
+
   function checkUsernameExist(username) {
     return users.some(user => user.username === username);
   }
-  
 
-   
+
+
   function checkEmailExist(email) {
     return users.some(user => user.email === email);
   }
-  
+
 
 
   const validateForm = () => {
-     if(checkUsernameExist(username)) {
+    if (checkUsernameExist(username)) {
       notifyToast("Username already exist", "error");
-    return false;
-     }
-      
-     if(checkEmailExist(email)) {
+      return false;
+    }
+
+    if (checkEmailExist(email)) {
       notifyToast("Email already exist", "error");
-    return false;
-     }
-    
-     
-    
+      return false;
+    }
+
+
+
     // Assuming password, email, and username are defined and assigned values somewhere above this function
 
     // Email validation regex pattern
@@ -149,6 +149,10 @@ function BasicModal(props) {
     For security purposes, we recommend changing your password after your first login. 
     
     To get started, simply visit www.TradeExalt.co.il and sign in using your credentials. 
+        
+    As a user of our TradeExalt app, it's essential that you carefully read and understand our Terms of Service and Privacy Policy. By accepting these terms and conditions, you also agree to be bound by the terms of the TradeExalt website.
+
+    Please take the time to review the complete Terms of Service and Privacy Policy provided with this email.
     
     !Happy trading 
     
@@ -159,14 +163,14 @@ function BasicModal(props) {
       to: email,
       subject: 'Welcome to TradeExalt!',
       text: welcomeMessage,
-     
-      }
+
+    }
 
     await api.post('/api/sendEmail', data).then((res) => {
       notifyToast("mail Send successfully", "success");
     }).catch((err) => {
 
-       notifyToast("Mail not send", "error");
+      notifyToast("Mail not send", "error");
       console.log(err);
       return false;
     })
