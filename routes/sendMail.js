@@ -36,27 +36,43 @@ const transporter = nodemailer.createTransport({
 
 
 router.post('/sendEmail', (req, res) => {
-  console.log(req.body);
-  const { to, subject, text } = req.body;
+  
+  const { to, subject, text ,isTrial } = req.body;
+  let mailOptions;
+  if(isTrial === true){
+     mailOptions = {
+      from: 'tradeExalt@outlook.co.il',
+      to,
+      subject,
+      text,
+    
+    };
+  
+  }
 
-  const mailOptions = {
-    from: 'tradeExalt@outlook.co.il',
-    to,
-    subject,
-    text,
-    attachments: [
-      {
-        filename: 'logo.png',
-        path: path.join(__dirname, 'logo.png'), // logo need to by the terms : "Terms.png"
-        cid: 'tradeexalt_logo',
-      },
-      {
-        filename: 'terms.png',
-        path: path.join(__dirname, 'terms.png'), // path to the Terms image
-        cid: 'terms_image',
-      },
-    ],
-  };
+  else{
+     mailOptions = {
+      from: 'tradeExalt@outlook.co.il',
+      to,
+      subject,
+      text,
+      attachments: [
+        {
+          filename: 'logo.png',
+          path: path.join(__dirname, 'logo.png'), // logo need to by the terms : "Terms.png"
+          cid: 'tradeexalt_logo',
+        },
+        {
+          filename: 'terms.png',
+          path: path.join(__dirname, 'terms.png'), // path to the Terms image
+          cid: 'terms_image',
+        },
+      ],
+    };
+
+
+  }
+  
 
   // Send email
   transporter.sendMail(mailOptions, (error, info) => {
