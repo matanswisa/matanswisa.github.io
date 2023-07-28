@@ -136,6 +136,13 @@ function BasicModal(props) {
 
   const handleSendMail = async () => {
     let welcomeMessage;
+
+
+    const formattedLicenseDate = licenseTime.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
       if(isTrial){
 
         const trialDays = 7; // Assuming the trial period is 7 days
@@ -149,7 +156,7 @@ function BasicModal(props) {
           
           Please take the time to review the complete Terms of Service and Privacy Policy provided with this email.
           
-          License Expiration Date: ${licenseTime}
+          License Expiration Date: ${formattedLicenseDate}
         
           !Happy trading 
               
@@ -190,6 +197,7 @@ function BasicModal(props) {
       to: email,
       subject: 'Welcome to TradeExalt!',
       text: welcomeMessage,
+      isTrial:isTrial,
 
     }
 
