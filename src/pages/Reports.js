@@ -2,13 +2,13 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import React from 'react';
-
+import Papa from 'papaparse';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTrades, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 import useToast from '../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useRef } from 'react';
 // @mui
 import {
   Card,
@@ -49,6 +49,7 @@ import USERLIST from '../_mock/user';
 import api from '../api/api';
 import AddTrade from '../components/addTrade/addTradeFormModal';
 import ImageModal from '../components/ImageModal/ImageModal';
+import { Grid } from 'rsuite';
 // ----------------------------------------------------------------------
 
 
@@ -151,6 +152,14 @@ export default function UserPage() {
   };
 
 
+  
+  
+  // /////////////////////import trades///////////////////
+
+
+
+
+  
   //Upload image related code:
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -158,6 +167,185 @@ export default function UserPage() {
     if (event.target.files.length > 0)
       setSelectedFile(event.target.files[0]);
   };
+  const [csvData, setCsvData] = useState(null);
+  const fileInputRefTrade = useRef(null);
+
+  const isCSVFile = (file) => {
+    return file.type === 'text/csv' || file.name.endsWith('.csv');
+  };
+
+  const isValidColumnNames = (data) => {
+    // Add your updated validation logic for column names here
+    const requiredColumns = [
+      'Position ID', 'Timestamp', 'Trade Date', 'Net Pos', 'Net Price', 'Bought',
+      'Avg. Buy', 'Sold', 'Avg. Sell', 'Account', 'Contract', 'Product', 'Product Description',
+      '_priceFormat', '_priceFormatType', '_tickSize', 'Pair ID', 'Buy Fill ID', 'Sell Fill ID',
+      'Paired Qty', 'Buy Price', 'Sell Price', 'P/L', 'Currency', 'Bought Timestamp', 'Sold Timestamp'
+    ];
+    return requiredColumns.every((col) => data[0].hasOwnProperty(col));
+  };
+
+
+  const handleFileChangeTrade = (event) => {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+
+      if (!isCSVFile(file)) {
+        notifyToast("Invalid file format. Please select a CSV file.", "error");
+        return;
+      }
+
+      // Use FileReader to read the file contents
+      const reader = new FileReader();
+      reader.onload = () => {
+        // Parse the CSV data using papaparse
+        const result = Papa.parse(reader.result, {
+          header: true,
+          dynamicTyping: true,
+        });
+
+        if (!isValidColumnNames(result.data)) {
+          notifyToast("Please ensure the CSV file has corrent ,when import trade from tradeovate file name need to be : Position History ", "error");
+          return;
+        }
+
+        // Store the parsed data in the state variable
+        setCsvData(result.data);
+        handleSaveTrade(result.data);
+        //call api to add new trades.
+      };
+
+      reader.readAsText(file);
+    }
+    console.log(csvData);
+  };
+
+  const handleImportTrade = () => {
+    // Trigger the file input selection when the button is clicked
+    fileInputRefTrade.current.click();
+  };
+
+  useEffect(() => {
+    console.log(csvData);
+  }, [csvData]);
+
+
+
+
+
+
+  
+  const handleSaveTrade = async (csvData) => {
+
+    const data = {
+      entryDate: csvData[0]["Bought Timestamp"] || "",
+      symbol: csvData[0]["Product"]|| "",
+      status: csvData[0]["P/L"] < 0  ?  "Loss" : "Win" || "",
+      netROI:"",
+      stopPrice :"",
+      longShort: csvData[0]["Buy Price"] < csvData[0]["Sell Price"] ? "Long" : "Short" || "",
+      contracts: csvData[0]["Bought"] || "",
+      entryPrice: csvData[0]["Buy Price"] || "",
+      exitPrice :  csvData[0]["Sell Price"] || "",
+      duration: "",
+      commission:"",
+      comments: "",
+      netPnL:  csvData[0]["P/L"] || "",
+      tradeId:  "",
+    }
+
+
+    const boughtTimestamp = new Date(csvData[0]["Bought Timestamp"]);
+    const soldTimestamp = new Date(csvData[0]["Sold Timestamp"]);
+    const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
+    data.duration = timeDifferenceInMinutes || "";
+
+
+   console.log(data);
+
+
+  //   if (validateForm()) {
+
+  //     if (validateForm()) {
+  //       if (!editMode) {
+  //         await api
+  //           .post('/api/addTrade', data).then((res) => {
+  //             if (selectedFile !== null) {
+  //               handleUpload(res.data.tradeId);
+  //             }
+  //             props.updateTradeLists()
+  //             notifyToast("Trade added successfully", "success");
+  //             handleClose();
+
+  //           }).catch((err) => {
+  //             notifyToast("Couldn't add trade", "error");
+  //           })
+  //       }
+  //       else if (editMode === true) {
+
+  //         const netPnL = prevStatusState !== data.status && data.status === "Win" && data.netPnL < 0
+  //           ? -data.netPnL
+  //           : data.netPnL;
+
+  //         data.netPnL = netPnL;
+  //         await api.post('/api/editTrade', data)
+  //           .then((response) => {
+  //             notifyToast("Trade Edit succssfully", "success")
+  //             handleUpload(tradeInfo?._id);
+  //             props.updateTradeLists()
+
+  //           })
+  //           .catch((error) => {
+  //             notifyToast("Trade can't be updated", "error")
+  //           });
+
+  //       }
+
+  //     } else {
+  //       console.log('Please fill in all the fields');
+  //     }
+  //   };
+  // }
+
+  // const validateForm = () => {
+
+  //   const currentDate = new Date().toISOString().slice(0, 10); // Get today's date in the format "YYYY-MM-DD"
+
+  //   if (positionDate > currentDate) {
+  //     const errorMessage = "the selected date is above today's date.";
+
+  //     notifyToast(errorMessage, "warning");
+
+  //     return false;
+
+  //   }
+
+  //   if (positionType === '' || positionStatus === '' ||
+  //     contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
+
+  //     if (positionType === '') notifyToast("Position type is missing", "warning");
+  //     else if (positionStatus === '') notifyToast("Position status is missing", "warning");
+  //     else if (!netPnL) notifyToast("Net PnL is missing", "warning");
+  //     else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
+  //     else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
+  //     else if (!positionDate) notifyToast("Date field is missing", "warning");
+
+  //     console.log(positionDate > currentDate);
+
+
+  //     return false;
+  //   }
+  //   return true;
+  };
+
+
+
+////////////////////////////////////////////////////////////
+
+
+
+
+
 
   const handleUpload = (tradeId) => {
     if (!selectedFile) { notifyToast("Couldn't upload the image", "error"); return; }
@@ -189,6 +377,8 @@ export default function UserPage() {
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
+
+  
 
   useEffect(() => {
     if (editTradeId?._id && selectedFile !== null) {
@@ -363,9 +553,21 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Trades
           </Typography>
+          <Grid>
+          {/* <input ref={fileInputRefTrade} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChangeTrade} /> */}
+          <Button onClick={handleImportTrade} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />}>
+        Import Trades
+      </Button>
+      <input
+        type="file"
+        ref={fileInputRefTrade}
+        style={{ display: 'none' }}
+        onChange={handleFileChangeTrade}
+      />
           <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Trade
           </Button>
+          </Grid>
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
             updateTradeLists={fetchLeastTrades}
