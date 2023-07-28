@@ -50,6 +50,7 @@ function BasicModal(props) {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [licenseTime, setLicenseTime] = useState();
+  const [isTrial, setisTrial] = useState(false);
 
   const handleGenerateUser = () => {
     const generatedUsername = generatePassword();
@@ -134,30 +135,56 @@ function BasicModal(props) {
 
 
   const handleSendMail = async () => {
-    const formattedLicenseDate = licenseTime.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    let welcomeMessage;
+      if(isTrial){
 
-    const welcomeMessage = `:Your login credentials 
-    Username: ${username}
-    Password: ${password}
-
-    License Expiration Date: ${formattedLicenseDate}
-    
-    For security purposes, we recommend changing your password after your first login. 
-    
-    To get started, simply visit www.TradeExalt.co.il and sign in using your credentials. 
+        const trialDays = 7; // Assuming the trial period is 7 days
+        welcomeMessage = `Welcome to TradeExalt!
+          
+          Your trial account has been created. This is a trial account, and you can enjoy all the premium features of TradeExalt for ${trialDays} days.
+      
+          To get started, simply visit www.TradeExalt.co.il and sign in using your credentials. 
+                  
+          As a user of our TradeExalt app, it's essential that you carefully read and understand our Terms of Service and Privacy Policy. By accepting these terms and conditions, you also agree to be bound by the terms of the TradeExalt website.
+          
+          Please take the time to review the complete Terms of Service and Privacy Policy provided with this email.
+          
+          License Expiration Date: ${licenseTime}
         
-    As a user of our TradeExalt app, it's essential that you carefully read and understand our Terms of Service and Privacy Policy. By accepting these terms and conditions, you also agree to be bound by the terms of the TradeExalt website.
+          !Happy trading 
+              
+          ,Best regards 
+          TradeExalt Team`;
+      }
+      else
+      {
+        const formattedLicenseDate = licenseTime.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        });
+    
+       welcomeMessage = `:Your login credentials 
+        Username: ${username}
+        Password: ${password}
+    
+        License Expiration Date: ${formattedLicenseDate}
+        
+        For security purposes, we recommend changing your password after your first login. 
+        
+        To get started, simply visit www.TradeExalt.co.il and sign in using your credentials. 
+            
+        As a user of our TradeExalt app, it's essential that you carefully read and understand our Terms of Service and Privacy Policy. By accepting these terms and conditions, you also agree to be bound by the terms of the TradeExalt website.
+    
+        Please take the time to review the complete Terms of Service and Privacy Policy provided with this email.
+        
+        !Happy trading 
+        
+        ,Best regards 
+        TradeExalt Team`;
 
-    Please take the time to review the complete Terms of Service and Privacy Policy provided with this email.
-    
-    !Happy trading 
-    
-    ,Best regards 
-    TradeExalt Team`;
+      }
+
 
     const data = {
       to: email,
@@ -178,7 +205,7 @@ function BasicModal(props) {
   }
 
   const handleCreateUser = () => {
-
+    console.log(licenseTime);
     if (validateForm()) {
 
       api
@@ -187,6 +214,7 @@ function BasicModal(props) {
           email: email,
           password: password,
           license: licenseTime,
+        
 
         })
         .then(async (response) => {
@@ -215,11 +243,24 @@ function BasicModal(props) {
   };
 
 
+
   const handleChange = (event) => {
-    const selectedMonths = event.target.value;
+    const selectedValue = event.target.value;
     const currentDate = new Date();
-    const endDate = new Date(currentDate.setMonth(currentDate.getMonth() + selectedMonths));
-    setLicenseTime(endDate);
+  
+    if (selectedValue === "Trial") {
+      setisTrial(true);
+      const endDate = new Date(currentDate);
+      endDate.setDate(currentDate.getDate() + 7);
+      setLicenseTime(endDate);
+    } else {
+      setisTrial(false);
+      const selectedMonths = Number(selectedValue);
+      const endDate = new Date(currentDate);
+      endDate.setMonth(currentDate.getMonth() + selectedMonths);
+
+      setLicenseTime(endDate);
+    }
   };
 
   return (
@@ -250,21 +291,21 @@ function BasicModal(props) {
             <Typography id="modal-modal-title" variant="h6" component="h5" style={{ fontSize: "12px", color: 'grey', marginLeft: '14px' }}>
               License Time
             </Typography>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={licenseTime}
-              label="License time"
-
-              onChange={handleChange}
-              defaultValue={licenseTime}
-            >
-              {[...Array(12)].map((_, index) => (
-                <MenuItem key={index + 1} value={index + 1}>
-                  {index + 1} month
-                </MenuItem>
-              ))}
-            </Select>
+          
+        <Select
+      labelId="demo-simple-select-label"
+      id="demo-simple-select"
+      value={licenseTime}
+      label="License time"
+      onChange={handleChange}
+    >
+      <MenuItem value="Trial">Trial</MenuItem>
+      {[...Array(12)].map((_, index) => (
+        <MenuItem key={index + 1} value={index + 1}>
+          {index + 1} month
+        </MenuItem>
+      ))}
+    </Select>
             <Grid container justify="flex-end" style={{ marginRight: '15px' }}>
               <Button variant="contained" onClick={handleGenerateUser}>
                 Generate
