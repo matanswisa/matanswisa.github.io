@@ -218,25 +218,6 @@ export default function DashboardAppPage() {
   }, [])
 
 
-    const handleButtonClick = async () => {
-      const data = {
-        to:'ttradingjournal@gmail.com', 
-        subject:'matanamar165@gmil.com',
-        text:   "Test",
-        
-      }
-
-     await api.post('/api/sendEmail', data).then((res) => {
-          console.log("11");
-        }).catch((err) => {
-
-         /// notifyToast("Couldn't add Account", "error");
-         console.log(err);
-          return false;
-        })
-
-    }
-  
 
   useEffect(() => {
     api.get("/api/ShowNumOfTradeTotalPnlInfoByDates").then(
@@ -254,9 +235,7 @@ export default function DashboardAppPage() {
       <Helmet>
         <title>Dashboard</title>
       </Helmet>
-      <button onClick={handleButtonClick}>
-      Send Email
-    </button>
+   
       <Container maxWidth="xl">
       <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0px' ,marginRight:'3px'}}>
       {/* Your SelectAccount component content goes here */}

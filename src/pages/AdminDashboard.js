@@ -328,6 +328,7 @@ const UsersManagementPage = () => {
             }).then((res) => {
                 console.log("Fetch!", res.data);
                 setUsers([...res.data]);
+                console.log(users);
             })
     }
 
@@ -347,7 +348,7 @@ const UsersManagementPage = () => {
                 <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
                     Users Management
                 </Typography>
-                <Button onClick={handleOpenModal} startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'>Create User</Button>
+                <Button onClick={handleOpenModal}  startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'>Create User</Button>
             </div>
 
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -44,7 +44,8 @@ const generatePassword = () => {
 function BasicModal(props) {
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
-
+  const [users, setUsers] = useState([]);
+  
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -59,8 +60,50 @@ function BasicModal(props) {
   };
 
 
+  function fetchUsers() {
+    const token = localStorage.getItem("token");
+    api.get('/api/auth/users', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => {
+      setUsers(res.data);
+    }).catch((error) => {
+      // Handle error if necessary
+    });
+  }
+
+
+  useEffect(() => {
+    fetchUsers(); // Call the fetchUsers function to fetch data and update the users state
+  }, []);
+  
+ 
+  function checkUsernameExist(username) {
+    return users.some(user => user.username === username);
+  }
+  
+
+   
+  function checkEmailExist(email) {
+    return users.some(user => user.email === email);
+  }
+  
+
 
   const validateForm = () => {
+     if(checkUsernameExist(username)) {
+      notifyToast("Username already exist", "error");
+    return false;
+     }
+      
+     if(checkEmailExist(email)) {
+      notifyToast("Email already exist", "error");
+    return false;
+     }
+    
+     
+    
     // Assuming password, email, and username are defined and assigned values somewhere above this function
 
     // Email validation regex pattern
