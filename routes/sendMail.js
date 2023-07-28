@@ -45,7 +45,14 @@ router.post('/sendEmail', (req, res) => {
       to,
       subject,
       text,
-    
+      attachments: [
+        {
+          filename: 'logo.png',
+          path: path.join(__dirname, 'logo.png'), // logo need to by the terms : "Terms.png"
+          cid: 'tradeexalt_logo',
+        },
+      
+      ],
     };
   
   }
