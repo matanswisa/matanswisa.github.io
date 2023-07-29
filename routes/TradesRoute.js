@@ -45,14 +45,18 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
   try {
     const { userId, accountId, tradeData } = req.body;
     const user = await User.findById(userId);
-    const account = await Account.findById(accountId);
-    const accounts = user.accounts.find(account => account._id == accountId);
+    let accounts = user.accounts;
+    const account = user.accounts.find(account => account._id == accountId);
+
+    accounts = accounts.filter((account) => account._id != account._id);
     if (!accounts) return res.status(400).send("Can't find account");
 
     const createdTrade = await Trade.create(tradeData);
-    accounts.trades.push(createdTrade);
+    account.trades.push(createdTrade);
+
+    accounts.push(account);
     // account.trades = accounts;
-    await Account.findByIdAndUpdate(accountId, { trades: accounts.trades });
+    await Account.findByIdAndUpdate(accountId, { trades: account.trades });
     await User.updateOne({ _id: userId }, { accounts: accounts });
     // await account.save();
     const result = await Trade.create(tradeData);
