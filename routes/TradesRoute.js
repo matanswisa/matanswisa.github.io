@@ -28,9 +28,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
-/**
- * This is a test
- */
+
 router.post("/addTrade", async (req, res) => {
   try {
     const data = req.body;
@@ -42,6 +40,24 @@ router.post("/addTrade", async (req, res) => {
     res.status(500).send('Error when adding a trade');
   }
 });
+
+
+
+
+router.post("/importTrades", async (req, res) => {
+  try {
+    const data = req.body;
+
+    console.log(data);
+    const result = await Trade.create(data);
+    res.status(200).json({ tradeId: result._id });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error when adding a trade');
+  }
+});
+
 
 
 router.get('/fetchTrades', async (req, res) => {
