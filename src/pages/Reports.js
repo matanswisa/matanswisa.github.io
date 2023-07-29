@@ -363,10 +363,12 @@ export default function UserPage() {
 
   return (
     <>
+    
       <Helmet>
         <title>All Trades</title>
       </Helmet>
       <Container>
+        
         <div style={{ marginRight: "10px" }}>
           <DatePicker
             selected={selectedDate}
@@ -374,6 +376,7 @@ export default function UserPage() {
             dateFormat="E, MMM d, yyyy"
             placeholderText="Select a date"
           />
+          
           <Button
             variant="contained"
             onClick={handleClearDate}
@@ -384,13 +387,14 @@ export default function UserPage() {
         </div>
 
         <ToastContainer />
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={6}>
           <Typography variant="h4" gutterBottom>
             Trades
           </Typography>
-          <Grid>
-
-            <Button onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />}>
+              
+       <div>
+            <Button onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />}  sx={{ marginRight:2 }}>
               Import Trades
             </Button>
             {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
@@ -398,7 +402,8 @@ export default function UserPage() {
             <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
               Add New Trade
             </Button>
-          </Grid>
+       </div>
+      
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
             updateTradeLists={fetchLeastTrades}
