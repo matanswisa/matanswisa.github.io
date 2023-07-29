@@ -62,8 +62,8 @@ const TABLE_HEAD = [
   { id: 'longShort', label: 'Long / Short', alignRight: false },
   { id: 'contracts', label: 'Contracts', alignRight: false },
   { id: 'entryPrice', label: 'Entry Price', alignRight: false },
-  { id: 'stopPrice', label: 'Stop Price', alignRight: false },
   { id: 'exitPrice', label: 'Exit Price', alignRight: false },
+  { id: 'stopPrice', label: 'Stop Price', alignRight: false },
   { id: 'duration', label: 'Duration', alignRight: false },
   { id: 'commission', label: 'Commission', alignRight: false },
   { id: 'netPnL', label: 'Net P&L', alignRight: false },
@@ -452,10 +452,10 @@ export default function UserPage() {
                             {trade.entryPrice ? trade.entryPrice + "$" : "N/A"}
                           </TableCell>
                           <TableCell align="center">
-                            {trade.stopPrice ? trade.stopPrice + "$" : "N/A"}
+                            {trade.exitPrice ? trade.exitPrice + "$" : "N/A"}
                           </TableCell>
                           <TableCell align="center">
-                            {trade.exitPrice ? trade.exitPrice + "$" : "N/A"}
+                            {trade.stopPrice ? trade.stopPrice + "$" : "N/A"}
                           </TableCell>
                           <TableCell align="center">
                             {trade.duration !== undefined && trade.duration > 0
