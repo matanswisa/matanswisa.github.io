@@ -265,6 +265,22 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
 
+
+
+  const formatDate = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    };
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", options);
+  }
+
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -307,6 +323,8 @@ export default function UserPage() {
     setDialogOpen(true);
   };
 
+
+  
 
   const handleDialogClose = () => {
     setDialogOpen(false);
@@ -435,10 +453,10 @@ export default function UserPage() {
                             { }
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
-                            <Stack direction="row" alignItems="center" spacing={2}>
-                              {new Date(trade.entryDate).toLocaleDateString('en-GB')}
-                            </Stack>
-                          </TableCell>
+      <Stack direction="row" alignItems="center" spacing={2}>
+        {formatDate(trade.entryDate)}
+      </Stack>
+    </TableCell>
                           <TableCell align="center">{trade.symbol}</TableCell>
                           <TableCell align="center">
                             <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>

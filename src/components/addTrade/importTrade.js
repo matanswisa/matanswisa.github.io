@@ -133,7 +133,7 @@ export default function BasicModal(props) {
           const data = {
             entryDate: csvData[i]["Bought Timestamp"] || "",
             symbol: csvData[i]["Product"] || "",
-            status: csvData[i]["P/L"] < 0 ? "Loss" : "Win" || "",
+            status: csvData[i]["P/L"] < 0 ? "Loss" : csvData[i]["P/L"] > 0 ? "Win" : "Break Even",
             netROI:netROI.toFixed(2) ,
             stopPrice: 0,
             longShort: csvData[i]["Buy Price"] < csvData[i]["Sell Price"] ? "Long" : "Short" || "",
@@ -143,16 +143,19 @@ export default function BasicModal(props) {
             duration: "",
             commission: "",
             comments: "",
-            netPnL: csvData[i]["P/L"] || "",
+            netPnL: csvData[i]["P/L"] !== undefined ? csvData[i]["P/L"] : "",
             tradeId: "",
           }
         
+     
+          console.log(i, data);
+
           const boughtTimestamp = new Date(csvData[i]["Bought Timestamp"]);
           const soldTimestamp = new Date(csvData[i]["Sold Timestamp"]);
           const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
           data.duration = timeDifferenceInMinutes || "";
 
-
+        
           
           
               await api
@@ -162,7 +165,7 @@ export default function BasicModal(props) {
                   handleClose();
                      successCount++;
                 }).catch((err) => {
-                  const errorMessage = "Couldn't add trade: " + csvData[i]["Product"] + " - " + csvData[i]["Timestamp"];
+                  const errorMessage = "Couldn't add trade number: "+  (i+ 1) + "   "  + csvData[i]["Product"] + " - " + csvData[i]["Timestamp"];
                   notifyToast(errorMessage, "error");
                 
                 })
