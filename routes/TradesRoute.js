@@ -180,11 +180,31 @@ router.get('/ShowNumOfTradeTotalPnlInfoByDates', async (req, res) => {
   }
 });
 
+
 router.get('/ShowInfoBySpecificDate/:date', async (req, res) => {
   try {
     const { date } = req.params;
 
-    const tradesByDate = await Trade.find({ entryDate: date });
+    // Convert the input date to a JavaScript Date object
+    const startDate = new Date(date);
+    
+    // Calculate the end date (next day) by adding one day (in milliseconds)
+    const endDate = new Date(startDate.getTime() + 86400000);
+
+    console.log(startDate);
+    console.log(endDate);
+
+    // Find documents with entryDate within the date range using the Aggregation Pipeline
+    const tradesByDate = await Trade.aggregate([
+      {
+        $match: {
+          entryDate: {
+            $gte: startDate,
+            $lt: endDate
+          }
+        }
+      }
+    ]);
 
     res.json(tradesByDate);
     console.log(tradesByDate);
@@ -193,7 +213,6 @@ router.get('/ShowInfoBySpecificDate/:date', async (req, res) => {
     res.status(500).json({ error: 'An error occurred' });
   }
 });
-
 
 
 router.get('/ShowInfoByDates', async (req, res) => {
