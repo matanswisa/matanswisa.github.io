@@ -457,13 +457,15 @@ export default function UserPage() {
                           <TableCell align="center">
                             {trade.stopPrice ? trade.stopPrice + "$" : "N/A"}
                           </TableCell>
-                          <TableCell align="center">
-                            {trade.duration !== undefined && trade.duration > 0
-                              ? trade.duration < 1
-                                ? `${trade.duration * 60} Sec`
-                                : `${trade.duration} Min`
-                              : "N/A"}
-                          </TableCell>
+                        <TableCell align="center">
+  {trade.duration !== undefined && trade.duration > 0
+    ? trade.duration < 1
+      ? `${trade.duration * 60} Sec`
+      : trade.duration >= 60
+      ? `${Math.floor(trade.duration / 60)} Hr`
+      : `${Math.floor(trade.duration % 60)}  Min`
+    : "N/A"}
+</TableCell>
                           <TableCell align="center">
                             {trade.commission ? trade.commission + "$" : "N/A"}
                           </TableCell>
