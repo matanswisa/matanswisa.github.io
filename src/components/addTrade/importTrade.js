@@ -148,7 +148,7 @@ export default function BasicModal(props) {
           }
         
      
-          console.log(i, data);
+       //   console.log(i, data);
           const boughtTimestamp = new Date(csvData[i]["Bought Timestamp"]);
           const soldTimestamp = new Date(csvData[i]["Sold Timestamp"]);
 

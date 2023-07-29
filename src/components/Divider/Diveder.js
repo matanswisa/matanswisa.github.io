@@ -124,21 +124,41 @@ const rows = trades.map((trade) => ({
   stopPrice: "$" +trade.stopPrice,
   exitPrice: "$" +trade.exitPrice,
   duration:  trade.duration ? (trade.duration >= 60  ? +  trade.duration/60  + "Hour" : trade.duration +  "Min") : "N/A",
-  commission: "$" +trade.commission,
+  commission:trade.commission? "$" +trade.commission : "N/A",
   netPnL:"$" + trade.netPnL ,
   comments: trade.comments,
 }));
   
-  useEffect(() => {
-    api.get(`/api/ShowInfoBySpecificDate/${date}`).then(
-      (res) => {
-        setTrades(res.data);
+
+
+const fetchTrades = async () => {
+  const result = await api.get(`/api/ShowInfoBySpecificDate/${date}`);
+  return result;
+}
+
+
+useEffect(() => {
+
+
+  fetchTrades().then((res) => {
+    if (res.data)
+    setTrades(res.data);
+  }).catch((err) => {
+    console.error(err);
+  })
+}, [])
+
+
+  // useEffect(() => {
+  //   api.get(`/api/ShowInfoBySpecificDate/${date}`).then(
+  //     (res) => {
+  //       setTrades(res.data);
         
       
 
-      }
-    ).catch()
-  }, [date])
+  //     }
+  //   ).catch()
+  // }, [date])
 
 
 
