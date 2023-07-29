@@ -8,7 +8,7 @@ import { getTrades, setTrades as setTradesRedux } from '../redux-toolkit/tradesS
 import useToast from '../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState,useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 // @mui
 import {
   Card,
@@ -371,15 +371,15 @@ export default function UserPage() {
             Trades
           </Typography>
           <Grid>
-       
-        <Button onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />}>
-        Import Trades
-      </Button>
-      {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
-     
-          <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            Add New Trade
-          </Button>
+
+            <Button onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />}>
+              Import Trades
+            </Button>
+            {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
+
+            <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              Add New Trade
+            </Button>
           </Grid>
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
@@ -458,7 +458,11 @@ export default function UserPage() {
                             {trade.exitPrice ? trade.exitPrice + "$" : "N/A"}
                           </TableCell>
                           <TableCell align="center">
-                            {trade.duration ? trade.duration + "Min" : "N/A"}
+                            {trade.duration !== undefined && trade.duration > 0
+                              ? trade.duration < 1
+                                ? `${trade.duration * 60} Sec`
+                                : `${trade.duration} Min`
+                              : "N/A"}
                           </TableCell>
                           <TableCell align="center">
                             {trade.commission ? trade.commission + "$" : "N/A"}
