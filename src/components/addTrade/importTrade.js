@@ -149,13 +149,29 @@ export default function BasicModal(props) {
         
      
           console.log(i, data);
-
           const boughtTimestamp = new Date(csvData[i]["Bought Timestamp"]);
           const soldTimestamp = new Date(csvData[i]["Sold Timestamp"]);
-          const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
-          data.duration = timeDifferenceInMinutes || "";
 
+          if(data.longShort == "Short"){
+            const timeDifferenceInMinutes = (boughtTimestamp - soldTimestamp) / (1000 * 60);
+            data.duration = timeDifferenceInMinutes || "";
+
+          }
         
+          else{
+
+            const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
+            data.duration = timeDifferenceInMinutes || "";
+          }
+
+          if(data.status == "Break Even"){
+
+            const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
+            data.duration = timeDifferenceInMinutes || "";
+            data.netROI = 0;
+          }
+      
+     
           
           
               await api

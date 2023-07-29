@@ -463,7 +463,7 @@ export default function UserPage() {
                               {sentenceCase(trade.status)}
                             </Label>
                           </TableCell>
-                          <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "N/A"}</TableCell>
+                          <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
                           <TableCell align="center">{trade.longShort}</TableCell>
                           <TableCell align="center">{trade.contracts}</TableCell>
                           <TableCell align="center">
