@@ -128,11 +128,12 @@ export default function BasicModal(props) {
 
       for (let i = 0; i < csvData.length; i++) {
 
+        const netROI = ((csvData[i]["Sell Price"] - csvData[i]["Buy Price"]) / csvData[i]["Buy Price"]) * 100;
           const data = {
             entryDate: csvData[i]["Bought Timestamp"] || "",
             symbol: csvData[i]["Product"] || "",
             status: csvData[i]["P/L"] < 0 ? "Loss" : "Win" || "",
-            netROI: "",
+            netROI:netROI.toFixed(2) ,
             stopPrice: 0,
             longShort: csvData[i]["Buy Price"] < csvData[i]["Sell Price"] ? "Long" : "Short" || "",
             contracts: csvData[i]["Bought"] || "",
