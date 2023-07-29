@@ -117,7 +117,7 @@ const rows = trades.map((trade) => ({
   id: trade._id,
   symbol: trade.symbol,
   status: trade.status,
-  netROI: trade.netROI,
+  netROI: trade.netROI + "%",
   longShort: trade.longShort,
   contracts: trade.contracts,
   entryPrice:"$" + trade.entryPrice,
