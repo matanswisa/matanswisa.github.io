@@ -324,7 +324,7 @@ export default function UserPage() {
   };
 
 
-  
+
 
   const handleDialogClose = () => {
     setDialogOpen(false);
@@ -363,12 +363,12 @@ export default function UserPage() {
 
   return (
     <>
-    
+
       <Helmet>
         <title>All Trades</title>
       </Helmet>
       <Container>
-        
+
         <div style={{ marginRight: "10px" }}>
           <DatePicker
             selected={selectedDate}
@@ -376,7 +376,7 @@ export default function UserPage() {
             dateFormat="E, MMM d, yyyy"
             placeholderText="Select a date"
           />
-          
+
           <Button
             variant="contained"
             onClick={handleClearDate}
@@ -387,14 +387,14 @@ export default function UserPage() {
         </div>
 
         <ToastContainer />
-        
+
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={6}>
           <Typography variant="h4" gutterBottom>
             Trades
           </Typography>
-              
-       <div>
-            <Button onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />}  sx={{ marginRight:2 }}>
+
+          <div>
+            <Button onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />} sx={{ marginRight: 2 }}>
               Import Trades
             </Button>
             {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
@@ -402,8 +402,8 @@ export default function UserPage() {
             <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
               Add New Trade
             </Button>
-       </div>
-      
+          </div>
+
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
             updateTradeLists={fetchLeastTrades}
@@ -455,13 +455,15 @@ export default function UserPage() {
                           selected={trade}
                         >
                           <TableCell >
-                            { }
+                            <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true); setimageId(trade._id); }}>
+                              <Iconify icon={'eva:info-outline'} />
+                            </IconButton>
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
-      <Stack direction="row" alignItems="center" spacing={2}>
-        {formatDate(trade.entryDate)}
-      </Stack>
-    </TableCell>
+                            <Stack direction="row" alignItems="center" spacing={2}>
+                              {formatDate(trade.entryDate)}
+                            </Stack>
+                          </TableCell>
                           <TableCell align="center">{trade.symbol}</TableCell>
                           <TableCell align="center">
                             <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
@@ -480,15 +482,15 @@ export default function UserPage() {
                           <TableCell align="center">
                             {trade.stopPrice ? trade.stopPrice + "$" : "N/A"}
                           </TableCell>
-                        <TableCell align="center">
-  {trade.duration !== undefined && trade.duration > 0
-    ? trade.duration < 1
-      ? `${trade.duration * 60} Sec`
-      : trade.duration >= 60
-      ? `${Math.floor(trade.duration / 60)} Hr`
-      : `${Math.floor(trade.duration % 60)}  Min`
-    : "N/A"}
-</TableCell>
+                          <TableCell align="center">
+                            {trade.duration !== undefined && trade.duration > 0
+                              ? trade.duration < 1
+                                ? `${trade.duration * 60} Sec`
+                                : trade.duration >= 60
+                                  ? `${Math.floor(trade.duration / 60)} Hr`
+                                  : `${Math.floor(trade.duration % 60)}  Min`
+                              : "N/A"}
+                          </TableCell>
                           <TableCell align="center">
                             {trade.commission ? trade.commission + "$" : "N/A"}
                           </TableCell>
