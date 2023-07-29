@@ -87,6 +87,7 @@ export default function BasicModal(props) {
         const result = Papa.parse(reader.result, {
           header: true,
           dynamicTyping: true,
+          skipEmptyLines: true, // Skip empty lines during parsing
         });
 
         if (!isValidColumnNames(result.data)) {
@@ -102,7 +103,7 @@ export default function BasicModal(props) {
 
       reader.readAsText(file);
     }
-    console.log(csvData);
+  
   };
 
   const handleImportTrade = () => {
@@ -111,7 +112,7 @@ export default function BasicModal(props) {
   };
 
   useEffect(() => {
-
+    console.log(csvData);
   }, [csvData]);
 
 
@@ -152,7 +153,7 @@ export default function BasicModal(props) {
           data.duration = timeDifferenceInMinutes || "";
 
 
-
+          
           
               await api
                 .post('/api/importTrades', data).then((res) => {
@@ -218,8 +219,8 @@ export default function BasicModal(props) {
 
           >
             <MenuItem value={1}>Tradovate</MenuItem>
-            <MenuItem value={2}>Ninja Trader</MenuItem>
-            <MenuItem value={3}>Interactiv</MenuItem>
+            {/* <MenuItem value={2}>Ninja Trader</MenuItem>
+            <MenuItem value={3}>Interactiv</MenuItem> */}
           </Select>
           <Button sx={{ mt: 5 }}
             size="medium"
