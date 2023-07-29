@@ -8,47 +8,47 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { useEffect, useState,useRef } from 'react';
-
+import { useEffect, useState, useRef } from 'react';
+import api from '../../api/api'
 import Papa from 'papaparse';
 
 
 
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-    display: 'flex',
-    flexDirection: 'column', // Make sure the content is in a column
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+  display: 'flex',
+  flexDirection: 'column', // Make sure the content is in a column
 };
 
 
 export default function BasicModal(props) {
 
 
-        
-
-
-    const handleOpen = () => props.handleOpenModal(true);
-    const handleClose = () => props.handleOpenModal(false);
-    const { notifyToast } = props;
-
-    const [broker, setBroker] = React.useState(1);
-
-    const handleChange = (event) => {
-        setBroker(event.target.value);
-    };
 
 
 
+  const handleOpen = () => props.handleOpenModal(true);
+  const handleClose = () => props.handleOpenModal(false);
+  const { notifyToast } = props;
 
-  
+  const [broker, setBroker] = React.useState(1);
+
+  const handleChange = (event) => {
+    setBroker(event.target.value);
+  };
+
+
+
+
+
   // /////////////////////import trades///////////////////
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -111,7 +111,7 @@ export default function BasicModal(props) {
   };
 
   useEffect(() => {
-    console.log(csvData);
+
   }, [csvData]);
 
 
@@ -119,171 +119,124 @@ export default function BasicModal(props) {
 
 
 
+
+  const handleSaveTrade = async (csvData) =>
+   {
+
+    const count = csvData.length; // Total number of trades
+    let successCount = 0;
+
+      for (let i = 0; i < csvData.length; i++) {
+
+          const data = {
+            entryDate: csvData[i]["Bought Timestamp"] || "",
+            symbol: csvData[i]["Product"] || "",
+            status: csvData[i]["P/L"] < 0 ? "Loss" : "Win" || "",
+            netROI: "",
+            stopPrice: 0,
+            longShort: csvData[i]["Buy Price"] < csvData[i]["Sell Price"] ? "Long" : "Short" || "",
+            contracts: csvData[i]["Bought"] || "",
+            entryPrice: csvData[i]["Buy Price"] || "",
+            exitPrice: csvData[i]["Sell Price"] || "",
+            duration: "",
+            commission: "",
+            comments: "",
+            netPnL: csvData[i]["P/L"] || "",
+            tradeId: "",
+          }
+        
+          const boughtTimestamp = new Date(csvData[i]["Bought Timestamp"]);
+          const soldTimestamp = new Date(csvData[i]["Sold Timestamp"]);
+          const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
+          data.duration = timeDifferenceInMinutes || "";
+
+
+
+          
+              await api
+                .post('/api/importTrades', data).then((res) => {
+                  props.updateTradeLists()
+                 
+                  handleClose();
+                     successCount++;
+                }).catch((err) => {
+                  const errorMessage = "Couldn't add trade: " + csvData[i]["Product"] + " - " + csvData[i]["Timestamp"];
+                  notifyToast(errorMessage, "error");
+                
+                })
+        
+              }
   
-  const handleSaveTrade = async (csvData) => {
-
-    const data = {
-      entryDate: csvData[0]["Bought Timestamp"] || "",
-      symbol: csvData[0]["Product"]|| "",
-      status: csvData[0]["P/L"] < 0  ?  "Loss" : "Win" || "",
-      netROI:"",
-      stopPrice :"",
-      longShort: csvData[0]["Buy Price"] < csvData[0]["Sell Price"] ? "Long" : "Short" || "",
-      contracts: csvData[0]["Bought"] || "",
-      entryPrice: csvData[0]["Buy Price"] || "",
-      exitPrice :  csvData[0]["Sell Price"] || "",
-      duration: "",
-      commission:"",
-      comments: "",
-      netPnL:  csvData[0]["P/L"] || "",
-      tradeId:  "",
-    }
+              if (successCount === count) {
+                notifyToast(`All ${count} trades added successfully`, "success");
+              } else {
+                notifyToast(`${successCount} out of ${count} trades added successfully`, "success");
+              }
 
 
-    const boughtTimestamp = new Date(csvData[0]["Bought Timestamp"]);
-    const soldTimestamp = new Date(csvData[0]["Sold Timestamp"]);
-    const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
-    data.duration = timeDifferenceInMinutes || "";
+  
+}
 
 
-   console.log(data);
-
-
-  //   if (validateForm()) {
-
-  //     if (validateForm()) {
-  //       if (!editMode) {
-  //         await api
-  //           .post('/api/addTrade', data).then((res) => {
-  //             if (selectedFile !== null) {
-  //               handleUpload(res.data.tradeId);
-  //             }
-  //             props.updateTradeLists()
-  //             notifyToast("Trade added successfully", "success");
-  //             handleClose();
-
-  //           }).catch((err) => {
-  //             notifyToast("Couldn't add trade", "error");
-  //           })
-  //       }
-  //       else if (editMode === true) {
-
-  //         const netPnL = prevStatusState !== data.status && data.status === "Win" && data.netPnL < 0
-  //           ? -data.netPnL
-  //           : data.netPnL;
-
-  //         data.netPnL = netPnL;
-  //         await api.post('/api/editTrade', data)
-  //           .then((response) => {
-  //             notifyToast("Trade Edit succssfully", "success")
-  //             handleUpload(tradeInfo?._id);
-  //             props.updateTradeLists()
-
-  //           })
-  //           .catch((error) => {
-  //             notifyToast("Trade can't be updated", "error")
-  //           });
-
-  //       }
-
-  //     } else {
-  //       console.log('Please fill in all the fields');
-  //     }
-  //   };
-  // }
-
-  // const validateForm = () => {
-
-  //   const currentDate = new Date().toISOString().slice(0, 10); // Get today's date in the format "YYYY-MM-DD"
-
-  //   if (positionDate > currentDate) {
-  //     const errorMessage = "the selected date is above today's date.";
-
-  //     notifyToast(errorMessage, "warning");
-
-  //     return false;
-
-  //   }
-
-  //   if (positionType === '' || positionStatus === '' ||
-  //     contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
-
-  //     if (positionType === '') notifyToast("Position type is missing", "warning");
-  //     else if (positionStatus === '') notifyToast("Position status is missing", "warning");
-  //     else if (!netPnL) notifyToast("Net PnL is missing", "warning");
-  //     else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
-  //     else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
-  //     else if (!positionDate) notifyToast("Date field is missing", "warning");
-
-  //     console.log(positionDate > currentDate);
-
-
-  //     return false;
-  //   }
-  //   return true;
-  };
-
-
-
-////////////////////////////////////////////////////////////
-
-    
+  ////////////////////////////////////////////////////////////
 
 
 
 
 
 
-    return (
-        <div>
-
-            <Modal
-                open={handleOpen}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <Typography    id="modal-modal-title" variant="h5" component="h2">
-                        import Trades          </Typography>
 
 
+  return (
+    <div>
+
+      <Modal
+        open={handleOpen}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h5" component="h2">
+            import Trades          </Typography>
 
 
-                    <Select  sx={{ mt: 3 }}
-                        name="broker"
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={broker}
-                        label="broker"
-                        onChange={handleChange}
-                        inputProps={{
-                            name: 'age',
-                            id: 'uncontrolled-native',
-                        }}
 
-                    >
-                        <MenuItem value={1}>Tradovate</MenuItem>
-                        <MenuItem value={2}>Ninja Trader</MenuItem>
-                        <MenuItem value={3}>Interactiv</MenuItem>
-                    </Select>
-                    <Button  sx={{ mt: 5 }}
-                        size="medium"
-                        variant="contained"
-                        component="span"
-                        startIcon={<Iconify icon={'eva:file-add-outline'} />}
-                    onClick={handleImportTrade}
-                    >
-                        Import
-                    </Button>
-                    <input
-        type="file"
-        ref={fileInputRefTrade}
-        style={{ display: 'none' }}
-        onChange={handleFileChangeTrade}
-      />
-                </Box>
-            </Modal>
-        </div>
-    );
+
+          <Select sx={{ mt: 3 }}
+            name="broker"
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={broker}
+            label="broker"
+            onChange={handleChange}
+            inputProps={{
+              name: 'age',
+              id: 'uncontrolled-native',
+            }}
+
+          >
+            <MenuItem value={1}>Tradovate</MenuItem>
+            <MenuItem value={2}>Ninja Trader</MenuItem>
+            <MenuItem value={3}>Interactiv</MenuItem>
+          </Select>
+          <Button sx={{ mt: 5 }}
+            size="medium"
+            variant="contained"
+            component="span"
+            startIcon={<Iconify icon={'eva:file-add-outline'} />}
+            onClick={handleImportTrade}
+          >
+            Import
+          </Button>
+          <input
+            type="file"
+            ref={fileInputRefTrade}
+            style={{ display: 'none' }}
+            onChange={handleFileChangeTrade}
+          />
+        </Box>
+      </Modal>
+    </div>
+  );
 }
