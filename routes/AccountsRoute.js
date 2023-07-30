@@ -46,7 +46,7 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
     }
 
     // Return a success response
-    res.status(200).json({ message: `Account deleted - ${accountId}` });
+    res.status(200).json({ accountId });
   } catch (error) {
     console.error(error);
     // Return an error response

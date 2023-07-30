@@ -97,7 +97,7 @@ router.post("/editTrade", authenticateToken, async (req, res) => {
     account.trades = tradesWithoutCurrTrade;
     await User.findByIdAndUpdate(userId, { accounts: account });
     await Account.findOneAndUpdate({ _id: accountId }, account);
-    res.status(200).send(`Trade ${result._id} added succefully`);
+    res.status(200).json(tradeData);
   } catch (err) {
     console.err(err);
     res.status(500).send('Error when adding a trade');
