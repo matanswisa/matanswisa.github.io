@@ -60,7 +60,7 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
     await User.updateOne({ _id: userId }, { accounts: accounts });
     // await account.save();
     const result = await Trade.create(tradeData);
-    res.status(200).json({ tradeId: result._id });
+    res.status(200).json(tradeData);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error when adding a trade');

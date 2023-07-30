@@ -133,7 +133,7 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
       { $set: { IsSelected: "true" } }
     );
 
-    res.status(200).json({ AccountId: newAccount._id });
+    res.status(200).json(newAccount);
 
   } catch (err) {
     console.error(err);
@@ -174,18 +174,11 @@ router.put("/editAccount", authenticateToken, async (req, res) => {
       { $set: { IsSelected: "false" } }
     );
 
-    return res.json({ message: 'Account updated successfully' });
+    return res.status(200).json(accountToUpdate);
   } catch (error) {
     console.error('Error updating account:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
-
 });
-
-
-// {
-//   'lastCurrentAccountIndex' : 0,
-//   'userId': eg15w6143w654y
-// }
 
 export default router;
