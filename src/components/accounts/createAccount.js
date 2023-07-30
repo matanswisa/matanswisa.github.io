@@ -23,8 +23,8 @@ import {
   blueGrey,
 } from '@mui/material/colors';
 import { Grid } from 'rsuite';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../../redux-toolkit/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { addAccountToList, selectUser, selectUserAccounts, updateAccount } from '../../redux-toolkit/userSlice';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -38,11 +38,15 @@ const style = {
 };
 
 export default function BasicModal(props) {
-  const [accounts, setAccounts] = useState([]);
+  // const [accounts, setAccounts] = useState([]);
+  const dispatch = useDispatch();
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
+
+  const accounts = useSelector(selectUserAccounts);
   const [accountName, setAccountName] = useState('');
   const [selectedColor, setSelectedColor] = useState(red[500]);
+
   const { notifyToast } = props;
   const { edit } = props;
   const { accountInfo } = props;
@@ -82,10 +86,11 @@ export default function BasicModal(props) {
           }
         })
         .then(async (res) => {
+
           notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
-          await props.fetchAccounts();
-          return false;
+          console.log(res.data);
+          dispatch(addAccountToList(res.data));
         })
         .catch((err) => {
           notifyToast("Couldn't add Account", 'error');
@@ -102,7 +107,7 @@ export default function BasicModal(props) {
         Label: selectedColor,
         IsSelected: 'true',
         userId: user._id,
-      }; 
+      };
 
       await api
         .put('/api/editAccount', data, {
@@ -113,7 +118,8 @@ export default function BasicModal(props) {
         .then((res) => {
           notifyToast('Account updated successfully', 'success');
           props.handleOpenModal(false);
-          props.fetchAccounts();
+          dispatch(updateAccount(res.data));
+          //need to add here dispatch and redux aciton to update 
         })
         .catch((err) => {
           notifyToast("Couldn't update account", 'error');

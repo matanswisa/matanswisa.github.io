@@ -24,7 +24,8 @@ import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
 import './addTrade.css';
 import { useSelector } from 'react-redux';
-import { selectUser } from '../../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser } from '../../redux-toolkit/userSlice';
+import { config } from '../../api/apiAuthConfig';
 
 const style = {
   position: 'absolute',
@@ -51,7 +52,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function BasicModal(props) {
 
   const user = useSelector(selectUser);
-
+  const currentAccount = useSelector(selectCurrentAccount);
 
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
@@ -151,8 +152,9 @@ export default function BasicModal(props) {
 
       if (validateForm()) {
         if (!editMode) {
+          console.log("config", config);
           await api
-            .post('/api/addTrade', { userId: user._id, data } , {}).then((res) => {
+            .post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }, config).then((res) => {
               if (selectedFile !== null) {
                 handleUpload(res.data.tradeId);
               }

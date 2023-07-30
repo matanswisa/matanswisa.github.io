@@ -195,7 +195,6 @@ export default function UserPage() {
     showToast(Msg, Type);
   }
 
-
   const currentAccount = useSelector(selectCurrentAccount);
   const trades = currentAccount.trades;
 
