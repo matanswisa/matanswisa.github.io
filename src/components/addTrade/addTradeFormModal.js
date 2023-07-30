@@ -23,8 +23,8 @@ import {
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
 import './addTrade.css';
-import { useSelector } from 'react-redux';
-import { selectCurrentAccount, selectUser } from '../../redux-toolkit/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentAccount, selectUser, setTradesList } from '../../redux-toolkit/userSlice';
 import { config } from '../../api/apiAuthConfig';
 
 const style = {
@@ -60,6 +60,8 @@ export default function BasicModal(props) {
   const tradeInfo = props?.tradeInfo;
   const editMode = props?.isEditMode;
   const prevStatusState = props?.prevState;
+
+  const reduxDispatch = useDispatch();
 
   const initialState = {
     positionType: tradeInfo?.longShort || '',
@@ -158,7 +160,10 @@ export default function BasicModal(props) {
               if (selectedFile !== null) {
                 handleUpload(res.data.tradeId);
               }
-              props.updateTradeLists()
+              // props.updateTradeLists()
+
+              reduxDispatch(setTradesList(res.data));
+              console.log(res.data);
               notifyToast("Trade added successfully", "success");
 
             }).catch((err) => {
@@ -168,11 +173,14 @@ export default function BasicModal(props) {
         else if (editMode === true) {
           console.log('inside edit trade!', tradeInfo?._id);
           data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
-          await api.post('/api/editTrade', data)
-            .then((response) => {
+          await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, config)
+            .then((res) => {
               notifyToast("Trade Edit succssfully", "success")
               handleUpload(tradeInfo?._id);
-              props.updateTradeLists()
+              // props.updateTradeLists()
+
+              reduxDispatch(setTradesList(res.data));
+
 
             })
             .catch((error) => {

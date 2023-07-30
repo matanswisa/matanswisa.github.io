@@ -48,7 +48,8 @@ import USERLIST from '../_mock/user';
 import api from '../api/api';
 import AddTrade from '../components/addTrade/addTradeFormModal';
 import ImageModal from '../components/ImageModal/ImageModal';
-import { selectCurrentAccount } from '../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectTradesOfCurrentAccount, selectUser, setTradesList } from '../redux-toolkit/userSlice';
+import { config } from '../api/apiAuthConfig';
 
 
 const TABLE_HEAD = [
@@ -109,12 +110,6 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const fetchTrades = async () => {
-  const result = await api.get('/api/fetchTrades');
-  return result;
-}
-// export let globalAlert;
-
 
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -126,6 +121,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function UserPage() {
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
+  const currentAccount = useSelector(selectCurrentAccount);
+  const user = useSelector(selectUser);
 
   function handleCellClick(parameter, info) {
     return function () {
@@ -140,6 +137,7 @@ export default function UserPage() {
   const handleCloseCommend = () => {
     setCommendOpen(false);
   };
+
 
 
   //Upload image related code:
@@ -157,6 +155,8 @@ export default function UserPage() {
     // Append the selected file to the FormData object
     formData.append('file', selectedFile);
     formData.append('tradeId', tradeId);
+    formData.append('accountId', currentAccount._id);
+    formData.append('userId', user._id);
 
     // Make a POST request to the server with the file data
     fetch('http://localhost:8000/api/uploadTradeImage', {
@@ -166,7 +166,9 @@ export default function UserPage() {
       .then(response => response.json())
       .then(data => {
         notifyToast("Trade image uploaded successfully", "success");
-        setTradesList(data);
+        // setTradesList(data);
+        //need to update redux here - 
+
       })
       .catch(error => {
         // Handle any errors that occurred during the upload
@@ -195,8 +197,7 @@ export default function UserPage() {
     showToast(Msg, Type);
   }
 
-  const currentAccount = useSelector(selectCurrentAccount);
-  const trades = currentAccount.trades;
+  const trades = useSelector(selectTradesOfCurrentAccount);
 
   const totalTrades = Object.keys(trades).length;
 
@@ -206,38 +207,9 @@ export default function UserPage() {
   const [openmodal, setIsOpenmodal] = useState(false);
   const dispatch = useDispatch();
 
-  const setTradesList = (trades) => {
-
-    // dispatch(setTradesRedux(trades));
-  }
-
   const handleOpenModal = (tradeId) => {
     setIsOpenmodal(true);
   };
-
-
-  const fetchLeastTrades = () => {
-    return fetchTrades().then((res) => {
-      if (res.data)
-        setTradesList(res.data);
-    }).catch((err) => {
-      console.error(err);
-    })
-  }
-
-  useEffect(() => {
-
-
-    fetchTrades().then((res) => {
-      if (res.data)
-        setTradesList(res.data);
-    }).catch((err) => {
-      console.error(err);
-    })
-  }, [])
-
-
-
 
 
   const [open, setOpen] = useState(null);
@@ -297,9 +269,15 @@ export default function UserPage() {
   };
 
   const deleteTrade = async (tradeId) => {
-    await api.delete('/api/deleteTrade', { data: { tradeId } });
-    const tempTrades = await fetchTrades();
-    setTradesList(tempTrades.data);
+    console.log({ tradeId, userId: user._id, accountId: currentAccount._id });
+    const response = await api.post('/api/deleteTrade',
+      // Assuming 'config' contains any additional headers you need to include
+      { tradeId, userId: user._id, accountId: currentAccount._id }, config
+    );
+
+    if (!response.data) notifyToast("Couldnt delete trade", 'warning');
+
+    dispatch(setTradesList(response.data));
     notifyToast("Delete trade Successfully", 'warning');
     toggleShow();
   }
@@ -357,9 +335,8 @@ export default function UserPage() {
           <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Trade
           </Button>
-          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
-            updateTradeLists={fetchLeastTrades}
             key={editTradeId._id}
             openModal={openmodal}
             handleOpenModal={setIsOpenmodal}
