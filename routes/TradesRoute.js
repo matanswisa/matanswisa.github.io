@@ -46,21 +46,24 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
     const { userId, accountId, tradeData } = req.body;
     const user = await User.findById(userId);
     let accounts = user.accounts;
-    const account = user.accounts.find(account => account._id == accountId);
+    const accountObj = user.accounts.find(account => account._id == accountId);
 
-    accounts = accounts.filter((account) => account._id != account._id);
+    accounts = accounts.filter((account) => account._id !== accountObj._id);
     if (!accounts) return res.status(400).send("Can't find account");
 
     const createdTrade = await Trade.create(tradeData);
-    account.trades.push(createdTrade);
+    accountObj.trades.push(createdTrade);
 
-    accounts.push(account);
+    accounts.push(accountObj);
     // account.trades = accounts;
-    await Account.findByIdAndUpdate(accountId, { trades: account.trades });
+    await Account.findByIdAndUpdate(accountId, { trades: accountObj.trades });
     await User.updateOne({ _id: userId }, { accounts: accounts });
     // await account.save();
     const result = await Trade.create(tradeData);
-    res.status(200).json(tradeData);
+
+    const tradesWithImage = await fetchTradesWithImages(accountObj.trades);
+
+    res.status(200).json(tradesWithImage);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error when adding a trade');
@@ -77,7 +80,7 @@ router.get('/fetchTrades', authenticateToken, async (req, res) => {
 
     const tradesWithImage = await fetchTradesWithImages(accounts.trades);
     if (!tradesWithImage.length) return res.status(400).send("There isn't any trades to display");
-    res.status(200).json(tradesWithImage);
+    res.status(200).json({ accountId, trades: tradesWithImage });
   } catch (err) {
     console.error(err);
     res.status(500).send(err);
@@ -92,42 +95,51 @@ router.post("/editTrade", authenticateToken, async (req, res) => {
     const result = await Trade.findByIdAndUpdate(tradeId, tradeData);
     console.log(result);
     const account = await getAccountOfUserById(userId, accountId);
-    const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id == tradeId);
+    const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id != tradeId);
     tradesWithoutCurrTrade.push(tradeData);
     account.trades = tradesWithoutCurrTrade;
     await User.findByIdAndUpdate(userId, { accounts: account });
     await Account.findOneAndUpdate({ _id: accountId }, account);
-    res.status(200).json(tradeData);
+
+
+    const tradesWithImage = await fetchTradesWithImages(account.trades);
+
+    res.status(200).json(tradesWithImage);
   } catch (err) {
     console.err(err);
     res.status(500).send('Error when adding a trade');
   }
 });
 
-
-router.delete('/deleteTrade', authenticateToken, async (req, res) => {
+router.post('/deleteTrade', authenticateToken, async (req, res) => {
   try {
+
+    console.log(req.body);
     const { tradeId, accountId, userId } = req.body;
+
+    // Assuming the 'Trade', 'User', 'Account', and 'getAccountOfUserById' functions are properly defined and working.
+
     const result = await Trade.findByIdAndDelete(tradeId);
 
     if (result) {
-
       const account = await getAccountOfUserById(userId, accountId);
-      const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id == tradeId);
+      const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id.toString() !== tradeId);
       account.trades = tradesWithoutCurrTrade;
 
       await User.findByIdAndUpdate(userId, { accounts: account });
       await Account.findOneAndUpdate({ _id: accountId }, account);
 
-      res.status(200).send(`Trade ${tradeId} has been deleted`);
-    } else {
-      res.status(400).send('Trade couldn\'t be deleted , there was a problem.');
-    }
+      // Assuming 'fetchTradesWithImages' properly fetches trade data with images
+      const tradesWithImage = await fetchTradesWithImages(account.trades);
 
+      res.status(200).json(tradesWithImage);
+    } else {
+      res.status(400).send('Trade couldn\'t be deleted, there was a problem.');
+    }
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).send(err.message || 'Internal server error');
   }
-})
+});
 
 
 router.get('/getDailyStats', async (req, res) => {
