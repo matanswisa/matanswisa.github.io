@@ -2,7 +2,6 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import React from 'react';
-import Papa from 'papaparse';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTrades, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 import useToast from '../hooks/alert';
@@ -421,7 +420,7 @@ export default function UserPage() {
 
         <Card>
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, maxWidth: 2000 }}>
+            <TableContainer sx={{ minWidth: 800, maxWidth: 2000, height: 'calc(100vh - 200px)' }}>
               <Table>
                 <UserListHead
                   order={order}
