@@ -32,7 +32,7 @@ import {
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import AddFarshel from '../components/addTrade/AddFarshel'
 import DialogContentText from '@mui/material/DialogContentText';
 import Slide from '@mui/material/Slide';
 
@@ -454,9 +454,8 @@ export default function UserPage() {
                           selected={trade}
                         >
                           <TableCell >
-                            <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true); setimageId(trade._id); }}>
-                              <Iconify icon={'eva:info-outline'} />
-                            </IconButton>
+                          <AddFarshel trade={trade} key={trade.id} />
+                           
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
