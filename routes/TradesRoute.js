@@ -44,11 +44,11 @@ router.post("/addTrade", async (req, res) => {
 
 
 
+
 router.post("/importTrades", async (req, res) => {
   try {
     const data = req.body;
 
-    console.log(data);
     const result = await Trade.create(data);
     res.status(200).json({ tradeId: result._id });
 
@@ -57,6 +57,32 @@ router.post("/importTrades", async (req, res) => {
     res.status(500).send('Error when adding a trade');
   }
 });
+
+
+router.post("/importParcelsTrades", async (req, res) => {
+  try {
+    const { data, id } = req.body;
+
+    console.log(data);
+
+    // Assuming you have a mongoose model named 'Trade'
+    const trade = await Trade.findOne({tradeID:id});
+    if (trade) {
+      trade.tradesHistory.push(data);
+      await trade.save();
+    } else {
+      // If no trade is found with the specified ID, handle accordingly.
+      console.error("Trade not found");
+      return res.status(404).send("Trade not found");
+    }
+
+    res.status(200).json({ id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error when adding a trade");
+  }
+});
+
 
 
 
