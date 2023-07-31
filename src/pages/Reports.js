@@ -454,8 +454,8 @@ export default function UserPage() {
                           selected={trade}
                         >
                           <TableCell >
-                          <AddFarshel trade={trade} key={trade.id} />
-                           
+                            <AddFarshel trade={trade} key={trade.id} />
+
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
@@ -471,26 +471,18 @@ export default function UserPage() {
                           <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
                           <TableCell align="center">{trade.longShort}</TableCell>
                           <TableCell align="center">{trade.contracts}</TableCell>
-                          {/* <TableCell align="center">
-                            {trade.entryPrice ? trade.entryPrice + "$" : "N/A"}
-                          </TableCell>
+
                           <TableCell align="center">
-                            {trade.exitPrice ? trade.exitPrice + "$" : "N/A"}
+                            {trade.duration !== undefined && trade.duration > 0 ? (
+                              <React.Fragment>
+                                {trade.duration >= 60 && `${Math.floor(trade.duration / 60)} Hr `}
+                                {Math.floor(trade.duration % 60) > 0 && `${Math.floor(trade.duration % 60)} Min `}
+                                {Math.floor((trade.duration % 1) * 60) > 0 && `${Math.floor((trade.duration % 1) * 60)} Sec`}
+                              </React.Fragment>
+                            ) : (
+                              "N/A"
+                            )}
                           </TableCell>
-                          <TableCell align="center">
-                            {trade.stopPrice ? trade.stopPrice + "$" : "N/A"}
-                          </TableCell> */}
-<TableCell align="center">
-  {trade.duration !== undefined && trade.duration > 0 ? (
-    <React.Fragment>
-      {trade.duration >= 60 && `${Math.floor(trade.duration / 60)} Hr `}
-      {Math.floor(trade.duration % 60) > 0 && `${Math.floor(trade.duration % 60)} Min `}
-      {Math.floor((trade.duration % 1) * 60) > 0 && `${Math.floor((trade.duration % 1) * 60)} Sec`}
-    </React.Fragment>
-  ) : (
-    "N/A"
-  )}
-</TableCell>
 
 
                           <TableCell align="center">

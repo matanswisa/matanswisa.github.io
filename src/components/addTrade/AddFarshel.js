@@ -38,8 +38,10 @@ const columns = [
     { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
     { field: 'longShort', headerName: 'Long / Short', width: 100, editable: false, },
     { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
-
-    { field: 'duration', headerName: 'Duration', width: 170, editable: false, },
+    { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false,},
+    { field: 'stopPrice', headerName: 'Stop Price', width: 100, editable: false,},
+    { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false,},
+    { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
     { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
     { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
     { field: 'comments', headerName: 'comments', width: 100, editable: false, },
@@ -75,8 +77,8 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 1200,
-    height: 560,
+    width: 1340,
+    height: 480,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -190,9 +192,7 @@ export default function AddFarshel(props) {
   aria-describedby="modal-modal-description"
 >
   <Box sx={style}>
-  <Typography gutterBottom variant="h4" component="div">
-              {getFormattedDate(props.trade._id)}
-            </Typography>
+  
   <Box sx={{ height: 400, width: '100%' }}>
       <DataGrid
         rows={rows}
