@@ -70,6 +70,26 @@ export default function BasicModal(props) {
     return requiredColumns.every((col) => data[0].hasOwnProperty(col));
   };
 
+  const handleMergeRows = (data) => {
+    // Group the rows by the 'Position ID' field
+    const groupedRows = data.reduce((acc, row) => {
+      const id = row['Position ID'];
+      if (!acc[id]) {
+        acc[id] = { ...row }; // Make a copy of the row to avoid mutation
+        acc[id]['P/L'] = parseFloat(row['P/L'] || 0); // Initialize the sum of P/L
+      } else {
+        acc[id]['P/L'] += parseFloat(row['P/L'] || 0); // Add the P/L to the existing sum
+        acc[id]['Sold Timestamp'] = row['Sold Timestamp']; // Update the 'Sold Timestamp' with the current row's value
+      }
+      return acc;
+    }, {});
+    // Convert the object back to an array
+    const mergedRows = Object.values(groupedRows);
+
+    return mergedRows;
+  };
+
+
 
   const handleFileChangeTrade = (event) => {
     if (event.target.files.length > 0) {
@@ -96,9 +116,13 @@ export default function BasicModal(props) {
         }
 
         // Store the parsed data in the state variable
-        setCsvData(result.data);
-        handleSaveTrade(result.data);
-        //call api to add new trades.
+        const mergedData = handleMergeRows(result.data); 
+        console.log(mergedData);
+      //  setCsvData(result.data);  
+       
+
+        handleSaveTrade(mergedData);  // this is data insert to parsel
+      
       };
 
       reader.readAsText(file);
@@ -148,21 +172,14 @@ export default function BasicModal(props) {
           }
         
      
-       //   console.log(i, data);
+    
           const boughtTimestamp = new Date(csvData[i]["Bought Timestamp"]);
           const soldTimestamp = new Date(csvData[i]["Sold Timestamp"]);
 
-          if(data.longShort == "Short"){
-            const timeDifferenceInMinutes = (boughtTimestamp - soldTimestamp) / (1000 * 60);
-            data.duration = timeDifferenceInMinutes || "";
-
-          }
-        
-          else{
-
+         
             const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
             data.duration = timeDifferenceInMinutes || "";
-          }
+         
 
           if(data.status == "Break Even"){
 

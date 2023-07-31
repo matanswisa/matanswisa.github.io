@@ -60,9 +60,9 @@ const TABLE_HEAD = [
   { id: 'netROI', label: 'Net ROI', alignRight: false },
   { id: 'longShort', label: 'Long / Short', alignRight: false },
   { id: 'contracts', label: 'Contracts', alignRight: false },
-  { id: 'entryPrice', label: 'Entry Price', alignRight: false },
-  { id: 'exitPrice', label: 'Exit Price', alignRight: false },
-  { id: 'stopPrice', label: 'Stop Price', alignRight: false },
+  // { id: 'entryPrice', label: 'Entry Price', alignRight: false },
+  // { id: 'exitPrice', label: 'Exit Price', alignRight: false },
+  // { id: 'stopPrice', label: 'Stop Price', alignRight: false },
   { id: 'duration', label: 'Duration', alignRight: false },
   { id: 'commission', label: 'Commission', alignRight: false },
   { id: 'netPnL', label: 'Net P&L', alignRight: false },
@@ -472,7 +472,7 @@ export default function UserPage() {
                           <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
                           <TableCell align="center">{trade.longShort}</TableCell>
                           <TableCell align="center">{trade.contracts}</TableCell>
-                          <TableCell align="center">
+                          {/* <TableCell align="center">
                             {trade.entryPrice ? trade.entryPrice + "$" : "N/A"}
                           </TableCell>
                           <TableCell align="center">
@@ -480,16 +480,20 @@ export default function UserPage() {
                           </TableCell>
                           <TableCell align="center">
                             {trade.stopPrice ? trade.stopPrice + "$" : "N/A"}
-                          </TableCell>
-                          <TableCell align="center">
-                            {trade.duration !== undefined && trade.duration > 0
-                              ? trade.duration < 1
-                                ? `${trade.duration * 60} Sec`
-                                : trade.duration >= 60
-                                  ? `${Math.floor(trade.duration / 60)} Hr`
-                                  : `${Math.floor(trade.duration % 60)}  Min`
-                              : "N/A"}
-                          </TableCell>
+                          </TableCell> */}
+<TableCell align="center">
+  {trade.duration !== undefined && trade.duration > 0 ? (
+    <React.Fragment>
+      {trade.duration >= 60 && `${Math.floor(trade.duration / 60)} Hr `}
+      {Math.floor(trade.duration % 60) > 0 && `${Math.floor(trade.duration % 60)} Min `}
+      {Math.floor((trade.duration % 1) * 60) > 0 && `${Math.floor((trade.duration % 1) * 60)} Sec`}
+    </React.Fragment>
+  ) : (
+    "N/A"
+  )}
+</TableCell>
+
+
                           <TableCell align="center">
                             {trade.commission ? trade.commission + "$" : "N/A"}
                           </TableCell>
