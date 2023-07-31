@@ -11,6 +11,7 @@ import Select from '@mui/material/Select';
 import { useEffect, useState, useRef } from 'react';
 import api from '../../api/api'
 import Papa from 'papaparse';
+import { forEach } from 'lodash';
 
 
 
@@ -102,8 +103,9 @@ export default function BasicModal(props) {
 
       // Use FileReader to read the file contents
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = async () => {
         // Parse the CSV data using papaparse
+
         const result = Papa.parse(reader.result, {
           header: true,
           dynamicTyping: true,
@@ -116,19 +118,36 @@ export default function BasicModal(props) {
         }
 
         // Store the parsed data in the state variable
-        const mergedData = handleMergeRows(result.data); 
-        console.log(mergedData);
-      //  setCsvData(result.data);  
-       
+        const mergedData = handleMergeRows(result.data);
 
-        handleSaveTrade(mergedData);  // this is data insert to parsel
-      
+
+
+        await handleSaveTrade(mergedData);  //insert merged data to reports page.
+        
+        const transactions = result.data;
+        const transactionsMapObj = {};
+        transactions.forEach((transaction) => {
+
+          const transactionId = transaction["Position ID"];
+
+          if (!transactionsMapObj[transactionId]) {
+            transactionsMapObj[transactionId] = [];
+            transactionsMapObj[transactionId].push(transaction)
+          } else transactionsMapObj[transactionId].push(transaction)
+        });
+
+        for (let k of Object.keys(transactionsMapObj)) {
+          console.log(k)
+          handleSaveParcelsTrade(k, transactionsMapObj[k]);
+        }
       };
 
       reader.readAsText(file);
     }
-  
+
   };
+
+
 
   const handleImportTrade = () => {
     // Trigger the file input selection when the button is clicked
@@ -136,7 +155,7 @@ export default function BasicModal(props) {
   };
 
   useEffect(() => {
-    console.log(csvData);
+
   }, [csvData]);
 
 
@@ -145,75 +164,146 @@ export default function BasicModal(props) {
 
 
 
-  const handleSaveTrade = async (csvData) =>
-   {
+
+  const handleSaveParcelsTrade = async (id, arr) => {
+    console.log(arr);
+    // const count = matchingRows.length; // Total number of trades
+    //let successCount = 0;
+
+    for (let i = 0; i < arr.length; i++) {
+      const netROI = ((arr[i]["Sell Price"] - arr[i]["Buy Price"]) / arr[i]["Buy Price"]) * 100;
+
+      const data = {
+        entryDate: arr[i]["Bought Timestamp"] || "",
+        symbol: arr[i]["Product"] || "",
+        status: arr[i]["P/L"] < 0 ? "Loss" : arr[i]["P/L"] > 0 ? "Win" : "Break Even",
+        netROI: netROI.toFixed(2),
+        stopPrice: 0,
+        longShort: arr[i]["Buy Price"] < arr[i]["Sell Price"] ? "Long" : "Short" || "",
+        contracts: arr[i]["Bought"] || "",
+        entryPrice: arr[i]["Buy Price"] || "",
+        exitPrice: arr[i]["Sell Price"] || "",
+        duration: "",
+        commission: "",
+        comments: "",
+        netPnL: arr[i]["P/L"] !== undefined ? arr[i]["P/L"] : "",
+
+      }
+
+
+
+      const boughtTimestamp = new Date(arr[i]["Bought Timestamp"]);
+      const soldTimestamp = new Date(arr[i]["Sold Timestamp"]);
+
+      const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
+      data.duration = timeDifferenceInMinutes || "";
+
+      if (data.status == "Break Even") {
+        const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
+        data.duration = timeDifferenceInMinutes || "";
+        data.netROI = 0;
+      }
+
+
+
+      await api
+        .post('/api/importParcelsTrades', { data, id })
+        .then((res) => {
+          props.updateTradeLists();
+          handleClose();
+          //  successCount++;
+        })
+        .catch((err) => {
+          const errorMessage =
+            "Couldn't add trade number: " +
+            (i + 1) +
+            "   " +
+            arr[i]["Product"] +
+            " - " +
+            arr[i]["Timestamp"];
+          notifyToast(errorMessage, "error");
+        });
+
+    }
+
+    // if (successCount === count) {
+    //   notifyToast(`All ${count} trades added successfully`, "success");
+    // } else {
+    //   notifyToast(`${successCount} out of ${count} trades added successfully`, "success");
+    // }
+  }
+
+
+
+
+  const handleSaveTrade = async (csvData) => {
 
     const count = csvData.length; // Total number of trades
     let successCount = 0;
 
-      for (let i = 0; i < csvData.length; i++) {
+    for (let i = 0; i < csvData.length; i++) {
 
-        const netROI = ((csvData[i]["Sell Price"] - csvData[i]["Buy Price"]) / csvData[i]["Buy Price"]) * 100;
-          const data = {
-            entryDate: csvData[i]["Bought Timestamp"] || "",
-            symbol: csvData[i]["Product"] || "",
-            status: csvData[i]["P/L"] < 0 ? "Loss" : csvData[i]["P/L"] > 0 ? "Win" : "Break Even",
-            netROI:netROI.toFixed(2) ,
-            stopPrice: 0,
-            longShort: csvData[i]["Buy Price"] < csvData[i]["Sell Price"] ? "Long" : "Short" || "",
-            contracts: csvData[i]["Bought"] || "",
-            entryPrice: csvData[i]["Buy Price"] || "",
-            exitPrice: csvData[i]["Sell Price"] || "",
-            duration: "",
-            commission: "",
-            comments: "",
-            netPnL: csvData[i]["P/L"] !== undefined ? csvData[i]["P/L"] : "",
-            tradeId: "",
-          }
-        
-     
-    
-          const boughtTimestamp = new Date(csvData[i]["Bought Timestamp"]);
-          const soldTimestamp = new Date(csvData[i]["Sold Timestamp"]);
-
-         
-            const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
-            data.duration = timeDifferenceInMinutes || "";
-         
-
-          if(data.status == "Break Even"){
-
-            const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
-            data.duration = timeDifferenceInMinutes || "";
-            data.netROI = 0;
-          }
-      
-     
-          
-          
-              await api
-                .post('/api/importTrades', data).then((res) => {
-                  props.updateTradeLists()
-                 
-                  handleClose();
-                     successCount++;
-                }).catch((err) => {
-                  const errorMessage = "Couldn't add trade number: "+  (i+ 1) + "   "  + csvData[i]["Product"] + " - " + csvData[i]["Timestamp"];
-                  notifyToast(errorMessage, "error");
-                
-                })
-        
-              }
-  
-              if (successCount === count) {
-                notifyToast(`All ${count} trades added successfully`, "success");
-              } else {
-                notifyToast(`${successCount} out of ${count} trades added successfully`, "success");
-              }
+      const netROI = ((csvData[i]["Sell Price"] - csvData[i]["Buy Price"]) / csvData[i]["Buy Price"]) * 100;
+      const data = {
+        entryDate: csvData[i]["Bought Timestamp"] || "",
+        symbol: csvData[i]["Product"] || "",
+        status: csvData[i]["P/L"] < 0 ? "Loss" : csvData[i]["P/L"] > 0 ? "Win" : "Break Even",
+        netROI: netROI.toFixed(2),
+        stopPrice: 0,
+        longShort: csvData[i]["Buy Price"] < csvData[i]["Sell Price"] ? "Long" : "Short" || "",
+        contracts: csvData[i]["Bought"] || "",
+        entryPrice: csvData[i]["Buy Price"] || "",
+        exitPrice: csvData[i]["Sell Price"] || "",
+        duration: "",
+        commission: "",
+        comments: "",
+        netPnL: csvData[i]["P/L"] !== undefined ? csvData[i]["P/L"] : "",
+        tradeID: csvData[i]["Position ID"],
+      }
 
 
-  
-}
+
+      const boughtTimestamp = new Date(csvData[i]["Bought Timestamp"]);
+      const soldTimestamp = new Date(csvData[i]["Sold Timestamp"]);
+
+
+      const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
+      data.duration = timeDifferenceInMinutes || "";
+
+
+      if (data.status == "Break Even") {
+
+        const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
+        data.duration = timeDifferenceInMinutes || "";
+        data.netROI = 0;
+      }
+
+
+
+
+      await api
+        .post('/api/importTrades', data).then((res) => {
+          props.updateTradeLists()
+
+          handleClose();
+          successCount++;
+        }).catch((err) => {
+          const errorMessage = "Couldn't add trade number: " + (i + 1) + "   " + csvData[i]["Product"] + " - " + csvData[i]["Timestamp"];
+          notifyToast(errorMessage, "error");
+
+        })
+
+    }
+
+    if (successCount === count) {
+      notifyToast(`All ${count} trades added successfully`, "success");
+    } else {
+      notifyToast(`${successCount} out of ${count} trades added successfully`, "success");
+    }
+
+
+
+  }
 
 
   ////////////////////////////////////////////////////////////
