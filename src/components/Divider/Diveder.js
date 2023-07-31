@@ -38,10 +38,8 @@ const columns = [
   { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false,},
   { field: 'longShort', headerName: 'Long / Short', width: 100, editable: false,},
   { field: 'contracts', headerName: 'Contracts', width: 100, editable: false,},
-  { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false,},
-  { field: 'stopPrice', headerName: 'Stop Price', width: 100, editable: false,},
-  { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false,},
-  { field: 'duration', headerName: 'Duration', width: 100, editable: false,},
+
+  { field: 'duration', headerName: 'Duration', width: 170, editable: false,},
   { field: 'commission', headerName: 'Commission', width: 100, editable: false,},
   { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false,},
   { field: 'comments', headerName: 'comments', width: 100, editable: false,},
@@ -112,22 +110,44 @@ export default function Diveder(props) {
   const handleCloseCommend = () => {
     setCommendOpen(false);
   };
+  const rows = trades.map((trade) => {
+    // Calculate the duration in hours, minutes, and seconds format
+    const durationInMinutes = trade.duration || 0;
+    const hours = Math.floor(durationInMinutes / 60);
+    const minutes = Math.floor(durationInMinutes % 60);
+    const seconds = Math.floor((durationInMinutes % 1) * 60);
   
-const rows = trades.map((trade) => ({
-  id: trade._id,
-  symbol: trade.symbol,
-  status: trade.status,
-  netROI: trade.netROI + "%",
-  longShort: trade.longShort,
-  contracts: trade.contracts,
-  entryPrice:"$" + trade.entryPrice,
-  stopPrice: "$" +trade.stopPrice,
-  exitPrice: "$" +trade.exitPrice,
-  duration:  trade.duration ? (trade.duration >= 60  ? +  trade.duration/60  + "Hour" : trade.duration +  "Min") : "N/A",
-  commission:trade.commission? "$" +trade.commission : "N/A",
-  netPnL:"$" + trade.netPnL ,
-  comments: trade.comments,
-}));
+    // Format the duration as a string
+    let formattedDuration = '';
+    if (hours > 0) {
+      formattedDuration += `${hours} Hr `;
+    }
+    if (minutes > 0) {
+      formattedDuration += `${minutes} Min `;
+    }
+    if (seconds > 0) {
+      formattedDuration += `${seconds} Sec`;
+    }
+  
+    // If all values are zero, display "N/A"
+    if (!formattedDuration.trim()) {
+      formattedDuration = "N/A";
+    }
+  
+    return {
+      id: trade._id,
+      symbol: trade.symbol,
+      status: trade.status,
+      netROI: trade.netROI + "%",
+      longShort: trade.longShort,
+      contracts: trade.contracts,
+      duration: formattedDuration, // Use the formatted duration instead of the raw value
+      commission: trade.commission ? "$" + trade.commission : "N/A",
+      netPnL: "$" + trade.netPnL,
+      comments: trade.comments,
+    };
+  });
+  
   
 
 
@@ -149,16 +169,7 @@ useEffect(() => {
 }, [])
 
 
-  // useEffect(() => {
-  //   api.get(`/api/ShowInfoBySpecificDate/${date}`).then(
-  //     (res) => {
-  //       setTrades(res.data);
-        
-      
-
-  //     }
-  //   ).catch()
-  // }, [date])
+  
 
 
 
