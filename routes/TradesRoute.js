@@ -97,6 +97,25 @@ router.get('/fetchTrades', async (req, res) => {
   }
 });
 
+// router.get('/fetchFarshelTrades/:id', async (req, res) => {
+//   try {
+//     const { id } = req.params; // Change req.params to req.query
+//     console.log(id);
+
+//     const tradesWithId = await Trade.find({ tradeID: id });
+
+//     if (!tradesWithId.length) {
+//       return res.status(400).send("There aren't any trades with the provided id");
+//     }
+
+//     res.status(200).json(tradesWithId);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send(err);
+//   }
+// });
+
+
 router.post("/editTrade", async (req, res) => {
   try {
     const data = req.body;
