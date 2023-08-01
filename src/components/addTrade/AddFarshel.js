@@ -38,9 +38,9 @@ const columns = [
     { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
     { field: 'longShort', headerName: 'Long / Short', width: 100, editable: false, },
     { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
-    { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false,},
-    { field: 'stopPrice', headerName: 'Stop Price', width: 100, editable: false,},
-    { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false,},
+    { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
+    { field: 'stopPrice', headerName: 'Stop Price', width: 100, editable: false, },
+    { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false, },
     { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
     { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
     { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
@@ -90,17 +90,31 @@ const style = {
 
 export default function AddFarshel(props) {
     const id = props.trade.tradeID;
-    console.log(id);
-   
-    const [trades, setTrades] = useState([]);
+
     const totalPnL = props.trade.totalPnL;
     const isNegative = totalPnL < 0;
     const winRate = ((props.trade.win / (props.trade.win + props.trade.loss)) * 100).toFixed(2);
-
     const handleOpen = () => props.handleOpenModal(true);
     const handleClose = () => props.handleOpenModal(false);
     const [selectedComment, setSelectedComment] = useState('');
     const [openCommend, setCommendOpen] = React.useState(false);
+    const [trades, setTrades] = useState([]);
+
+
+
+    // Assuming 'id' is a variable containing the trade ID you want to fetch
+    useEffect(() => {
+        api.get(`/api/fetchFarshelTrades/${id}`)
+            .then((res) => {
+                setTrades(res.data);
+             
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, [id]);
+
+
 
 
     const handleCellClick = (params) => {
@@ -114,99 +128,86 @@ export default function AddFarshel(props) {
         setCommendOpen(false);
     };
     const rows = trades.map((trade) => {
-        // Calculate the duration in hours, minutes, and seconds format
-        const durationInMinutes = trade.duration || 0;
-        const hours = Math.floor(durationInMinutes / 60);
-        const minutes = Math.floor(durationInMinutes % 60);
-        const seconds = Math.floor((durationInMinutes % 1) * 60);
+        console.log(trade);
+        trade.tradesHistory.map((history) => {
+            console.log(history);
+            // Calculate the duration in hours, minutes, and seconds format
+            const durationInMinutes = history["duration"] || 0;
+            const hours = Math.floor(durationInMinutes / 60);
+            const minutes = Math.floor(durationInMinutes % 60);
+            const seconds = Math.floor((durationInMinutes % 1) * 60);
 
-        // Format the duration as a string
-        let formattedDuration = '';
-        if (hours > 0) {
-            formattedDuration += `${hours} Hr `;
-        }
-        if (minutes > 0) {
-            formattedDuration += `${minutes} Min `;
-        }
-        if (seconds > 0) {
-            formattedDuration += `${seconds} Sec`;
-        }
+            // Format the duration as a string
+            let formattedDuration = '';
+            if (hours > 0) {
+                formattedDuration += `${hours} Hr `;
+            }
+            if (minutes > 0) {
+                formattedDuration += `${minutes} Min `;
+            }
+            if (seconds > 0) {
+                formattedDuration += `${seconds} Sec`;
+            }
 
-        // If all values are zero, display "N/A"
-        if (!formattedDuration.trim()) {
-            formattedDuration = "N/A";
-        }
+            // If all values are zero, display "N/A"
+            if (!formattedDuration.trim()) {
+                formattedDuration = "N/A";
+            }
 
-        return {
-            id: trade._id,
-            symbol: trade.symbol,
-            status: trade.status,
-            netROI: trade.netROI + "%",
-            longShort: trade.longShort,
-            contracts: trade.contracts,
-            duration: formattedDuration, // Use the formatted duration instead of the raw value
-            commission: trade.commission ? "$" + trade.commission : "N/A",
-            netPnL: "$" + trade.netPnL,
-            comments: trade.comments,
-        };
+            return {
+                id: history["_id"],
+                symbol: history["symbol"],
+                status: history["status"],
+                netROI: history["netROI"] + "%",
+                longShort: history["longShort"],
+                contracts: history["contracts"],
+                duration: formattedDuration, // Use the formatted duration instead of the raw value
+                commission: history["commission"] ? "$" + history["commission"] : "N/A",
+                netPnL: "$" + history["netPnL"],
+                comments: history["comments"],
+            };
+        })
+        
     });
 
 
 
-
-    // const fetchTrades = async () => {
-    //     const result = await api.get(`/api/ShowInfoBySpecificDate/${date}`);
-    //     return result;
-    // }
-
-
-    // useEffect(() => {
-
-
-    //     fetchTrades().then((res) => {
-    //         if (res.data)
-    //             setTrades(res.data);
-    //     }).catch((err) => {
-    //         console.error(err);
-    //     })
-    // }, [])
-
     return (
-  <div>  
-        <Modal
-  open={handleOpen}
-  onClose={handleClose}
-  aria-labelledby="modal-modal-title"
-  aria-describedby="modal-modal-description"
->
-  <Box sx={style}>
-  
-  <Box sx={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
-        }}
-        pageSizeOptions={[5]}
-          onCellClick={handleCellClick}
-       
-      />
-          <Dialog open={openCommend} onClose={handleCloseCommend}>
-        <DialogTitle>Comment</DialogTitle>
-        <DialogContent>{selectedComment}</DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseCommend} color="primary">Close</Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
-  </Box>
-</Modal>
+        <div>
+            <Modal
+                open={handleOpen}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
 
-</div>
+                    <Box sx={{ height: 400, width: '100%' }}>
+                        <DataGrid
+                            rows={rows}
+                            columns={columns}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        pageSize: 5,
+                                    },
+                                },
+                            }}
+                            pageSizeOptions={[5]}
+                            onCellClick={handleCellClick}
+
+                        />
+                        <Dialog open={openCommend} onClose={handleCloseCommend}>
+                            <DialogTitle>Comment</DialogTitle>
+                            <DialogContent>{selectedComment}</DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleCloseCommend} color="primary">Close</Button>
+                            </DialogActions>
+                        </Dialog>
+                    </Box>
+                </Box>
+            </Modal>
+
+        </div>
     );
 }
