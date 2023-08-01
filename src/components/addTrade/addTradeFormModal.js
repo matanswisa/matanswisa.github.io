@@ -22,8 +22,10 @@ import {
 } from '@mui/material';
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
-import { setTrades } from '../../redux-toolkit/tradesSlice';
 import './addTrade.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentAccount, selectUser, setTradesList } from '../../redux-toolkit/userSlice';
+import { config } from '../../api/apiAuthConfig';
 
 const style = {
   position: 'absolute',
@@ -48,13 +50,18 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 export default function BasicModal(props) {
-  
+
+  const user = useSelector(selectUser);
+  const currentAccount = useSelector(selectCurrentAccount);
+
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
   const tradeInfo = props?.tradeInfo;
   const editMode = props?.isEditMode;
   const prevStatusState = props?.prevState;
+
+  const reduxDispatch = useDispatch();
 
   const initialState = {
     positionType: tradeInfo?.longShort || '',
@@ -139,7 +146,7 @@ export default function BasicModal(props) {
       duration: positionDuration,
       commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
       comments,
-      netPnL: positionStatus === "Loss" ?netPnL*-1 : netPnL,
+      netPnL: positionStatus === "Loss" ? netPnL * -1 : netPnL,
       tradeId: tradeInfo?._id || '',
     }
 
@@ -147,12 +154,16 @@ export default function BasicModal(props) {
 
       if (validateForm()) {
         if (!editMode) {
+          console.log("config", config);
           await api
-            .post('/api/addTrade', data).then((res) => {
+            .post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }, config).then((res) => {
               if (selectedFile !== null) {
                 handleUpload(res.data.tradeId);
               }
-              props.updateTradeLists()
+              // props.updateTradeLists()
+
+              reduxDispatch(setTradesList(res.data));
+              console.log(res.data);
               notifyToast("Trade added successfully", "success");
               handleClose();
 
@@ -163,15 +174,18 @@ export default function BasicModal(props) {
         else if (editMode === true) {
 
           const netPnL = prevStatusState !== data.status && data.status === "Win" && data.netPnL < 0
-          ? -data.netPnL 
-          : data.netPnL;
- 
-         data.netPnL = netPnL;
+            ? -data.netPnL
+            : data.netPnL;
+
+          data.netPnL = netPnL;
           await api.post('/api/editTrade', data)
             .then((response) => {
               notifyToast("Trade Edit succssfully", "success")
               handleUpload(tradeInfo?._id);
-              props.updateTradeLists()
+              // props.updateTradeLists()
+
+              reduxDispatch(setTradesList(response.data));
+
 
             })
             .catch((error) => {
@@ -189,20 +203,19 @@ export default function BasicModal(props) {
   const validateForm = () => {
 
     const currentDate = new Date().toISOString().slice(0, 10); // Get today's date in the format "YYYY-MM-DD"
-   
-    if(positionDate > currentDate)
-      { 
-        const errorMessage = "the selected date is above today's date.";
- 
-        notifyToast(errorMessage, "warning");
 
-        return false;
+    if (positionDate > currentDate) {
+      const errorMessage = "the selected date is above today's date.";
 
-       } 
+      notifyToast(errorMessage, "warning");
+
+      return false;
+
+    }
 
     if (positionType === '' || positionStatus === '' ||
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
-   
+
       if (positionType === '') notifyToast("Position type is missing", "warning");
       else if (positionStatus === '') notifyToast("Position status is missing", "warning");
       else if (!netPnL) notifyToast("Net PnL is missing", "warning");
@@ -211,8 +224,8 @@ export default function BasicModal(props) {
       else if (!positionDate) notifyToast("Date field is missing", "warning");
 
       console.log(positionDate > currentDate);
-      
-        
+
+
       return false;
     }
     return true;
@@ -242,7 +255,7 @@ export default function BasicModal(props) {
       .then(response => response.json())
       .then(data => {
         // Handle the response from the server
-   
+
         props.updateTradeLists()
       })
       .catch(error => {
@@ -258,7 +271,7 @@ export default function BasicModal(props) {
   };
 
   useEffect(() => {
-    
+
     if (selectedFile) {
       notifyToast("Image successfully uploaded", "success");
     }

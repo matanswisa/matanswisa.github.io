@@ -8,7 +8,8 @@ import Calendar from '../components/Calendar/calendar';
 // components
 import Iconify from '../components/iconify';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
+// import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
+// import {}
 // sections
 import {
   AppTasks,
@@ -27,7 +28,8 @@ import api from '../api/api';
 import { ReactComponent as dollarLogo } from '../icons/dollar-symbol.svg';
 
 import { Colors } from '../components/color-utils/Colors';
-
+import SelectAccount from '../components/accounts/selectAccount'
+import { selectCurrentAccount } from '../redux-toolkit/userSlice';
 // ----------------------------------------------------------------------
 
 
@@ -85,7 +87,6 @@ const ProfitFactor = (trades) => {
 
 
   return SumWin / SumLoss < 0 ? SumWin / SumLoss * -1 : SumWin / SumLoss;
-
 }
 
 
@@ -94,8 +95,8 @@ export default function DashboardAppPage() {
 
 
 
-  const Alltrades = useSelector(getTrades)
-
+  const currentAccount = useSelector(selectCurrentAccount)
+  const Alltrades = currentAccount.trades;
   const theme = useTheme();
 
   const [losingTrades, setLosingTrades] = useState(0);
@@ -199,7 +200,7 @@ export default function DashboardAppPage() {
     api.get("/api/ShowInfoByDates").then(
       (res) => {
         setDailyNetCumulative(res.data)
-       
+
         for (const index in res.data) {
 
           if (res.data[index]["totalPnL"] < 0) {  //when in some day we have a lose day(P&L < 0) inc variable  
@@ -209,10 +210,7 @@ export default function DashboardAppPage() {
           else { //when in some day we have a win day(P&L > 0) inc variable  
             setWinningTradesInDays(prevState => prevState + 1);
           }
-
-
         }
-
       }
     ).catch()
   }, [])
@@ -223,9 +221,6 @@ export default function DashboardAppPage() {
     api.get("/api/ShowNumOfTradeTotalPnlInfoByDates").then(
       (res) => {
         setCalendarTrades(res.data)
-     
-
-
       }
     ).catch()
   }, [])
@@ -245,6 +240,7 @@ export default function DashboardAppPage() {
         <Typography variant="h4" sx={{ mb: 3 }}>
           Hi, Welcome back
         </Typography>
+        <SelectAccount />
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>

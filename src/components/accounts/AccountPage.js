@@ -31,6 +31,8 @@ import useToast from '../../hooks/alert';
 import 'react-toastify/dist/ReactToastify.css';
 import api from '../../api/api';
 import { ToastContainer, } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeAccount, selectAccounts, selectUser, selectUserAccounts } from '../../redux-toolkit/userSlice';
 
 
 //Related to dialog error - has to be outside of the component
@@ -40,33 +42,20 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function BasicModal() {
 
+    const dispatch = useDispatch();
+
     //const toggleShow = () => setBasicModal(!basicModal);
-    const [accounts, setAccounts] = useState([]);
+    // const [accounts, setAccounts] = useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
-
-
-    useEffect(() => {
-        fetchAccounts();
-
-    }, []);
-
-
-
-
-
+    const user = useSelector(selectUser);
+    const accounts = useSelector(selectUserAccounts);
+    const token = localStorage.getItem('token');
 
 
     const fetchAccounts = async () => {
-        try {
-            const response = await api.get('/api/accounts');
-            setAccounts(response.data);
 
-
-        } catch (error) {
-            console.error(error);
-        }
     };
 
 
@@ -78,17 +67,37 @@ export default function BasicModal() {
 
 
 
-
     const handleCloseMenu = async (accountId) => {
+        const token = localStorage.getItem("token");
+        console.log("token", token);
+        try {
+            // Prepare the request body data to be sent with the DELETE request
+            const requestData = {
+                accountId: accountId,
+                userId: user._id,
+            };
+
+            // Send the DELETE request with the data in the request body and authorization header
+            await api.delete('/api/deleteAccount', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                data: requestData,
+            });
+
+            dispatch(removeAccount({ accountId }));
+            // Notify and fetch accounts
+            notifyToast(`Delete Account - ${accountId}`, 'warning');
+            // await fetchAccounts();
 
 
-        await api.delete('/api/deleteAccount', { data: { accountId } });
-        notifyToast("Delete Account successfully", 'warning');
-        fetchAccounts();
+            setAnchorEl(null);
+        } catch (error) {
+            // Handle errors if any
+            console.error(error);
+        }
+    };
 
-
-        setAnchorEl(null);
-    }
 
 
 
@@ -139,12 +148,8 @@ export default function BasicModal() {
 
 
     return (
-
-
         <Container maxWidth="lg">
             <ToastContainer />
-
-
 
             <div style={containerStyle}>
                 <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
@@ -220,7 +225,7 @@ export default function BasicModal() {
                                             <DialogTitle>{"Confirm Deletion"}</DialogTitle>
                                             <DialogContent>
                                                 <DialogContentText id="alert-dialog-slide-description">
-                                                When deleting the account, all the trades under that account will be deleted. Are you sure?
+                                                    When deleting the account, all the trades under that account will be deleted. Are you sure?
                                                 </DialogContentText>
                                             </DialogContent>
                                             <DialogActions>
@@ -250,16 +255,13 @@ export default function BasicModal() {
             <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
 
 
-                {openmodal && editMode === false && <ChildModal edit={editMode} notifyToast={notifyToast} fetchAccounts={fetchAccounts} openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
+                {openmodal && editMode === false && <ChildModal edit={editMode} notifyToast={notifyToast} openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
                 {(openmodal) === true && editMode === true ? <ChildModal
                     openModal={openmodal}
-                    fetchAccounts={fetchAccounts}
                     handleOpenModal={setIsOpenmodal}
                     notifyToast={notifyToast}
                     edit={editMode}
                     accountInfo={accountInfoInEdit}
-
-
                 /> : null}
 
 
