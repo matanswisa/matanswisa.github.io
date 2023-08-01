@@ -215,7 +215,7 @@ export default function UserPage() {
 
   const [openmodal, setIsOpenmodal] = useState(false);
   const [openmodalfarshel, setIsOpenFarshelmodal] = useState(false);
-  
+  const [selectedTrade, setSelectedTrade] = useState(null);
   const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);
   const dispatch = useDispatch();
 
@@ -228,11 +228,11 @@ export default function UserPage() {
     setIsOpenmodal(true);
   };
 
-
-  const handleOpenFarshelModal = (tradeId) => {
+  const handleOpenFarshelModal = (trade) => {
+    setSelectedTrade(trade);
     setIsOpenFarshelmodal(true);
   };
-
+  
 
   const handleOpenModalImportTrades = (tradeId) => {
     setIsOpenmodalImportTrades(true);
@@ -461,15 +461,17 @@ export default function UserPage() {
                           role="checkbox"
                           selected={trade}
                         >
-                          <TableCell >
 
-                            
-                             <IconButton size="large" color="inherit" onClick={handleOpenFarshelModal}>
+                          <TableCell>
+                            <IconButton size="large" color="inherit" onClick={() => handleOpenFarshelModal(trade)}>
                               <Iconify icon={'eva:info-outline'} />
                             </IconButton>
-                           {openmodalfarshel &&<AddFarshel trade={trade} openModal={openmodalfarshel} handleOpenModal={setIsOpenFarshelmodal} /> } 
-
+                            {openmodalfarshel && selectedTrade === trade && <AddFarshel trade={trade} openModal={openmodalfarshel} handleOpenModal={setIsOpenFarshelmodal} />}
                           </TableCell>
+
+
+
+
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               {formatDate(trade.entryDate)}
