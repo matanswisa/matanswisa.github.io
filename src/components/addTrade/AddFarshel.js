@@ -32,7 +32,7 @@ const ProfitFactor = (trade) => {
 
 
 const columns = [
-    { field: 'id', headerName: 'ID', width: 120 },
+ 
     { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
     { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
     { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
@@ -74,7 +74,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 1000,
+    width: 990,
     height: 480,
     bgcolor: 'background.paper',
     border: '2px solid #000',
@@ -87,7 +87,7 @@ const style = {
 
 export default function AddFarshel(props) {
     const trade = props.trade;
-    const tradeId = props.trade.tradeID;
+   
     //console.log(trade.tradesHistory);
     const totalPnL = props.trade.totalPnL;
     const isNegative = totalPnL < 0;
@@ -113,13 +113,14 @@ export default function AddFarshel(props) {
     };
     const rows = trade.tradesHistory.map((trade) => {
        
-      
-          
+
+            console.log(trade.duration);
             // Calculate the duration in hours, minutes, and seconds format
             const durationInMinutes = trade.duration || 0;
-            const hours = Math.floor(durationInMinutes / 60);
-            const minutes = Math.floor(durationInMinutes % 60);
-            const seconds = Math.floor((durationInMinutes % 1) * 60);
+            const absoluteDurationInMinutes = Math.abs(durationInMinutes);
+            const hours = Math.floor(absoluteDurationInMinutes / 60);
+            const minutes = Math.floor(absoluteDurationInMinutes % 60);
+            const seconds = Math.floor((absoluteDurationInMinutes % 1) * 60);
 
             // Format the duration as a string
             let formattedDuration = '';
@@ -138,6 +139,8 @@ export default function AddFarshel(props) {
                 formattedDuration = "N/A";
             }
 
+          
+          
             return {
                 id: trade._id,
                 symbol: trade.symbol,
@@ -167,7 +170,7 @@ export default function AddFarshel(props) {
             >
                 <Box sx={style}>
 
-                    <Box sx={{ height: 400, width: '100%' }}>
+                    <Box sx={{ height: 400, width: '95%' }}>
                         <DataGrid
                             rows={rows}
                             columns={columns}
