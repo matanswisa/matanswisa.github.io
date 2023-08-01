@@ -238,7 +238,7 @@ export default function BasicModal(props) {
 
 
   const handleSaveTrade = async (csvData) => {
-
+    console.log(csvData);
     const count = csvData.length; // Total number of trades
     let successCount = 0;
 
@@ -264,13 +264,16 @@ export default function BasicModal(props) {
 
 
 
+
       const boughtTimestamp = new Date(csvData[i]["Bought Timestamp"]);
       const soldTimestamp = new Date(csvData[i]["Sold Timestamp"]);
 
 
       const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
-      data.duration = timeDifferenceInMinutes || "";
+      const absoluteDurationInMinutes = Math.abs(timeDifferenceInMinutes)
+      data.duration = absoluteDurationInMinutes || "";
 
+      console.log(data.duration);
 
       if (data.status == "Break Even") {
 
@@ -279,7 +282,7 @@ export default function BasicModal(props) {
         data.netROI = 0;
       }
 
-
+    ;
 
 
       await api
