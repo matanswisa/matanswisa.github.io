@@ -89,8 +89,8 @@ const style = {
 
 
 export default function AddFarshel(props) {
-    const id = props.trade.tradeID;
-
+    const trade = props.trade;
+    //console.log(trade.tradesHistory);
     const totalPnL = props.trade.totalPnL;
     const isNegative = totalPnL < 0;
     const winRate = ((props.trade.win / (props.trade.win + props.trade.loss)) * 100).toFixed(2);
@@ -99,20 +99,6 @@ export default function AddFarshel(props) {
     const [selectedComment, setSelectedComment] = useState('');
     const [openCommend, setCommendOpen] = React.useState(false);
     const [trades, setTrades] = useState([]);
-
-
-
-    // Assuming 'id' is a variable containing the trade ID you want to fetch
-    useEffect(() => {
-        api.get(`/api/fetchFarshelTrades/${id}`)
-            .then((res) => {
-                setTrades(res.data);
-             
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, [id]);
 
 
 
@@ -127,12 +113,13 @@ export default function AddFarshel(props) {
     const handleCloseCommend = () => {
         setCommendOpen(false);
     };
-    const rows = trades.map((trade) => {
+    const rows = trade.tradesHistory.map((trade) => {
         console.log(trade);
-        trade.tradesHistory.map((history) => {
-            console.log(history);
+        console.log(trade.symbol);
+      
+          
             // Calculate the duration in hours, minutes, and seconds format
-            const durationInMinutes = history["duration"] || 0;
+            const durationInMinutes = trade.duration || 0;
             const hours = Math.floor(durationInMinutes / 60);
             const minutes = Math.floor(durationInMinutes % 60);
             const seconds = Math.floor((durationInMinutes % 1) * 60);
@@ -155,18 +142,18 @@ export default function AddFarshel(props) {
             }
 
             return {
-                id: history["_id"],
-                symbol: history["symbol"],
-                status: history["status"],
-                netROI: history["netROI"] + "%",
-                longShort: history["longShort"],
-                contracts: history["contracts"],
+                id: trade._id,
+                symbol: trade.symbol,
+                status: trade.status,
+                netROI: trade.netROI + "%",
+                longShort: trade.longShort,
+                contracts: trade.contracts,
                 duration: formattedDuration, // Use the formatted duration instead of the raw value
-                commission: history["commission"] ? "$" + history["commission"] : "N/A",
-                netPnL: "$" + history["netPnL"],
-                comments: history["comments"],
+                commission: trade.commission ? "$" + trade.commission : "N/A",
+                netPnL: "$" + trade.netPnL,
+                comments: trade.comments,
             };
-        })
+      
         
     });
 
