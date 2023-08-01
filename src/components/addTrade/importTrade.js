@@ -137,7 +137,7 @@ export default function BasicModal(props) {
         });
 
         for (let k of Object.keys(transactionsMapObj)) {
-          console.log(k)
+        
           handleSaveParcelsTrade(k, transactionsMapObj[k]);
         }
       };
@@ -166,7 +166,7 @@ export default function BasicModal(props) {
 
 
   const handleSaveParcelsTrade = async (id, arr) => {
-    console.log(arr);
+
     // const count = matchingRows.length; // Total number of trades
     //let successCount = 0;
 

@@ -214,6 +214,8 @@ export default function UserPage() {
   const toggleShow = () => setBasicModal(!basicModal);
 
   const [openmodal, setIsOpenmodal] = useState(false);
+  const [openmodalfarshel, setIsOpenFarshelmodal] = useState(false);
+  
   const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);
   const dispatch = useDispatch();
 
@@ -225,6 +227,12 @@ export default function UserPage() {
   const handleOpenModal = (tradeId) => {
     setIsOpenmodal(true);
   };
+
+
+  const handleOpenFarshelModal = (tradeId) => {
+    setIsOpenFarshelmodal(true);
+  };
+
 
   const handleOpenModalImportTrades = (tradeId) => {
     setIsOpenmodalImportTrades(true);
@@ -454,7 +462,12 @@ export default function UserPage() {
                           selected={trade}
                         >
                           <TableCell >
-                            <AddFarshel trade={trade} key={trade.id} />
+
+                            
+                             <IconButton size="large" color="inherit" onClick={handleOpenFarshelModal}>
+                              <Iconify icon={'eva:info-outline'} />
+                            </IconButton>
+                           {openmodalfarshel &&<AddFarshel trade={trade} openModal={openmodalfarshel} handleOpenModal={setIsOpenFarshelmodal} /> } 
 
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">

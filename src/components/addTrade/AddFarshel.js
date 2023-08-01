@@ -89,17 +89,18 @@ const style = {
 
 
 export default function AddFarshel(props) {
-    const date = props.trade._id;
+    const id = props.trade.tradeID;
+    console.log(id);
+   
     const [trades, setTrades] = useState([]);
     const totalPnL = props.trade.totalPnL;
     const isNegative = totalPnL < 0;
     const winRate = ((props.trade.win / (props.trade.win + props.trade.loss)) * 100).toFixed(2);
-    const [open, setOpen] = React.useState(false);
-    const [openCommend, setCommendOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
 
+    const handleOpen = () => props.handleOpenModal(true);
+    const handleClose = () => props.handleOpenModal(false);
     const [selectedComment, setSelectedComment] = useState('');
+    const [openCommend, setCommendOpen] = React.useState(false);
 
 
     const handleCellClick = (params) => {
@@ -153,40 +154,27 @@ export default function AddFarshel(props) {
 
 
 
-    const fetchTrades = async () => {
-        const result = await api.get(`/api/ShowInfoBySpecificDate/${date}`);
-        return result;
-    }
+    // const fetchTrades = async () => {
+    //     const result = await api.get(`/api/ShowInfoBySpecificDate/${date}`);
+    //     return result;
+    // }
 
 
-    useEffect(() => {
+    // useEffect(() => {
 
 
-        fetchTrades().then((res) => {
-            if (res.data)
-                setTrades(res.data);
-        }).catch((err) => {
-            console.error(err);
-        })
-    }, [])
-
-
-
-
-
+    //     fetchTrades().then((res) => {
+    //         if (res.data)
+    //             setTrades(res.data);
+    //     }).catch((err) => {
+    //         console.error(err);
+    //     })
+    // }, [])
 
     return (
-
-  <div>
-
-
-
-      <IconButton size="large" color="inherit" onClick={handleOpen}>
-                              <Iconify icon={'eva:info-outline'} />
-                            </IconButton>
-      
+  <div>  
         <Modal
-  open={open}
+  open={handleOpen}
   onClose={handleClose}
   aria-labelledby="modal-modal-title"
   aria-describedby="modal-modal-description"
