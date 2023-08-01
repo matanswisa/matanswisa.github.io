@@ -32,19 +32,16 @@ const ProfitFactor = (trade) => {
 
 
 const columns = [
-    { field: 'id', headerName: 'ID', width: 30 },
+    { field: 'id', headerName: 'ID', width: 120 },
     { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
-    { field: 'status', headerName: 'Status', width: 100, editable: false, },
     { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
-    { field: 'longShort', headerName: 'Long / Short', width: 100, editable: false, },
     { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
     { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
-    { field: 'stopPrice', headerName: 'Stop Price', width: 100, editable: false, },
     { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false, },
     { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
     { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
     { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
-    { field: 'comments', headerName: 'comments', width: 100, editable: false, },
+  
 ];
 
 
@@ -77,7 +74,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 1340,
+    width: 1000,
     height: 480,
     bgcolor: 'background.paper',
     border: '2px solid #000',
@@ -90,6 +87,7 @@ const style = {
 
 export default function AddFarshel(props) {
     const trade = props.trade;
+    const tradeId = props.trade.tradeID;
     //console.log(trade.tradesHistory);
     const totalPnL = props.trade.totalPnL;
     const isNegative = totalPnL < 0;
@@ -114,8 +112,7 @@ export default function AddFarshel(props) {
         setCommendOpen(false);
     };
     const rows = trade.tradesHistory.map((trade) => {
-        console.log(trade);
-        console.log(trade.symbol);
+       
       
           
             // Calculate the duration in hours, minutes, and seconds format
@@ -144,14 +141,15 @@ export default function AddFarshel(props) {
             return {
                 id: trade._id,
                 symbol: trade.symbol,
-                status: trade.status,
                 netROI: trade.netROI + "%",
-                longShort: trade.longShort,
-                contracts: trade.contracts,
+                entryPrice: trade.entryPrice,
+                exitPrice: trade.exitPrice,
+                contracts: trade.qty,
                 duration: formattedDuration, // Use the formatted duration instead of the raw value
                 commission: trade.commission ? "$" + trade.commission : "N/A",
                 netPnL: "$" + trade.netPnL,
-                comments: trade.comments,
+                
+              
             };
       
         

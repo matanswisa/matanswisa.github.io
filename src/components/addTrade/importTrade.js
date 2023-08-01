@@ -187,6 +187,7 @@ export default function BasicModal(props) {
         commission: "",
         comments: "",
         netPnL: arr[i]["P/L"] !== undefined ? arr[i]["P/L"] : "",
+        qty: arr[i]["Paired Qty"],
 
       }
 
