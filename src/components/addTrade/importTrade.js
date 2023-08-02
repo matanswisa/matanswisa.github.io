@@ -12,6 +12,9 @@ import { useEffect, useState, useRef } from 'react';
 import api from '../../api/api'
 import Papa from 'papaparse';
 import { forEach } from 'lodash';
+import { configAuth } from '../../api/configAuth';
+import { useSelector } from 'react-redux';
+import { selectCurrentAccount, selectUser } from '../../redux-toolkit/userSlice';
 
 
 
@@ -48,7 +51,8 @@ export default function BasicModal(props) {
 
 
 
-
+  const user = useSelector(selectUser);
+  const currentAccount = useSelector(selectCurrentAccount)
 
   // /////////////////////import trades///////////////////
   const [selectedFile, setSelectedFile] = useState(null);
@@ -123,7 +127,7 @@ export default function BasicModal(props) {
 
 
         await handleSaveTrade(mergedData);  //insert merged data to reports page.
-        
+
         const transactions = result.data;
         const transactionsMapObj = {};
         transactions.forEach((transaction) => {
@@ -137,7 +141,7 @@ export default function BasicModal(props) {
         });
 
         for (let k of Object.keys(transactionsMapObj)) {
-        
+
           handleSaveParcelsTrade(k, transactionsMapObj[k]);
         }
       };
@@ -208,7 +212,7 @@ export default function BasicModal(props) {
 
 
       await api
-        .post('/api/importParcelsTrades', { data, id })
+        .post('/api/importParcelsTrades', { data, id, userId: user._id, accountId: currentAccount._id }, configAuth)
         .then((res) => {
           props.updateTradeLists();
           handleClose();
@@ -282,11 +286,11 @@ export default function BasicModal(props) {
         data.netROI = 0;
       }
 
-    ;
+      ;
 
 
       await api
-        .post('/api/importTrades', data).then((res) => {
+        .post('/api/importTrades', { userId: user._id, accountId: currentAccount._id, data }, configAuth).then((res) => {
           props.updateTradeLists()
 
           handleClose();
