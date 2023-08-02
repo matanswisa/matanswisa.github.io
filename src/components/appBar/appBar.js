@@ -1,4 +1,3 @@
-import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,35 +14,35 @@ export default function ButtonAppBar() {
 
 
 
-  const fetchAccounts = async () => {
-    try {
-      const response = await api.get('/api/accounts');
-      setAccounts(response.data);
+  // const fetchAccounts = async () => {
+  //   try {
+  //     const response = await api.get('/api/accounts');
+  //     setAccounts(response.data);
 
-      
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
-  
-  useEffect(() => {
-    fetchAccounts();
-    
-  }, []);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+
+  // useEffect(() => {
+  //   fetchAccounts();
+
+  // }, []);
 
 
 
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-       <AppBar position="static" sx={{ backgroundColor: '#f9fafb', boxShadow: 'none',  }}>
-       <Toolbar sx={{ display: 'flex', justifyContent: 'flex-end'  }}>
+      <AppBar position="static" sx={{ backgroundColor: '#f9fafb', boxShadow: 'none', }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'flex-end' }}>
 
 
-       {accounts.length > 0 && <SelectAccount />}
-     
-          
+          {accounts.length > 0 && <SelectAccount />}
+
+
         </Toolbar>
       </AppBar>
     </Box>

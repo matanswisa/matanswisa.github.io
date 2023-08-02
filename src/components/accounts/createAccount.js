@@ -8,8 +8,23 @@ import { useState } from 'react';
 import api from '../../api/api';
 import { useEffect } from 'react';
 import { Select, MenuItem, ListItemIcon, Alert } from '@mui/material';
-import { red, blue, green, yellow, orange, purple, pink, cyan, brown, lightGreen, lime, blueGrey } from '@mui/material/colors';
+import {
+  red,
+  blue,
+  green,
+  yellow,
+  orange,
+  purple,
+  pink,
+  cyan,
+  brown,
+  lightGreen,
+  lime,
+  blueGrey,
+} from '@mui/material/colors';
 import { Grid } from 'rsuite';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../redux-toolkit/userSlice';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -31,92 +46,80 @@ export default function BasicModal(props) {
   const { notifyToast } = props;
   const { edit } = props;
   const { accountInfo } = props;
+
+  const user = useSelector(selectUser);
+  const token = localStorage.getItem('token');
+
+  console.log("props", props);
+
+
   useEffect(() => {
     if (accountInfo && typeof accountInfo === 'object') {
-      setAccountName(accountInfo.AccountName || "");
-      setSelectedColor(accountInfo.Label || "");
+      setAccountName(accountInfo.AccountName || '');
+      setSelectedColor(accountInfo.Label || '');
     }
-  }, [accountInfo])
-
-
+  }, [accountInfo]);
 
   const checkAccountExists = (accountList, accountName) => {
-
-
-    const selectedAccount = accountList.find(account => account.AccountName === accountName);
-
+    const selectedAccount = accountList.find((account) => account.AccountName === accountName);
     return selectedAccount !== undefined;
   };
 
-
-
-
-
-
   const handleCreateAccount = async () => {
-
     if (validateForm()) {
       const data = {
-
         AccountName: accountName,
         Label: selectedColor,
-        IsSelected: "true",
-
-      }
-
-      console.log(data);
-
-
-
-      await api
-        .post('/api/createAccount', data).then((res) => {
-
-
-          notifyToast("Account added successfully", "success");
-          props.handleOpenModal(false);
-          props.fetchAccounts();
-          return false;
-
-        }).catch((err) => {
-
-          notifyToast("Couldn't add Account", "error");
-          return false;
-        })
-
-    }
-  }
-
-
-
-
-  const handleEditAccount = async () => {
-    if (validateForm()) {
-      const data = {
-        _id: accountInfo._id, // Include the _id property for updating the correct account
-        AccountName: accountName,
-        Label: selectedColor,
-        IsSelected: "true",
+        IsSelected: 'true',
       };
 
-      console.log(data);
+      console.log("user", user);
 
       await api
-        .put(`/api/editAccount/${accountInfo._id}`, data) // Use api.put and pass the account id in the URL
-        .then((res) => {
-          notifyToast("Account updated successfully", "success");
+        .post('/api/createAccount', { userId: user._id, data }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        })
+        .then(async (res) => {
+          notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
-          props.fetchAccounts();
+          await props.fetchAccounts();
+          return false;
         })
         .catch((err) => {
-          notifyToast("Couldn't update account", "error");
+          notifyToast("Couldn't add Account", 'error');
+          return false;
         });
     }
   };
 
+  const handleEditAccount = async () => {
+    if (validateForm()) {
+      const data = {
+        accountId: accountInfo._id, // Include the _id property for updating the correct account
+        AccountName: accountName,
+        Label: selectedColor,
+        IsSelected: 'true',
+        userId: user._id,
+      }; 
 
-
-
-
+      await api
+        .put('/api/editAccount', data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }) // Use api.put and pass the account id in the URL
+        .then((res) => {
+          notifyToast('Account updated successfully', 'success');
+          props.handleOpenModal(false);
+          props.fetchAccounts();
+        })
+        .catch((err) => {
+          notifyToast("Couldn't update account", 'error');
+        });
+    }
+  };
 
   const style = {
     position: 'absolute',
@@ -132,55 +135,29 @@ export default function BasicModal(props) {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end', // Align buttons to the right
-
   };
 
-
-
-
   const validateForm = () => {
-    if (accountName === '')
-      notifyToast("Account type is missing", "warning");
-
-
+    if (accountName === '') notifyToast('Account type is missing', 'warning');
     else if (checkAccountExists(accounts, accountName)) {
-      notifyToast("Account already exist", "warning");
+      notifyToast('Account already exist', 'warning');
       return false;
-    }
-
-    else
-      return true;
-
-  }
+    } else return true;
+  };
   return (
     <div>
       <Button onClick={handleOpen}>Open modal</Button>
-      {/* <Modal
-        open={handleOpen}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      > */}
-      <Box sx={style} >
+      <Box sx={style}>
         <Grid>
-          {edit === true ? <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            sx={{ textAlign: 'left', marginTop: 0 }}
-          >
-            Update Account
-          </Typography> : <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            sx={{ textAlign: 'left', marginTop: 0 }}
-          >
-            Create Account
-          </Typography>}
-
-
-
+          {edit === true ? (
+            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: 'left', marginTop: 0 }}>
+              Update Account
+            </Typography>
+          ) : (
+            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: 'left', marginTop: 0 }}>
+              Create Account
+            </Typography>
+          )}
         </Grid>
 
         <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
@@ -193,24 +170,17 @@ export default function BasicModal(props) {
             onChange={(e) => setAccountName(e.target.value)}
           />
 
-
-
-          <Select size="small" value={selectedColor}
-            onChange={(event) => setSelectedColor(event.target.value)}>
-            <MenuItem value={red[500]}>
-
-            </MenuItem>
+          <Select size="small" value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
+            <MenuItem value={red[500]}></MenuItem>
             <MenuItem value={red[500]}>
               <ListItemIcon>
                 <div style={{ backgroundColor: red[500], width: '24px', height: '24px' }}></div>
               </ListItemIcon>
-
             </MenuItem>
             <MenuItem value={blue[500]}>
               <ListItemIcon>
                 <div style={{ backgroundColor: blue[500], width: '24px', height: '24px' }}></div>
               </ListItemIcon>
-
             </MenuItem>
             <MenuItem value={green[500]}>
               <ListItemIcon>
@@ -227,55 +197,44 @@ export default function BasicModal(props) {
               <ListItemIcon>
                 <div style={{ backgroundColor: yellow[500], width: '24px', height: '24px' }}></div>
               </ListItemIcon>
-
             </MenuItem>
             <MenuItem value={orange[500]}>
               <ListItemIcon>
                 <div style={{ backgroundColor: orange[500], width: '24px', height: '24px' }}></div>
               </ListItemIcon>
-
             </MenuItem>
             <MenuItem value={purple[500]}>
               <ListItemIcon>
                 <div style={{ backgroundColor: purple[500], width: '24px', height: '24px' }}></div>
               </ListItemIcon>
-
             </MenuItem>
             <MenuItem value={pink[500]}>
               <ListItemIcon>
                 <div style={{ backgroundColor: pink[500], width: '24px', height: '24px' }}></div>
               </ListItemIcon>
-
             </MenuItem>
             <MenuItem value={cyan[500]}>
               <ListItemIcon>
                 <div style={{ backgroundColor: cyan[500], width: '24px', height: '24px' }}></div>
               </ListItemIcon>
-
             </MenuItem>
             <MenuItem value={lightGreen[500]}>
               <ListItemIcon>
                 <div style={{ backgroundColor: lightGreen[500], width: '24px', height: '24px' }}></div>
               </ListItemIcon>
-
             </MenuItem>
             <MenuItem value={lime[500]}>
               <ListItemIcon>
                 <div style={{ backgroundColor: lime[500], width: '24px', height: '24px' }}></div>
               </ListItemIcon>
-
             </MenuItem>
             <MenuItem value={blueGrey[500]}>
               <ListItemIcon>
                 <div style={{ backgroundColor: blueGrey[500], width: '24px', height: '24px' }}></div>
               </ListItemIcon>
-
             </MenuItem>
           </Select>
         </Grid>
-
-
-
 
         <Box
           sx={{
@@ -292,7 +251,7 @@ export default function BasicModal(props) {
           </Button>
 
           <Button onClick={edit === true ? handleEditAccount : handleCreateAccount} variant="contained" size="medium">
-            {edit === true ? "Update" : "Create"}
+            {edit === true ? 'Update' : 'Create'}
           </Button>
         </Box>
       </Box>

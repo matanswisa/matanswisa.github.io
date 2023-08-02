@@ -60,17 +60,6 @@ export default function Router() {
 
     {
       element: isAuthenticated ? <Tabs /> : <Navigate to="/login" replace />,
-      // children: [
-
-      //   // {
-      //   //   path: 'manage-users', // Add a new route for UsersManagementPage called "manage-users"
-      //   //   element: isAuthenticated && isAdmin ? <UsersManagementPage /> : <Navigate to="/login" replace />
-      //   // },
-      //   {
-      //     path: 'manage-users', // Add a new route for UsersManagementPage called "manage-users"
-      //     element: isAuthenticated && isAdmin ? <UsersManagementPage /> : <Navigate to="/login" replace />
-      //   },
-      // ]
     },
     {
       path: '404',

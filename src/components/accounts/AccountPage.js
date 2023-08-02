@@ -31,6 +31,8 @@ import useToast from '../../hooks/alert';
 import 'react-toastify/dist/ReactToastify.css';
 import api from '../../api/api';
 import { ToastContainer, } from 'react-toastify';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../redux-toolkit/userSlice';
 
 
 //Related to dialog error - has to be outside of the component
@@ -45,7 +47,8 @@ export default function BasicModal() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
-
+    const user = useSelector(selectUser);
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         fetchAccounts();
@@ -53,14 +56,13 @@ export default function BasicModal() {
     }, []);
 
 
-
-
-
-
-
     const fetchAccounts = async () => {
         try {
-            const response = await api.get('/api/accounts');
+            const response = await api.post('/api/accounts', { userId: user._id }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
             setAccounts(response.data);
 
 
@@ -78,17 +80,35 @@ export default function BasicModal() {
 
 
 
-
     const handleCloseMenu = async (accountId) => {
+        const token = localStorage.getItem("token");
+        console.log("token", token);
+        try {
+            // Prepare the request body data to be sent with the DELETE request
+            const requestData = {
+                accountId: accountId,
+                userId: user._id,
+            };
 
+            // Send the DELETE request with the data in the request body and authorization header
+            await api.delete('/api/deleteAccount', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                data: requestData,
+            });
 
-        await api.delete('/api/deleteAccount', { data: { accountId } });
-        notifyToast("Delete Account successfully", 'warning');
-        fetchAccounts();
+            // Notify and fetch accounts
+            notifyToast(`Delete Account - ${accountId}`, 'warning');
+            await fetchAccounts();
 
+            setAnchorEl(null);
+        } catch (error) {
+            // Handle errors if any
+            console.error(error);
+        }
+    };
 
-        setAnchorEl(null);
-    }
 
 
 
@@ -220,7 +240,7 @@ export default function BasicModal() {
                                             <DialogTitle>{"Confirm Deletion"}</DialogTitle>
                                             <DialogContent>
                                                 <DialogContentText id="alert-dialog-slide-description">
-                                                When deleting the account, all the trades under that account will be deleted. Are you sure?
+                                                    When deleting the account, all the trades under that account will be deleted. Are you sure?
                                                 </DialogContentText>
                                             </DialogContent>
                                             <DialogActions>

@@ -12,27 +12,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUserName } from '../redux-toolkit/userSlice';
 
 
-export default function U(props) {
+export default function UserDahsboard(props) {
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
 
   // const dispatch = useDispatch();
   const username = useSelector(selectUserName);
-
   const [password, setPassword] = useState('');
 
-
-
   const validateForm = () => {
-
-
-
-    // if (password === props.password) {
-    //   notifyToast("New password cannot be the same as the current password.", "warning");
-    //   return false;
-    // } 
-
 
     if (password === '') {
       if (password === '') notifyToast("Password is missing", "warning");
@@ -54,9 +43,9 @@ export default function U(props) {
 
   const handleUpdateUser = async () => {
     const token = localStorage.getItem("token");
-  
+
     if (validateForm()) {
-      await  api
+      await api
         .put('/api/auth/updateUserPassword', {
           username: username,
           password: password,
@@ -94,64 +83,62 @@ export default function U(props) {
         });
     }
   };
-  
-  
-
-
-    const handlePasswordChange = (event) => {
-      setPassword(event.target.value);
-    };
-
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Box
-          sx={{
-            width: '600px',
-            height: '220px',
-            padding: '20px',
-            background: '#fff',
-            borderRadius: '8px',
-            boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.2)',
-            display: 'flex', // Add display:flex to the box to enable flex layout
-            flexDirection: 'column', // Set flexDirection to column to stack elements vertically
-            justifyContent: 'space-between', // Align elements vertically with space in between
-          }}
-        >
-          <Typography id="modal-modal-title" variant="h6" component="h2" style={{ marginBottom: '4px' }}>
-            Change Password
-          </Typography>
-          <div>
 
 
 
-          </div>
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{
+          width: '600px',
+          height: '220px',
+          padding: '20px',
+          background: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.2)',
+          display: 'flex', // Add display:flex to the box to enable flex layout
+          flexDirection: 'column', // Set flexDirection to column to stack elements vertically
+          justifyContent: 'space-between', // Align elements vertically with space in between
+        }}
+      >
+        <Typography id="modal-modal-title" variant="h6" component="h2" style={{ marginBottom: '4px' }}>
+          Change Password
+        </Typography>
+        <div>
+
+        </div>
+
+        <TextField
+          disabled
+          id="outlined-disabled"
+          label="User Name"
+          value={username}
+          style={{ marginLeft: '4px', width: '40%', marginBottom: '15px' }}
+        />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
           <TextField
-            disabled
-            id="outlined-disabled"
-            label="User Name"
-            value={username}
-            style={{ marginLeft: '4px', width: '40%', marginBottom: '15px' }}
+            fullWidth
+            type='password'
+            label="Password"
+            value={password}
+            onChange={handlePasswordChange}
+            style={{ marginLeft: '4px', width: '100%' }}
           />
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Button variant="contained" onClick={handleUpdateUser} style={{ marginLeft: '15px' }}>
+            Update
+          </Button>
+        </div>
+      </Box >
+    </div >
+  );
 
-            <TextField
-              fullWidth
-              type='password'
-              label="Password"
-              value={password}
-              onChange={handlePasswordChange}
-              style={{ marginLeft: '4px', width: '100%' }}
-            />
-            <Button variant="contained" onClick={handleUpdateUser} style={{ marginLeft: '15px' }}>
-              Update
-            </Button>
-          </div>
-        </Box>
-      </div>
-    );
-
-  }
+}
 
 
 
