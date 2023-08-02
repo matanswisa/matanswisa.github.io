@@ -9,7 +9,6 @@ import { roles } from '../utils/roles.js';
 configDotenv();
 
 const { JWT_SECRET_KEY } = process.env;
-console.log("JWT_SECRET_KEY", JWT_SECRET_KEY)
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -24,37 +23,35 @@ router.post('/register', async (req, res) => {
             email,
             license,
 
-        })
-            .then((user) => {
-                const maxAge = 24 * 60 * 60;
-                const token = jwt.sign(
-                    { id: user._id, username, email: user.email, role: user.role, license: user.license },
-                    JWT_SECRET_KEY,
-                    {
-                        expiresIn: maxAge, // 24hrs
-                    }
-                );
-
-                res.cookie("jwt", token, {
-                    httpOnly: true,
-                    SameSite: "Lax",
-                    maxAge: maxAge * 1000
-                });
-                res.status(201).json({
-                    message: "User successfully created",
-                    user: user._id,
-                    role: user.role,
-                    email: user.email,
-                    license: user.license,
-
-                });
-            })
-            .catch((error) =>
-                res.status(400).json({
-                    message: "User not successful created",
-                    error: error.message,
-                })
+        }).then((user) => {
+            const maxAge = 24 * 60 * 60;
+            const token = jwt.sign(
+                { id: user._id, username, email: user.email, role: user.role, license: user.license },
+                JWT_SECRET_KEY,
+                {
+                    expiresIn: maxAge, // 24hrs
+                }
             );
+
+            res.cookie("jwt", token, {
+                httpOnly: true,
+                SameSite: "Lax",
+                maxAge: maxAge * 1000
+            });
+            res.status(201).json({
+                message: "User successfully created",
+                user: user._id,
+                role: user.role,
+                email: user.email,
+                license: user.license,
+
+            });
+        }).catch((error) =>
+            res.status(400).json({
+                message: "User not successful created",
+                error: error.message,
+            })
+        );
     });
 });
 
@@ -78,9 +75,6 @@ router.post('/login', async (req, res, next) => {
         } else {
             // comparing given password with hashed password
             bcrypt.compare(password, user.password).then(function (result) {
-
-
-
                 if (result) {
 
                     if (user.license && user.role == 0) {
@@ -112,9 +106,12 @@ router.post('/login', async (req, res, next) => {
                     res.status(201).json({
                         message: "User successfully Logged in",
                         user: {
+                            _id: user._id,
                             username: user.username,
                             role: user.role,
                             email: user.email,
+                            accounts: user.accounts,
+
 
                         },
                         token: token

@@ -21,7 +21,7 @@ const adminSeeder = async () => {
                 username,
                 password: hash,
                 email,
-                role: roles.basic
+                role: roles.admin
             })
         });
 

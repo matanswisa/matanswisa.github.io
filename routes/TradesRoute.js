@@ -9,6 +9,9 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
 import { fetchTradesWithImages } from "../services/trades.service.js";
+import User from "../models/user.js";
+import Account from "../models/accounts.js";
+import { authenticateToken } from "../auth/jwt.js";
 // import { fetchTradesWithImages } from "./services";
 
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -28,13 +31,39 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
+//need to split to other file -
+async function getAccountOfUserById(userId, accountId) {
+  const user = await User.findById(userId);
+  const accounts = user.accounts.find(account => account._id == accountId);
+  return accounts;
+}
 
-router.post("/addTrade", async (req, res) => {
+/**
+ * //TODO: when adding a trade need to make sure i get the account ID and userId for related trades.
+  */
+router.post("/addTrade", authenticateToken, async (req, res) => {
   try {
-    const data = req.body;
-    const result = await Trade.create(data);
-    res.status(200).json({ tradeId: result._id });
+    const { userId, accountId, tradeData } = req.body;
+    const user = await User.findById(userId);
+    let accounts = user.accounts;
+    const accountObj = user.accounts.find(account => account._id == accountId);
 
+    accounts = accounts.filter((account) => account._id !== accountObj._id);
+    if (!accounts) return res.status(400).send("Can't find account");
+
+    const createdTrade = await Trade.create(tradeData);
+    accountObj.trades.push(createdTrade);
+
+    accounts.push(accountObj);
+    // account.trades = accounts;
+    await Account.findByIdAndUpdate(accountId, { trades: accountObj.trades });
+    await User.updateOne({ _id: userId }, { accounts: accounts });
+    // await account.save();
+    const result = await Trade.create(tradeData);
+
+    const tradesWithImage = await fetchTradesWithImages(accountObj.trades);
+
+    res.status(200).json(tradesWithImage);
   } catch (err) {
     console.error(err);
     res.status(500).send('Error when adding a trade');
@@ -45,11 +74,27 @@ router.post("/addTrade", async (req, res) => {
 
 
 
-router.post("/importTrades", async (req, res) => {
+router.post("/importTrades", authenticateToken, async (req, res) => {
   try {
-    const data = req.body;
+    const { userId, accountId, data } = req.body;
 
+    const trade = await Trade.findOne({ tradeID: data.tradeID });
+    console.log(trade);
+    // if (trade) return;
+
+    let user = await User.findOne({ _id: userId });
+    console.log(user);
+    let accounts = user.accounts;
+    console.log(accounts);
+    const account = accounts.find(acc => acc._id == accountId);
+    accounts = accounts.filter(acc => acc._id != accountId);
+    account.trades.push(data);
+    accounts.push(account);
     const result = await Trade.create(data);
+    await Account.findByIdAndUpdate(accountId, account);
+    // await updateOne({_id:userId},{})
+    await User.updateOne({ _id: userId }, { accounts: accounts });
+
     res.status(200).json({ tradeId: result._id });
 
   } catch (err) {
@@ -59,17 +104,40 @@ router.post("/importTrades", async (req, res) => {
 });
 
 
-router.post("/importParcelsTrades", async (req, res) => {
+//Updating tradeHistory of a specific trade.
+//After adding the trades we need to update Account and User and trade itself.
+router.post("/importParcelsTrades", authenticateToken, async (req, res) => {
   try {
-    const { data, id } = req.body;
+    const { data, id, userId, accountId } = req.body;
 
     console.log(data);
 
     // Assuming you have a mongoose model named 'Trade'
-    const trade = await Trade.findOne({tradeID:id});
-    if (trade) {
-      trade.tradesHistory.push(data);
+
+
+    const trade = await Trade.findOne({ tradeID: id });
+
+    if (trade && data) {
+      const user = await User.findById(userId);
+
+      let accounts = user.accounts;
+      const account = accounts.find(acc => acc._id == accountId);
+      const tradeOfAccount = account.trades.find(trade => trade.tradeID == id);
+      if (!tradeOfAccount?.tradesHistory) tradeOfAccount.tradesHistory = [];
+      else tradeOfAccount?.tradesHistory.push(data);
+
+      accounts = accounts.filter(acc => acc._id != accountId);
+      account.trades.push(tradeOfAccount);
+      accounts.push(account);
+
+      const result = await Trade.create({ ...data, tradeID: id });
+      trade.tradesHistory.push({ ...data, tradeID: id });
+
+      await Account.findByIdAndUpdate(accountId, account);
+      await User.updateOne({ _id: userId }, { accounts: accounts });
+
       await trade.save();
+      res.status(200).send('ok');
     } else {
       // If no trade is found with the specified ID, handle accordingly.
       console.error("Trade not found");
@@ -86,65 +154,75 @@ router.post("/importParcelsTrades", async (req, res) => {
 
 
 
-router.get('/fetchTrades', async (req, res) => {
+router.get('/fetchTrades', authenticateToken, async (req, res) => {
   try {
-    const tradesWithImage = await fetchTradesWithImages();
+    const { userId, accountId } = req.body;
+    const user = await User.findById(userId);
+    const accounts = user.accounts.find(account => account._id == accountId);
+    if (!accounts?.trades) return res.status(400).send("No trades exists for this account");
+
+    const tradesWithImage = await fetchTradesWithImages(accounts.trades);
     if (!tradesWithImage.length) return res.status(400).send("There isn't any trades to display");
-    res.status(200).json(tradesWithImage);
+    res.status(200).json({ accountId, trades: tradesWithImage });
   } catch (err) {
     console.error(err);
     res.status(500).send(err);
   }
 });
 
-// router.get('/fetchFarshelTrades/:id', async (req, res) => {
-//   try {
-//     const { id } = req.params; // Change req.params to req.query
-//     console.log(id);
+router.post("/editTrade", authenticateToken, async (req, res) => {
 
-//     const tradesWithId = await Trade.find({ tradeID: id });
-
-//     if (!tradesWithId.length) {
-//       return res.status(400).send("There aren't any trades with the provided id");
-//     }
-
-//     res.status(200).json(tradesWithId);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send(err);
-//   }
-// });
-
-
-router.post("/editTrade", async (req, res) => {
   try {
-    const data = req.body;
-    console.log(data);
-    const result = await Trade.findOneAndUpdate({ _id: data.tradeId }, data);
-    res.status(200).send(`Trade ${result._id} added succefully`);
+    const { userId, accountId, tradeId, tradeData } = req.body;
+    //first updating the trade object and get it back
+    const result = await Trade.findByIdAndUpdate(tradeId, tradeData);
+    console.log(result);
+    const account = await getAccountOfUserById(userId, accountId);
+    const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id != tradeId);
+    tradesWithoutCurrTrade.push(tradeData);
+    account.trades = tradesWithoutCurrTrade;
+    await User.findByIdAndUpdate(userId, { accounts: account });
+    await Account.findOneAndUpdate({ _id: accountId }, account);
 
+
+    const tradesWithImage = await fetchTradesWithImages(account.trades);
+
+    res.status(200).json(tradesWithImage);
   } catch (err) {
     console.err(err);
     res.status(500).send('Error when adding a trade');
   }
 });
 
-
-router.delete('/deleteTrade', async (req, res) => {
+router.post('/deleteTrade', authenticateToken, async (req, res) => {
   try {
-    const { tradeId } = req.body;
-    if (tradeId) {
-      const result = await Trade.deleteOne({ _id: tradeId });
-      if (result) {
-        res.status(200).send('Trade has been deleted');
-      } else {
-        res.status(400).send('Trade couldn\'t be deleted , there was a problem.');
-      }
+
+    console.log(req.body);
+    const { tradeId, accountId, userId } = req.body;
+
+    // Assuming the 'Trade', 'User', 'Account', and 'getAccountOfUserById' functions are properly defined and working.
+
+    const result = await Trade.findByIdAndDelete(tradeId);
+
+    if (result) {
+      const account = await getAccountOfUserById(userId, accountId);
+      const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id.toString() !== tradeId);
+      account.trades = tradesWithoutCurrTrade;
+
+      await User.findByIdAndUpdate(userId, { accounts: account });
+      await Account.findOneAndUpdate({ _id: accountId }, account);
+
+      // Assuming 'fetchTradesWithImages' properly fetches trade data with images
+      const tradesWithImage = await fetchTradesWithImages(account.trades);
+
+      res.status(200).json(tradesWithImage);
+    } else {
+      res.status(400).send('Trade couldn\'t be deleted, there was a problem.');
     }
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).send(err.message || 'Internal server error');
   }
-})
+});
 
 
 router.get('/getDailyStats', async (req, res) => {
@@ -232,7 +310,7 @@ router.get('/ShowInfoBySpecificDate/:date', async (req, res) => {
 
     // Convert the input date to a JavaScript Date object
     const startDate = new Date(date);
-    
+
     // Calculate the end date (next day) by adding one day (in milliseconds)
     const endDate = new Date(startDate.getTime() + 86400000);
 

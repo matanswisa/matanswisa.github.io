@@ -57,67 +57,71 @@ const TradeSchema = new Mongoose.Schema({
         type: String,
         required: false
     },
-    tradeID:{
+    tradeID: {
         type: String,
         required: true,
         unique: true,
     },
 
-    tradesHistory: [{
-        entryDate: {
-            type: Date,
-            required: true
-        },
-        symbol: {
-            type: String,
-            required: true
-        },
-        status: {
-            type: String,
-            required: true
-        },
-        netROI: {
-            type: Number,
-            required: false
-        },
-        longShort: {
-            type: String,
-            required: true
-        },
-        contracts: {
-            type: Number,
-            required: true
-        },
-        entryPrice: {
-            type: Number,
-            required: true
-        },
-        exitPrice: {
-            type: Number,
-            required: true
-        },
-        duration: {
-            type: String,
-            required: false
-        },
-        commission: {
-            type: Number,
-            required: false
-        },
-        netPnL: {
-            type: Number,
-            required: true
-        },
-        qty: {
-            type: Number,
-            required: true
-        },
-    
-    }]
+    tradesHistory: {
+        type: [{
+            entryDate: {
+                type: Date,
+                required: true
+            },
+            symbol: {
+                type: String,
+                required: true
+            },
+            status: {
+                type: String,
+                required: true
+            },
+            netROI: {
+                type: Number,
+                required: false
+            },
+            longShort: {
+                type: String,
+                required: true
+            },
+            contracts: {
+                type: Number,
+                required: true
+            },
+            entryPrice: {
+                type: Number,
+                required: true
+            },
+            exitPrice: {
+                type: Number,
+                required: true
+            },
+            duration: {
+                type: String,
+                required: false
+            },
+            commission: {
+                type: Number,
+                required: false
+            },
+            netPnL: {
+                type: Number,
+                required: true
+            },
+            qty: {
+                type: Number,
+                required: true
+            },
+
+        }],
+        default: [],
+        require: false,
+    }
 
 
 });
 
 const Trade = Mongoose.model('Trade', TradeSchema);
 
-export default Trade;
+export default Trade;
