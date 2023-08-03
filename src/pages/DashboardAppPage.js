@@ -29,7 +29,7 @@ import { ReactComponent as dollarLogo } from '../icons/dollar-symbol.svg';
 
 import { Colors } from '../components/color-utils/Colors';
 
-import SelectAccount from '../components/accounts/selectAccount'
+
 import { selectCurrentAccount } from '../redux-toolkit/userSlice';
 // ----------------------------------------------------------------------
 
@@ -97,7 +97,15 @@ export default function DashboardAppPage() {
 
 
   const currentAccount = useSelector(selectCurrentAccount)
-  const Alltrades = currentAccount.trades;
+  let Alltrades;
+  if(currentAccount?.trades){
+
+   Alltrades = currentAccount?.trades;
+  }
+  else{
+     Alltrades = [];
+  }
+  
   const theme = useTheme();
 
   const [losingTrades, setLosingTrades] = useState(0);
@@ -241,7 +249,7 @@ export default function DashboardAppPage() {
         <Typography variant="h4" sx={{ mb: 3 }}>
           Hi, Welcome back
         </Typography>
-        <SelectAccount />
+      
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
