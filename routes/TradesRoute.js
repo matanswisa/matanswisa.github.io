@@ -126,7 +126,7 @@ router.post("/importParcelsTrades", authenticateToken, async (req, res) => {
       else tradeOfAccount?.tradesHistory.push(data);
 
       accounts = accounts.filter(acc => acc._id != accountId);
-      account.trades.push(tradeOfAccount);
+      account.trade.tradesHistory.push(tradeOfAccount);
       accounts.push(account);
 
       const result = await Trade.create({ ...data, tradeID: id });
