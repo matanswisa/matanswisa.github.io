@@ -59,8 +59,8 @@ const TradeSchema = new Mongoose.Schema({
     },
     tradeID: {
         type: String,
-        required: true,
-        unique: true,
+        required: false,
+        unique: false,
     },
 
     tradesHistory: {

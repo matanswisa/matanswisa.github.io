@@ -55,7 +55,7 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
     accountObj.trades.push(createdTrade);
 
     accounts.push(accountObj);
-    // account.trades = accounts;
+
     await Account.findByIdAndUpdate(accountId, { trades: accountObj.trades });
     await User.updateOne({ _id: userId }, { accounts: accounts });
     // await account.save();
