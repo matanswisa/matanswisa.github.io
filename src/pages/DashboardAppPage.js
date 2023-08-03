@@ -97,7 +97,15 @@ export default function DashboardAppPage() {
 
 
   const currentAccount = useSelector(selectCurrentAccount)
-  const Alltrades = currentAccount.trades;
+  let Alltrades;
+  if(currentAccount?.trades){
+
+   Alltrades = currentAccount?.trades;
+  }
+  else{
+     Alltrades = [];
+  }
+  
   const theme = useTheme();
 
   const [losingTrades, setLosingTrades] = useState(0);

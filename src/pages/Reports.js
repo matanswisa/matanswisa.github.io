@@ -199,7 +199,19 @@ export default function UserPage() {
 
 
   const currentAccount = useSelector(selectCurrentAccount);
-  const trades = currentAccount.trades;
+  let trades;
+
+  
+
+  if(currentAccount?.trades){
+
+    trades = currentAccount?.trades;
+  }
+  else{
+    trades = [];
+  }
+  
+
 
   const totalTrades = Object.keys(trades).length;
 
