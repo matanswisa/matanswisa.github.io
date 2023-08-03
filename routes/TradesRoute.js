@@ -114,7 +114,6 @@ router.post("/importParcelsTrades", authenticateToken, async (req, res) => {
 
     // Assuming you have a mongoose model named 'Trade'
 
-
     const trade = await Trade.findOne({ tradeID: id });
 
     if (trade && data) {
@@ -137,19 +136,20 @@ router.post("/importParcelsTrades", authenticateToken, async (req, res) => {
       await User.updateOne({ _id: userId }, { accounts: accounts });
 
       await trade.save();
-      res.status(200).send('ok');
+
+      // Send success response here
+      return res.status(200).json({ id });
     } else {
       // If no trade is found with the specified ID, handle accordingly.
       console.error("Trade not found");
       return res.status(404).send("Trade not found");
     }
-
-    res.status(200).json({ id });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error when adding a trade");
   }
 });
+
 
 
 
@@ -388,7 +388,7 @@ router.get('/DailyStatsInfo', async (req, res) => {
 router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
   console.log(req.body)
   try {
-    const { tradeId } = req.body;
+    const { tradeId, userId, accountId } = req.body;
     if (!req.file) return res.status(400).send("No image file to upload");
     const { path, originalname } = req.file;
     // Handle the uploaded image as needed
@@ -400,7 +400,20 @@ router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
       image: imagePath
     });
 
-    const tradesWithImage = fetchTradesWithImages();
+    const user = await User.findOne({ _id: userId });
+    const accountOfUser = user.accounts.find(acc => acc._id == accountId);
+    const tradeOfAccount = accountOfUser.trades.find(trade => trade._id == tradeId);
+
+    //updating user , and accounts and trades.
+    tradeOfAccount.image = imagePath;
+    accountOfUser.trades.push(tradeOfAccount);
+    user.accounts = [...user.accounts.filter(acc => acc._id == accountId), accountOfUser];
+
+    // User.findByIdAndUpdate(userId,{accounts:})
+    user.save();
+
+
+    const tradesWithImage = fetchTradesWithImages(accountOfUser.trades);
     if (trade) { return res.status(200).json(tradesWithImage) }
     return res.status(400).send("Can't save trading image");
 
