@@ -59,8 +59,8 @@ export default function BasicModal(props) {
   const handleChange = (event) => {
     setBroker(event.target.value);
   };
-
-
+  
+ 
 
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount)
@@ -138,7 +138,12 @@ export default function BasicModal(props) {
 
 
         await handleSaveTrade(mergedData);  //insert merged data to reports page.
+       
 
+   
+        if (user.accounts.length === 0) {
+          return;
+        }
         const transactions = result.data;
         const transactionsMapObj = {};
         transactions.forEach((transaction) => {
@@ -159,7 +164,7 @@ export default function BasicModal(props) {
 
       reader.readAsText(file);
     }
-
+  
   };
 
 
@@ -242,11 +247,6 @@ export default function BasicModal(props) {
 
     }
 
-    // if (successCount === count) {
-    //   notifyToast(`All ${count} trades added successfully`, "success");
-    // } else {
-    //   notifyToast(`${successCount} out of ${count} trades added successfully`, "success");
-    // }
   }
 
 
@@ -288,8 +288,8 @@ export default function BasicModal(props) {
       const absoluteDurationInMinutes = Math.abs(timeDifferenceInMinutes)
       data.duration = absoluteDurationInMinutes || "";
 
-      console.log(data.duration);
-
+ 
+      
       if (data.status == "Break Even") {
 
         const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
