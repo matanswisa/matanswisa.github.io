@@ -1,31 +1,27 @@
 import { Helmet } from 'react-helmet-async';
-import { faker } from '@faker-js/faker';
+
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
-import { useState, useRef, useEffect } from 'react';
+import { useState,  useEffect } from 'react';
 import Calendar from '../components/Calendar/calendar';
 // components
-import Iconify from '../components/iconify';
-import { useDispatch, useSelector } from 'react-redux';
+
+import { useSelector } from 'react-redux';
 // import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
 // import {}
 // sections
 import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
+
   AppCurrentVisits,
   AppWebsiteVisits,
-  AppTrafficBySite,
+
   AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
+ 
 } from '../sections/@dashboard/app';
-import axios from 'axios';
 
 import api from '../api/api';
-import { ReactComponent as dollarLogo } from '../icons/dollar-symbol.svg';
+
 
 import { Colors } from '../components/color-utils/Colors';
 
@@ -345,15 +341,3 @@ export default function DashboardAppPage() {
 }
 
 
-const totalPlRedColor = {
-
-  color: '#d16c71', // Replace with the desired text color
-
-};
-
-
-const totalPlColor = {
-
-  color: '#54a38d', // Replace with the desired text color
-
-};
