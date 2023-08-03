@@ -298,7 +298,13 @@ export default function BasicModal(props) {
       }
 
       ;
-
+      
+      
+      if (user.accounts.length === 0) {
+        notifyToast("You must create an account before importing any trade", "error");
+        handleClose();
+        return;
+      }
 
       await api
         .post('/api/importTrades', { userId: user._id, accountId: currentAccount._id, data }, configAuth).then((res) => {
