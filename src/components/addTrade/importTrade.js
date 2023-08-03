@@ -15,7 +15,13 @@ import { forEach } from 'lodash';
 import { configAuth } from '../../api/configAuth';
 import { useSelector } from 'react-redux';
 import { selectCurrentAccount, selectUser } from '../../redux-toolkit/userSlice';
+import StepperModal from './StepperModal';
+import {
 
+  IconButton
+ 
+
+} from '@mui/material';
 
 
 const style = {
@@ -34,7 +40,12 @@ const style = {
 
 
 export default function BasicModal(props) {
+  const [showStepper, setShowStepper] = useState(false);
 
+  const handleIconButtonClick = () => {
+    // Set showAnotherComponent to true to display AnotherComponent
+    setShowStepper(true);
+  };
 
 
 
@@ -371,6 +382,10 @@ export default function BasicModal(props) {
             style={{ display: 'none' }}
             onChange={handleFileChangeTrade}
           />
+          <IconButton size="large" color="inherit" onClick={handleIconButtonClick }>
+            <Iconify icon={'eva:question-mark-circle-outline'} />
+          </IconButton>
+          {showStepper && <StepperModal  handleOpenModal={setShowStepper} />}
         </Box>
       </Modal>
     </div>
