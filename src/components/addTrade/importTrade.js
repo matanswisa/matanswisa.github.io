@@ -291,8 +291,8 @@ export default function BasicModal(props) {
 
       await api
         .post('/api/importTrades', { userId: user._id, accountId: currentAccount._id, data }, configAuth).then((res) => {
-          props.updateTradeLists()
-
+          // props.updateTradeLists()
+          
           handleClose();
           successCount++;
         }).catch((err) => {

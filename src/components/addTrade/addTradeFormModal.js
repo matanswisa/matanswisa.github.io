@@ -23,8 +23,9 @@ import {
 import api from '../../api/api';
 import Iconify from '../iconify/Iconify';
 import './addTrade.css';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../../redux-toolkit/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentAccount, selectUser, setTradesList } from '../../redux-toolkit/userSlice';
+import { configAuth } from '../../api/configAuth';
 
 const style = {
   position: 'absolute',
@@ -51,7 +52,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function BasicModal(props) {
 
   const user = useSelector(selectUser);
-
+  const currentAccount = useSelector(selectCurrentAccount);
 
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
@@ -59,6 +60,8 @@ export default function BasicModal(props) {
   const tradeInfo = props?.tradeInfo;
   const editMode = props?.isEditMode;
   const prevStatusState = props?.prevState;
+
+  const reduxDispatch = useDispatch();
 
   const initialState = {
     positionType: tradeInfo?.longShort || '',
@@ -96,7 +99,6 @@ export default function BasicModal(props) {
     }
   };
 
-
   const [formState, dispatch] = useReducer(formReducer, initialState);
   const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
 
@@ -119,16 +121,6 @@ export default function BasicModal(props) {
 
 
 
-  useEffect(() => {
-    handleOpen();
-
-    return () => {
-      if (editMode)
-        props?.handleEditTradeLeavePanel(null);
-    }
-
-  }, []);
-
   const handleSaveTrade = async () => {
     const data = {
       entryDate: positionDate,
@@ -143,52 +135,56 @@ export default function BasicModal(props) {
       duration: positionDuration,
       commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
       comments,
-      netPnL: positionStatus === "Loss" ?netPnL*-1 : netPnL,
+      netPnL: netPnL,
       tradeId: tradeInfo?._id || '',
     }
 
     if (validateForm()) {
+      if (!editMode) {
+        await api
+          .post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth).then((res) => {
+            if (selectedFile !== null) {
+              handleUpload(res.data.tradeId);
+            }
+            // props.updateTradeLists()
 
-      if (validateForm()) {
-        if (!editMode) {
-          await api
-            .post('/api/addTrade', { userId: user._id, data } , {}).then((res) => {
-              if (selectedFile !== null) {
-                handleUpload(res.data.tradeId);
-              }
-              props.updateTradeLists()
-              notifyToast("Trade added successfully", "success");
-              handleClose();
+            reduxDispatch(setTradesList(res.data));
+            console.log(res.data);
+            notifyToast("Trade added successfully", "success");
 
-            }).catch((err) => {
-              notifyToast("Couldn't add trade", "error");
-            })
-        }
-        else if (editMode === true) {
-
-          const netPnL = prevStatusState !== data.status && data.status === "Win" && data.netPnL < 0
-          ? -data.netPnL 
-          : data.netPnL;
- 
-         data.netPnL = netPnL;
-          await api.post('/api/editTrade', data)
-            .then((response) => {
-              notifyToast("Trade Edit succssfully", "success")
-              handleUpload(tradeInfo?._id);
-              props.updateTradeLists()
-
-            })
-            .catch((error) => {
-              notifyToast("Trade can't be updated", "error")
-            });
-
-        }
-
-      } else {
-        console.log('Please fill in all the fields');
+          }).catch((err) => {
+            notifyToast("Couldn't add trade", "error");
+          })
       }
-    };
-  }
+      else if (editMode === true) {
+        console.log('inside edit trade!', tradeInfo?._id);
+        data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
+        await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth)
+          .then((res) => {
+            notifyToast("Trade Edit succssfully", "success")
+            handleUpload(tradeInfo?._id);
+            reduxDispatch(setTradesList(res.data));
+
+            if (positionType === '' || positionStatus === '' ||
+              contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
+
+              if (positionType === '') notifyToast("Position type is missing", "warning");
+              else if (positionStatus === '') notifyToast("Position status is missing", "warning");
+              else if (!netPnL) notifyToast("Net PnL is missing", "warning");
+              else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
+              else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
+              else if (!positionDate) notifyToast("Date field is missing", "warning");
+
+              return false;
+            }
+            return true;
+          });
+      }
+
+      //Upload image related code:
+
+    }
+  };
 
   const validateForm = () => {
 
@@ -221,13 +217,12 @@ export default function BasicModal(props) {
     return true;
   };
 
-  //Upload image related code:
+
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
-  };
-
+  }
 
   const handleUpload = (tradeId) => {
     if (!selectedFile) { notifyToast("Don't have image file to upload", "error"); return; }
@@ -261,7 +256,7 @@ export default function BasicModal(props) {
   };
 
   useEffect(() => {
-    
+
     if (selectedFile) {
       notifyToast("Image successfully uploaded", "success");
     }

@@ -13,32 +13,6 @@ import ScrollToTop from './components/scroll-to-top';
 
 export default function App() {
 
-
-  //NOT THE RIGHT POSITION FOR THIS CODE
-  // useEffect(() => {
-  //   const fetchTrades = async () => {
-  //     const token = localStorage.getItem('token');
-  //     const result = await api.get('/api/fetchTrades', {
-  //       params: {
-  //         userId: user._id,
-  //         accountId: null
-  //       }
-  //     }, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       }
-  //     });
-  //     return result;
-  //   }
-
-  //   fetchTrades().then((result) => {
-
-  //     dispatch(setTrades(result.data));
-  //   }).catch((error) => {
-
-  //   });
-  // }, [])
-
   return (
     <HelmetProvider>
       <BrowserRouter>

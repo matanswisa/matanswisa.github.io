@@ -51,6 +51,7 @@ import ImageModal from '../components/ImageModal/ImageModal';
 import { Grid } from 'rsuite';
 // ----------------------------------------------------------------------
 import { selectCurrentAccount } from '../redux-toolkit/userSlice';
+import { configAuth } from '../api/configAuth';
 
 
 const TABLE_HEAD = [
@@ -112,7 +113,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 const fetchTrades = async () => {
-  const result = await api.get('/api/fetchTrades');
+  const result = await api.get('/api/fetchTrades', configAuth);
   return result;
 }
 // export let globalAlert;
