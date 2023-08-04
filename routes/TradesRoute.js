@@ -8,7 +8,7 @@ const router = Router();
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
-import { fetchTradesWithImages } from "../services/trades.service.js";
+import { fetchTradesWithImages, fetchUserTrades } from "../services/trades.service.js";
 import User from "../models/user.js";
 import Account from "../models/accounts.js";
 import { authenticateToken } from "../auth/jwt.js";
@@ -88,9 +88,9 @@ router.post("/importTrades", authenticateToken, async (req, res) => {
     console.log(accounts);
     const account = accounts.find(acc => acc._id == accountId);
     accounts = accounts.filter(acc => acc._id != accountId);
-    account.trades.push(data);
+    const newTrade = await Trade.create(data);
+    account.trades.push(newTrade);
     accounts.push(account);
-    const result = await Trade.create(data);
     await Account.findByIdAndUpdate(accountId, account);
     // await updateOne({_id:userId},{})
     await User.updateOne({ _id: userId }, { accounts: accounts });
@@ -126,7 +126,7 @@ router.post("/importParcelsTrades", authenticateToken, async (req, res) => {
       else tradeOfAccount?.tradesHistory.push(data);
 
       accounts = accounts.filter(acc => acc._id != accountId);
-      account.trade.tradesHistory.push(tradeOfAccount);
+      account.trades.push(tradeOfAccount);
       accounts.push(account);
 
       const result = await Trade.create({ ...data, tradeID: id });
@@ -137,8 +137,10 @@ router.post("/importParcelsTrades", authenticateToken, async (req, res) => {
 
       await trade.save();
 
+      //give all trades of current user account;
+      const trades = await fetchUserTrades(userId, accountId);
       // Send success response here
-      return res.status(200).json({ id });
+      return res.status(200).json(trades);
     } else {
       // If no trade is found with the specified ID, handle accordingly.
       console.error("Trade not found");
@@ -158,8 +160,10 @@ router.get('/fetchTrades', authenticateToken, async (req, res) => {
   try {
     const { userId, accountId } = req.body;
     const user = await User.findById(userId);
+    if (!user?.accounts && !user?.accounts.length) return res.status(400).send("No Accounts exists for this user");
+    if (!accounts?.trades) return res.status(400).send("No trades exists for this user account");
+
     const accounts = user.accounts.find(account => account._id == accountId);
-    if (!accounts?.trades) return res.status(400).send("No trades exists for this account");
 
     const tradesWithImage = await fetchTradesWithImages(accounts.trades);
     if (!tradesWithImage.length) return res.status(400).send("There isn't any trades to display");
@@ -197,25 +201,24 @@ router.post("/editTrade", authenticateToken, async (req, res) => {
 router.post('/deleteTrade', authenticateToken, async (req, res) => {
   try {
 
-    console.log(req.body);
     const { tradeId, accountId, userId } = req.body;
 
     // Assuming the 'Trade', 'User', 'Account', and 'getAccountOfUserById' functions are properly defined and working.
-
+    console.log({ tradeId, accountId, userId })
     const result = await Trade.findByIdAndDelete(tradeId);
 
     if (result) {
       const account = await getAccountOfUserById(userId, accountId);
-      const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id.toString() !== tradeId);
+      const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id != tradeId);
       account.trades = tradesWithoutCurrTrade;
 
       await User.findByIdAndUpdate(userId, { accounts: account });
       await Account.findOneAndUpdate({ _id: accountId }, account);
 
       // Assuming 'fetchTradesWithImages' properly fetches trade data with images
-      const tradesWithImage = await fetchTradesWithImages(account.trades);
-
-      res.status(200).json(tradesWithImage);
+      // const tradesWithImage = await fetchTradesWithImages(account.trades);
+      const trades = await fetchUserTrades(userId, accountId);
+      res.status(200).json(trades);
     } else {
       res.status(400).send('Trade couldn\'t be deleted, there was a problem.');
     }

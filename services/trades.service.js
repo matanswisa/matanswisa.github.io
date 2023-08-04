@@ -1,5 +1,6 @@
 import Trade from "../models/trade.js";
 import fs from 'fs';
+import User from "../models/user.js";
 
 export const fetchTradesWithImages = async (trades) => {
     // const trades = await Trade.find({});
@@ -18,3 +19,10 @@ export const fetchTradesWithImages = async (trades) => {
     return tradesWithImage;
 }
 
+
+export const fetchUserTrades = async (userId, accountId) => {
+    const user = await User.findById(userId);
+    const currAccount = user.accounts.find(acc => acc._id == accountId);
+    const tradesWithImages = fetchTradesWithImages(currAccount.trades);
+    return tradesWithImages;
+}
