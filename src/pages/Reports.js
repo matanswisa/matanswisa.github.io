@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useToast from '../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
   Card,
@@ -50,7 +50,7 @@ import ImportTrade from '../components/addTrade/importTrade'
 import ImageModal from '../components/ImageModal/ImageModal';
 import { Grid } from 'rsuite';
 // ----------------------------------------------------------------------
-import { selectCurrentAccount } from '../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, setTradesList } from '../redux-toolkit/userSlice';
 import { configAuth } from '../api/configAuth';
 
 
@@ -129,6 +129,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function UserPage() {
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
+  const user = useSelector(selectUser);
+  const currentAccount = useSelector(selectCurrentAccount);
 
   function handleCellClick(parameter, info) {
     return function () {
@@ -169,7 +171,7 @@ export default function UserPage() {
       .then(response => response.json())
       .then(data => {
         notifyToast("Trade image uploaded successfully", "success");
-        setTradesList(data);
+        dispatch(setTradesList(data));
       })
       .catch(error => {
         // Handle any errors that occurred during the upload
@@ -199,19 +201,18 @@ export default function UserPage() {
   }
 
 
-  const currentAccount = useSelector(selectCurrentAccount);
   let trades;
 
-  
 
-  if(currentAccount?.trades){
+
+  if (currentAccount?.trades) {
 
     trades = currentAccount?.trades;
   }
-  else{
+  else {
     trades = [];
   }
-  
+
 
 
   const totalTrades = Object.keys(trades).length;
@@ -225,10 +226,6 @@ export default function UserPage() {
   const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);
   const dispatch = useDispatch();
 
-  const setTradesList = (trades) => {
-
-    // dispatch(setTradesRedux(trades));
-  }
 
   const handleOpenModal = (tradeId) => {
     setIsOpenmodal(true);
@@ -245,25 +242,6 @@ export default function UserPage() {
   };
 
 
-  const fetchLeastTrades = () => {
-    return fetchTrades().then((res) => {
-      if (res.data)
-        setTradesList(res.data);
-    }).catch((err) => {
-      console.error(err);
-    })
-  }
-
-  useEffect(() => {
-
-
-    fetchTrades().then((res) => {
-      if (res.data)
-        setTradesList(res.data);
-    }).catch((err) => {
-      console.error(err);
-    })
-  }, [])
 
 
 
@@ -344,9 +322,10 @@ export default function UserPage() {
   };
 
   const deleteTrade = async (tradeId) => {
-    await api.delete('/api/deleteTrade', { data: { tradeId } });
-    const tempTrades = await fetchTrades();
-    setTradesList(tempTrades.data);
+    console.log(editTradeId);
+    const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, configAuth);
+    setTradesList(res.data)
+
     notifyToast("Delete trade Successfully", 'warning');
     toggleShow();
   }
@@ -410,16 +389,15 @@ export default function UserPage() {
             <Button onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />} sx={{ marginRight: 2 }}>
               Import Trades
             </Button>
-            {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
+            {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} />}
 
             <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
               Add New Trade
             </Button>
           </div>
 
-          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} updateTradeLists={fetchLeastTrades} />}
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
-            updateTradeLists={fetchLeastTrades}
             key={editTradeId._id}
             openModal={openmodal}
             handleOpenModal={setIsOpenmodal}

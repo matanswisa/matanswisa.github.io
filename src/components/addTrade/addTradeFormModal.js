@@ -49,7 +49,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 
-export default function BasicModal(props) {
+export default function TradeModal(props) {
 
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
@@ -241,7 +241,7 @@ export default function BasicModal(props) {
       .then(data => {
         // Handle the response from the server
 
-        props.updateTradeLists()
+        //TODO: need to add here the function - dispatch(setTradeList(data))
       })
       .catch(error => {
         // Handle any errors that occurred during the upload
