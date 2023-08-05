@@ -15,7 +15,7 @@ import Papa from 'papaparse';
 import { configAuth } from '../../../api/configAuth';
 import { useSelector } from 'react-redux';
 import { selectCurrentAccount, selectUser } from '../../../redux-toolkit/userSlice';
-import StepperModal from '../stepper/StepperModal';
+import StepperModal from '../ExplanationOfImportTrades/StepperModal';
 import {
 
   IconButton

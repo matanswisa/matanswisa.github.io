@@ -1,4 +1,4 @@
-import Divider from '../components/Divider/Diveder';
+import Divider from '../components/trades/DailystatsView/Divider'
 
 import { Helmet } from 'react-helmet-async';
 import { filter, includes, lowerCase } from 'lodash';
