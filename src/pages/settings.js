@@ -1,10 +1,10 @@
 import React from 'react';
 import { Tabs, Tab, Box,Button } from '@mui/material';
-import AdminManagementPage from '../../pages/AdminDashboard'; // Import the UsersManagementPage component
-import UsersManagementPage from '../../pages/UserDahboard'
-import AccountPage from '../../components/accounts/AccountPage';
+import AdminManagementPage from './AdminDashboard'; // Import the UsersManagementPage component
+import UsersManagementPage from './UserDahboard'
+import AccountPage from '../components/accounts/AccountPage';
 import { useNavigate } from 'react-router-dom';
-import useToast from '../../hooks/alert'
+import useToast from '../hooks/alert'
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const TabPanel = (props) => {

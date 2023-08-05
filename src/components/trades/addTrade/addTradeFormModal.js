@@ -10,7 +10,7 @@ import { styled } from '@mui/material/styles';
 import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import { useEffect, useState, useReducer } from 'react';
-import { futuresTickers } from './Tickers';
+import { futuresTickers } from '../tickers/Tickers';
 
 // @mui
 import {
@@ -20,12 +20,12 @@ import {
   TextField,
   Input,
 } from '@mui/material';
-import api from '../../api/api';
-import Iconify from '../iconify/Iconify';
+import api from '../../../api/api';
+import Iconify from '../../iconify/Iconify';
 import './addTrade.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentAccount, selectUser, setTradesList } from '../../redux-toolkit/userSlice';
-import { configAuth } from '../../api/configAuth';
+import { selectCurrentAccount, selectUser, setTradesList } from '../../../redux-toolkit/userSlice';
+import { configAuth } from '../../../api/configAuth';
 
 const style = {
   position: 'absolute',

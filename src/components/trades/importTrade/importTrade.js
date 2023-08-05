@@ -3,19 +3,19 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import Iconify from '../iconify/Iconify';
+import Iconify from '../../iconify/Iconify';
 
 import MenuItem from '@mui/material/MenuItem';
 
 import Select from '@mui/material/Select';
 import { useEffect, useState, useRef } from 'react';
-import api from '../../api/api'
+import api from '../../../api/api'
 import Papa from 'papaparse';
 
-import { configAuth } from '../../api/configAuth';
+import { configAuth } from '../../../api/configAuth';
 import { useSelector } from 'react-redux';
-import { selectCurrentAccount, selectUser } from '../../redux-toolkit/userSlice';
-import StepperModal from './StepperModal';
+import { selectCurrentAccount, selectUser } from '../../../redux-toolkit/userSlice';
+import StepperModal from '../stepper/StepperModal';
 import {
 
   IconButton

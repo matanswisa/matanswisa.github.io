@@ -6,7 +6,7 @@ import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 
 // pages
-import BlogPage from './pages/BlogPage';
+
 import DailyStatsPage from './pages/DailyStatsPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
@@ -17,7 +17,7 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import useTokenValidation from './hooks/validateToken';
 import { useDispatch, useSelector } from 'react-redux';
 import { isUserAuthenticated, login, selectUserAdmin } from './redux-toolkit/userSlice';
-import Tabs from './components/Tabs/Tabs';
+import Tabs from './pages/settings';
 export default function Router() {
   const [tokenIsValid] = useTokenValidation();
   const isAdmin = useSelector(selectUserAdmin);
@@ -45,7 +45,7 @@ export default function Router() {
         { path: 'dailystatspage', element: isAuthenticated ? <DailyStatsPage /> : <Navigate to="/login" replace /> },
         { path: 'manage-users', element: isAuthenticated ? <Tabs /> : <Navigate to="/login" replace /> },
         { path: 'reports', element: isAuthenticated ? <Reports /> : <Navigate to="/login" replace /> },
-        { path: 'blog', element: isAuthenticated ? <BlogPage /> : <Navigate to="/login" replace /> },
+        
       ],
     },
     {

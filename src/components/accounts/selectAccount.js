@@ -37,11 +37,11 @@ export default function MultipleSelectPlaceholder(props) {
 
   // const fetchAccounts = async () => {
   //   try {
-  //     // const response = await api.post('/api/accounts', { userId: user._id }, {
-  //     //   headers: {
-  //     //     Authorization: `Bearer ${token}`,
-  //     //   }
-  //     // });
+  //     const response = await api.post('/api/accounts', { userId: user._id }, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       }
+  //     });
 
   //     const initialSelectedAccount = getSelectedAccountName(response.data);
   //     setAccounts(response.data);

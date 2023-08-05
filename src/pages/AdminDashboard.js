@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
 import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
-import UsersManage from '../components/createUser/createUser';
+import UsersManage from '../components/users/createUser';
 import Iconify from '../components/iconify';
 import { useEffect, useState } from 'react';
 import useToast from '../hooks/alert'

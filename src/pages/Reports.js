@@ -26,12 +26,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-
 } from '@mui/material';
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import AddFarshel from '../components/addTrade/AddFarshel'
 import DialogContentText from '@mui/material/DialogContentText';
 import Slide from '@mui/material/Slide';
 
@@ -43,10 +41,11 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
+
 import api from '../api/api';
-import AddTrade from '../components/addTrade/addTradeFormModal';
-import ImportTrade from '../components/addTrade/importTrade'
+import AddTrade from '../components/trades/addTrade/addTradeFormModal';
+import ImportTrade from '../components/trades/importTrade/importTrade'
+import AddFarshel from '../components/trades/importTrade/AddFarshel'
 import ImageModal from '../components/ImageModal/ImageModal';
 import { Grid } from 'rsuite';
 // ----------------------------------------------------------------------
@@ -280,7 +279,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = trades.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -304,8 +303,8 @@ export default function UserPage() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - trades.length) : 0;
+  const filteredUsers = applySortFilter(trades, getComparator(order, orderBy), filterName);
   const isNotFound = !filteredUsers.length && !!filterName;
 
   const [opendialog, setDialogOpen] = useState(false);
@@ -418,7 +417,7 @@ export default function UserPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={trades.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
