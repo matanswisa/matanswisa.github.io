@@ -434,7 +434,7 @@ export default function UserPage() {
 
         <Card>
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, maxWidth: 2000, height: 'calc(100vh - 200px)' }}>
+            <TableContainer sx={{ minWidth: 800, maxWidth: 2000,  }}>
               <Table>
                 <UserListHead
                   order={order}
