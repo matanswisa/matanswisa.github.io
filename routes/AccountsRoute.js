@@ -3,6 +3,7 @@ import Account from "../models/accounts.js";
 import User from "../models/user.js";
 import Mongoose from "mongoose";
 import { authenticateToken } from "../auth/jwt.js";
+import SelectedAccountModel from "../models/selectedAccount.js";
 
 const router = Router();
 
@@ -55,32 +56,26 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
 });
 
 
-router.post('/updateIsSelectedAccount', (req, res) => {
-  const { AccountName } = req.body;
-  console.log(AccountName);
+router.post('/setSelectedAccount', authenticateToken, async (req, res) => {
+  try {
+    const { userId, accountId } = req.body;
+    const requestedAccount = await Account.findById(accountId);
+    const selectedAccount = await SelectedAccountModel.find({ userId: userId });
 
-  // Update the isSelected field for the specified account in the database
+    if (!requestedAccount) {
+      res.status(400).send('Couldn\'t find the account to set');
+    }
 
-  // Assuming you're using a database library like Mongoose
-  Account.updateMany(
-    {}, // Update all accounts
-    { IsSelected: "false" } // Set isSelected to "false" (as a string) for all accounts
-  )
-    .then(() => {
-      Account.updateOne(
-        { AccountName }, // Find the specified account by accountName
-        { IsSelected: "true" } // Set isSelected to "true" (as a string) for the specified account
-      )
-        .then(() => {
-          res.status(200).json({ message: 'isSelected field updated successfully' });
-        })
-        .catch((err) => {
-          res.status(500).json({ message: 'Failed to update isSelected field' });
-        });
-    })
-    .catch((err) => {
-      res.status(500).json({ message: 'Internal server error' });
-    });
+    if (!selectedAccount) {
+      const result = await SelectedAccountModel.create({ userId, accountId, account: requestedAccount });
+      res.status(200).json(result);
+    } else {
+      await SelectedAccountModel.create({ userId, accountId, account: requestedAccount });
+      res.status(200).json(requestedAccount);
+    }
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 
