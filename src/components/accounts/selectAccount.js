@@ -7,32 +7,35 @@ import Select from '@mui/material/Select';
 import api from '../../api/api';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { useEffect, useState } from 'react';
-import { selectUser } from '../../redux-toolkit/userSlice';
+import { selectUser, selectUserAccounts } from '../../redux-toolkit/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAccounts, setCurrentAccount } from '../../redux-toolkit/userSlice';
 
 
 export default function MultipleSelectPlaceholder(props) {
+
+
   const [selectedAccount, setSelectedAccount] = useState('');
   const [selectedAccountColor, setSelectedAccountColor] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
 
   const dispatch = useDispatch();
+  const accounts = useSelector(selectUserAccounts);
 
-  const user = useSelector(selectUser);
   const token = localStorage.getItem('token');
 
 
-  const accounts = user.accounts;
+  // const accounts = user.accounts;
 
 
   useEffect(() => {
+    console.log(accounts);
     if (accounts) {
       setSelectedAccount(getSelectedAccountName(accounts))
       setSelectedAccountColor(getSelectedAccountLabel(accounts))
       dispatch(setCurrentAccount(getSelectedAccountObject(accounts)));
     }
-  }, [accounts])
+  }, [])
 
 
   // const fetchAccounts = async () => {
@@ -146,7 +149,7 @@ export default function MultipleSelectPlaceholder(props) {
           {accounts.map((account) => (
             <MenuItem
               key={account._id}
-              value={account.AccountName}
+              value={account._id}
               style={{
                 display: 'flex',
                 alignItems: 'center',

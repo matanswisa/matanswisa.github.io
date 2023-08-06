@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 import Header from './header';
 import Nav from './nav';
 import AppBar from '../../components/appBar/appBar'
+import MultipleSelectPlaceholder from '../../components/accounts/selectAccount';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -37,11 +38,14 @@ export default function DashboardLayout() {
 
   return (
     <StyledRoot>
+
       <Header onOpenNav={() => setOpen(true)} />
 
       <Nav openNav={open} onCloseNav={() => setOpen(false)} />
 
       <Main>
+        <MultipleSelectPlaceholder />
+
         <AppBar />
         <Outlet />
       </Main>

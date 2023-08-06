@@ -33,6 +33,7 @@ import api from '../../api/api';
 import { ToastContainer, } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../redux-toolkit/userSlice';
+import MultipleSelectPlaceholder from './selectAccount';
 
 
 //Related to dialog error - has to be outside of the component
@@ -163,7 +164,6 @@ export default function BasicModal() {
 
         <Container maxWidth="lg">
             <ToastContainer />
-
 
 
             <div style={containerStyle}>
