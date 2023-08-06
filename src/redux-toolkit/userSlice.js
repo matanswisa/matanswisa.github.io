@@ -17,8 +17,6 @@ const authSlice = createSlice({
             state.user = action.payload.user;
             state.isAuthenticated = true;
             state.isAdmin = action.payload.user.role === roles.admin;
-            console.log(action.payload.user)
-            if (action.payload.user.accounts && action.payload.user.accounts.length) state.currentAccount = action.payload.user.accounts[0];
         },
         logout(state) {
             state.user = null;

@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 import api from '../../api/api';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { useEffect, useState } from 'react';
-import { selectUser, selectUserAccounts } from '../../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, selectUserAccounts } from '../../redux-toolkit/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAccounts, setCurrentAccount } from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
@@ -16,7 +16,7 @@ import { configAuth } from '../../api/configAuth';
 export default function MultipleSelectPlaceholder(props) {
 
 
-  const [selectedAccount, setSelectedAccount] = useState('');
+  const [selectedAccountName, setSelectedAccount] = useState(''); //refers to account name*
   const [selectedAccountColor, setSelectedAccountColor] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -24,41 +24,28 @@ export default function MultipleSelectPlaceholder(props) {
   const accounts = useSelector(selectUserAccounts);
   const user = useSelector(selectUser);
 
+  const currentAccount = useSelector(selectCurrentAccount);
 
 
+  //Responsible to intialize current account for user.
   useEffect(() => {
-    console.log(accounts);
-    if (accounts) {
-      setSelectedAccount(getSelectedAccountName(accounts))
-      setSelectedAccountColor(getSelectedAccountLabel(accounts))
-      dispatch(setCurrentAccount(getSelectedAccountObject(accounts)));
-    }
+    api.post('/api/getSelectedAccount', { userId: user._id }, configAuth).then((res) => {
+      dispatch(setCurrentAccount(res.data));
+      setSelectedAccountColor(res.data.Label);
+      setSelectedAccount(res.data.AccountName);
+    }).catch((err) => {
+      console.log(err);
+      alert(err);
+    });
   }, [])
 
 
-
-  const getSelectedAccountLabel = (accountList) => {
-    const selectedAccount = accountList.find(account => account.IsSelected === 'true');
-
-    return selectedAccount ? selectedAccount.Label : '';
-  };
-  const getSelectedAccountName = (accountList) => {
-    const selectedAccount = accountList.find(account => account.IsSelected === 'true');
-    return selectedAccount ? selectedAccount.AccountName : '';
-  };
-
-  const getSelectedAccountObject = (accountList) => {
-    return accountList.find(account => account.IsSelected === 'true');
-  }
-
-
   const handleChange = (event) => {
-
     const accountId = event.target.value
     api.post('/api/setSelectedAccount', { userId: user._id, accountId }, configAuth).then((res) => {
       console.log(res.data);
-      setSelectedAccount(res.data);
-      setSelectedAccountColor(getAccountColor(res.data.AccountName));
+      setSelectedAccount(res.data.AccountName)
+      setSelectedAccountColor(res.data.Label);
       dispatch(setCurrentAccount(res.data));
     }).catch((err) => {
       console.error(err);
@@ -75,12 +62,6 @@ export default function MultipleSelectPlaceholder(props) {
     setAnchorEl(null);
   };
 
-  const getAccountColor = (accountName) => {
-    const account = accounts.find(
-      (account) => account.AccountName === accountName
-    );
-    return account ? account.Label : '';
-  };
 
   return (
     <Box>
@@ -93,7 +74,7 @@ export default function MultipleSelectPlaceholder(props) {
           aria-haspopup="true"
           onClick={handleOpenMenu}
           onClose={handleCloseMenu}
-          value={selectedAccount}
+          value={selectedAccountName}
           onChange={handleChange}
           renderValue={(value) => (
             <React.Fragment>

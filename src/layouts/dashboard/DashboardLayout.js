@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
@@ -7,6 +7,10 @@ import Header from './header';
 import Nav from './nav';
 import AppBar from '../../components/appBar/appBar'
 import MultipleSelectPlaceholder from '../../components/accounts/selectAccount';
+import api from '../../api/api';
+import { useDispatch } from 'react-redux';
+import { configAuth } from '../../api/configAuth';
+import { setCurrentAccount } from '../../redux-toolkit/userSlice';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -35,6 +39,7 @@ const Main = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
+
 
   return (
     <StyledRoot>
