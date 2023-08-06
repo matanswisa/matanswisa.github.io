@@ -42,9 +42,7 @@ const authSlice = createSlice({
         setCurrentAccount(state, action) {
             state.currentAccount = action.payload;
         },
-        setCurrentAccount(state, action) {
-            state.currentAccount = action.payload;
-        },
+
         addAccountToList(state, action) {
             // state.
             console.log(action.payload);
@@ -70,7 +68,7 @@ const authSlice = createSlice({
     },
 });
 
-export const { login, logout, selectIsAdmin, initializeUser, setCurrentAccount, addAccountToList, updateAccount, removeAccount, setTradesList } = authSlice.actions;
+export const { login, logout, selectIsAdmin, initializeUser, setCurrentAccount, addAccountToList, updateAccount, removeAccount, setTradesList, updateAccountList } = authSlice.actions;
 
 //Selectors
 export const selectUserAccounts = (state) => state.auth.user.accounts;

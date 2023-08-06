@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { selectUser, selectUserAccounts } from '../../redux-toolkit/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAccounts, setCurrentAccount } from '../../redux-toolkit/userSlice';
+import { configAuth } from '../../api/configAuth';
 
 
 export default function MultipleSelectPlaceholder(props) {
@@ -21,11 +22,8 @@ export default function MultipleSelectPlaceholder(props) {
 
   const dispatch = useDispatch();
   const accounts = useSelector(selectUserAccounts);
+  const user = useSelector(selectUser);
 
-  const token = localStorage.getItem('token');
-
-
-  // const accounts = user.accounts;
 
 
   useEffect(() => {
@@ -37,28 +35,6 @@ export default function MultipleSelectPlaceholder(props) {
     }
   }, [])
 
-
-  // const fetchAccounts = async () => {
-  //   try {
-  //     const response = await api.post('/api/accounts', { userId: user._id }, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       }
-  //     });
-
-  //     const initialSelectedAccount = getSelectedAccountName(response.data);
-  //     setAccounts(response.data);
-  //     setSelectedAccount(initialSelectedAccount);
-
-  //     const initialSelectedAccountColor = getSelectedAccountLabel(response.data);
-  //     setSelectedAccountColor(initialSelectedAccountColor);
-
-  //     dispatch(setUserAccounts(response.data));
-  //     console.log(initialSelectedAccount);
-  //     dispatch(setCurrentAccount(getSelectedAccountObject(response.data)));
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
 
 
   const getSelectedAccountLabel = (accountList) => {
@@ -77,10 +53,18 @@ export default function MultipleSelectPlaceholder(props) {
 
 
   const handleChange = (event) => {
-    console.log(event.target.value);
-    setSelectedAccount(event.target.value);
-    setSelectedAccountColor(getAccountColor(event.target.value));
-    updateSelectedAccount(event.target.value);
+
+    const accountId = event.target.value
+    api.post('/api/setSelectedAccount', { userId: user._id, accountId }, configAuth).then((res) => {
+      console.log(res.data);
+      setSelectedAccount(res.data);
+      setSelectedAccountColor(getAccountColor(res.data.AccountName));
+      dispatch(setCurrentAccount(res.data));
+    }).catch((err) => {
+      console.error(err);
+      alert('Error: ' + err);
+    });
+
   };
 
   const handleOpenMenu = (event) => {
@@ -89,21 +73,6 @@ export default function MultipleSelectPlaceholder(props) {
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
-  };
-
-  const updateSelectedAccount = async (accountName) => {
-
-    const data = {
-      AccountName: accountName,
-    };
-
-    try {
-      await api.post('/api/updateIsSelectedAccount', data);
-      return false;
-    } catch (err) {
-      console.error(err);
-      return false;
-    }
   };
 
   const getAccountColor = (accountName) => {

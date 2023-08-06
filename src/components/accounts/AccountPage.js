@@ -31,8 +31,8 @@ import useToast from '../../hooks/alert';
 import 'react-toastify/dist/ReactToastify.css';
 import api from '../../api/api';
 import { ToastContainer, } from 'react-toastify';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../../redux-toolkit/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser, selectUserAccounts, updateAccountList } from '../../redux-toolkit/userSlice';
 import MultipleSelectPlaceholder from './selectAccount';
 
 
@@ -44,34 +44,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function BasicModal() {
 
     //const toggleShow = () => setBasicModal(!basicModal);
-    const [accounts, setAccounts] = useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
     const user = useSelector(selectUser);
-    const token = localStorage.getItem('token');
 
-    useEffect(() => {
-        fetchAccounts();
-
-    }, []);
-
-
-    const fetchAccounts = async () => {
-        try {
-            const response = await api.post('/api/accounts', { userId: user._id }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            });
-            setAccounts(response.data);
-
-
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
+    const dispatch = useDispatch();
+    const accounts = useSelector(selectUserAccounts);
 
 
     const getAccountInfoById = (accountList, accountid) => {
@@ -92,16 +71,18 @@ export default function BasicModal() {
             };
 
             // Send the DELETE request with the data in the request body and authorization header
-            await api.delete('/api/deleteAccount', {
+            const response = await api.delete('/api/deleteAccount', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
                 data: requestData,
             });
+            const accounts = response.data;
 
+            dispatch(updateAccountList(accounts))
             // Notify and fetch accounts
             notifyToast(`Delete Account - ${accountId}`, 'warning');
-            await fetchAccounts();
+            // await fetchAccounts();
 
             setAnchorEl(null);
         } catch (error) {
@@ -270,10 +251,9 @@ export default function BasicModal() {
             <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
 
 
-                {openmodal && editMode === false && <ChildModal edit={editMode} notifyToast={notifyToast} fetchAccounts={fetchAccounts} openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
+                {openmodal && editMode === false && <ChildModal edit={editMode} notifyToast={notifyToast} openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
                 {(openmodal) === true && editMode === true ? <ChildModal
                     openModal={openmodal}
-                    fetchAccounts={fetchAccounts}
                     handleOpenModal={setIsOpenmodal}
                     notifyToast={notifyToast}
                     edit={editMode}

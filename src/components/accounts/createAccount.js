@@ -23,8 +23,9 @@ import {
   blueGrey,
 } from '@mui/material/colors';
 import { Grid } from 'rsuite';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../../redux-toolkit/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser, updateAccountList } from '../../redux-toolkit/userSlice';
+import { configAuth } from '../../api/configAuth';
 const style = {
   position: 'absolute',
   top: '50%',
@@ -37,7 +38,7 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal(props) {
+export default function AccountModal(props) {
   const [accounts, setAccounts] = useState([]);
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
@@ -48,9 +49,7 @@ export default function BasicModal(props) {
   const { accountInfo } = props;
 
   const user = useSelector(selectUser);
-  const token = localStorage.getItem('token');
-
-  console.log("props", props);
+  const dispatch = useDispatch();
 
 
   useEffect(() => {
@@ -76,16 +75,12 @@ export default function BasicModal(props) {
       console.log("user", user);
 
       await api
-        .post('/api/createAccount', { userId: user._id, data }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        })
+        .post('/api/createAccount', { userId: user._id, data }, configAuth)
         .then(async (res) => {
           notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
-          await props.fetchAccounts();
-          return false;
+          dispatch(updateAccountList(res.data))
+
         })
         .catch((err) => {
           notifyToast("Couldn't add Account", 'error');
@@ -102,18 +97,16 @@ export default function BasicModal(props) {
         Label: selectedColor,
         IsSelected: 'true',
         userId: user._id,
-      }; 
+      };
 
       await api
-        .put('/api/editAccount', data, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        }) // Use api.put and pass the account id in the URL
+        .put('/api/editAccount', data, configAuth) // Use api.put and pass the account id in the URL
         .then((res) => {
           notifyToast('Account updated successfully', 'success');
           props.handleOpenModal(false);
-          props.fetchAccounts();
+          // props.fetchAccounts();
+          dispatch(updateAccountList(res.data))
+
         })
         .catch((err) => {
           notifyToast("Couldn't update account", 'error');
