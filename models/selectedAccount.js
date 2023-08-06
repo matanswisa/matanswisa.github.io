@@ -8,7 +8,8 @@ const SelectedAccount = new Mongoose.Schema({
     account: { type: Object, ref: 'Account', default: {}, required: false },
     userId: {
         type: String,
-        required: true
+        required: true,
+        uniqe: true
     },
 });
 

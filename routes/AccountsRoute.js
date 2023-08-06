@@ -57,22 +57,45 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
   }
 });
 
+router.post('/getSelectedAccount', authenticateToken, async (req, res) => {
+  const { userId } = req.body;
+  const selectedAccount = await SelectedAccountModel.findOne({ userId: userId });
+  const user = await User.findById(userId);
+
+
+  if (!selectedAccount && !user?.accounts.length) {
+    res.status(400).send('No selected account found');
+  } else if (!selectedAccount && user?.accounts.length) {
+    res.status(200).send('ok');
+  } else if (selectedAccount && user?.accounts.length) {
+    res.status(200).json(selectedAccount.account);
+  }
+});
 
 router.post('/setSelectedAccount', authenticateToken, async (req, res) => {
   try {
     const { userId, accountId } = req.body;
     const requestedAccount = await Account.findById(accountId);
-    const selectedAccount = await SelectedAccountModel.find({ userId: userId });
+    const selectedAccount = await SelectedAccountModel.findOne({ userId: userId });
 
+
+    //in case account doesn't exists
     if (!requestedAccount) {
-      res.status(400).send('Couldn\'t find the account to set');
+      return res.status(400).send('Couldn\'t find the account to set');
     }
 
+    //in case we switch to account that does exists and its not the first time.
+    if (selectedAccount) {
+      await SelectedAccountModel.updateOne({ userId }, { accountId: accountId, account: requestedAccount });
+      return res.status(200).json(requestedAccount);
+    }
+
+    //First time for intializing selected account.
     if (!selectedAccount) {
       const result = await SelectedAccountModel.create({ userId, accountId, account: requestedAccount });
-      res.status(200).json(result);
+      return res.status(200).json(requestedAccount);
     } else {
-      await SelectedAccountModel.create({ userId, accountId, account: requestedAccount });
+      const result = await SelectedAccountModel.create({ userId, accountId, account: requestedAccount.account });
       res.status(200).json(requestedAccount);
     }
   } catch (err) {
