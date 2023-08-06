@@ -47,7 +47,9 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
     }
 
     // Return a success response
-    res.status(200).json({ accountId });
+    // res.status(200).json({ accountId });
+    // res.status(200).json
+    res.status(200).json(accounts);
   } catch (error) {
     console.error(error);
     // Return an error response
@@ -128,7 +130,8 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
       { $set: { IsSelected: "true" } }
     );
 
-    res.status(200).json(newAccount);
+
+    res.status(200).json(accounts);
 
   } catch (err) {
     console.error(err);
@@ -169,7 +172,8 @@ router.put("/editAccount", authenticateToken, async (req, res) => {
       { $set: { IsSelected: "false" } }
     );
 
-    return res.status(200).json(accountToUpdate);
+    // return res.status(200).json(accountToUpdate);
+    res.status(200).json(accounts);
   } catch (error) {
     console.error('Error updating account:', error);
     return res.status(500).json({ error: 'Internal server error' });

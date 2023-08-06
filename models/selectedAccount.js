@@ -5,7 +5,7 @@ const SelectedAccount = new Mongoose.Schema({
         type: String,
         required: true
     },
-    accounts: { type: Object, ref: 'Account', default: {}, required: false },
+    account: { type: Object, ref: 'Account', default: {}, required: false },
     userId: {
         type: String,
         required: true
