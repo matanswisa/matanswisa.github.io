@@ -21,11 +21,9 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
     let accounts = user.accounts;
     if (!accounts.length) return res.status(400).json({ message: "No accounts to delete" });
 
-    // Convert the accountId to a Mongoose ObjectId
-    const accountToDeleteId = accountId;
 
     // Filter out the account to be deleted
-    accounts = accounts.filter(account => !account._id == accountToDeleteId);
+    accounts = accounts.filter(account => account._id != accountId);
     await User.updateOne({ _id: userId }, { accounts });
 
     // Check if the account exists
@@ -48,7 +46,7 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
     }
 
     // Return a success response
-    res.status(200).json({ message: `Account deleted - ${accountId}` });
+    res.status(200).json({ accountId });
   } catch (error) {
     console.error(error);
     // Return an error response
@@ -86,12 +84,12 @@ router.post('/updateIsSelectedAccount', (req, res) => {
 });
 
 
-router.get("/accounts", authenticateToken, async (req, res) => {
+router.post("/accounts", authenticateToken, async (req, res) => {
   try {
     const { userId } = req.body;
     console.log(req.body);
-    const user = await User.findById(userId)
-    const accounts = user.accounts; // Assuming you're using a MongoDB database and the Account model
+    const user = await User.findById(userId);
+    const accounts = user.accounts;
 
     res.status(200).json(accounts);
   } catch (err) {
@@ -135,7 +133,7 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
       { $set: { IsSelected: "true" } }
     );
 
-    res.status(200).json({ AccountId: newAccount._id });
+    res.status(200).json(newAccount);
 
   } catch (err) {
     console.error(err);
@@ -143,13 +141,10 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
   }
 });
 
-
 router.put("/editAccount", authenticateToken, async (req, res) => {
-
   const { userId, accountId, AccountName, Label, IsSelected } = req.body;
 
   try {
-    // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
@@ -168,26 +163,22 @@ router.put("/editAccount", authenticateToken, async (req, res) => {
     accountToUpdate.Label = Label;
     accountToUpdate.IsSelected = IsSelected;
 
-    await Account.findByIdAndUpdate(accountId, { $set: { AccountName, Label, IsSelected: "true" } });
+    const accounts = user.accounts.filter(account => account._id != accountId);
+
+    accounts.push(accountToUpdate);
+    await Account.findOneAndUpdate({ _id: accountId }, { AccountName, Label, IsSelected: "true" });
+    await User.findByIdAndUpdate(userId, { accounts });
 
     await Account.updateMany(
       { _id: { $ne: accountId } },
       { $set: { IsSelected: "false" } }
     );
 
-    //   // Update the updated account's IsSelected field to "true"
-
-    // Save the updated user document
-    await user.save();
-
-    return res.json({ message: 'Account updated successfully' });
+    return res.status(200).json(accountToUpdate);
   } catch (error) {
     console.error('Error updating account:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
-
 });
-
-
 
 export default router;

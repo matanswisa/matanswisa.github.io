@@ -9,7 +9,6 @@ import { roles } from '../utils/roles.js';
 configDotenv();
 
 const { JWT_SECRET_KEY } = process.env;
-console.log("JWT_SECRET_KEY", JWT_SECRET_KEY)
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -24,37 +23,35 @@ router.post('/register', async (req, res) => {
             email,
             license,
 
-        })
-            .then((user) => {
-                const maxAge = 24 * 60 * 60;
-                const token = jwt.sign(
-                    { id: user._id, username, email: user.email, role: user.role, license: user.license },
-                    JWT_SECRET_KEY,
-                    {
-                        expiresIn: maxAge, // 24hrs
-                    }
-                );
-
-                res.cookie("jwt", token, {
-                    httpOnly: true,
-                    SameSite: "Lax",
-                    maxAge: maxAge * 1000
-                });
-                res.status(201).json({
-                    message: "User successfully created",
-                    user: user._id,
-                    role: user.role,
-                    email: user.email,
-                    license: user.license,
-
-                });
-            })
-            .catch((error) =>
-                res.status(400).json({
-                    message: "User not successful created",
-                    error: error.message,
-                })
+        }).then((user) => {
+            const maxAge = 24 * 60 * 60;
+            const token = jwt.sign(
+                { id: user._id, username, email: user.email, role: user.role, license: user.license },
+                JWT_SECRET_KEY,
+                {
+                    expiresIn: maxAge, // 24hrs
+                }
             );
+
+            res.cookie("jwt", token, {
+                httpOnly: true,
+                SameSite: "Lax",
+                maxAge: maxAge * 1000
+            });
+            res.status(201).json({
+                message: "User successfully created",
+                user: user._id,
+                role: user.role,
+                email: user.email,
+                license: user.license,
+
+            });
+        }).catch((error) =>
+            res.status(400).json({
+                message: "User not successful created",
+                error: error.message,
+            })
+        );
     });
 });
 
@@ -79,6 +76,21 @@ router.post('/login', async (req, res, next) => {
             // comparing given password with hashed password
             bcrypt.compare(password, user.password).then(function (result) {
                 if (result) {
+
+                    if (user.license && user.role == 0) {
+
+                        const currentDate = new Date(); // Get the current date
+                        const userLicenseDate = new Date(user.license); // Convert the user's license date to a Date object
+
+
+                        if (userLicenseDate <= currentDate) {
+                            console.log("Your license has expired. Please renew it to continue using the service.");
+
+                            return res.status(400).json({ message: "Login not successful", isLicenseExpried: true });
+                        }
+
+                    }
+
                     const maxAge = 24 * 60 * 60;
                     const token = jwt.sign(
                         { id: user._id, username, role: user.role },
@@ -98,6 +110,8 @@ router.post('/login', async (req, res, next) => {
                             username: user.username,
                             role: user.role,
                             email: user.email,
+                            accounts: user.accounts,
+
 
                         },
                         token: token
@@ -193,10 +207,11 @@ router.put("/updateUser", authenticateToken, async (req, res) => {
         if (!req.body) {
             return res.status(400).send('data is missing');
         }
-        console.log(req.body)
-        const { username, email, license } = req.body.data;
-        console.log({ username, email, license })
-        const result = await User.updateOne({ _id: req.body.data.userId }, { username, email, license });
+
+        const { username, email, licenseTime } = req.body.data;
+        const dateObj = new Date(licenseTime);
+
+        const result = await User.updateOne({ _id: req.body.data.userId }, { username, email, license: dateObj });
 
         if (result) {
             res.status(200).send(`User ${username} been updated.`);
@@ -212,7 +227,6 @@ router.put("/updateUser", authenticateToken, async (req, res) => {
 
 
 
-//Update username or email etc.
 router.put("/updateUserPassword", authenticateToken, async (req, res) => {
     try {
 
@@ -220,32 +234,29 @@ router.put("/updateUserPassword", authenticateToken, async (req, res) => {
             return res.status(400).send('data is missing');
         }
 
-
-        const { username, email, role, password } = req.body;
-        const result = await User.updateOne({ _id: req.body.userId }, { username, email, role });
+        const { username, password } = req.body.data;
 
 
 
 
         if (password === "222222") {
-
-            res.status(500).send(`same password`);
+            return res.status(400).json({ message: "same password", samePassword: true });
+            //    res.status(500).send(`same password`);
         }
         else {
-
-            if (result) {
-
-                res.status(200).send(`User ${username} been updated.`);
+            const user = await User.findOne({ username });
+            if (!user) {
+                return res.status(404).send(`User ${username} not found.`);
             }
 
-
-
             else {
-                res.status(400).send(`Can't update the user ${username}.`);
+                user.password = password;
+                await user.save();
+
+                res.status(200).send(`User ${username} has been updated.`);
             }
 
         }
-
 
 
     } catch (err) {

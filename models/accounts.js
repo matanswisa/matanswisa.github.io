@@ -15,10 +15,11 @@ const AccountsSchema = new Mongoose.Schema({
         type: String,
         required: true
     },
-    trades: [{
-        type: Mongoose.Schema.Types.ObjectId,
+    trades: {
+        type: Array,
         ref: 'Trade',
-    }],
+        default: []
+    }
 });
 
 const Account = Mongoose.model('Account', AccountsSchema);

@@ -10,6 +10,7 @@ import userRoute from './routes/UserRoute.js';
 import adminSeeder from './utils/adminSeeder.js';
 import authRouter from './routes/auth.js';
 import AccountRoute from './routes/AccountsRoute.js'
+import SendMailRoute from './routes/sendMail.js'
 
 connectDB();
 adminSeeder();
@@ -25,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api", TradesRoute);
 app.use("/api/auth", userRoute);
 app.use("/api/auth", authRouter);
-
+app.use("/api", SendMailRoute);
 app.use("/api", AccountRoute);
 
 

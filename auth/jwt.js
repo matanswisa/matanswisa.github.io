@@ -29,4 +29,4 @@ export const authorizeRole = (role) => (req, res, next) => {
     next();
 };
 
-// export default { authenticateToken, authorizeRole };
+// export default { authenticateToken, authorizeRole }token;
