@@ -72,34 +72,37 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
 
 
 
-
-
-router.post("/importTrades", authenticateToken, async (req, res) => {
+router.post("/importTrades", authenticateToken, upload.single('file'), async (req, res) => {
   try {
-    const { userId, accountId, data } = req.body;
-
+    const { userId, accountId } = req.body;
+    const data = JSON.parse(req.file.buffer.toString()); // Assuming you are uploading a JSON file
+    console.log(data);
     const trade = await Trade.findOne({ tradeID: data.tradeID });
-    console.log(trade);
-    // if (trade) return;
+    if (trade) {
+      return res.status(400).json({ error: 'Trade already exists' });
+    }
 
     let user = await User.findOne({ _id: userId });
-    console.log(user);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
     let accounts = user.accounts;
-    console.log(accounts);
-    const account = accounts.find(acc => acc._id == accountId);
-    accounts = accounts.filter(acc => acc._id != accountId);
+    const accountIndex = accounts.findIndex(acc => acc._id.toString() === accountId);
+    if (accountIndex === -1) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
     const newTrade = await Trade.create(data);
-    account.trades.push(newTrade);
-    accounts.push(account);
-    await Account.findByIdAndUpdate(accountId, account);
-    // await updateOne({_id:userId},{})
-    await User.updateOne({ _id: userId }, { accounts: accounts });
+    accounts[accountIndex].trades.push(newTrade);
+    await Account.findByIdAndUpdate(accountId, { trades: accounts[accountIndex].trades });
 
-    res.status(200).json({ tradeId: result._id });
+    await User.updateOne({ _id: userId }, { accounts });
 
+    res.status(200).json({ tradeId: newTrade._id });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error when adding a trade');
+    res.status(500).json({ error: 'Error when adding a trade' });
   }
 });
 
