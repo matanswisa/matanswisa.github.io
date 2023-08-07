@@ -19,7 +19,7 @@ import StepperModal from '../ExplanationOfImportTrades/StepperModal';
 import {
 
   IconButton
- 
+
 
 } from '@mui/material';
 
@@ -59,8 +59,8 @@ export default function BasicModal(props) {
   const handleChange = (event) => {
     setBroker(event.target.value);
   };
-  
- 
+
+
 
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount)
@@ -107,64 +107,87 @@ export default function BasicModal(props) {
 
 
 
-  const handleFileChangeTrade = (event) => {
+  const handleFileChangeTrade = async (event) => {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
 
-      if (!isCSVFile(file)) {
-        notifyToast("Invalid file format. Please select a CSV file.", "error");
-        return;
+      console.log(file);
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        // formData.append('userId', userId);
+        // formData.append('accountId', accountId);
+
+        const response = await api.post('/api/importTrades', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            // You might also need to include your authorization token here if required
+          },
+        });
+
+        console.log('Trade ID:', response.data.tradeId);
+        // Handle success or show a success message to the user
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        // Handle error or show an error message to the user
       }
-
-      // Use FileReader to read the file contents
-      const reader = new FileReader();
-      reader.onload = async () => {
-        // Parse the CSV data using papaparse
-
-        const result = Papa.parse(reader.result, {
-          header: true,
-          dynamicTyping: true,
-          skipEmptyLines: true, // Skip empty lines during parsing
-        });
-
-        if (!isValidColumnNames(result.data)) {
-          notifyToast("Please ensure the CSV file has corrent ,when import trade from tradeovate file name need to be : Position History ", "error");
-          return;
-        }
-
-        // Store the parsed data in the state variable
-        const mergedData = handleMergeRows(result.data);
-
-
-
-        await handleSaveTrade(mergedData);  //insert merged data to reports page.
-       
-
-   
-        if (user.accounts.length === 0) {
-          return;
-        }
-        const transactions = result.data;
-        const transactionsMapObj = {};
-        transactions.forEach((transaction) => {
-
-          const transactionId = transaction["Position ID"];
-
-          if (!transactionsMapObj[transactionId]) {
-            transactionsMapObj[transactionId] = [];
-            transactionsMapObj[transactionId].push(transaction)
-          } else transactionsMapObj[transactionId].push(transaction)
-        });
-
-        for (let k of Object.keys(transactionsMapObj)) {
-
-          handleSaveParcelsTrade(k, transactionsMapObj[k]);
-        }
-      };
-
-      reader.readAsText(file);
     }
-  
+
+
+    //   if (!isCSVFile(file)) {
+    //     notifyToast("Invalid file format. Please select a CSV file.", "error");
+    //     return;
+    //   }
+
+    //   // Use FileReader to read the file contents
+    //   const reader = new FileReader();
+    //   reader.onload = async () => {
+    //     // Parse the CSV data using papaparse
+
+    //     const result = Papa.parse(reader.result, {
+    //       header: true,
+    //       dynamicTyping: true,
+    //       skipEmptyLines: true, // Skip empty lines during parsing
+    //     });
+
+    //     if (!isValidColumnNames(result.data)) {
+    //       notifyToast("Please ensure the CSV file has corrent ,when import trade from tradeovate file name need to be : Position History ", "error");
+    //       return;
+    //     }
+
+    //     // Store the parsed data in the state variable
+    //     const mergedData = handleMergeRows(result.data);
+
+
+
+    // await handleSaveTrade(mergedData);  //insert merged data to reports page.
+
+
+
+    //     if (user.accounts.length === 0) {
+    //       return;
+    //     }
+    //     const transactions = result.data;
+    //     const transactionsMapObj = {};
+    //     transactions.forEach((transaction) => {
+
+    //       const transactionId = transaction["Position ID"];
+
+    //       if (!transactionsMapObj[transactionId]) {
+    //         transactionsMapObj[transactionId] = [];
+    //         transactionsMapObj[transactionId].push(transaction)
+    //       } else transactionsMapObj[transactionId].push(transaction)
+    //     });
+
+    //     for (let k of Object.keys(transactionsMapObj)) {
+
+    //       handleSaveParcelsTrade(k, transactionsMapObj[k]);
+    //     }
+    //   };
+
+    //   reader.readAsText(file);
+    // }
+
   };
 
 
@@ -288,8 +311,8 @@ export default function BasicModal(props) {
       const absoluteDurationInMinutes = Math.abs(timeDifferenceInMinutes)
       data.duration = absoluteDurationInMinutes || "";
 
- 
-      
+
+
       if (data.status == "Break Even") {
 
         const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
@@ -298,8 +321,8 @@ export default function BasicModal(props) {
       }
 
       ;
-      
-      
+
+
       if (user.accounts.length === 0) {
         notifyToast("You must create an account before importing any trade", "error");
         handleClose();
@@ -309,7 +332,7 @@ export default function BasicModal(props) {
       await api
         .post('/api/importTrades', { userId: user._id, accountId: currentAccount._id, data }, configAuth).then((res) => {
           // props.updateTradeLists()
-          
+
           handleClose();
           successCount++;
         }).catch((err) => {
@@ -388,10 +411,10 @@ export default function BasicModal(props) {
             style={{ display: 'none' }}
             onChange={handleFileChangeTrade}
           />
-          <IconButton size="large" color="inherit" onClick={handleIconButtonClick }>
+          <IconButton size="large" color="inherit" onClick={handleIconButtonClick}>
             <Iconify icon={'eva:question-mark-circle-outline'} />
           </IconButton>
-          {showStepper && <StepperModal  handleOpenModal={setShowStepper} />}
+          {showStepper && <StepperModal handleOpenModal={setShowStepper} />}
         </Box>
       </Modal>
     </div>
