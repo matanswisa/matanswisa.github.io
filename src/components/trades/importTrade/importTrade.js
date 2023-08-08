@@ -13,8 +13,8 @@ import api from '../../../api/api'
 import Papa from 'papaparse';
 
 import { configAuth } from '../../../api/configAuth';
-import { useSelector } from 'react-redux';
-import { selectCurrentAccount, selectUser } from '../../../redux-toolkit/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentAccount, selectUser, setTradesList } from '../../../redux-toolkit/userSlice';
 import StepperModal from '../ExplanationOfImportTrades/StepperModal';
 import {
 
@@ -49,7 +49,7 @@ export default function BasicModal(props) {
 
 
 
-
+  const dispatch = useDispatch();
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
@@ -106,91 +106,34 @@ export default function BasicModal(props) {
   };
 
 
-
   const handleFileChangeTrade = async (event) => {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
 
-      console.log(file);
       try {
         const formData = new FormData();
         formData.append('file', file);
-        // formData.append('userId', userId);
-        // formData.append('accountId', accountId);
+        formData.append('userId', user._id);
+        formData.append('accountId', currentAccount._id);
 
-        const response = await api.post('/api/importTrades', formData, {
+        const token = localStorage.getItem('token');
+        const headersForImportTrades = {
           headers: {
             'Content-Type': 'multipart/form-data',
-            // You might also need to include your authorization token here if required
+            Authorization: `Bearer ${token}`,
           },
-        });
+        }
 
-        console.log('Trade ID:', response.data.tradeId);
+        const response = await api.post('/api/importTrades', formData, headersForImportTrades);
+
+        dispatch(setTradesList(response.data));
         // Handle success or show a success message to the user
       } catch (error) {
         console.error('Error uploading file:', error);
         // Handle error or show an error message to the user
       }
     }
-
-
-    //   if (!isCSVFile(file)) {
-    //     notifyToast("Invalid file format. Please select a CSV file.", "error");
-    //     return;
-    //   }
-
-    //   // Use FileReader to read the file contents
-    //   const reader = new FileReader();
-    //   reader.onload = async () => {
-    //     // Parse the CSV data using papaparse
-
-    //     const result = Papa.parse(reader.result, {
-    //       header: true,
-    //       dynamicTyping: true,
-    //       skipEmptyLines: true, // Skip empty lines during parsing
-    //     });
-
-    //     if (!isValidColumnNames(result.data)) {
-    //       notifyToast("Please ensure the CSV file has corrent ,when import trade from tradeovate file name need to be : Position History ", "error");
-    //       return;
-    //     }
-
-    //     // Store the parsed data in the state variable
-    //     const mergedData = handleMergeRows(result.data);
-
-
-
-    // await handleSaveTrade(mergedData);  //insert merged data to reports page.
-
-
-
-    //     if (user.accounts.length === 0) {
-    //       return;
-    //     }
-    //     const transactions = result.data;
-    //     const transactionsMapObj = {};
-    //     transactions.forEach((transaction) => {
-
-    //       const transactionId = transaction["Position ID"];
-
-    //       if (!transactionsMapObj[transactionId]) {
-    //         transactionsMapObj[transactionId] = [];
-    //         transactionsMapObj[transactionId].push(transaction)
-    //       } else transactionsMapObj[transactionId].push(transaction)
-    //     });
-
-    //     for (let k of Object.keys(transactionsMapObj)) {
-
-    //       handleSaveParcelsTrade(k, transactionsMapObj[k]);
-    //     }
-    //   };
-
-    //   reader.readAsText(file);
-    // }
-
   };
-
-
 
   const handleImportTrade = () => {
     // Trigger the file input selection when the button is clicked
@@ -200,168 +143,6 @@ export default function BasicModal(props) {
   useEffect(() => {
 
   }, [csvData]);
-
-
-
-
-
-
-
-
-  const handleSaveParcelsTrade = async (id, arr) => {
-
-    // const count = matchingRows.length; // Total number of trades
-    //let successCount = 0;
-
-    for (let i = 0; i < arr.length; i++) {
-      const netROI = ((arr[i]["Sell Price"] - arr[i]["Buy Price"]) / arr[i]["Buy Price"]) * 100;
-
-      const data = {
-        entryDate: arr[i]["Bought Timestamp"] || "",
-        symbol: arr[i]["Product"] || "",
-        status: arr[i]["P/L"] < 0 ? "Loss" : arr[i]["P/L"] > 0 ? "Win" : "Break Even",
-        netROI: netROI.toFixed(2),
-        stopPrice: 0,
-        longShort: arr[i]["Buy Price"] < arr[i]["Sell Price"] ? "Long" : "Short" || "",
-        contracts: arr[i]["Bought"] || "",
-        entryPrice: arr[i]["Buy Price"] || "",
-        exitPrice: arr[i]["Sell Price"] || "",
-        duration: "",
-        commission: "",
-        comments: "",
-        netPnL: arr[i]["P/L"] !== undefined ? arr[i]["P/L"] : "",
-        qty: arr[i]["Paired Qty"],
-
-      }
-
-
-
-      const boughtTimestamp = new Date(arr[i]["Bought Timestamp"]);
-      const soldTimestamp = new Date(arr[i]["Sold Timestamp"]);
-
-      const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
-      data.duration = timeDifferenceInMinutes || "";
-
-      if (data.status == "Break Even") {
-        const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
-        data.duration = timeDifferenceInMinutes || "";
-        data.netROI = 0;
-      }
-
-
-
-      await api
-        .post('/api/importParcelsTrades', { data, id, userId: user._id, accountId: currentAccount._id }, configAuth)
-        .then((res) => {
-          props.updateTradeLists();
-          handleClose();
-          //  successCount++;
-        })
-        .catch((err) => {
-          const errorMessage =
-            "Couldn't add trade number: " +
-            (i + 1) +
-            "   " +
-            arr[i]["Product"] +
-            " - " +
-            arr[i]["Timestamp"];
-          notifyToast(errorMessage, "error");
-        });
-
-    }
-
-  }
-
-
-
-
-  const handleSaveTrade = async (csvData) => {
-    console.log(csvData);
-    const count = csvData.length; // Total number of trades
-    let successCount = 0;
-
-    for (let i = 0; i < csvData.length; i++) {
-
-      const netROI = ((csvData[i]["Sell Price"] - csvData[i]["Buy Price"]) / csvData[i]["Buy Price"]) * 100;
-      const data = {
-        entryDate: csvData[i]["Bought Timestamp"] || "",
-        symbol: csvData[i]["Product"] || "",
-        status: csvData[i]["P/L"] < 0 ? "Loss" : csvData[i]["P/L"] > 0 ? "Win" : "Break Even",
-        netROI: netROI.toFixed(2),
-        stopPrice: 0,
-        longShort: csvData[i]["Buy Price"] < csvData[i]["Sell Price"] ? "Long" : "Short" || "",
-        contracts: csvData[i]["Bought"] || "",
-        entryPrice: csvData[i]["Buy Price"] || "",
-        exitPrice: csvData[i]["Sell Price"] || "",
-        duration: "",
-        commission: "",
-        comments: "",
-        netPnL: csvData[i]["P/L"] !== undefined ? csvData[i]["P/L"] : "",
-        tradeID: csvData[i]["Position ID"],
-      }
-
-
-
-
-      const boughtTimestamp = new Date(csvData[i]["Bought Timestamp"]);
-      const soldTimestamp = new Date(csvData[i]["Sold Timestamp"]);
-
-
-      const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
-      const absoluteDurationInMinutes = Math.abs(timeDifferenceInMinutes)
-      data.duration = absoluteDurationInMinutes || "";
-
-
-
-      if (data.status == "Break Even") {
-
-        const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
-        data.duration = timeDifferenceInMinutes || "";
-        data.netROI = 0;
-      }
-
-      ;
-
-
-      if (user.accounts.length === 0) {
-        notifyToast("You must create an account before importing any trade", "error");
-        handleClose();
-        return;
-      }
-
-      await api
-        .post('/api/importTrades', { userId: user._id, accountId: currentAccount._id, data }, configAuth).then((res) => {
-          // props.updateTradeLists()
-
-          handleClose();
-          successCount++;
-        }).catch((err) => {
-          const errorMessage = "Couldn't add trade number: " + (i + 1) + "   " + csvData[i]["Product"] + " - " + csvData[i]["Timestamp"];
-          notifyToast(errorMessage, "error");
-
-        })
-
-    }
-
-    if (successCount === count) {
-      notifyToast(`All ${count} trades added successfully`, "success");
-    } else {
-      notifyToast(`${successCount} out of ${count} trades added successfully`, "success");
-    }
-
-
-
-  }
-
-
-  ////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
 
   return (
     <div>

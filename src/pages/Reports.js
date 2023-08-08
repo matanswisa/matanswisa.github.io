@@ -207,6 +207,7 @@ export default function UserPage() {
   if (currentAccount?.trades) {
 
     trades = currentAccount?.trades;
+    console.log("trades", trades);
   }
   else {
     trades = [];
@@ -323,7 +324,7 @@ export default function UserPage() {
   const deleteTrade = async (tradeId) => {
     console.log(editTradeId);
     const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, configAuth);
-    setTradesList(res.data)
+    dispatch(setTradesList(res.data))
 
     notifyToast("Delete trade Successfully", 'warning');
     toggleShow();
@@ -411,7 +412,7 @@ export default function UserPage() {
 
         <Card>
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800, maxWidth: 2000,  }}>
+            <TableContainer sx={{ minWidth: 800, maxWidth: 2000, }}>
               <Table>
                 <UserListHead
                   order={order}
@@ -537,7 +538,7 @@ export default function UserPage() {
                             </Dialog>
                           </TableCell>
 
-                          <TableCell onClick={handleCellClick("comments", trade.comments)} align="center">{trade.comments.length > 20 ? `${trade.comments.substring(0, 20)}...` : trade.comments}</TableCell>
+                          <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>
 
                         </TableRow>
                       );
