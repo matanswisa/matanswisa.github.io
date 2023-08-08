@@ -12,7 +12,8 @@ import { fetchTradesWithImages, fetchUserTrades } from "../services/trades.servi
 import User from "../models/user.js";
 import Account from "../models/accounts.js";
 import { authenticateToken } from "../auth/jwt.js";
-// import { fetchTradesWithImages } from "./services";
+import parse from 'csv-parser';
+import { buildTradesDataByTradovateCSV } from "../utils/csvTradesFileUtils.js";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = dirname(currentFilePath);
@@ -75,83 +76,29 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
 router.post("/importTrades", authenticateToken, upload.single('file'), async (req, res) => {
   try {
     const { userId, accountId } = req.body;
-    const data = JSON.parse(req.file.buffer.toString()); // Assuming you are uploading a JSON file
-    console.log(data);
-    const trade = await Trade.findOne({ tradeID: data.tradeID });
-    if (trade) {
-      return res.status(400).json({ error: 'Trade already exists' });
-    }
 
-    let user = await User.findOne({ _id: userId });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+    const tradesData = [];
+    fs.createReadStream(req.file.path)
+      .pipe(parse({ delimiter: ',' }))
+      .on('data', (row) => {
+        tradesData.push(row);
+      })
+      .on('end', async () => {
+        fs.unlinkSync(req.file.path); // Remove the temporary file
 
-    let accounts = user.accounts;
-    const accountIndex = accounts.findIndex(acc => acc._id.toString() === accountId);
-    if (accountIndex === -1) {
-      return res.status(404).json({ error: 'Account not found' });
-    }
+        // console.log(tradesData);
+        // Now tradesData array contains the parsed CSV rows
+        buildTradesDataByTradovateCSV(tradesData, userId, accountId);
+        // console.log(userId, accountId);
 
-    const newTrade = await Trade.create(data);
-    accounts[accountIndex].trades.push(newTrade);
-    await Account.findByIdAndUpdate(accountId, { trades: accounts[accountIndex].trades });
+        const trades = await fetchUserTrades(userId, accountId);
 
-    await User.updateOne({ _id: userId }, { accounts });
-
-    res.status(200).json({ tradeId: newTrade._id });
+        // Send the response indicating success
+        res.status(200).json(trades);
+      });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Error when adding a trade' });
-  }
-});
-
-
-//Updating tradeHistory of a specific trade.
-//After adding the trades we need to update Account and User and trade itself.
-router.post("/importParcelsTrades", authenticateToken, async (req, res) => {
-  try {
-    const { data, id, userId, accountId } = req.body;
-
-    console.log(data);
-
-    // Assuming you have a mongoose model named 'Trade'
-
-    const trade = await Trade.findOne({ tradeID: id });
-
-    if (trade && data) {
-      const user = await User.findById(userId);
-
-      let accounts = user.accounts;
-      const account = accounts.find(acc => acc._id == accountId);
-      const tradeOfAccount = account.trades.find(trade => trade.tradeID == id);
-      if (!tradeOfAccount?.tradesHistory) tradeOfAccount.tradesHistory = [];
-      else tradeOfAccount?.tradesHistory.push(data);
-
-      accounts = accounts.filter(acc => acc._id != accountId);
-      account.trades.push(tradeOfAccount);
-      accounts.push(account);
-
-      const result = await Trade.create({ ...data, tradeID: id });
-      trade.tradesHistory.push({ ...data, tradeID: id });
-
-      await Account.findByIdAndUpdate(accountId, account);
-      await User.updateOne({ _id: userId }, { accounts: accounts });
-
-      await trade.save();
-
-      //give all trades of current user account;
-      const trades = await fetchUserTrades(userId, accountId);
-      // Send success response here
-      return res.status(200).json(trades);
-    } else {
-      // If no trade is found with the specified ID, handle accordingly.
-      console.error("Trade not found");
-      return res.status(404).send("Trade not found");
-    }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error when adding a trade");
+    res.status(500).json({ error: 'Error when importing trades' });
   }
 });
 
