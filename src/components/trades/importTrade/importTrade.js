@@ -125,11 +125,13 @@ export default function BasicModal(props) {
         }
 
         const response = await api.post('/api/importTrades', formData, headersForImportTrades);
-
+        console.log(response.data);
         dispatch(setTradesList(response.data));
+        notifyToast('Upload csv file successfully', 'success');
         // Handle success or show a success message to the user
       } catch (error) {
         console.error('Error uploading file:', error);
+        notifyToast('Error uploading file' + error.message, 'error');
         // Handle error or show an error message to the user
       }
     }
@@ -139,10 +141,6 @@ export default function BasicModal(props) {
     // Trigger the file input selection when the button is clicked
     fileInputRefTrade.current.click();
   };
-
-  useEffect(() => {
-
-  }, [csvData]);
 
   return (
     <div>
