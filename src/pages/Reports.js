@@ -49,7 +49,7 @@ import AddFarshel from '../components/trades/importTrade/AddFarshel'
 import ImageModal from '../components/ImageModal/ImageModal';
 import { Grid } from 'rsuite';
 // ----------------------------------------------------------------------
-import { selectCurrentAccount, selectUser, setTradesList } from '../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, setTradesList , selectUserAccounts  } from '../redux-toolkit/userSlice';
 import { configAuth } from '../api/configAuth';
 
 
@@ -130,7 +130,8 @@ export default function UserPage() {
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
-
+  const userAccounts = useSelector(selectUserAccounts);
+  
   function handleCellClick(parameter, info) {
     return function () {
       if (parameter === 'comments') {
@@ -228,7 +229,16 @@ export default function UserPage() {
 
 
   const handleOpenModal = (tradeId) => {
-    setIsOpenmodal(true);
+
+    if(userAccounts.length == 0){ //before open modal check if have any account and alert to user when no account
+      
+      notifyToast("before add trades you need create account", 'warning');
+      }
+      else{
+        setIsOpenmodal(true);
+      }
+     
+ 
   };
 
   const handleOpenFarshelModal = (trade) => {
@@ -238,7 +248,15 @@ export default function UserPage() {
 
 
   const handleOpenModalImportTrades = (tradeId) => {
-    setIsOpenmodalImportTrades(true);
+
+    if(userAccounts.length == 0){ //before open modal check if have any account and alert to user when no account
+      
+    notifyToast("before import trades you need create account", 'warning');
+    }
+    else{
+      setIsOpenmodalImportTrades(true);
+    }
+   
   };
 
 

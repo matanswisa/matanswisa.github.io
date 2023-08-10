@@ -215,9 +215,7 @@ export default function TradeModal(props) {
       else if (exitPrice < 1) notifyToast("exit Price  is missing", "warning");
 
 
-      console.log(positionDate > currentDate);
-
-
+    
       return false;
     }
     return true;
