@@ -29,7 +29,12 @@ export default function MultipleSelectPlaceholder(props) {
 
   //Responsible to intialize current account for user.
   useEffect(() => {
-    api.post('/api/getSelectedAccount', { userId: user._id }, configAuth).then((res) => {
+    const token = localStorage.getItem('token');
+    api.post('/api/getSelectedAccount', { userId: user._id }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    }).then((res) => {
       dispatch(setCurrentAccount(res.data));
       setSelectedAccountColor(res.data.Label);
       setSelectedAccount(res.data.AccountName);
