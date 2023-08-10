@@ -151,9 +151,11 @@ export default function TradeModal(props) {
             reduxDispatch(setTradesList(res.data));
             console.log(res.data);
             notifyToast("Trade added successfully", "success");
+            handleClose();
 
           }).catch((err) => {
             notifyToast("Couldn't add trade", "error");
+            handleClose();
           })
       }
       else if (editMode === true) {
