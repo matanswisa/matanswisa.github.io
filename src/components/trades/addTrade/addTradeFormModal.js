@@ -130,8 +130,8 @@ export default function TradeModal(props) {
       stopPrice,
       longShort: positionType,
       contracts: contractsCounts,
-      entryPrice,
-      exitPrice,
+      entryPrice :entryPrice,
+      exitPrice : exitPrice,
       duration: positionDuration,
       commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
       comments,
@@ -165,7 +165,7 @@ export default function TradeModal(props) {
             handleUpload(tradeInfo?._id);
             reduxDispatch(setTradesList(res.data));
 
-            if (positionType === '' || positionStatus === '' ||
+            if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 || 
               contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
               if (positionType === '') notifyToast("Position type is missing", "warning");
@@ -174,6 +174,9 @@ export default function TradeModal(props) {
               else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
               else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
               else if (!positionDate) notifyToast("Date field is missing", "warning");
+              else if (entryPrice < 1) notifyToast(" entry Price is missing", "warning");
+              else if (exitPrice < 1) notifyToast("exit Price  is missing", "warning");
+
 
               return false;
             }
@@ -199,7 +202,7 @@ export default function TradeModal(props) {
 
     }
 
-    if (positionType === '' || positionStatus === '' ||
+    if (positionType === '' || positionStatus === '' ||  entryPrice < 1 || exitPrice < 1 || 
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
       if (positionType === '') notifyToast("Position type is missing", "warning");
@@ -208,6 +211,9 @@ export default function TradeModal(props) {
       else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
       else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
       else if (!positionDate) notifyToast("Date field is missing", "warning");
+      else if (entryPrice < 1) notifyToast(" entry Price is missing", "warning");
+      else if (exitPrice < 1) notifyToast("exit Price  is missing", "warning");
+
 
       console.log(positionDate > currentDate);
 
