@@ -24,7 +24,19 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
 
 
     // Filter out the account to be deleted
+    //[  Account2...]
     accounts = accounts.filter(account => account._id != accountId);
+
+    const userSelectedAccount = await SelectedAccountModel.findOne({ accountId });
+    const currentAccount = userSelectedAccount.account;
+    const accountToDelete = accounts.find(acc => acc._id == currentAccount._id);
+    if (!accountToDelete && accounts.length) {
+      await SelectedAccountModel.updateOne({ userId: userId }, { account: accounts[0] });
+    } else {
+      await SelectedAccountModel.updateOne({ userId: userId }, { account: null });
+    }
+
+
     await User.updateOne({ _id: userId }, { accounts });
 
     // Check if the account exists
@@ -34,21 +46,8 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'Account not found' });
     }
 
-    // Perform the deletion logic using the accountId
     await Account.findByIdAndDelete(accountId);
 
-    // Update the IsSelected field for the remaining accounts
-    await Account.updateMany({}, { $set: { IsSelected: false } });
-
-    // Set the IsSelected field to true for the first account (if available)
-    const firstAccount = await Account.findOne({});
-    if (firstAccount) {
-      await Account.updateOne({ _id: firstAccount._id }, { $set: { IsSelected: true } });
-    }
-
-    // Return a success response
-    // res.status(200).json({ accountId });
-    // res.status(200).json
     res.status(200).json(accounts);
   } catch (error) {
     console.error(error);
@@ -141,19 +140,7 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
     // await user.save();
     await User.updateOne({ _id: userId }, { accounts })
 
-    // Update other accounts' IsSelected field to "false"
-    await Account.updateMany(
-      { _id: { $ne: newAccount._id } }, // Excluding the newly created account
-      { $set: { IsSelected: "false" } }
-    );
-
-    // Update the newly created account's IsSelected field to "true"
-    await Account.updateOne(
-      { _id: newAccount._id },
-      { $set: { IsSelected: "true" } }
-    );
-
-
+    await SelectedAccountModel.findOneAndUpdate({ userId }, { account: newAccount });
     res.status(200).json(accounts);
 
   } catch (err) {
@@ -195,7 +182,7 @@ router.put("/editAccount", authenticateToken, async (req, res) => {
       { $set: { IsSelected: "false" } }
     );
 
-    // return res.status(200).json(accountToUpdate);
+
     res.status(200).json(accounts);
   } catch (error) {
     console.error('Error updating account:', error);
