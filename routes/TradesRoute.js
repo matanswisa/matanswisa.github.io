@@ -87,11 +87,9 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
       .on('end', async () => {
         fs.unlinkSync(req.file.path); // Remove the temporary file
 
-        // console.log(tradesData);
-        // Now tradesData array contains the parsed CSV rows
+      
         buildTradesDataByTradovateCSV(tradesData, userId, accountId);
-        // console.log(userId, accountId);
-
+  
         const trades = await fetchUserTrades(userId, accountId);
 
         // Send the response indicating success
@@ -131,7 +129,7 @@ router.post("/editTrade", authenticateToken, async (req, res) => {
     const { userId, accountId, tradeId, tradeData } = req.body;
     //first updating the trade object and get it back
     const result = await Trade.findByIdAndUpdate(tradeId, tradeData);
-    console.log(result);
+ 
     const account = await getAccountOfUserById(userId, accountId);
     const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id != tradeId);
     tradesWithoutCurrTrade.push(tradeData);
@@ -155,7 +153,7 @@ router.post('/deleteTrade', authenticateToken, async (req, res) => {
     const { tradeId, accountId, userId } = req.body;
 
     // Assuming the 'Trade', 'User', 'Account', and 'getAccountOfUserById' functions are properly defined and working.
-    console.log({ tradeId, accountId, userId })
+  
     const result = await Trade.findByIdAndDelete(tradeId);
 
     if (result) {
@@ -268,9 +266,7 @@ router.get('/ShowInfoBySpecificDate/:date', async (req, res) => {
     // Calculate the end date (next day) by adding one day (in milliseconds)
     const endDate = new Date(startDate.getTime() + 86400000);
 
-    console.log(startDate);
-    console.log(endDate);
-
+   
     // Find documents with entryDate within the date range using the Aggregation Pipeline
     const tradesByDate = await Trade.aggregate([
       {
@@ -284,7 +280,7 @@ router.get('/ShowInfoBySpecificDate/:date', async (req, res) => {
     ]);
 
     res.json(tradesByDate);
-    console.log(tradesByDate);
+  
   } catch (error) {
     console.error('Error fetching trades:', error);
     res.status(500).json({ error: 'An error occurred' });
@@ -312,11 +308,14 @@ router.get('/ShowInfoByDates', async (req, res) => {
     res.status(500).json({ error: 'An error occurred' });
   }
 });
+
+
+
+
 router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
   try {
     const { trades } = req.body;
     console.log(trades);
-  
 
     const tradesByDate = trades.reduce((result, trade) => {
       const date = new Date(trade.entryDate).toISOString().substr(0, 10);
@@ -329,25 +328,22 @@ router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
           numberOfTrades: 0,
           totalPnL: 0,
           Commission: 0,
-          totalWin: 0,
-          totalLoss: 0,
+          totalLoss: 0, // Initialize totalLoss
+          totalWin : 0,
         };
       }
 
       result[date].numberOfTrades++;
       result[date].Commission += trade.commission || 0;
 
-      if (trade.netPnL > 0) {
-        result[date].totalWin += trade.netPnL;
+      if (trade.status == "Win") {
+        result[date].totalPnL += trade.netPnL;
+        result[date].totalWin += trade.netPnL; // Subtract from totalLoss
         result[date].win++;
-      } else if (trade.netPnL < 0) {
-        if (trade.status === 'Loss') {
-          result[date].totalPnL -= trade.netPnL; // Subtract the negative value
-          result[date].totalLoss -= trade.netPnL; // Subtract from totalLoss
-          result[date].loss++;
-        } else {
-          result[date].totalPnL += trade.netPnL; // Add the negative value
-        }
+      } else if (trade.status == "Loss") {
+        result[date].totalPnL -= trade.netPnL; // Subtract from totalPnL
+        result[date].totalLoss -= trade.netPnL; // Subtract from totalLoss
+        result[date].loss++;
       }
 
       return result;
@@ -369,8 +365,10 @@ router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
 
 
 
+
+
 router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
-  console.log(req.body)
+ 
   try {
     const { tradeId, userId, accountId } = req.body;
     if (!req.file) return res.status(400).send("No image file to upload");
