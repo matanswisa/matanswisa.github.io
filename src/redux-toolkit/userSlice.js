@@ -66,7 +66,7 @@ const authSlice = createSlice({
     },
 });
 
-export const { login, logout, selectIsAdmin, initializeUser, setCurrentAccount, addAccountToList, updateAccount, removeAccount, setTradesList, updateAccountList } = authSlice.actions;
+export const { login, logout, selectIsAdmin, initializeUser, setCurrentAccount, addAccountToList, removeAccount, setTradesList, updateAccountList } = authSlice.actions;
 
 //Selectors
 export const selectUserAccounts = (state) => state.auth.user.accounts;

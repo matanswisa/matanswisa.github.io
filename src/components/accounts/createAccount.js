@@ -24,7 +24,7 @@ import {
 } from '@mui/material/colors';
 import { Grid } from 'rsuite';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser, updateAccountList } from '../../redux-toolkit/userSlice';
+import { selectUser, setCurrentAccount, updateAccountList } from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
 const style = {
   position: 'absolute',
@@ -80,7 +80,7 @@ export default function AccountModal(props) {
           notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
           dispatch(updateAccountList(res.data))
-
+          dispatch(setCurrentAccount(res.data[res.data.length - 1]));
         })
         .catch((err) => {
           notifyToast("Couldn't add Account", 'error');

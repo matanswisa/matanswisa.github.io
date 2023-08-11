@@ -32,7 +32,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import api from '../../api/api';
 import { ToastContainer, } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser, selectUserAccounts, updateAccountList } from '../../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, selectUserAccounts, setCurrentAccount, updateAccountList } from '../../redux-toolkit/userSlice';
 import MultipleSelectPlaceholder from './selectAccount';
 
 
@@ -48,7 +48,7 @@ export default function BasicModal() {
     const [editMode, setEditMode] = React.useState(false);
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
     const user = useSelector(selectUser);
-
+    const currentAccount = useSelector(selectCurrentAccount);
     const dispatch = useDispatch();
     const accounts = useSelector(selectUserAccounts);
 
@@ -79,11 +79,18 @@ export default function BasicModal() {
             });
             const accounts = response.data;
 
-            dispatch(updateAccountList(accounts))
+            dispatch(updateAccountList(accounts));
+
+            const account = accounts.find(account => account._id == currentAccount._id);
+            console.log('accounts', accounts, 'account', account);
+            if (!account && accounts.length > 0) {
+                dispatch(setCurrentAccount(accounts[0]));
+            } else {
+                dispatch(setCurrentAccount(null));
+            }
+
             // Notify and fetch accounts
             notifyToast(`Delete Account - ${accountId}`, 'warning');
-            // await fetchAccounts();
-
             setAnchorEl(null);
         } catch (error) {
             // Handle errors if any

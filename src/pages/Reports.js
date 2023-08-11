@@ -203,8 +203,6 @@ export default function UserPage() {
 
   let trades;
 
-
-
   if (currentAccount?.trades) {
 
     trades = currentAccount?.trades;

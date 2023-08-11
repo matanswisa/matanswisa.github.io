@@ -45,6 +45,23 @@ export default function MultipleSelectPlaceholder(props) {
   }, [])
 
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    api.post('/api/getSelectedAccount', { userId: user._id }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    }).then((res) => {
+      // dispatch(setCurrentAccount(res.data));
+      setSelectedAccountColor(res.data.Label);
+      setSelectedAccount(res.data.AccountName);
+    }).catch((err) => {
+      console.log(err);
+      alert(err);
+    });
+  }, [currentAccount]);
+
+
   const handleChange = (event) => {
     const accountId = event.target.value
     api.post('/api/setSelectedAccount', { userId: user._id, accountId }, configAuth).then((res) => {
