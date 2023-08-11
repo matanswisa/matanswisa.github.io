@@ -38,23 +38,32 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Iconify from '../components/iconify';
 import api from '../api/api';
-
-
+import userSlice, { selectCurrentAccount , selectUser} from '../redux-toolkit/userSlice';
+import { configAuth } from '../api/configAuth';
 
 export default function DailyStatsPage() {
   const [trades, setTrades] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
+  const currentAccount = useSelector(selectCurrentAccount);
+ 
+
+
+
 
   useEffect(() => {
-    api.get('/api/DailyStatsInfo')
+    api.post('/api/DailyStatsInfo',{trades:currentAccount.trades},configAuth)
       .then((res) => {
         setTrades(res.data);
+      
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
+
+
+  
 
   const handleDateChange = (date) => {
     setSelectedDate(date);

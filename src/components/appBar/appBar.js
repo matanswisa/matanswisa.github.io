@@ -8,19 +8,24 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SelectAccount from '../../components/accounts/selectAccount'
 import api from '../../api/api';
 import { useEffect, useState } from 'react';
-
+import { selectUserAccounts  } from '../../redux-toolkit/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function ButtonAppBar() {
   
 
 
+ 
+
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ backgroundColor: '#ffffff', boxShadow: 'none', }}>
+      <AppBar position="static" sx={{ backgroundColor: '#f9fafb', boxShadow: 'none', }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'flex-end' }}>
 
      
+
+          
 
         
         </Toolbar>
