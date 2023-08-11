@@ -256,9 +256,15 @@ router.get('/ShowNumOfTradeTotalPnlInfoByDates', async (req, res) => {
 });
 
 
-router.get('/ShowInfoBySpecificDate/:date', async (req, res) => {
+
+
+router.get('/ShowInfoBySpecificDate', authenticateToken, async (req, res) => {
   try {
-    const { date } = req.params;
+
+    const { trades ,date } = req.body;
+   
+
+    console.log(trades);
 
     // Convert the input date to a JavaScript Date object
     const startDate = new Date(date);
@@ -266,21 +272,22 @@ router.get('/ShowInfoBySpecificDate/:date', async (req, res) => {
     // Calculate the end date (next day) by adding one day (in milliseconds)
     const endDate = new Date(startDate.getTime() + 86400000);
 
-   
-    // Find documents with entryDate within the date range using the Aggregation Pipeline
+    // Find documents with entryDate within the date range and for the current account
     const tradesByDate = await Trade.aggregate([
       {
         $match: {
           entryDate: {
             $gte: startDate,
             $lt: endDate
-          }
+          },
+          // Assuming currentAccount field in your Trade model
+          currentAccount: currentAccount
         }
       }
     ]);
 
     res.json(tradesByDate);
-  
+
   } catch (error) {
     console.error('Error fetching trades:', error);
     res.status(500).json({ error: 'An error occurred' });
@@ -315,8 +322,7 @@ router.get('/ShowInfoByDates', async (req, res) => {
 router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
   try {
     const { trades } = req.body;
-    console.log(trades);
-
+ 
     const tradesByDate = trades.reduce((result, trade) => {
       const date = new Date(trade.entryDate).toISOString().substr(0, 10);
 
