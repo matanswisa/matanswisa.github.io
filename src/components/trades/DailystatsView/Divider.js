@@ -12,7 +12,8 @@ import { styled } from '@mui/material/styles';
 import api from '../../../api/api'
 import Paper from '@mui/material/Paper';
 import Modal from '@mui/material/Modal';
-
+import userSlice, { selectCurrentAccount , selectUser} from '../../../redux-toolkit/userSlice';
+import { useSelector } from 'react-redux'
 import {
  
   Dialog,
@@ -21,6 +22,9 @@ import {
   DialogActions,
   
 } from '@mui/material';
+
+import { configAuth } from '../../../api/configAuth';
+
 const ProfitFactor = (trade) => {
   
 
@@ -88,6 +92,7 @@ const style = {
 
 export default function Diveder(props) {
   const date = props.trade._id;
+  console.log(date);
   const [trades, setTrades] = useState([]);
   const totalPnL = props.trade.totalPnL;
   const isNegative = totalPnL < 0;
@@ -98,7 +103,7 @@ export default function Diveder(props) {
   const handleClose = () => setOpen(false);
 
   const [selectedComment, setSelectedComment] = useState('');
-
+  const currentAccount = useSelector(selectCurrentAccount);
 
   const handleCellClick = (params) => {
     if (params.field === 'comments') {
@@ -149,25 +154,23 @@ export default function Diveder(props) {
   });
   
   
+ 
+  
+
+  
+  useEffect(() => {
+    api.post('/api/ShowInfoBySpecificDate',{trades:currentAccount.trades, date:date},configAuth)
+      .then((res) => {
+        setTrades(res.data);
+      
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
 
-const fetchTrades = async () => {
-  const result = await api.get(`/api/ShowInfoBySpecificDate/${date}`);
-  return result;
-}
-
-
-useEffect(() => {
-
-
-  fetchTrades().then((res) => {
-    if (res.data)
-    setTrades(res.data);
-  }).catch((err) => {
-    console.error(err);
-  })
-}, [])
-
+  
 
   
 
