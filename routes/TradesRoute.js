@@ -14,6 +14,7 @@ import Account from "../models/accounts.js";
 import { authenticateToken } from "../auth/jwt.js";
 import parse from 'csv-parser';
 import { buildTradesDataByTradovateCSV } from "../utils/csvTradesFileUtils.js";
+import SelectedAccountModel from "../models/selectedAccount.js";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = dirname(currentFilePath);
@@ -311,31 +312,61 @@ router.get('/ShowInfoByDates', async (req, res) => {
     res.status(500).json({ error: 'An error occurred' });
   }
 });
-
-router.get('/DailyStatsInfo', async (req, res) => {
+router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
   try {
-    const tradesByDate = await Trade.aggregate([
-      {
-        $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
-          loss: { $sum: { $cond: [{ $eq: ['$status', 'Loss'] }, 1, 0] } },
-          win: { $sum: { $cond: [{ $eq: ['$status', 'Win'] }, 1, 0] } },
-          numberOfTrades: { $sum: 1 }, // Calculate the total number of trades
-          totalPnL: { $sum: '$netPnL' },
-          Commission: { $sum: '$commission' }, // Add the Commission field and calculate the sum of commission
-          totalWin: { $sum: { $cond: [{ $gt: ['$netPnL', 0] }, '$netPnL', 0] } }, // Calculate the sum of netPnL when above zero
-          totalLoss: { $sum: { $cond: [{ $gt: ['$netPnL', 0] }, 0, '$netPnL'] } }, // Calculate the sum of netPnL when below or equal to zero
-        },
-      },
-      { $sort: { _id: -1 } }, // Sort by descending entryDate
-    ]);
+    const { trades } = req.body;
+    console.log(trades);
+  
 
-    res.json(tradesByDate);
+    const tradesByDate = trades.reduce((result, trade) => {
+      const date = new Date(trade.entryDate).toISOString().substr(0, 10);
+
+      if (!result[date]) {
+        result[date] = {
+          _id: date,
+          loss: 0,
+          win: 0,
+          numberOfTrades: 0,
+          totalPnL: 0,
+          Commission: 0,
+          totalWin: 0,
+          totalLoss: 0,
+        };
+      }
+
+      result[date].numberOfTrades++;
+      result[date].Commission += trade.commission || 0;
+
+      if (trade.netPnL > 0) {
+        result[date].totalWin += trade.netPnL;
+        result[date].win++;
+      } else if (trade.netPnL < 0) {
+        if (trade.status === 'Loss') {
+          result[date].totalPnL -= trade.netPnL; // Subtract the negative value
+          result[date].totalLoss -= trade.netPnL; // Subtract from totalLoss
+          result[date].loss++;
+        } else {
+          result[date].totalPnL += trade.netPnL; // Add the negative value
+        }
+      }
+
+      return result;
+    }, {});
+
+    // Convert the aggregated data to an array
+    const aggregatedData = Object.values(tradesByDate);
+
+    // Sort the array by date in descending order
+    aggregatedData.sort((a, b) => b._id.localeCompare(a._id));
+
+    res.json(aggregatedData);
   } catch (error) {
     console.error('Error fetching trades:', error);
     res.status(500).json({ error: 'An error occurred' });
   }
 });
+
+
 
 
 router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
