@@ -61,8 +61,7 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
     await Account.findByIdAndUpdate(accountId, { trades: accountObj.trades });
     await User.updateOne({ _id: userId }, { accounts: accounts });
     // await account.save();
-    const result = await Trade.create(tradeData);
-
+    
     const tradesWithImage = await fetchTradesWithImages(accountObj.trades);
 
     res.status(200).json(tradesWithImage);
@@ -71,6 +70,7 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
     res.status(500).send('Error when adding a trade');
   }
 });
+
 
 
 
