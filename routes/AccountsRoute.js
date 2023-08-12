@@ -28,12 +28,13 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
     accounts = accounts.filter(account => account._id != accountId);
 
     const userSelectedAccount = await SelectedAccountModel.findOne({ accountId });
+    console.log('accountId', accountId, userSelectedAccount);
     const currentAccount = userSelectedAccount.account;
     const accountToDelete = accounts.find(acc => acc._id == currentAccount._id);
     if (!accountToDelete && accounts.length) {
-      await SelectedAccountModel.updateOne({ userId: userId }, { account: accounts[0] });
-    } else {
-      await SelectedAccountModel.updateOne({ userId: userId }, { account: null });
+      await SelectedAccountModel.updateOne({ userId: userId }, { accountId: accounts[0]._id, account: accounts[0] });
+    } else if (!accountToDelete && accounts.length == 1) {
+      await SelectedAccountModel.updateOne({ userId: userId }, { accountId: null, account: null });
     }
 
 
@@ -140,7 +141,7 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
     // await user.save();
     await User.updateOne({ _id: userId }, { accounts })
 
-    await SelectedAccountModel.findOneAndUpdate({ userId }, { account: newAccount });
+    await SelectedAccountModel.findOneAndUpdate({ userId }, { accountId: newAccount._id, account: newAccount });
     res.status(200).json(accounts);
 
   } catch (err) {
