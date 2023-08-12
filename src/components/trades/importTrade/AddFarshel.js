@@ -42,6 +42,8 @@ const columns = [
 ];
 
 
+  
+
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -84,8 +86,8 @@ const style = {
 
 export default function AddFarshel(props) {
     const trade = props.trade;
-   
-    //console.log(trade.tradesHistory);
+    let rows ;
+    
     const totalPnL = props.trade.totalPnL;
     const isNegative = totalPnL < 0;
     const winRate = ((props.trade.win / (props.trade.win + props.trade.loss)) * 100).toFixed(2);
@@ -108,7 +110,60 @@ export default function AddFarshel(props) {
     const handleCloseCommend = () => {
         setCommendOpen(false);
     };
-    const rows = trade.tradesHistory.map((trade) => {
+
+
+
+    function transformTrade(trade) {
+        // Calculate the duration in hours, minutes, and seconds format
+        const durationInMinutes = trade.duration || 0;
+        const absoluteDurationInMinutes = Math.abs(durationInMinutes);
+        const hours = Math.floor(absoluteDurationInMinutes / 60);
+        const minutes = Math.floor(absoluteDurationInMinutes % 60);
+        const seconds = Math.floor((absoluteDurationInMinutes % 1) * 60);
+    
+        // Format the duration as a string
+        let formattedDuration = '';
+        if (hours > 0) {
+            formattedDuration += `${hours} Hr `;
+        }
+        if (minutes > 0) {
+            formattedDuration += `${minutes} Min `;
+        }
+        if (seconds > 0) {
+            formattedDuration += `${seconds} Sec`;
+        }
+    
+        // If all values are zero, display "N/A"
+        if (!formattedDuration.trim()) {
+            formattedDuration = "N/A";
+        }
+    
+        return {
+            id: trade._id,
+            symbol: trade.symbol,
+            netROI: trade.netROI + "%",
+            entryPrice: trade.entryPrice,
+            exitPrice: trade.exitPrice,
+            contracts: trade.contracts,
+            duration: formattedDuration,
+            commission: trade.commission ? "$" + trade.commission : "N/A",
+            netPnL: "$" + trade.netPnL,
+        };
+    }
+   
+    console.log(trade);
+    if(trade.tradesHistory.length  == 0 ){
+
+     rows = [transformTrade(trade)];
+
+
+    }
+    else{
+
+
+
+    
+         rows = trade.tradesHistory.map((trade) => {
        
 
             console.log(trade.duration);
@@ -154,6 +209,13 @@ export default function AddFarshel(props) {
       
         
     });
+
+
+        
+    }
+
+
+
 
 
 

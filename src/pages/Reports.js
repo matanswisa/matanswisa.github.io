@@ -206,7 +206,7 @@ export default function UserPage() {
   if (currentAccount?.trades) {
 
     trades = currentAccount?.trades;
-    console.log("trades", trades);
+    
   }
   else {
     trades = [];
