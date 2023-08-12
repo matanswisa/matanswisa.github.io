@@ -131,11 +131,20 @@ export default function AccountModal(props) {
   };
 
   const validateForm = () => {
-    if (accountName === '') notifyToast('Account type is missing', 'warning');
-    else if (checkAccountExists(accounts, accountName)) {
+    if (accountName === ''){
+
+      notifyToast('Account type is missing', 'warning');
+      return false;
+    }
+
+    if (checkAccountExists(accounts, accountName))
+     {
+      
       notifyToast('Account already exist', 'warning');
       return false;
-    } else return true;
+     }
+
+     return true;
   };
   return (
     <div>
