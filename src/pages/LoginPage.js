@@ -9,7 +9,7 @@ import useResponsive from '../hooks/useResponsive';
 import Iconify from '../components/iconify';
 // sections
 import { LoginForm } from '../sections/auth/login';
-
+import LogoImage from '../components/logo/logoImage'
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(({ theme }) => ({
@@ -51,16 +51,18 @@ export default function LoginPage() {
     <>
       <Helmet>
         <title> Login | Trading </title>
+        
       </Helmet>
     
       <StyledRoot>
+  
       
 
         {mdUp && (
           <StyledSection>
-            <Typography variant="h3" sx={{ px: 11, mt: 12, mb: 5 }}>
-              Hi, Welcome Back
-            </Typography>
+            <LogoImage w = '500px' h = '400px' />
+        
+  
         
           </StyledSection>
         )}
@@ -75,6 +77,8 @@ export default function LoginPage() {
             </Divider>
 
             <LoginForm />
+
+         
           </StyledContent>
         </Container>
       </StyledRoot>

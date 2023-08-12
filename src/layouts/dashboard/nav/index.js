@@ -126,7 +126,7 @@ export default function Nav({ openNav, onCloseNav }) {
         '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
       }}
     >
-    <LogoImage/>
+   <LogoImage w = '240px' h = '170px' />
       
 
       <NavSection data={navConfig} />
