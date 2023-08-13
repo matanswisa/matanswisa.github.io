@@ -85,18 +85,21 @@ router.post('/setSelectedAccount', authenticateToken, async (req, res) => {
     }
 
     //in case we switch to account that does exists and its not the first time.
-    if (selectedAccount) {
-      await SelectedAccountModel.updateOne({ userId }, { accountId: accountId, account: requestedAccount });
-      return res.status(200).json(requestedAccount);
-    }
+    // if (selectedAccount) {
+    //   await SelectedAccountModel.updateOne({ userId }, { accountId: accountId, account: requestedAccount });
+    //   return res.status(200).json(requestedAccount);
+    // }
+    console.log(selectedAccount);
 
     //First time for intializing selected account.
     if (!selectedAccount) {
       const result = await SelectedAccountModel.create({ userId, accountId, account: requestedAccount });
       return res.status(200).json(requestedAccount);
-    } else {
-      const result = await SelectedAccountModel.create({ userId, accountId, account: requestedAccount.account });
-      res.status(200).json(requestedAccount);
+    } else { //in case account is already exists
+      // const result = await SelectedAccountModel.create({ userId, accountId, account: requestedAccount.account });
+      await SelectedAccountModel.updateOne({ userId }, { accountId: accountId, account: requestedAccount });
+
+      return res.status(200).json(requestedAccount);
     }
   } catch (err) {
     res.status(500).send(err);
@@ -141,7 +144,15 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
     // await user.save();
     await User.updateOne({ _id: userId }, { accounts })
 
-    await SelectedAccountModel.findOneAndUpdate({ userId }, { accountId: newAccount._id, account: newAccount });
+    const selectedCurrentAccount = await SelectedAccountModel.findOne({ userId });
+    // selectedCurrentAccount.account
+    if (!selectedCurrentAccount) {
+      await SelectedAccountModel.create({ userId, account: newAccount, accountId: newAccount._id });
+
+    } else {
+      await SelectedAccountModel.findOneAndUpdate({ userId }, { accountId: newAccount._id, account: newAccount });
+    }
+
     res.status(200).json(accounts);
 
   } catch (err) {
