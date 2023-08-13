@@ -50,6 +50,7 @@ export default function DailyStatsPage() {
 
 
   useEffect(() => {
+    if (currentAccount?.trades && currentAccount.trades.length) {
     api.post('/api/DailyStatsInfo',{trades:currentAccount.trades},configAuth)
       .then((res) => {
         setTrades(res.data);
@@ -58,7 +59,8 @@ export default function DailyStatsPage() {
       .catch((error) => {
         console.log(error);
       });
-  }, [currentAccount.trades]);
+    }
+  }, []);
 
 
 
