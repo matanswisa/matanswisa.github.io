@@ -5,7 +5,9 @@ import { useState,  useEffect } from 'react';
 import './styles.css';
 import './calendar.css';
 import api from '../../api/api';
-
+import userSlice, { selectCurrentAccount , selectUser} from '../../redux-toolkit/userSlice';
+import { configAuth } from '../../api/configAuth';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 function getTodoList(info, date) {
@@ -25,15 +27,28 @@ function getTodoList(info, date) {
 
 const CalendarComponent = () => {
   const [calendarTrades, setCalendarTrades] = useState([]);
+  const currentAccount = useSelector(selectCurrentAccount);
+
+
 
   useEffect(() => {
-    api.get('/api/ShowNumOfTradeTotalPnlInfoByDates')
+    api.post('/api/ShowNumOfTradeTotalPnlInfoByDates',{trades: currentAccount.trades},configAuth)
       .then((res) => {
         setCalendarTrades(res.data);
+
+
      
       })
       .catch();
-  }, []);
+  }, [currentAccount.trades]);
+
+
+  console.log(calendarTrades);
+
+
+
+
+
   function renderCell(date) {
     const list = getTodoList(calendarTrades, date);
     const displayList = list.filter((item, index) => index < 2);
