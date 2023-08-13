@@ -24,7 +24,7 @@ import {
 } from '@mui/material/colors';
 import { Grid } from 'rsuite';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser, setCurrentAccount, updateAccountList } from '../../redux-toolkit/userSlice';
+import { selectUser, setCurrentAccount, updateAccountList , selectUserAccounts} from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
 const style = {
   position: 'absolute',
@@ -39,7 +39,8 @@ const style = {
 };
 
 export default function AccountModal(props) {
-  const [accounts, setAccounts] = useState([]);
+  // const [accounts, setAccounts] = useState([]);
+  const accounts = useSelector(selectUserAccounts);
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const [accountName, setAccountName] = useState('');
@@ -60,6 +61,8 @@ export default function AccountModal(props) {
   }, [accountInfo]);
 
   const checkAccountExists = (accountList, accountName) => {
+    console.log(accountName);
+    console.log(accountList);
     const selectedAccount = accountList.find((account) => account.AccountName === accountName);
     return selectedAccount !== undefined;
   };
