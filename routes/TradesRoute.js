@@ -207,23 +207,30 @@ router.get('/getDailyStats', async (req, res) => {
 });
 
 
-router.get('/WinAndLossTotalTime', async (req, res) => {
+router.post('/WinAndLossTotalTime', authenticateToken, async (req, res) => {
   try {
-    const tradeStats = await Trade.aggregate([
-      {
-        $group: {
-          _id: null,
-          lossCount: { $sum: { $cond: [{ $eq: ['$status', 'Loss'] }, 1, 0] } },
-          winCount: { $sum: { $cond: [{ $eq: ['$status', 'Win'] }, 1, 0] } },
-          breakEvenCount: { $sum: { $cond: [{ $eq: ['$netPnL', 0] }, 1, 0] } }
-        },
-      },
-    ]);
+    const { trades } = req.body;
+
+    let lossCount = 0;
+    let winCount = 0;
+    let breakEvenCount = 0;
+
+    trades.forEach((trade) => {
+      if (trade.status === 'Loss') {
+        lossCount++;
+      } else if (trade.status === 'Win') {
+        winCount++;
+      }
+
+      if (trade.netPnL === 0) {
+        breakEvenCount++;
+      }
+    });
 
     const updatedTradeStats = {
-      lossCount: tradeStats[0].lossCount,
-      winCount: tradeStats[0].winCount,
-      breakEvenCount: tradeStats[0].breakEvenCount
+      lossCount,
+      winCount,
+      breakEvenCount,
     };
 
     res.json(updatedTradeStats);
@@ -231,7 +238,6 @@ router.get('/WinAndLossTotalTime', async (req, res) => {
     res.status(500).json({ error: 'An error occurred' });
   }
 });
-
 
 
 
@@ -272,21 +278,38 @@ router.post('/ShowInfoBySpecificDate', authenticateToken, async (req, res) => {
   }
 });
 
-
-
-router.get('/ShowInfoByDates', async (req, res) => {
+router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
   try {
-    const tradesByDate = await Trade.aggregate([
-      {
-        $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
-          lossCount: { $sum: { $cond: [{ $eq: ['$status', 'Loss'] }, 1, 0] } },
-          winCount: { $sum: { $cond: [{ $eq: ['$status', 'Win'] }, 1, 0] } },
-          totalPnL: { $sum: '$netPnL' },
-        },
-      },
-      { $sort: { _id: -1 } }, // Sort by descending entryDate
-    ]);
+    const { trades } = req.body;
+   
+    const tradesByDate = trades.reduce((result, trade) => {
+      const tradeDate = trade.entryDate.substring(0, 10); // Extract YYYY-MM-DD from the full entryDate
+      const existingEntry = result.find(entry => entry._id === tradeDate);
+
+      if (existingEntry) {
+        if (trade.status === 'Loss') {
+          existingEntry.lossCount++;
+          existingEntry.totalPnL -= trade.netPnL;
+        } else if (trade.status === 'Win') {
+          existingEntry.winCount++;
+          existingEntry.totalPnL += trade.netPnL;
+          
+        }
+        existingEntry.totalPnL += trade.netPnL;
+      } else {
+        result.push({
+          _id: tradeDate,
+          lossCount: trade.status === 'Loss' ? 1 : 0,
+          winCount: trade.status === 'Win' ? 1 : 0,
+          totalPnL: trade.status === 'Loss' ? -trade.netPnL : trade.netPnL,
+        });
+      }
+      console.log(result);
+
+      return result;
+    }, []);
+
+    tradesByDate.sort((a, b) => b._id.localeCompare(a._id)); // Sort by descending date
 
     res.json(tradesByDate);
   } catch (error) {
