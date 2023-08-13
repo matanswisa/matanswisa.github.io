@@ -58,7 +58,7 @@ export default function DailyStatsPage() {
       .catch((error) => {
         console.log(error);
       });
-  }, [trades]);
+  }, [currentAccount.trades]);
 
 
 
