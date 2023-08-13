@@ -1,3 +1,4 @@
+import Account from "../models/accounts.js";
 import SelectedAccountModel from "../models/selectedAccount.js";
 import Trade from "../models/trade.js";
 import User from "../models/user.js";
@@ -81,17 +82,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
     console.log("tradesWithPartiels.length", tradesWithPartiels.length);
     console.log("tradesWithPartiels", tradesWithPartiels);
 
-    // const tradeGroups = {}; // To group trades by transactionId
 
-    // for (let i = 0; i < tradesWithPartiels.length; i++) {
-    //     const transactionId = tradesWithPartiels[i]["transactionId"];
-
-    //     if (!tradeGroups[transactionId]) {
-    //         tradeGroups[transactionId] = [tradesWithPartiels[i]];
-    //     } else {
-    //         tradeGroups[transactionId].push(tradesWithPartiels[i]);
-    //     }
-    // }
 
     for (let i = 0; i < mergedRows.length; i++) {
         const trade = mergedRows[i];
@@ -140,9 +131,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
         const existingTrade = await Trade.findOne({ transactionId: data.transactionId });
 
         if (!existingTrade) {
-            const newTrade = new Trade({
-                // tradesHistory: tradeGroup,
-                // Other properties from the first trade in the tradeGroup
+            const newTrade = await Trade.create({
                 entryDate: data.entryDate,
                 symbol: data.symbol,
                 status: data.status,
@@ -155,10 +144,9 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
                 duration: data.duration,
                 commission: data.commission,
                 netPnL: data.netPnL,
-                // ...
+                transactionId: data.transactionId
             });
 
-            await newTrade.save();
 
             const user = await User.findById(userId);
             const account = user.accounts.find(acc => acc._id == accountId);
@@ -171,51 +159,45 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
     }
 
 
+    const tradeGroups = {}; // To group trades by transactionId
+
+    for (let i = 0; i < tradesWithPartiels.length; i++) {
+        const transactionId = tradesWithPartiels[i]["transactionId"];
+
+        if (!tradeGroups[transactionId]) {
+            tradeGroups[transactionId] = [tradesWithPartiels[i]];
+        } else {
+            tradeGroups[transactionId].push(tradesWithPartiels[i]);
+        }
+    }
+
     // Process each trade group
-    // for (const transactionId in tradeGroups) {
-    //     const tradeGroup = tradeGroups[transactionId];
+    for (const transactionId in tradeGroups) {
+        const tradeGroup = tradeGroups[transactionId];
 
-    //     // Find an existing trade with the same transactionId
-    //     const existingTrade = await Trade.findOne({ transactionId });
+        // Find an existing trade with the same transactionId
+        const existingTrade = await Trade.findOne({ transactionId });
 
-    //     if (existingTrade) {
-    //         // Update existing trade's tradesHistory
-    //         existingTrade.tradesHistory.push(...tradeGroup);
-    //         await existingTrade.save();
-    //     } else {
-    //         // Create a new trade with its own tradesHistory array
-    //         const newTrade = new Trade({
-    //             tradesHistory: tradeGroup,
-    //             // Other properties from the first trade in the tradeGroup
-    //             entryDate: tradeGroup[0].entryDate,
-    //             symbol: tradeGroup[0].symbol,
-    //             status: tradeGroup[0].status,
-    //             netROI: tradeGroup[0].netROI,
-    //             longShort: tradeGroup[0].longShort,
-    //             contracts: tradeGroup[0].contracts,
-    //             entryPrice: tradeGroup[0].entryPrice,
-    //             stopPrice: tradeGroup[0].stopPrice,
-    //             exitPrice: tradeGroup[0].exitPrice,
-    //             duration: tradeGroup[0].duration,
-    //             commission: tradeGroup[0].commission,
-    //             netPnL: tradeGroup[0].netPnL,
-    //             // ...
-    //         });
+        if (existingTrade) {
+            // Update existing trade's tradesHistory
+            existingTrade.tradesHistory.push(...tradeGroup);
+            await existingTrade.save();
 
-    //         await newTrade.save();
-    //         // const user = await User.findOneAndUpdate(
-    //         //     { _id: userId, 'accounts._id': accountId },
-    //         //     { $push: { 'accounts.$.trades': newTrade } },
-    //         //     { new: true }
-    //         // );
-    //         const user = await User.findById(userId);
-    //         const account = user.accounts.find(acc => acc._id == accountId);
-    //         account.trades.push(newTrade);
-    //         const tempAccounts = user.accounts.filter(acc => acc._id != accountId);
-    //         tempAccounts.push(account);
-    //         await User.updateOne({ _id: userId }, { accounts: tempAccounts });
-    //     }
-    // }
+            const user = await User.findById(userId);
+            const account = user.accounts.find(acc => acc._id == accountId);
+            let tradesOfAccount = account.trades;
+            tradesOfAccount = tradesOfAccount.filter(trade => trade.transactionId != existingTrade.transactionId);
+
+            tradesOfAccount.push(existingTrade);
+            account.trades = tradesOfAccount
+            const tempAccounts = user.accounts.filter(acc => acc._id != accountId);
+            tempAccounts.push(account);
+
+            await User.updateOne({ _id: userId }, { accounts: tempAccounts });
+            await Account.findByIdAndUpdate(accountId, account);
+            await SelectedAccountModel.findOneAndUpdate({ _id: accountId }, { account: account });
+        }
+    }
 
 
     return true;

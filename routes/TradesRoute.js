@@ -61,7 +61,7 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
     await Account.findByIdAndUpdate(accountId, { trades: accountObj.trades });
     await User.updateOne({ _id: userId }, { accounts: accounts });
     // await account.save();
-    
+
     const tradesWithImage = await fetchTradesWithImages(accountObj.trades);
 
     res.status(200).json(tradesWithImage);
@@ -87,13 +87,15 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
       .on('end', async () => {
         fs.unlinkSync(req.file.path); // Remove the temporary file
 
-      
-        buildTradesDataByTradovateCSV(tradesData, userId, accountId);
-  
-        const trades = await fetchUserTrades(userId, accountId);
 
-        // Send the response indicating success
-        res.status(200).json(trades);
+        const imported = await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
+        if (imported) {
+          const trades = await fetchUserTrades(userId, accountId);
+          // Send the response indicating success
+          res.status(200).json(trades);
+        } else {
+          res.status(400).send("Couldn't import the csv file.")
+        }
       });
   } catch (err) {
     console.error(err);
@@ -129,7 +131,7 @@ router.post("/editTrade", authenticateToken, async (req, res) => {
     const { userId, accountId, tradeId, tradeData } = req.body;
     //first updating the trade object and get it back
     const result = await Trade.findByIdAndUpdate(tradeId, tradeData);
- 
+
     const account = await getAccountOfUserById(userId, accountId);
     const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id != tradeId);
     tradesWithoutCurrTrade.push(tradeData);
@@ -153,7 +155,7 @@ router.post('/deleteTrade', authenticateToken, async (req, res) => {
     const { tradeId, accountId, userId } = req.body;
 
     // Assuming the 'Trade', 'User', 'Account', and 'getAccountOfUserById' functions are properly defined and working.
-  
+
     const result = await Trade.findByIdAndDelete(tradeId);
 
     if (result) {
@@ -163,6 +165,7 @@ router.post('/deleteTrade', authenticateToken, async (req, res) => {
 
       await User.findByIdAndUpdate(userId, { accounts: account });
       await Account.findOneAndUpdate({ _id: accountId }, account);
+      await SelectedAccountModel.updateOne({ userId }, { account: account });
 
       // Assuming 'fetchTradesWithImages' properly fetches trade data with images
       // const tradesWithImage = await fetchTradesWithImages(account.trades);
@@ -273,7 +276,7 @@ router.post('/WinAndLossTotalTime', authenticateToken, async (req, res) => {
 //   } else if (trade.status === 'Win') {
 //     existingEntry.winCount++;
 //     existingEntry.totalPnL += trade.netPnL;
-    
+
 //   }
 //   existingEntry.totalPnL += trade.netPnL;
 // } else {
@@ -297,13 +300,13 @@ router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req,
 
       if (existingEntry) {
         if (trade.status === 'Loss') {
-        existingEntry.trades++;
-        existingEntry.totalPnL -= trade.netPnL;
-      } else if (trade.status === 'Win') {
-        existingEntry.winCount++;
-        existingEntry.totalPnL += trade.netPnL;
-        
-      }
+          existingEntry.trades++;
+          existingEntry.totalPnL -= trade.netPnL;
+        } else if (trade.status === 'Win') {
+          existingEntry.winCount++;
+          existingEntry.totalPnL += trade.netPnL;
+
+        }
       } else {
         result.push({
           _id: tradeDate,
@@ -348,7 +351,7 @@ router.post('/ShowInfoBySpecificDate', authenticateToken, async (req, res) => {
 router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
   try {
     const { trades } = req.body;
-   
+
     const tradesByDate = trades.reduce((result, trade) => {
       const tradeDate = trade.entryDate.substring(0, 10); // Extract YYYY-MM-DD from the full entryDate
       const existingEntry = result.find(entry => entry._id === tradeDate);
@@ -360,7 +363,7 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
         } else if (trade.status === 'Win') {
           existingEntry.winCount++;
           existingEntry.totalPnL += trade.netPnL;
-          
+
         }
         existingEntry.totalPnL += trade.netPnL;
       } else {
@@ -391,7 +394,7 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
 router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
   try {
     const { trades } = req.body;
- 
+
     const tradesByDate = trades.reduce((result, trade) => {
       const date = new Date(trade.entryDate).toISOString().substr(0, 10);
 
@@ -404,7 +407,7 @@ router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
           totalPnL: 0,
           Commission: 0,
           totalLoss: 0, // Initialize totalLoss
-          totalWin : 0,
+          totalWin: 0,
         };
       }
 
@@ -443,7 +446,7 @@ router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
 
 
 router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
- 
+
   try {
     const { tradeId, userId, accountId } = req.body;
     if (!req.file) return res.status(400).send("No image file to upload");

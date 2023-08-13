@@ -57,7 +57,7 @@ const TradeSchema = new Mongoose.Schema({
         type: String,
         required: false
     },
-    tradeID: {
+    transactionId: {
         type: String,
         required: false,
         unique: false,
