@@ -21,7 +21,7 @@ import {
 } from '../sections/@dashboard/app';
 
 import api from '../api/api';
-
+import { configAuth } from '../api/configAuth';
 
 import { Colors } from '../components/color-utils/Colors';
 
@@ -178,10 +178,10 @@ export default function DashboardAppPage() {
 
 
   useEffect(() => {
-    api.get("/api/WinAndLossTotalTime").then(
+    api.post('/api/WinAndLossTotalTime',{trades: Alltrades}, configAuth).then(
       (res) => {
         setTrades(res.data)
-
+     
         for (const index in res.data) {
           if (index === "lossCount") {
             setLosingTrades(res.data["lossCount"]);
@@ -195,20 +195,24 @@ export default function DashboardAppPage() {
           }
 
         }
+
       }
+      
     ).catch()
-  }, [])
+  }, [Alltrades])
+
 
 
 
   useEffect(() => {
-    api.get("/api/ShowInfoByDates").then(
+    api.post('/api/ShowInfoByDates',{trades: Alltrades},configAuth).then(
       (res) => {
+        
         setDailyNetCumulative(res.data)
 
         for (const index in res.data) {
 
-          if (res.data[index]["totalPnL"] < 0) {  //when in some day we have a lose day(P&L < 0) inc variable  
+          if (res.data[index]["lossCount"] > 0) {  //when in some day we have a lose day(P&L < 0) inc variable  
             setLosingTradesInDays(prevState => prevState + 1);
           }
 
@@ -218,7 +222,7 @@ export default function DashboardAppPage() {
         }
       }
     ).catch()
-  }, [])
+  }, [Alltrades])
 
 
 
