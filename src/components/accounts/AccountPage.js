@@ -110,8 +110,12 @@ export default function BasicModal() {
 
 
     const [opendialog, setDialogOpen] = useState(false);
+    const [accountIdToDelete, setAccountIdToDelete] = useState('');
 
-    const handleClickDialogOpen = () => {
+
+    
+    const handleClickDialogOpen = (accountId) => {
+        setAccountIdToDelete(accountId);
         setDialogOpen(true);
     };
 
@@ -215,9 +219,12 @@ export default function BasicModal() {
                                     <TableCell >   </TableCell>
                                     <TableCell >
 
+
                                         <IconButton aria-label="Delete">
-                                            <DeleteIcon onClick={handleClickDialogOpen} />
+                                            <DeleteIcon onClick={() => handleClickDialogOpen(account._id)} />
                                         </IconButton>
+
+                                      
                                         <Dialog
                                             open={opendialog}
                                             TransitionComponent={Transition}
@@ -234,7 +241,7 @@ export default function BasicModal() {
                                             <DialogActions>
                                                 <Button onClick={handleDialogClose}>Cancel</Button>
                                                 <Button onClick={() => {
-                                                    handleCloseMenu(account._id);
+                                                    handleCloseMenu(accountIdToDelete);
 
                                                     handleDialogClose(); // Close the dialog first
                                                 }} color="primary">
