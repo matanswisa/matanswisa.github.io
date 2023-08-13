@@ -47,7 +47,6 @@ export default function DailyStatsPage() {
   const currentAccount = useSelector(selectCurrentAccount);
  
 
-  console.log(trades);
 
 
   useEffect(() => {
@@ -59,7 +58,7 @@ export default function DailyStatsPage() {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [trades]);
 
 
 
