@@ -43,8 +43,6 @@ const CalendarComponent = () => {
   }, [currentAccount.trades]);
 
 
-  console.log(calendarTrades);
-
 
 
 
