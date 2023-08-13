@@ -7,11 +7,10 @@ import SelectedAccountModel from "../models/selectedAccount.js";
 
 const router = Router();
 
-
 router.delete('/deleteAccount', authenticateToken, async (req, res) => {
   try {
     const { accountId, userId } = req.body; // Assuming the ID is passed in the request body
-
+   
     // Find the user by ID
     const user = await User.findById(userId);
 
@@ -22,21 +21,27 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
     let accounts = user.accounts;
     if (!accounts.length) return res.status(400).json({ message: "No accounts to delete" });
 
-
     // Filter out the account to be deleted
-    //[  Account2...]
     accounts = accounts.filter(account => account._id != accountId);
 
     const userSelectedAccount = await SelectedAccountModel.findOne({ accountId });
-    console.log('accountId', accountId, userSelectedAccount);
-    const currentAccount = userSelectedAccount.account;
-    const accountToDelete = accounts.find(acc => acc._id == currentAccount._id);
-    if (!accountToDelete && accounts.length) {
-      await SelectedAccountModel.updateOne({ userId: userId }, { accountId: accounts[0]._id, account: accounts[0] });
-    } else if (!accountToDelete && accounts.length == 1) {
-      await SelectedAccountModel.updateOne({ userId: userId }, { accountId: null, account: null });
-    }
 
+    // Check if userSelectedAccount exists and has the 'account' property
+    if (userSelectedAccount && userSelectedAccount.account) {
+      const currentAccount = userSelectedAccount.account;
+      const accountToDelete = accounts.find(acc => acc._id == currentAccount._id);
+
+      if (!accountToDelete && accounts.length) {
+        await SelectedAccountModel.updateOne({ userId: userId }, { accountId: accounts[0]._id, account: accounts[0] });
+      } else if (!accountToDelete && accounts.length == 1) {
+        await SelectedAccountModel.updateOne({ userId: userId }, { accountId: null, account: null });
+      }
+
+      
+    } else {
+      // Handle the case where 'account' property is missing or userSelectedAccount is null
+      console.log("User selected account not found or does not have 'account' property.");
+    }
 
     await User.updateOne({ _id: userId }, { accounts });
 
@@ -56,6 +61,8 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Failed to delete the account' });
   }
 });
+
+
 
 router.post('/getSelectedAccount', authenticateToken, async (req, res) => {
   const { userId } = req.body;
