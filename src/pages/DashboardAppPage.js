@@ -181,7 +181,7 @@ export default function DashboardAppPage() {
     api.post('/api/WinAndLossTotalTime',{trades: Alltrades}, configAuth).then(
       (res) => {
         setTrades(res.data)
-     
+        
         for (const index in res.data) {
           if (index === "lossCount") {
             setLosingTrades(res.data["lossCount"]);
@@ -209,10 +209,10 @@ export default function DashboardAppPage() {
       (res) => {
         
         setDailyNetCumulative(res.data)
-
+        console.log(res.data);
         for (const index in res.data) {
 
-          if (res.data[index]["lossCount"] > 0) {  //when in some day we have a lose day(P&L < 0) inc variable  
+          if (res.data[index]["totalPnL"] < 1) {  //when in some day we have a lose day(P&L < 0) inc variable  
             setLosingTradesInDays(prevState => prevState + 1);
           }
 
