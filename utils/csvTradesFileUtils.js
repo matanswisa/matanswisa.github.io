@@ -41,7 +41,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
             netROI: netROI.toFixed(2),
             stopPrice: 0,
             longShort: csvData[i]["Buy Price"] < csvData[i]["Sell Price"] ? "Long" : "Short" || "",
-            contracts: csvData[i]["Bought"] || "",
+            contracts: csvData[i]["Paired Qty"] || "",
             entryPrice: csvData[i]["Buy Price"] || "",
             exitPrice: csvData[i]["Sell Price"] || "",
             duration: "",
