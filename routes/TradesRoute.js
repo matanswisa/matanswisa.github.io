@@ -252,16 +252,18 @@ router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req,
     const tradesByDate = trades.reduce((result, trade) => {
       const tradeDate = trade.entryDate.substring(0, 10); // Extract YYYY-MM-DD from the full entryDate
       const existingEntry = result.find(entry => entry._id === tradeDate);
-
+      
       if (existingEntry) {
         if (trade.status === 'Loss') {
           existingEntry.trades++;
-          existingEntry.totalPnL -= trade.netPnL;
+          existingEntry.lossCount++;
+     
         } else if (trade.status === 'Win') {
+          existingEntry.trades++;
           existingEntry.winCount++;
-          existingEntry.totalPnL += trade.netPnL;
-
+          
         }
+        existingEntry.totalPnL += trade.netPnL;
       } else {
         result.push({
           _id: tradeDate,
@@ -269,7 +271,7 @@ router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req,
           totalPnL: trade.netPnL,
         });
       }
-
+    console.log("dsds",result);
       return result;
     }, []);
 
@@ -310,14 +312,14 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
     const tradesByDate = trades.reduce((result, trade) => {
       const tradeDate = trade.entryDate.substring(0, 10); // Extract YYYY-MM-DD from the full entryDate
       const existingEntry = result.find(entry => entry._id === tradeDate);
-      console.log("fffff", trades);
+      console.log("ff", trades);
       if (existingEntry) {
         if (trade.status === 'Loss') {
           existingEntry.lossCount++;
-          existingEntry.totalPnL -= trade.netPnL;
+        
         } else if (trade.status === 'Win') {
           existingEntry.winCount++;
-          existingEntry.totalPnL += trade.netPnL;
+       
 
         }
         existingEntry.totalPnL += trade.netPnL;
