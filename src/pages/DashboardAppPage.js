@@ -199,7 +199,7 @@ export default function DashboardAppPage() {
       }
       
     ).catch()
-  }, [Alltrades])
+  }, [])
 
 
 
@@ -222,7 +222,7 @@ export default function DashboardAppPage() {
         }
       }
     ).catch()
-  }, [Alltrades])
+  }, [])
 
 
 
