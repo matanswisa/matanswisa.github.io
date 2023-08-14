@@ -355,7 +355,7 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
     const tradesByDate = trades.reduce((result, trade) => {
       const tradeDate = trade.entryDate.substring(0, 10); // Extract YYYY-MM-DD from the full entryDate
       const existingEntry = result.find(entry => entry._id === tradeDate);
-
+      console.log("fffff" , trades);
       if (existingEntry) {
         if (trade.status === 'Loss') {
           existingEntry.lossCount++;
@@ -371,10 +371,10 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
           _id: tradeDate,
           lossCount: trade.status === 'Loss' ? 1 : 0,
           winCount: trade.status === 'Win' ? 1 : 0,
-          totalPnL: trade.status === 'Loss' ? -trade.netPnL : trade.netPnL,
+          totalPnL:trade.netPnL,
         });
       }
-      console.log(result);
+      console.log("fffff" , result);
 
       return result;
     }, []);
