@@ -311,7 +311,7 @@ router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req,
         result.push({
           _id: tradeDate,
           trades: 1,
-          totalPnL: trade.status === 'Loss' ? -trade.netPnL : trade.netPnL,
+          totalPnL:trade.netPnL,
         });
       }
 
