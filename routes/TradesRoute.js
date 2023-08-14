@@ -415,15 +415,16 @@ router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
       result[date].Commission += trade.commission || 0;
 
       if (trade.status == "Win") {
-        result[date].totalPnL += trade.netPnL;
+     
         result[date].totalWin += trade.netPnL; // Subtract from totalLoss
         result[date].win++;
       } else if (trade.status == "Loss") {
-        result[date].totalPnL -= trade.netPnL; // Subtract from totalPnL
+      
         result[date].totalLoss -= trade.netPnL; // Subtract from totalLoss
         result[date].loss++;
       }
-
+      result[date].totalPnL += trade.netPnL;
+      console.log("dsdsds",result);
       return result;
     }, {});
 
