@@ -244,51 +244,6 @@ router.post('/WinAndLossTotalTime', authenticateToken, async (req, res) => {
 
 
 
-// router.get('/ShowNumOfTradeTotalPnlInfoByDates',authenticateToken, async (req, res) => {
-//   try {
-//     const { trades } = req.body;
-
-
-//     const tradesByDate = await Trade.aggregate([
-//       {
-//         $group: {
-//           _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
-//           trades: { $sum: 1 }, // Count of trades
-//           totalPnL: { $sum: '$netPnL' },
-//         },
-//       },
-//       { $sort: { _id: -1 } }, // Sort by descending entryDate
-//     ]);
-
-//     res.json(tradesByDate);
-//   } catch (error) {
-//     console.error('Error fetching trades:', error);
-//     res.status(500).json({ error: 'An error occurred' });
-//   }
-// });
-
-
-
-// if (existingEntry) {
-//   if (trade.status === 'Loss') {
-//     existingEntry.lossCount++;
-//     existingEntry.totalPnL -= trade.netPnL;
-//   } else if (trade.status === 'Win') {
-//     existingEntry.winCount++;
-//     existingEntry.totalPnL += trade.netPnL;
-
-//   }
-//   existingEntry.totalPnL += trade.netPnL;
-// } else {
-//   result.push({
-//     _id: tradeDate,
-//     lossCount: trade.status === 'Loss' ? 1 : 0,
-//     winCount: trade.status === 'Win' ? 1 : 0,
-//     totalPnL: trade.status === 'Loss' ? -trade.netPnL : trade.netPnL,
-//   });
-// }
-
-
 
 router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req, res) => {
   try {
@@ -311,7 +266,7 @@ router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req,
         result.push({
           _id: tradeDate,
           trades: 1,
-          totalPnL:trade.netPnL,
+          totalPnL: trade.netPnL,
         });
       }
 
@@ -355,7 +310,7 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
     const tradesByDate = trades.reduce((result, trade) => {
       const tradeDate = trade.entryDate.substring(0, 10); // Extract YYYY-MM-DD from the full entryDate
       const existingEntry = result.find(entry => entry._id === tradeDate);
-      console.log("fffff" , trades);
+      console.log("fffff", trades);
       if (existingEntry) {
         if (trade.status === 'Loss') {
           existingEntry.lossCount++;
@@ -371,10 +326,10 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
           _id: tradeDate,
           lossCount: trade.status === 'Loss' ? 1 : 0,
           winCount: trade.status === 'Win' ? 1 : 0,
-          totalPnL:trade.netPnL,
+          totalPnL: trade.netPnL,
         });
       }
-      console.log("fffff" , result);
+      console.log("fffff", result);
 
       return result;
     }, []);

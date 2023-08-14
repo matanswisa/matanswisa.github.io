@@ -10,7 +10,7 @@ const router = Router();
 router.delete('/deleteAccount', authenticateToken, async (req, res) => {
   try {
     const { accountId, userId } = req.body; // Assuming the ID is passed in the request body
-   
+
     // Find the user by ID
     const user = await User.findById(userId);
 
@@ -37,7 +37,7 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
         await SelectedAccountModel.updateOne({ userId: userId }, { accountId: null, account: null });
       }
 
-      
+
     } else {
       // Handle the case where 'account' property is missing or userSelectedAccount is null
       console.log("User selected account not found or does not have 'account' property.");
@@ -142,7 +142,7 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
     }
 
     // Create a new account with the provided data
-    const newAccount = await Account.create(data);
+    const newAccount =  await Account.create(data);
     const accounts = user.accounts;
     // Add the new account to the user's accounts array
     accounts.push(newAccount);
@@ -154,7 +154,7 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
     const selectedCurrentAccount = await SelectedAccountModel.findOne({ userId });
     // selectedCurrentAccount.account
     if (!selectedCurrentAccount) {
-      await SelectedAccountModel.create({ userId, account: newAccount, accountId: newAccount._id });
+      await SelectedAccountModel.create({ userId, account: { ...newAccount }, accountId: newAccount._id });
 
     } else {
       await SelectedAccountModel.findOneAndUpdate({ userId }, { accountId: newAccount._id, account: newAccount });
@@ -193,13 +193,9 @@ router.put("/editAccount", authenticateToken, async (req, res) => {
     const accounts = user.accounts.filter(account => account._id != accountId);
 
     accounts.push(accountToUpdate);
-    await Account.findOneAndUpdate({ _id: accountId }, { AccountName, Label, IsSelected: "true" });
+    await Account.findOneAndUpdate({ _id: accountId }, { AccountName, Label });
     await User.findByIdAndUpdate(userId, { accounts });
 
-    await Account.updateMany(
-      { _id: { $ne: accountId } },
-      { $set: { IsSelected: "false" } }
-    );
 
 
     res.status(200).json(accounts);
