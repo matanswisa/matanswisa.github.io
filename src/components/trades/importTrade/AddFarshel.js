@@ -199,7 +199,7 @@ export default function AddFarshel(props) {
                 netROI: trade.netROI + "%",
                 entryPrice: trade.entryPrice,
                 exitPrice: trade.exitPrice,
-                contracts: trade.qty,
+                contracts: trade.contracts,
                 duration: formattedDuration, // Use the formatted duration instead of the raw value
                 commission: trade.commission ? "$" + trade.commission : "N/A",
                 netPnL: "$" + trade.netPnL,
