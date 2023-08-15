@@ -49,7 +49,7 @@ import AddFarshel from '../components/trades/importTrade/AddFarshel'
 import ImageModal from '../components/ImageModal/ImageModal';
 import { Grid } from 'rsuite';
 // ----------------------------------------------------------------------
-import { selectCurrentAccount, selectUser, setTradesList , selectUserAccounts  } from '../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, setTradesList, selectUserAccounts } from '../redux-toolkit/userSlice';
 import { configAuth } from '../api/configAuth';
 
 
@@ -131,7 +131,7 @@ export default function UserPage() {
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
   const userAccounts = useSelector(selectUserAccounts);
-  
+
   function handleCellClick(parameter, info) {
     return function () {
       if (parameter === 'comments') {
@@ -162,6 +162,8 @@ export default function UserPage() {
     // Append the selected file to the FormData object
     formData.append('file', selectedFile);
     formData.append('tradeId', tradeId);
+    formData.append('userId', user._id)
+    formData.append('accountId', currentAccount._id)
 
     // Make a POST request to the server with the file data
     fetch('http://localhost:8000/api/uploadTradeImage', {
@@ -206,7 +208,7 @@ export default function UserPage() {
   if (currentAccount?.trades) {
 
     trades = currentAccount?.trades;
-    
+
   }
   else {
     trades = [];
@@ -228,15 +230,15 @@ export default function UserPage() {
 
   const handleOpenModal = (tradeId) => {
 
-    if(userAccounts.length == 0){ //before open modal check if have any account and alert to user when no account
-      
+    if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
+
       notifyToast("before add trades you need create account", 'warning');
-      }
-      else{
-        setIsOpenmodal(true);
-      }
-     
- 
+    }
+    else {
+      setIsOpenmodal(true);
+    }
+
+
   };
 
   const handleOpenFarshelModal = (trade) => {
@@ -247,14 +249,14 @@ export default function UserPage() {
 
   const handleOpenModalImportTrades = (tradeId) => {
 
-    if(userAccounts.length == 0){ //before open modal check if have any account and alert to user when no account
-      
-    notifyToast("before import trades you need create account", 'warning');
+    if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
+
+      notifyToast("before import trades you need create account", 'warning');
     }
-    else{
+    else {
       setIsOpenmodalImportTrades(true);
     }
-   
+
   };
 
 
