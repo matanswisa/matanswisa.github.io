@@ -10,8 +10,9 @@ import { styled } from '@mui/material/styles';
 import Autocomplete from '@mui/material/Autocomplete';
 import Grid from '@mui/material/Grid';
 import { useEffect, useState, useReducer } from 'react';
-import { futuresTickers } from '../tickers/Tickers';
-
+import { tickerArrays } from '../tickers/Tickers';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 // @mui
 import {
   Paper,
@@ -50,6 +51,26 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 export default function TradeModal(props) {
+
+
+  ///symbol choose :
+
+  const [value, setValue] = React.useState(0);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+  const activeTickers = tickerArrays[value];
+
+
+  const labelStyle = {
+    minWidth: 0, // Adjust as needed
+    fontSize: '14px', // Adjust font size as needed
+    padding: '6px 12px', // Adjust padding as needed
+
+
+
+  };
+  ////
 
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
@@ -130,12 +151,12 @@ export default function TradeModal(props) {
       stopPrice,
       longShort: positionType,
       contracts: contractsCounts,
-      entryPrice :entryPrice,
-      exitPrice : exitPrice,
+      entryPrice: entryPrice,
+      exitPrice: exitPrice,
       duration: positionDuration,
       commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
       comments,
-      netPnL: positionStatus == "Loss" ? netPnL*-1 : netPnL,
+      netPnL: positionStatus == "Loss" ? netPnL * -1 : netPnL,
       tradeId: tradeInfo?._id || '',
     }
 
@@ -167,7 +188,7 @@ export default function TradeModal(props) {
             handleUpload(tradeInfo?._id);
             reduxDispatch(setTradesList(res.data));
 
-            if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 || 
+            if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||
               contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
               if (positionType === '') notifyToast("Position type is missing", "warning");
@@ -204,7 +225,7 @@ export default function TradeModal(props) {
 
     }
 
-    if (positionType === '' || positionStatus === '' ||  entryPrice < 1 || exitPrice < 1 || 
+    if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
       if (positionType === '') notifyToast("Position type is missing", "warning");
@@ -217,7 +238,7 @@ export default function TradeModal(props) {
       else if (exitPrice < 1) notifyToast("exit Price  is missing", "warning");
 
 
-    
+
       return false;
     }
     return true;
@@ -359,11 +380,16 @@ export default function TradeModal(props) {
           <Grid item xs={6}>
             <Item>
               <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                <Tabs value={value} onChange={handleChange} centered >
+                  <Tab label="Futuers" style={labelStyle} />
+                  <Tab label="Stocks" style={labelStyle} />
+                  <Tab label="Crypto" style={labelStyle} />
+                </Tabs>
                 <Autocomplete
                   disablePortal
                   id="combo-box-demo"
                   required="true"
-                  options={futuresTickers}
+                  options={activeTickers}
                   value={positionSymbol}
                   onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
                   sx={{ width: 600 }}
