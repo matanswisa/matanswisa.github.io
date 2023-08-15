@@ -53,7 +53,7 @@ const handleMergeRows = (data) => {
     for (const id in groupedRows) {
         if (groupedRows.hasOwnProperty(id)) {
             const times = timesObject[id]
-            groupedRows[id]['LongShort'] = times.time2 > times.time1 ? "Long" : "Short";
+            groupedRows[id]['LongShort'] = times.time2 > times.time1 ? "Short" : "Long";
         }
     }
 
