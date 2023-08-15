@@ -22,17 +22,28 @@ const handleMergeRows = (data) => {
     return mergedRows;
 };
 
+
+const calcCommission = (contractName) => {
+    if (contractName.includes("Micro")) {
+        return 1;
+    }
+    
+    return 3;
+}
+
 export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) => {
     console.log(csvData);
     const mergedRows = handleMergeRows(csvData);
-    console.log("mergedRows", mergedRows);
+   
     const count = csvData.length; // Total number of trades
     // let successCount = 0;
 
     let tradesWithPartiels = [];
-
+   
     for (let i = 0; i < csvData.length; i++) {
-
+        let commissionSize = calcCommission(csvData[i]["Product Description"])* -1;   
+        let totalCommissionInDollars  =    commissionSize * csvData[i]["Paired Qty"] ; 
+        console.log("ddd",csvData);
         const netROI = ((csvData[i]["Sell Price"] - csvData[i]["Buy Price"]) / csvData[i]["Buy Price"]) * 100;
         const data = {
             entryDate: csvData[i]["Bought Timestamp"] || "",
@@ -45,7 +56,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
             entryPrice: csvData[i]["Buy Price"] || "",
             exitPrice: csvData[i]["Sell Price"] || "",
             duration: "",
-            commission: "",
+            commission: totalCommissionInDollars,
             comments: "",
             netPnL: csvData[i]["P/L"] !== undefined ? csvData[i]["P/L"] : "",
             transactionId: csvData[i]["Position ID"],
@@ -85,8 +96,14 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
 
 
     for (let i = 0; i < mergedRows.length; i++) {
-        const trade = mergedRows[i];
 
+        const trade = mergedRows[i];
+        let commissionSize = calcCommission(trade["Product Description"]) * -1; 
+        let totalCommissionInDollars  =    commissionSize * trade["Bought"] ;
+
+       
+    
+        
         //this code responsible to build a main trade partials we add after - 
 
         const netROI = ((trade["Sell Price"] - trade["Buy Price"]) / trade["Buy Price"]) * 100;
@@ -101,9 +118,9 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
             entryPrice: trade["Buy Price"] || "",
             exitPrice: trade["Sell Price"] || "",
             duration: "",
-            commission: "",
+            commission: totalCommissionInDollars,
             comments: "",
-            netPnL: trade["P/L"] !== undefined ? trade["P/L"] : "",
+            netPnL: trade["P/L"] !== undefined ? trade["P/L"] + totalCommissionInDollars : "",
             transactionId: trade["Position ID"],
         }
 
