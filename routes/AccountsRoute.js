@@ -142,7 +142,7 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
     }
 
     // Create a new account with the provided data
-    const newAccount =  await Account.create(data);
+    const newAccount = await Account.create(data);
     const accounts = user.accounts;
     // Add the new account to the user's accounts array
     accounts.push(newAccount);

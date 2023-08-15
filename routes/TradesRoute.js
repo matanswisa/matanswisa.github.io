@@ -89,6 +89,8 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
 
 
         const imported = await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
+        const accountOfUser = await Account.findOne({ _id: accountId });
+        await SelectedAccountModel.updateOne({ userId }, { account: accountOfUser, accountId: accountId });
         if (imported) {
           const trades = await fetchUserTrades(userId, accountId);
           // Send the response indicating success
@@ -252,16 +254,16 @@ router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req,
     const tradesByDate = trades.reduce((result, trade) => {
       const tradeDate = trade.entryDate.substring(0, 10); // Extract YYYY-MM-DD from the full entryDate
       const existingEntry = result.find(entry => entry._id === tradeDate);
-      
+
       if (existingEntry) {
         if (trade.status === 'Loss') {
           existingEntry.trades++;
           existingEntry.lossCount++;
-     
+
         } else if (trade.status === 'Win') {
           existingEntry.trades++;
           existingEntry.winCount++;
-          
+
         }
         existingEntry.totalPnL += trade.netPnL;
       } else {
@@ -271,7 +273,7 @@ router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req,
           totalPnL: trade.netPnL,
         });
       }
-    console.log("dsds",result);
+      console.log("dsds", result);
       return result;
     }, []);
 
@@ -316,10 +318,10 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
       if (existingEntry) {
         if (trade.status === 'Loss') {
           existingEntry.lossCount++;
-        
+
         } else if (trade.status === 'Win') {
           existingEntry.winCount++;
-       
+
 
         }
         existingEntry.totalPnL += trade.netPnL;
@@ -372,16 +374,16 @@ router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
       result[date].Commission += trade.commission || 0;
 
       if (trade.status == "Win") {
-     
+
         result[date].totalWin += trade.netPnL; // Subtract from totalLoss
         result[date].win++;
       } else if (trade.status == "Loss") {
-      
+
         result[date].totalLoss -= trade.netPnL; // Subtract from totalLoss
         result[date].loss++;
       }
       result[date].totalPnL += trade.netPnL;
-      console.log("dsdsds",result);
+      console.log("dsdsds", result);
       return result;
     }, {});
 
