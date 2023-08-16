@@ -68,13 +68,61 @@ export const tickerArrays = [
     { label: 'Dogecoin', year: 'DOGE' },
     { label: 'Avalanche', year: 'AVAX' },
     { label: 'Terra', year: 'LUNA' },
-    // ... (add more crypto names and symbols)
+    // ... (previous entries)
     { label: 'VeChain', year: 'VET' },
     { label: 'Chainlink', year: 'LINK' },
     { label: 'Litecoin', year: 'LTC' },
     { label: 'Cosmos', year: 'ATOM' },
     { label: 'Bitcoin Cash', year: 'BCH' },
     { label: 'Filecoin', year: 'FIL' },
+    // ... (previous entries)
+    { label: 'Tezos', year: 'XTZ' },
+    { label: 'Stellar', year: 'XLM' },
+    { label: 'Aave', year: 'AAVE' },
+    { label: 'Compound', year: 'COMP' },
+    { label: 'Synthetix', year: 'SNX' },
+    { label: 'Polygon', year: 'MATIC' },
+    { label: 'Algorand', year: 'ALGO' },
+    // ... (previous entries)
+    { label: 'Neo', year: 'NEO' },
+    { label: 'Ethereum Classic', year: 'ETC' },
+    { label: 'Dash', year: 'DASH' },
+    { label: 'Zcash', year: 'ZEC' },
+    { label: 'Monero', year: 'XMR' },
+    { label: 'IOTA', year: 'MIOTA' },
+    { label: 'Theta', year: 'THETA' },
+    // ... (previous entries)
+    { label: 'NEM', year: 'XEM' },
+    { label: 'EOS', year: 'EOS' },
+    { label: 'Tron', year: 'TRX' },
+    { label: 'VeThor Token', year: 'VTHO' },
+    { label: 'Kusama', year: 'KSM' },
+    { label: 'BitTorrent', year: 'BTT' },
+    { label: 'Huobi Token', year: 'HT' },
+    // ... (previous entries)
+    { label: 'Decentraland', year: 'MANA' },
+    { label: 'Zilliqa', year: 'ZIL' },
+    { label: 'DigiByte', year: 'DGB' },
+    { label: 'OMG Network', year: 'OMG' },
+    { label: 'Waves', year: 'WAVES' },
+    { label: 'Celo', year: 'CELO' },
+    { label: 'Klaytn', year: 'KLAY' },
+    // ... (previous entries)
+    { label: 'SushiSwap', year: 'SUSHI' },
+    { label: 'Maker', year: 'MKR' },
+    { label: 'Ren', year: 'REN' },
+    { label: 'Chiliz', year: 'CHZ' },
+    { label: 'Curve DAO Token', year: 'CRV' },
+    { label: 'Siacoin', year: 'SC' },
+    { label: 'Ontology', year: 'ONT' },
+    // ... (previous entries)
+    { label: 'Synereo', year: 'AMP' },
+    { label: 'Golem', year: 'GLM' },
+    { label: 'Reserve Rights', year: 'RSR' },
+    { label: '0x', year: 'ZRX' },
+    { label: 'Horizen', year: 'ZEN' },
+    { label: 'Enjin Coin', year: 'ENJ' },
+    { label: 'Holo', year: 'HOT' },
     // ... (add more crypto names and symbols)
   ]
   
