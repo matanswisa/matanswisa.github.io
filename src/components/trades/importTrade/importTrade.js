@@ -109,9 +109,79 @@ export default function BasicModal(props) {
   };
 
 
+  const validationBeforeImportCsvFileFromTradeovate = (file) => {
+    const requiredColumns = [
+      "Position ID",
+      "Timestamp",
+      "Trade Date",
+      "Net Pos",
+      "Net Price",
+      "Bought",
+      "Avg. Buy",
+      "Sold",
+      "Avg. Sell",
+      "Account",
+      "Contract",
+      "Product",
+      "Product Description",
+      "_priceFormat",
+      "_priceFormatType",
+      "_tickSize",
+      "Pair ID",
+      "Buy Fill ID",
+      "Sell Fill ID",
+      "Paired Qty",
+      "Buy Price",
+      "Sell Price",
+      "P/L",
+      "Currency",
+      "Bought Timestamp",
+      "Sold Timestamp"
+  ];
+
+  let validationPassed = true;
+
+    if (!file.name.endsWith('.csv')) {
+        validationPassed = false;
+        notifyToast('Please select a CSV file.', 'error');
+        return false; // Validation failed
+    }
+
+
+    Papa.parse(file, {
+        complete: (result) => {
+            const headers = result.data[0]; // Assuming the first row contains column headers
+
+            // Check if all required columns are present
+            const missingColumns = requiredColumns.filter(column => !headers.includes(column));
+            if (missingColumns.length > 0) {
+                notifyToast('Please select the correct file.', 'error');
+                validationPassed = false; // Validation failed
+            } else {
+                // Validation passed
+                validationPassed = true;
+            }
+        }
+    });
+
+    return validationPassed;
+};
+
+
+ 
+
+
   const handleFileChangeTrade = async (event) => {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
+
+
+      const isValidFile = validationBeforeImportCsvFileFromTradeovate(file);
+
+      if (!isValidFile) {
+          return; // Stop further execution
+      }
+      
 
       try {
         setIsUploading(true);
