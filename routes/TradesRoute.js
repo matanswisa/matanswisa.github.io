@@ -426,15 +426,17 @@ router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
 
     //updating user , and accounts and trades.
     tradeOfAccount.image = imagePath;
+    accountOfUser.trades = accountOfUser.trades.filter(trade => trade._id != tradeId)
+    user.accounts = user.accounts.filter(acc => acc._id != accountId);
     accountOfUser.trades.push(tradeOfAccount);
-    user.accounts = [...user.accounts.filter(acc => acc._id == accountId), accountOfUser];
+    user.accounts.push(accountOfUser);
 
     // User.findByIdAndUpdate(userId,{accounts:})
     user.save();
 
 
-    const tradesWithImage = fetchTradesWithImages(accountOfUser.trades);
-    if (trade) { return res.status(200).json(tradesWithImage) }
+    const tradesWithImage = await fetchTradesWithImages(accountOfUser.trades);
+    if (tradesWithImage && tradesWithImage.length) { return res.status(200).json(tradesWithImage) }
     return res.status(400).send("Can't save trading image");
 
   } catch (err) {
