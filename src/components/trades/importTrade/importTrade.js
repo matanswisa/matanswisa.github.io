@@ -22,7 +22,7 @@ import {
 
 
 } from '@mui/material';
-
+import Process from '../../processBar/process'
 
 const style = {
   position: 'absolute',
@@ -42,6 +42,9 @@ const style = {
 export default function BasicModal(props) {
   const [showStepper, setShowStepper] = useState(false);
 
+  const [isUploading, setIsUploading] = useState(false);
+  const [processDuration, setProcessDuration] = useState(2000);
+  const [uploadStarted, setUploadStarted] = useState(false);
   const handleIconButtonClick = () => {
     // Set showAnotherComponent to true to display AnotherComponent
     setShowStepper(true);
@@ -111,6 +114,8 @@ export default function BasicModal(props) {
       const file = event.target.files[0];
 
       try {
+        setIsUploading(true);
+        setUploadStarted(true);
         const formData = new FormData();
         formData.append('file', file);
         formData.append('userId', user._id);
@@ -124,27 +129,62 @@ export default function BasicModal(props) {
           },
         }
 
+        const timer = setInterval(() => {
+          setProcessDuration((prevDuration) => Math.min(prevDuration + 2000, 10000)); // Cap at 10 seconds
+        }, 2000);
+
+
         const response = await api.post('/api/importTrades', formData, headersForImportTrades);
-        console.log(response.data);
+        
+        clearInterval(timer); // Clear the timer when upload is complete
+        setProcessDuration(3000); // Reset process duration
         dispatch(setTradesList(response.data));
+      
         notifyToast('Upload csv file successfully', 'success');
         // Handle success or show a success message to the user
       } catch (error) {
+        setIsUploading(false);
         console.error('Error uploading file:', error);
         notifyToast('Error uploading file' + error.message, 'error');
         // Handle error or show an error message to the user
+      } finally {
+        setIsUploading(false);
+        setUploadStarted(false);
+        setProcessDuration(2000); // Reset process duration
       }
+      
     }
   };
+
+  useEffect(() => {
+    let interval;
+  
+    if (uploadStarted) {
+      interval = setInterval(() => {
+        if (processDuration < 10000) {
+          // Increase process duration up to a maximum of 10 seconds
+          setProcessDuration((prevDuration) => prevDuration + 2000);
+        } else if (processDuration >= 4000 && processDuration < 6000) {
+          // Close the process bar after it reaches 40%
+          clearInterval(interval);
+          setIsUploading(false);
+          setUploadStarted(false);
+          setProcessDuration(2000); // Reset process duration
+        }
+      }, 2000);
+    } else {
+      clearInterval(interval); // Clear the interval when upload is not started
+    }
+  
+    return () => clearInterval(interval);
+  }, [uploadStarted, processDuration]);
 
   const handleImportTrade = () => {
     // Trigger the file input selection when the button is clicked
     fileInputRefTrade.current.click();
   };
-
   return (
     <div>
-
       <Modal
         open={handleOpen}
         onClose={handleClose}
@@ -153,12 +193,11 @@ export default function BasicModal(props) {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h5" component="h2">
-            import Trades          </Typography>
-
-
-
-
-          <Select sx={{ mt: 3 }}
+            import Trades
+          </Typography>
+  
+          <Select
+            sx={{ mt: 3 }}
             name="broker"
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -169,31 +208,41 @@ export default function BasicModal(props) {
               name: 'age',
               id: 'uncontrolled-native',
             }}
-
           >
             <MenuItem value={1}>Tradovate</MenuItem>
             {/* <MenuItem value={2}>Ninja Trader</MenuItem>
-            <MenuItem value={3}>Interactiv</MenuItem> */}
+              <MenuItem value={3}>Interactiv</MenuItem> */}
           </Select>
-          <Button sx={{ mt: 5 }}
-            size="medium"
-            variant="contained"
-            component="span"
-            startIcon={<Iconify icon={'eva:file-add-outline'} />}
-            onClick={handleImportTrade}
-          >
-            Import
-          </Button>
-          <input
-            type="file"
-            ref={fileInputRefTrade}
-            style={{ display: 'none' }}
-            onChange={handleFileChangeTrade}
-          />
-          <IconButton size="large" color="inherit" onClick={handleIconButtonClick}>
-            <Iconify icon={'eva:question-mark-circle-outline'} />
-          </IconButton>
-          {showStepper && <StepperModal handleOpenModal={setShowStepper} />}
+  
+          {isUploading ? (
+         <Process duration={processDuration} />
+          ) : (
+            <>
+              <Button
+                sx={{ mt: 5 }}
+                size="medium"
+                variant="contained"
+                component="span"
+                startIcon={<Iconify icon={'eva:file-add-outline'} />}
+                onClick={handleImportTrade}
+              >
+                Import
+              </Button>
+  
+              <input
+                type="file"
+                ref={fileInputRefTrade}
+                style={{ display: 'none' }}
+                onChange={handleFileChangeTrade}
+              />
+  
+              <IconButton size="large" color="inherit" onClick={handleIconButtonClick}>
+                <Iconify icon={'eva:question-mark-circle-outline'} />
+              </IconButton>
+  
+              {showStepper && <StepperModal handleOpenModal={setShowStepper} />}
+            </>
+          )}
         </Box>
       </Modal>
     </div>
