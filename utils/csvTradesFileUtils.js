@@ -40,11 +40,14 @@ const handleMergeRows = (data) => {
 
 
     const positionsIdsObject = groupByPositionId(data)
-
+    let firstBoughtTimestamp;
+    let firstSoldTimestamp;
     const timesObject = {};
     for (let key in positionsIdsObject) {
         const dataOfPositions = positionsIdsObject[key];
         timesObject[key] = { time1: 0, time2: 0 };
+        firstBoughtTimestamp = dataOfPositions[0]['Bought Timestamp'];
+        firstSoldTimestamp = dataOfPositions[0]['Sold Timestamp'];
         timesObject[key]['time1'] = Math.abs(new Date(dataOfPositions[0]['Bought Timestamp']) - new Date(dataOfPositions[dataOfPositions.length - 1]['Sold Timestamp']));   //Time1= arr[0][buytime stamp] - arr[len-1][sold timestamp]
         timesObject[key]['time2'] = Math.abs(new Date(dataOfPositions[0]['Sold Timestamp']) - new Date(dataOfPositions[dataOfPositions.length - 1]['Bought Timestamp']));
         // timesObject[key]['LongShort'] = Time2 > time1 ? "Short" : "Long";
@@ -53,7 +56,10 @@ const handleMergeRows = (data) => {
     for (const id in groupedRows) {
         if (groupedRows.hasOwnProperty(id)) {
             const times = timesObject[id]
-            groupedRows[id]['LongShort'] = times.time2 > times.time1 ? "Short" : "Long";
+            console.log();
+            // groupedRows[id]['LongShort'] = times.time2 >= times.time1  && firstSoldTimestamp < firstBoughtTimestamp ? "Short" : "Long";
+            groupedRows[id]['LongShort'] = (times.time2 >= times.time1 && firstSoldTimestamp < firstBoughtTimestamp)? "Short"  : ((times.time1 >= times.time2 && firstBoughtTimestamp < firstSoldTimestamp)  ? "Short": "Long");
+
         }
     }
 
