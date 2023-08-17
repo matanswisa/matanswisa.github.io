@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 const steps = [
+  [ //0 -> TradeOvate
   {
     label: 'Log in to your Tradovate Account',
     description: `Open your web browser and go to the Tradovate website. \
@@ -34,10 +35,51 @@ and choose the file you just downloaded from your computer. \
 After selecting the file, the platform will process the data and import your trade history into your account. \
 `,
   },
-];
+],
+ [ //1-> binance
+  {
+    label: 'Log in to your Binance Account',
+    description: `Open your web browser and go to the Binance website. \
+Click on the "Login" button and enter your username and password to log in to your account.`,
+  },
+  {
+    label: 'Access Trade History',
+    description:
+      'Once logged in, you will be directed to the Binance dashboard. Look for the "Trade" or "Wallet" tab in the navigation menu. \
+Click on the "Trade History" or "Order History" option for spot trading, or "Futures" and then "Futures Order History" for futures trading.',
+  },
+  {
+    label: 'Export Trade History CSV',
+    description: `On the Trade History page, you should see a table displaying your historical trades. \
+Look for an option like "Export," "Download," or an icon that represents exporting data (often a down-arrow or a download icon). \
+Click on the export/download option, and a dialog box should appear. Choose the date range, trading pairs, and select "CSV" (Comma-Separated Values) as the file format. \
+Click "Download" or "Export." Your trade history data will be saved as a CSV file on your computer. Choose a location to save the file.`,
+  },
+  {
+    label: 'Import Trade File',
+    description: `Now that you have the CSV file with your trade history, go back to your cryptocurrency portfolio tracker or tax software. \
+Look for an option like "Import" or "Upload" within the software. Select the CSV file you just downloaded from your computer. \
+The software will process the data and import your trade history into your account.`,
+  },
+  {
+    label: 'Review and Update',
+    description: `After importing, review the imported transactions to ensure accuracy. \
+Check if all your trades, deposits, and withdrawals are correctly recorded. If you've made additional trades since your last export, \
+repeat the above steps periodically to keep your trade history up-to-date.`,
+  },
+],];
 
-export default function VerticalLinearStepper() {
+
+
+
+export default function VerticalLinearStepper(props) {
+
+  const brokerIdx = props.brokerNametoImport;
+
+ 
   const [activeStep, setActiveStep] = React.useState(0);
+  const [number, setNumber] = React.useState(brokerIdx-1);
+  
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -54,7 +96,8 @@ export default function VerticalLinearStepper() {
   return (
     <Box sx={{ maxWidth: 400 }}>
       <Stepper activeStep={activeStep} orientation="vertical">
-        {steps.map((step, index) => (
+        {steps[number].map((step, index) => (
+          step && 
           <Step key={step.label}>
             <StepLabel
               optional={
@@ -74,7 +117,7 @@ export default function VerticalLinearStepper() {
                     onClick={handleNext}
                     sx={{ mt: 1, mr: 1 }}
                   >
-                    {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                    {index === steps[number].length - 1 ? 'Finish' : 'Continue'}
                   </Button>
                   <Button
                     disabled={index === 0}
@@ -89,7 +132,7 @@ export default function VerticalLinearStepper() {
           </Step>
         ))}
       </Stepper>
-      {activeStep === steps.length && (
+      {activeStep === steps[number].length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
           <Typography>All steps completed - you&apos;re finished</Typography>
           <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
@@ -99,4 +142,5 @@ export default function VerticalLinearStepper() {
       )}
     </Box>
   );
+
 }

@@ -17,7 +17,8 @@ const style = {
 };
 
 export default function BasicModal(props) {
-
+  const BrokerToImportNumber = props.name;
+ 
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   return (
@@ -31,7 +32,7 @@ export default function BasicModal(props) {
       >
         <Box sx={style}>
          
-         <Stepper/>
+         <Stepper brokerNametoImport = {BrokerToImportNumber}/>
         </Box>
       </Modal>
     </div>

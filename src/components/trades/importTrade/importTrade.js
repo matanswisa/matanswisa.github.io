@@ -282,8 +282,8 @@ export default function BasicModal(props) {
             }}
           >
             <MenuItem value={1}>Tradovate</MenuItem>
-            {/* <MenuItem value={2}>Ninja Trader</MenuItem>
-              <MenuItem value={3}>Interactiv</MenuItem> */}
+            <MenuItem value={2}>Binance</MenuItem>
+              {/* <MenuItem value={3}>Interactiv</MenuItem> */}
           </Select>
   
           {isUploading ? (
@@ -312,7 +312,7 @@ export default function BasicModal(props) {
                 <Iconify icon={'eva:question-mark-circle-outline'} />
               </IconButton>
   
-              {showStepper && <StepperModal handleOpenModal={setShowStepper} />}
+              {showStepper && <StepperModal name = {broker} handleOpenModal={setShowStepper} />}
             </>
           )}
         </Box>
