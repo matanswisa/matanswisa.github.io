@@ -5,7 +5,7 @@ import { Box, List, ListItemText } from '@mui/material';
 //
 import { StyledNavItem, StyledNavItemIcon } from './styles';
 import { useDispatch } from 'react-redux';
-import { logout } from '../../redux-toolkit/userSlice';
+import { logout, setCurrentAccount } from '../../redux-toolkit/userSlice';
 
 // ----------------------------------------------------------------------
 

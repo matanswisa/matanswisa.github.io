@@ -22,6 +22,7 @@ const authSlice = createSlice({
             state.user = null;
             state.isAuthenticated = false;
             state.isAdmin = false;
+            state.currentAccount = null;
         },
         selectIsAuthenticated(state) {
             return state.isAuthenticated;
