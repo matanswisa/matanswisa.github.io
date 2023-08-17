@@ -32,8 +32,12 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
       const accountToDelete = accounts.find(acc => acc._id == currentAccount._id);
 
       if (!accountToDelete && accounts.length) {
-        await SelectedAccountModel.updateOne({ userId: userId }, { accountId: accounts[0]._id, account: accounts[0] });
-      } else if (!accountToDelete && accounts.length == 1) {
+        if (accounts.length === 1) {
+          await SelectedAccountModel.updateOne({ userId: userId }, { accountId: null, account: null });
+        } else if (accounts.length > 1) {
+          await SelectedAccountModel.updateOne({ userId: userId }, { accountId: accounts[0]._id, account: accounts[0] });
+        }
+      } else if (!accountToDelete) {
         await SelectedAccountModel.updateOne({ userId: userId }, { accountId: null, account: null });
       }
 
