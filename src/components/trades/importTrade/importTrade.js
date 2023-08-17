@@ -190,7 +190,7 @@ export default function BasicModal(props) {
         formData.append('file', file);
         formData.append('userId', user._id);
         formData.append('accountId', currentAccount._id);
-
+        formData.append('broker', broker);
         const token = localStorage.getItem('token');
         const headersForImportTrades = {
           headers: {
@@ -203,8 +203,8 @@ export default function BasicModal(props) {
           setProcessDuration((prevDuration) => Math.min(prevDuration + 2000, 10000)); // Cap at 10 seconds
         }, 2000);
 
-
-        const response = await api.post('/api/importTrades', formData, headersForImportTrades);
+     
+        const response = await api.post('/api/importTrades', formData, headersForImportTrades );
         
         clearInterval(timer); // Clear the timer when upload is complete
         setProcessDuration(3000); // Reset process duration
