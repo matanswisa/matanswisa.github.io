@@ -4,6 +4,7 @@ import User from "../models/user.js";
 import Mongoose from "mongoose";
 import { authenticateToken } from "../auth/jwt.js";
 import SelectedAccountModel from "../models/selectedAccount.js";
+import Trade from "../models/trade.js";
 
 const router = Router();
 
@@ -37,11 +38,17 @@ router.delete('/deleteAccount', authenticateToken, async (req, res) => {
         } else if (accounts.length > 1) {
           await SelectedAccountModel.updateOne({ userId: userId }, { accountId: accounts[0]._id, account: accounts[0] });
         }
+        // currentAccount.trades.forEach(async (trade) => {
+        //   await Trade.deleteOne({ _id: trade._id });
+        // });
+
       } else if (!accountToDelete) {
         await SelectedAccountModel.updateOne({ userId: userId }, { accountId: null, account: null });
       }
 
-
+      currentAccount.trades.forEach(async (trade) => {
+        await Trade.deleteOne({ _id: trade._id });
+      });
     } else {
       // Handle the case where 'account' property is missing or userSelectedAccount is null
       console.log("User selected account not found or does not have 'account' property.");
