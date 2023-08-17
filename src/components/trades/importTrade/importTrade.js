@@ -110,7 +110,7 @@ export default function BasicModal(props) {
 
 
   const validationBeforeImportCsvFileFromTradeovate = (file) => {
-    const requiredColumns = [
+    const requiredColumnsTradeOvate = [
       "Position ID",
       "Timestamp",
       "Trade Date",
@@ -137,51 +137,107 @@ export default function BasicModal(props) {
       "Currency",
       "Bought Timestamp",
       "Sold Timestamp"
-  ];
+    ];
 
-  let validationPassed = true;
+
+  
+    let validationPassed = true;
 
     if (!file.name.endsWith('.csv')) {
-        validationPassed = false;
-        notifyToast('Please select a CSV file.', 'error');
-        return false; // Validation failed
+      validationPassed = false;
+      notifyToast('Please select a CSV  file.', 'error');
+      return false; // Validation failed
     }
 
 
     Papa.parse(file, {
-        complete: (result) => {
-            const headers = result.data[0]; // Assuming the first row contains column headers
+      complete: (result) => {
+          const headers = result.data[0]; // Assuming the first row contains column headers
 
-            // Check if all required columns are present
-            const missingColumns = requiredColumns.filter(column => !headers.includes(column));
-            if (missingColumns.length > 0) {
-                notifyToast('Please select the correct file.', 'error');
-                validationPassed = false; // Validation failed
-            } else {
-                // Validation passed
-                validationPassed = true;
-            }
-        }
-    });
+          // Check if all required columns are present
+          const missingColumns = requiredColumnsTradeOvate.filter(column => !headers.includes(column));
+          if (missingColumns.length > 0) {
+              notifyToast('Please select the correct file.', 'error');
+              validationPassed = false; // Validation failed
+          } else {
+              // Validation passed
+              validationPassed = true;
+          }
+      }
+  });
 
     return validationPassed;
-};
+  };
 
 
- 
+  
+
+  const validationBeforeImportCsvFileFromBinance = (file) => {
+  
+
+    const requiredColumnsBinance = [
+      "Date(UTC)",
+      "Symbol",
+      "Side",
+      "Price",
+      "Quantity",
+      "Amount",
+      "Fee",
+      "Fee Coin",
+      "Realized Profit",
+      "Quote Asset"
+    ];
+    let validationPassed = true;
+
+    if (!file.name.endsWith('.xlsx')) {
+      validationPassed = false;
+      notifyToast('Please select a  Excel file.', 'error');
+      return false; // Validation failed
+    }
+
+
+    Papa.parse(file, {
+      complete: (result) => {
+          const headers = result.data[0]; // Assuming the first row contains column headers
+
+          // Check if all required columns are present
+          const missingColumns = requiredColumnsBinance.filter(column => !headers.includes(column));
+          if (missingColumns.length > 0) {
+              notifyToast('Please select the correct file.', 'error');
+              validationPassed = false; // Validation failed
+          } else {
+              // Validation passed
+              validationPassed = true;
+          }
+      }
+  });
+
+
+    return validationPassed;
+  };
+
+
+
 
 
   const handleFileChangeTrade = async (event) => {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
+      let isValidFile;
 
+      if(broker == 1){
 
-      const isValidFile = validationBeforeImportCsvFileFromTradeovate(file);
+        isValidFile = validationBeforeImportCsvFileFromTradeovate(file);
+      }
+
+      else if (broker == 2){
+        isValidFile = validationBeforeImportCsvFileFromBinance(file);
+      }
 
       if (!isValidFile) {
-          return; // Stop further execution
+        return; // Stop further execution
       }
-      
+
 
       try {
         setIsUploading(true);
@@ -203,13 +259,13 @@ export default function BasicModal(props) {
           setProcessDuration((prevDuration) => Math.min(prevDuration + 2000, 10000)); // Cap at 10 seconds
         }, 2000);
 
-     
-        const response = await api.post('/api/importTrades', formData, headersForImportTrades );
-        
+
+        const response = await api.post('/api/importTrades', formData, headersForImportTrades);
+
         clearInterval(timer); // Clear the timer when upload is complete
         setProcessDuration(3000); // Reset process duration
         dispatch(setTradesList(response.data));
-      
+
         notifyToast('Upload csv file successfully', 'success');
         setProcessDuration(1000); // Reset process duration
         handleClose();
@@ -224,13 +280,13 @@ export default function BasicModal(props) {
         setUploadStarted(false);
         setProcessDuration(2000); // Reset process duration
       }
-      
+
     }
   };
 
   useEffect(() => {
     let interval;
-  
+
     if (uploadStarted) {
       interval = setInterval(() => {
         if (processDuration < 10000) {
@@ -247,7 +303,7 @@ export default function BasicModal(props) {
     } else {
       clearInterval(interval); // Clear the interval when upload is not started
     }
-  
+
     return () => clearInterval(interval);
   }, [uploadStarted, processDuration]);
 
@@ -267,7 +323,7 @@ export default function BasicModal(props) {
           <Typography id="modal-modal-title" variant="h5" component="h2">
             import Trades
           </Typography>
-  
+
           <Select
             sx={{ mt: 3 }}
             name="broker"
@@ -283,11 +339,11 @@ export default function BasicModal(props) {
           >
             <MenuItem value={1}>Tradovate</MenuItem>
             <MenuItem value={2}>Binance</MenuItem>
-              {/* <MenuItem value={3}>Interactiv</MenuItem> */}
+            {/* <MenuItem value={3}>Interactiv</MenuItem> */}
           </Select>
-  
+
           {isUploading ? (
-         <Process duration={processDuration} />
+            <Process duration={processDuration} />
           ) : (
             <>
               <Button
@@ -300,19 +356,19 @@ export default function BasicModal(props) {
               >
                 Import
               </Button>
-  
+
               <input
                 type="file"
                 ref={fileInputRefTrade}
                 style={{ display: 'none' }}
                 onChange={handleFileChangeTrade}
               />
-  
+
               <IconButton size="large" color="inherit" onClick={handleIconButtonClick}>
                 <Iconify icon={'eva:question-mark-circle-outline'} />
               </IconButton>
-  
-              {showStepper && <StepperModal name = {broker} handleOpenModal={setShowStepper} />}
+
+              {showStepper && <StepperModal name={broker} handleOpenModal={setShowStepper} />}
             </>
           )}
         </Box>
