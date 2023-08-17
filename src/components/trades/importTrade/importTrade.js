@@ -211,6 +211,8 @@ export default function BasicModal(props) {
         dispatch(setTradesList(response.data));
       
         notifyToast('Upload csv file successfully', 'success');
+        setProcessDuration(1000); // Reset process duration
+        handleClose();
         // Handle success or show a success message to the user
       } catch (error) {
         setIsUploading(false);
