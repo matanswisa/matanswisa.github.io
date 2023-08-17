@@ -56,7 +56,7 @@ const handleMergeRows = (data) => {
     for (const id in groupedRows) {
         if (groupedRows.hasOwnProperty(id)) {
             const times = timesObject[id]
-            console.log();
+         
             // groupedRows[id]['LongShort'] = times.time2 >= times.time1  && firstSoldTimestamp < firstBoughtTimestamp ? "Short" : "Long";
             groupedRows[id]['LongShort'] = (times.time2 >= times.time1 && firstSoldTimestamp < firstBoughtTimestamp)? "Short"  : ((times.time1 >= times.time2 && firstBoughtTimestamp < firstSoldTimestamp)  ? "Short": "Long");
 
@@ -64,7 +64,7 @@ const handleMergeRows = (data) => {
     }
 
     const mergedRows = Object.values(groupedRows);
-    console.log(mergedRows);
+   
     return mergedRows;
 };
 
@@ -77,7 +77,7 @@ const calcCommission = (contractName) => {
 }
 
 export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) => {
-    console.log(csvData);
+    
     const mergedRows = handleMergeRows(csvData);
 
     const count = csvData.length; // Total number of trades
@@ -88,7 +88,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
     for (let i = 0; i < csvData.length; i++) {
         let commissionSize = calcCommission(csvData[i]["Product Description"]) * -1;
         let totalCommissionInDollars = commissionSize * csvData[i]["Paired Qty"];
-        console.log("ddd", csvData);
+        
         const netROI = ((csvData[i]["Sell Price"] - csvData[i]["Buy Price"]) / csvData[i]["Buy Price"]) * 100;
         const data = {
             entryDate: csvData[i]["Bought Timestamp"] || "",
@@ -135,9 +135,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
 
 
 
-    console.log("tradesWithPartiels.length", tradesWithPartiels.length);
-    console.log("tradesWithPartiels", tradesWithPartiels);
-
+   
 
 
     for (let i = 0; i < mergedRows.length; i++) {

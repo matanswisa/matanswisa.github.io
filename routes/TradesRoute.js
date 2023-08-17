@@ -76,8 +76,9 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
 
 router.post("/importTrades", authenticateToken, upload.single('file'), async (req, res) => {
   try {
-    const { userId, accountId } = req.body;
+    const { userId, accountId,broker } = req.body;
 
+    console.log(broker);
     const tradesData = [];
     fs.createReadStream(req.file.path)
       .pipe(parse({ delimiter: ',' }))
