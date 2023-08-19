@@ -2,6 +2,7 @@ import Account from "../models/accounts.js";
 import SelectedAccountModel from "../models/selectedAccount.js";
 import Trade from "../models/trade.js";
 import User from "../models/user.js";
+import fs from 'fs/promises';
 
 
 function groupByPositionId(array) {
@@ -48,10 +49,47 @@ const handleMergeRows = (data) => {
 
 
 
-export const buildTradesDataByBinanceCSV = async (csvData, userId, accountId) => {
+export const buildTradesDataByBinanceCSV = async (ExcelData, userId, accountId) => {
+
+    const csvHeaders = [
+        'Date(UTC)', 'Symbol', 'Side', 'Price', 'Quantity',
+        'Amount', 'Fee', 'Fee Coin', 'Realized Profit', 'Quote Asset'
+      ];
     
-    const mergedRows = handleMergeRows(csvData);
-    console.log("################",mergedRows);
+      const csvRows = [csvHeaders.join(',')]; // First row with column headers
+    
+      // Convert ExcelData to CSV rows
+      ExcelData.forEach(trade => {
+        const csvRow = [
+          trade.Date, trade.Symbol, trade.Side, trade.Price, trade.Quantity,
+          trade.Amount, trade.Fee, trade['Fee Coin'], trade['Realized Profit'], trade['Quote Asset']
+        ];
+        csvRows.push(csvRow.join(','));
+      });
+    
+      // Join all rows with line breaks
+      const csvContent = csvRows.join('\n');
+
+
+    
+      // Construct the file name based on userId and accountId
+      const fileName = `trades_${userId}_${accountId}.csv`;
+    
+      // Write the CSV content to a file
+      try {
+        await fs.writeFile(fileName, csvContent);
+        console.log(`CSV file ${fileName} successfully created.`);
+      } catch (error) {
+        console.error('Error writing CSV file:', error);
+      }
+
+
+    };
+
+
+
+    // const mergedRows = handleMergeRows(csvData);
+    // console.log("################",mergedRows);
     // const count = csvData.length; // Total number of trades
     // // let successCount = 0;
 
@@ -233,5 +271,5 @@ export const buildTradesDataByBinanceCSV = async (csvData, userId, accountId) =>
     // }
 
 
-    return true;
-}
+  //  return true;
+//}
