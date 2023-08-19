@@ -14,7 +14,7 @@ import Account from "../models/accounts.js";
 import { authenticateToken } from "../auth/jwt.js";
 import parse from 'csv-parser';
 import { buildTradesDataByTradovateCSV } from "../utils/csvTradesFileUtils.js";
-import { buildTradesDataByBinanceCSV }  from "../utils/csvTradesFileImportsBinance.js"
+import { buildTradesDataByBinanceCSV } from "../utils/csvTradesFileImportsBinance.js"
 import SelectedAccountModel from "../models/selectedAccount.js";
 
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -77,7 +77,7 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
 
 router.post("/importTrades", authenticateToken, upload.single('file'), async (req, res) => {
   try {
-    const { userId, accountId,broker } = req.body;
+    const { userId, accountId, broker } = req.body;
     let imported;
     console.log(broker);
     const tradesData = [];
@@ -89,12 +89,12 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
       .on('end', async () => {
         fs.unlinkSync(req.file.path); // Remove the temporary file
 
-        if(broker == 1){//TradeOvate
+        if (broker == 1) {//TradeOvate
 
-         imported = await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
+          imported = await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
         }
-        else if(broker == 2){// Binance
-           imported = await buildTradesDataByBinanceCSV(tradesData, userId, accountId);
+        else if (broker == 2) {// Binance
+          imported = await buildTradesDataByBinanceCSV(tradesData, userId, accountId);
         }
         const accountOfUser = await Account.findOne({ _id: accountId });
         await SelectedAccountModel.updateOne({ userId }, { account: accountOfUser, accountId: accountId });
@@ -211,7 +211,7 @@ router.get('/getDailyStats', async (req, res) => {
       }
     }
 
-    res.json(tradesByDate);
+    res.status(200).json(tradesByDate);
   } catch (error) {
     console.error('Error fetching trades:', error);
     res.status(500).json({ error: 'An error occurred' });
@@ -245,7 +245,7 @@ router.post('/WinAndLossTotalTime', authenticateToken, async (req, res) => {
       breakEvenCount,
     };
 
-    res.json(updatedTradeStats);
+    res.status(200).json(updatedTradeStats);
   } catch (error) {
     res.status(500).json({ error: 'An error occurred' });
   }
@@ -280,13 +280,12 @@ router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req,
           totalPnL: trade.netPnL,
         });
       }
-      console.log("dsds", result);
       return result;
     }, []);
 
     tradesByDate.sort((a, b) => b._id.localeCompare(a._id)); // Sort by descending date
 
-    res.json(tradesByDate);
+    res.status(200).json(tradesByDate);
   } catch (error) {
     console.error('Error fetching trades:', error);
     res.status(500).json({ error: 'An error occurred' });
@@ -390,7 +389,6 @@ router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
         result[date].loss++;
       }
       result[date].totalPnL += trade.netPnL;
-      console.log("dsdsds", result);
       return result;
     }, {});
 
