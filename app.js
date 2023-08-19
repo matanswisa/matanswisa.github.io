@@ -16,8 +16,9 @@ connectDB();
 adminSeeder();
 
 const app = express();
-
+//cors
 app.use(cors());
+
 app.use(bodyParser());
 app.use(logger('dev'));
 app.use(express.json());
