@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
-import { useState,  useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Calendar from '../components/Calendar/calendar';
 // components
 
@@ -17,7 +17,7 @@ import {
   AppWebsiteVisits,
 
   AppWidgetSummary,
- 
+
 } from '../sections/@dashboard/app';
 
 import api from '../api/api';
@@ -94,14 +94,14 @@ export default function DashboardAppPage() {
 
   const currentAccount = useSelector(selectCurrentAccount)
   let Alltrades;
-  if(currentAccount?.trades){
+  if (currentAccount?.trades) {
 
-   Alltrades = currentAccount?.trades;
+    Alltrades = currentAccount?.trades;
   }
-  else{
-     Alltrades = [];
+  else {
+    Alltrades = [];
   }
-  
+
   const theme = useTheme();
 
   const [losingTrades, setLosingTrades] = useState(0);
@@ -178,10 +178,10 @@ export default function DashboardAppPage() {
 
 
   useEffect(() => {
-    api.post('/api/WinAndLossTotalTime',{trades: Alltrades}, configAuth).then(
+    api.post('/api/WinAndLossTotalTime', { trades: Alltrades }, configAuth).then(
       (res) => {
         setTrades(res.data)
-        
+
         for (const index in res.data) {
           if (index === "lossCount") {
             setLosingTrades(res.data["lossCount"]);
@@ -197,7 +197,7 @@ export default function DashboardAppPage() {
         }
 
       }
-      
+
     ).catch()
   }, [])
 
@@ -205,9 +205,9 @@ export default function DashboardAppPage() {
 
 
   useEffect(() => {
-    api.post('/api/ShowInfoByDates',{trades: Alltrades},configAuth).then(
+    api.post('/api/ShowInfoByDates', { trades: Alltrades }, configAuth).then(
       (res) => {
-        
+
         setDailyNetCumulative(res.data)
         console.log(res.data);
         for (const index in res.data) {
@@ -227,12 +227,14 @@ export default function DashboardAppPage() {
 
 
   useEffect(() => {
-    api.get("/api/ShowNumOfTradeTotalPnlInfoByDates").then(
-      (res) => {
-        setCalendarTrades(res.data)
-      }
-    ).catch()
-  }, [])
+    if (trades.length) {
+      api.post("/api/ShowNumOfTradeTotalPnlInfoByDates", { trades: Alltrades }, configAuth).then(
+        (res) => {
+          setCalendarTrades(res.data)
+        }
+      ).catch()
+    }
+  }, [trades])
 
   return (
     <>
@@ -249,7 +251,7 @@ export default function DashboardAppPage() {
         <Typography variant="h4" sx={{ mb: 3 }}>
           Hi, Welcome back
         </Typography>
-      
+
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
