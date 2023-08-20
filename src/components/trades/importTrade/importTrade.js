@@ -24,6 +24,9 @@ import {
 } from '@mui/material';
 import Process from '../../processBar/process'
 
+import BinanceIcon from '../../brokersIcons/binance.svg'
+import TradeovateIcon from '../../brokersIcons/Tradovate.svg'
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -138,7 +141,7 @@ export default function BasicModal(props) {
     ];
 
 
-  
+
     let validationPassed = true;
 
     if (!file.name.endsWith('.csv')) {
@@ -150,28 +153,28 @@ export default function BasicModal(props) {
 
     Papa.parse(file, {
       complete: (result) => {
-          const headers = result.data[0]; // Assuming the first row contains column headers
+        const headers = result.data[0]; // Assuming the first row contains column headers
 
-          // Check if all required columns are present
-          const missingColumns = requiredColumnsTradeOvate.filter(column => !headers.includes(column));
-          if (missingColumns.length > 0) {
-              notifyToast('Please select the correct file.', 'error');
-              validationPassed = false; // Validation failed
-          } else {
-              // Validation passed
-              validationPassed = true;
-          }
+        // Check if all required columns are present
+        const missingColumns = requiredColumnsTradeOvate.filter(column => !headers.includes(column));
+        if (missingColumns.length > 0) {
+          notifyToast('Please select the correct file.', 'error');
+          validationPassed = false; // Validation failed
+        } else {
+          // Validation passed
+          validationPassed = true;
+        }
       }
-  });
+    });
 
     return validationPassed;
   };
 
 
-  
+
 
   const validationBeforeImportCsvFileFromBinance = (file) => {
-  
+
 
     const requiredColumnsBinance = [
       "Date(UTC)",
@@ -196,19 +199,19 @@ export default function BasicModal(props) {
 
     Papa.parse(file, {
       complete: (result) => {
-          const headers = result.data[0]; // Assuming the first row contains column headers
+        const headers = result.data[0]; // Assuming the first row contains column headers
 
-          // Check if all required columns are present
-          const missingColumns = requiredColumnsBinance.filter(column => !headers.includes(column));
-          if (missingColumns.length > 0) {
-              notifyToast('Please select the correct file.', 'error');
-              validationPassed = false; // Validation failed
-          } else {
-              // Validation passed
-              validationPassed = true;
-          }
+        // Check if all required columns are present
+        const missingColumns = requiredColumnsBinance.filter(column => !headers.includes(column));
+        if (missingColumns.length > 0) {
+          notifyToast('Please select the correct file.', 'error');
+          validationPassed = false; // Validation failed
+        } else {
+          // Validation passed
+          validationPassed = true;
+        }
       }
-  });
+    });
 
 
     return validationPassed;
@@ -223,12 +226,12 @@ export default function BasicModal(props) {
       const file = event.target.files[0];
       let isValidFile;
 
-      if(broker == 1){
+      if (broker == 1) {
 
         isValidFile = validationBeforeImportCsvFileFromTradeovate(file);
       }
 
-      else if (broker == 2){
+      else if (broker == 2) {
         isValidFile = validationBeforeImportCsvFileFromBinance(file);
       }
 
@@ -335,8 +338,30 @@ export default function BasicModal(props) {
               id: 'uncontrolled-native',
             }}
           >
-            <MenuItem value={1}>Tradovate</MenuItem>
-            <MenuItem value={2}>Binance</MenuItem>
+            <MenuItem value={1}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img
+              src={TradeovateIcon} // Use the imported SVG component here
+              alt="Binance"
+              width={124}
+              height={74}
+              style={{ marginRight: '8px' }}
+            />
+            
+          </div>
+            </MenuItem>
+            <MenuItem value={2}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img
+              src={BinanceIcon} // Use the imported SVG component here
+              alt="Binance"
+              width={124}
+              height={74}
+              style={{ marginRight: '8px' }}
+            />
+            
+          </div>
+        </MenuItem>
             {/* <MenuItem value={3}>Interactiv</MenuItem> */}
           </Select>
 
