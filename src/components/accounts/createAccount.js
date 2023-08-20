@@ -70,7 +70,7 @@ export default function AccountModal(props) {
       const data = {
         AccountName: accountName,
         Label: selectedColor,
-        IsSelected: 'true',
+       
       };
 
 
@@ -96,7 +96,6 @@ export default function AccountModal(props) {
         accountId: accountInfo._id, // Include the _id property for updating the correct account
         AccountName: accountName,
         Label: selectedColor,
-        IsSelected: 'true',
         userId: user._id,
       };
 
