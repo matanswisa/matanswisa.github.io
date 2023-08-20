@@ -102,7 +102,9 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
           }
         });
     } else if (broker == brokers.Binance) {
-      await buildTradesDataByBinanceCSV(req.file.path, userId, accountId)//
+      await buildTradesDataByBinanceCSV(req.file.path, userId, accountId);
+
+      
     }
   } catch (err) {
     console.error(err);

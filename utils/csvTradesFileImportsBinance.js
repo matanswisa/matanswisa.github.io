@@ -4,6 +4,8 @@ import Trade from "../models/trade.js";
 import User from "../models/user.js";
 import fs from 'fs/promises';
 import XLSX from 'xlsx';
+import { v4 as uuidv4 } from 'uuid';
+
 
 function groupByPositionId(array) {
     const grouped = {};
@@ -25,26 +27,26 @@ function groupByPositionId(array) {
 function handleMergeRows(excelJsonData) {
     const mergedRows = [];
     const groupedRows = {};
-  
+
     excelJsonData.forEach(row => {
-      const key = `${row.Symbol}-${row.Side}-${row.Price}`;
-      if (!groupedRows[key]) {
-        groupedRows[key] = { ...row };
-      } else {
-        groupedRows[key].Quantity = (+groupedRows[key].Quantity + +row.Quantity).toFixed(8);
-        groupedRows[key].Amount = (+groupedRows[key].Amount + +row.Amount).toFixed(16);
-        groupedRows[key].Fee = (+groupedRows[key].Fee + +row.Fee).toFixed(8);
-        groupedRows[key]['Realized Profit'] = (+groupedRows[key]['Realized Profit'] + +row['Realized Profit']).toFixed(8);
-      }
+        const key = `${row.Symbol}-${row.Side}-${row.Price}`;
+        if (!groupedRows[key]) {
+            groupedRows[key] = { ...row };
+        } else {
+            groupedRows[key].Quantity = (+groupedRows[key].Quantity + +row.Quantity).toFixed(8);
+            groupedRows[key].Amount = (+groupedRows[key].Amount + +row.Amount).toFixed(16);
+            groupedRows[key].Fee = (+groupedRows[key].Fee + +row.Fee).toFixed(8);
+            groupedRows[key]['Realized Profit'] = (+groupedRows[key]['Realized Profit'] + +row['Realized Profit']).toFixed(8);
+        }
     });
-  
+
     for (const key in groupedRows) {
-      mergedRows.push(groupedRows[key]);
+        mergedRows.push(groupedRows[key]);
     }
-   
+
     return mergedRows;
-  }
-  
+}
+
 
 
 
@@ -55,22 +57,71 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
     const csvHeaders = [
         'Date(UTC)', 'Symbol', 'Side', 'Price', 'Quantity',
         'Amount', 'Fee', 'Fee Coin', 'Realized Profit', 'Quote Asset'
-      ];
+    ];
     
 
 
-      const workbook = XLSX.readFile(ExcelFile);
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
+    const workbook = XLSX.readFile(ExcelFile);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
 
-      // Convert the worksheet to a JSON object
-      const excelJsonData = XLSX.utils.sheet_to_json(worksheet);
+    // Convert the worksheet to a JSON object
+    const excelJsonData = XLSX.utils.sheet_to_json(worksheet);
 
-     
+    const mergedRows = handleMergeRows(excelJsonData);
+    for (let i = 0; i < mergedRows.length; i++) {
+
+        const trade = mergedRows[i];
+
+        const data = {
+            entryDate: trade["Date(UTC)"] || "",
+            symbol: trade["Symbol"] || "",
+            status: trade["Realized Profit"] < 0 ? "Loss" : trade["Realized Profit"] > 0 ? "Win" : "Break Even",
+            netROI: 0,
+            stopPrice: 0,
+            longShort: mergedRows['Side'] == "SELL" ? "Short" : "Long",
+            contracts: trade["Quantity"] || "",
+            entryPrice: trade["Price"] || "",
+            exitPrice: 0 ,
+            duration: "",
+            commission: trade["Fee"],
+            comments: "",
+            netPnL: trade["Realized Profit"],
+            transactionId:  uuidv4(), // Generate a unique ID using uuid
+        }
 
 
-       const mergedRows = handleMergeRows(excelJsonData);
-       console.log(mergedRows);
+        //Code is repeat itself need to create functions for later use
+        const existingTrade = await Trade.findOne({ transactionId: data.transactionId });
+        console.log(existingTrade);
+        if (!existingTrade) {
+            const newTrade = await Trade.create({
+                entryDate: data.entryDate,
+                symbol: data.symbol,
+                status: data.status,
+                netROI: data.netROI,
+                longShort: data.longShort,
+                contracts: data.contracts,
+                entryPrice: data.entryPrice,
+                stopPrice: data.stopPrice,
+                exitPrice: data.exitPrice,
+                duration: data.duration,
+                commission: data.commission,
+                netPnL: data.netPnL,
+                transactionId: data.transactionId
+            });
 
-    };
+            console.log(newTrade);
+          
+
+            const user = await User.findById(userId);
+            const account = user.accounts.find(acc => acc._id == accountId);
+            account.trades.push(newTrade);
+            const tempAccounts = user.accounts.filter(acc => acc._id != accountId);
+            tempAccounts.push(account);
+            await User.updateOne({ _id: userId }, { accounts: tempAccounts });
+            await SelectedAccountModel.updateOne({ userId }, { accountId, account });
+        }
+    }
+};
 
