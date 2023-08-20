@@ -180,7 +180,7 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
 });
 
 router.put("/editAccount", authenticateToken, async (req, res) => {
-  const { userId, accountId, AccountName, Label, IsSelected } = req.body;
+  const { userId, accountId, AccountName, Label } = req.body;
 
   try {
     const user = await User.findById(userId);
@@ -199,7 +199,7 @@ router.put("/editAccount", authenticateToken, async (req, res) => {
     // Update the account properties
     accountToUpdate.AccountName = AccountName;
     accountToUpdate.Label = Label;
-    accountToUpdate.IsSelected = IsSelected;
+  
 
     const accounts = user.accounts.filter(account => account._id != accountId);
 

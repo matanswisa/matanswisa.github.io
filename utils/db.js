@@ -17,7 +17,7 @@ const connectDB = async () => {
     cron.schedule('0 0 * * *', async () => {
         try {
             // Call the export function for the 'accounts' collection
-            await exportToCSV('accounts', ['AccountName', 'Label', 'IsSelected']);
+            await exportToCSV('accounts', ['AccountName', 'Label']);
             console.log('Export for accounts completed');
     
             // Call the export function for the 'trades' collection
