@@ -2,6 +2,7 @@ import Account from "../models/accounts.js";
 import SelectedAccountModel from "../models/selectedAccount.js";
 import Trade from "../models/trade.js";
 import User from "../models/user.js";
+import Accounts from "../models/accounts.js"
 import fs from 'fs/promises';
 import XLSX from 'xlsx';
 import { v4 as uuidv4 } from 'uuid';
@@ -54,12 +55,8 @@ function handleMergeRows(excelJsonData) {
 
 export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) => {
 
-    const csvHeaders = [
-        'Date(UTC)', 'Symbol', 'Side', 'Price', 'Quantity',
-        'Amount', 'Fee', 'Fee Coin', 'Realized Profit', 'Quote Asset'
-    ];
-    
-
+ 
+    const trades =[];
 
     const workbook = XLSX.readFile(ExcelFile);
     const sheetName = workbook.SheetNames[0];
@@ -67,7 +64,7 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
 
     // Convert the worksheet to a JSON object
     const excelJsonData = XLSX.utils.sheet_to_json(worksheet);
-
+   
     const mergedRows = handleMergeRows(excelJsonData);
     for (let i = 0; i < mergedRows.length; i++) {
 
@@ -84,7 +81,7 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
             entryPrice: trade["Price"] || "",
             exitPrice: 0 ,
             duration: "",
-            commission: trade["Fee"],
+            commission: parseFloat(trade["Fee"]).toFixed(2),
             comments: "",
             netPnL: trade["Realized Profit"],
             transactionId:  uuidv4(), // Generate a unique ID using uuid
@@ -106,14 +103,12 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
                 stopPrice: data.stopPrice,
                 exitPrice: data.exitPrice,
                 duration: data.duration,
-                commission: data.commission,
+                commission:data.commission,
                 netPnL: data.netPnL,
                 transactionId: data.transactionId
             });
 
-            console.log(newTrade);
-          
-
+            trades.push(newTrade);
             const user = await User.findById(userId);
             const account = user.accounts.find(acc => acc._id == accountId);
             account.trades.push(newTrade);
@@ -121,7 +116,67 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
             tempAccounts.push(account);
             await User.updateOne({ _id: userId }, { accounts: tempAccounts });
             await SelectedAccountModel.updateOne({ userId }, { accountId, account });
+
         }
     }
+    await Account.updateOne({ _id: accountId }, { trades: trades }); //pararm 1 = where update  param 2 = what update 
+
+
+    for (const data of excelJsonData) {
+        let trade = await Trade.findOne({ symbol: data.Symbol, longShort: data.Side == "SELL" ? "Short" : "Long" });
+   
+        if (trade) {
+            trade.tradesHistory.push({
+                entryDate: data["Date(UTC)"] || "",
+                symbol: data["Symbol"] || "",
+                status: data["Realized Profit"] < 0 ? "Loss" : data["Realized Profit"] > 0 ? "Win" : "Break Even",
+                netROI: 0,
+                stopPrice: 0,
+                longShort: data['Side'] == "SELL" ? "Short" : "Long",
+                contracts: data["Quantity"] || "",
+                entryPrice: data["Price"] || "",
+                exitPrice: 0 ,
+                duration: "",
+                commission: parseFloat(data["Fee"]).toFixed(2),
+                comments: "",
+                netPnL: data["Realized Profit"],
+                transactionId:  trade.transactionId, // Generate a unique ID using uuid
+    });
+    
+            await trade.save();
+        } else {
+            console.log(`No trade found for symbol ${data.Symbol} and longShort ${data.Side}`);
+        }
+    }
+
+
+
+
+    // excelJsonData.forEach(async data => {
+    
+
+
+    //   let trade =  await Trade.findOne({symbol: data.Symbol, longShort: data.Side});
+    
+    //   trade.tradesHistory.push({
+    //     entryDate: data.entryDate,
+    //     symbol: data.symbol,
+    //     status: data.status,
+    //     netROI: data.netROI,
+    //     longShort: data.longShort,
+    //     contracts: data.contracts,
+    //     entryPrice: data.entryPrice,
+    //     stopPrice: data.stopPrice,
+    //     exitPrice: data.exitPrice,
+    //     duration: data.duration,
+    //     commission:data.commission,
+    //     netPnL: data.netPnL,
+    //     transactionId: data.transactionId
+    // });
+    // trade.save();
+
+    // });
+  
+
 };
 
