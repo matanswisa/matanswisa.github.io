@@ -3,7 +3,7 @@ import SelectedAccountModel from "../models/selectedAccount.js";
 import Trade from "../models/trade.js";
 import User from "../models/user.js";
 import fs from 'fs/promises';
-
+import XLSX from 'xlsx';
 
 function groupByPositionId(array) {
     const grouped = {};
@@ -49,39 +49,50 @@ const handleMergeRows = (data) => {
 
 
 
-export const buildTradesDataByBinanceCSV = async (ExcelData, userId, accountId) => {
+export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) => {
 
     const csvHeaders = [
         'Date(UTC)', 'Symbol', 'Side', 'Price', 'Quantity',
         'Amount', 'Fee', 'Fee Coin', 'Realized Profit', 'Quote Asset'
       ];
     
-      const csvRows = [csvHeaders.join(',')]; // First row with column headers
+      // const csvRows = [csvHeaders.join(',')]; // First row with column headers
+      
     
-      // Convert ExcelData to CSV rows
-      ExcelData.forEach(trade => {
-        const csvRow = [
-          trade.Date, trade.Symbol, trade.Side, trade.Price, trade.Quantity,
-          trade.Amount, trade.Fee, trade['Fee Coin'], trade['Realized Profit'], trade['Quote Asset']
-        ];
-        csvRows.push(csvRow.join(','));
-      });
+      // // Convert ExcelData to CSV rows
+      // ExcelData.forEach(trade => {
+      //   const csvRow = [
+      //     trade.Date, trade.Symbol, trade.Side, trade.Price, trade.Quantity,
+      //     trade.Amount, trade.Fee, trade['Fee Coin'], trade['Realized Profit'], trade['Quote Asset']
+      //   ];
+      //   csvRows.push(csvRow.join(','));
+      // });
     
-      // Join all rows with line breaks
-      const csvContent = csvRows.join('\n');
+      // // Join all rows with line breaks
+      // const csvContent = csvRows.join('\n');
 
 
     
-      // Construct the file name based on userId and accountId
-      const fileName = `trades_${userId}_${accountId}.csv`;
+      // // Construct the file name based on userId and accountId
+      // const fileName = `trades_${userId}_${accountId}.csv`;
     
-      // Write the CSV content to a file
-      try {
-        await fs.writeFile(fileName, csvContent);
-        console.log(`CSV file ${fileName} successfully created.`);
-      } catch (error) {
-        console.error('Error writing CSV file:', error);
-      }
+      // // Write the CSV content to a file
+      // try {
+      //   await fs.writeFile(fileName, csvContent);
+      //   console.log(`CSV file ${fileName} successfully created.`);
+      // } catch (error) {
+      //   console.error('Error writing CSV file:', error);
+      // }
+
+      const workbook = XLSX.readFile(ExcelFile);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+
+      // Convert the worksheet to a JSON object
+      const excelJsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      // Print the extracted data
+      console.log(excelJsonData);
 
 
     };

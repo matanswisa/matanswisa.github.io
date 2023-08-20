@@ -16,6 +16,7 @@ import parse from 'csv-parser';
 import { buildTradesDataByTradovateCSV } from "../utils/csvTradesFileUtils.js";
 import { buildTradesDataByBinanceCSV } from "../utils/csvTradesFileImportsBinance.js"
 import SelectedAccountModel from "../models/selectedAccount.js";
+import { brokers } from "../utils/brokers.js";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = dirname(currentFilePath);
@@ -79,33 +80,30 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
   try {
     const { userId, accountId, broker } = req.body;
     let imported;
-    console.log(broker);
     const tradesData = [];
-    fs.createReadStream(req.file.path)
-      .pipe(parse({ delimiter: ',' }))
-      .on('data', (row) => {
-        tradesData.push(row);
-      })
-      .on('end', async () => {
-        fs.unlinkSync(req.file.path); // Remove the temporary file
 
-        if (broker == 1) {//TradeOvate
-
-          imported = await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
-        }
-        else if (broker == 2) {// Binance
-          imported = await buildTradesDataByBinanceCSV(tradesData, userId, accountId);
-        }
-        const accountOfUser = await Account.findOne({ _id: accountId });
-        await SelectedAccountModel.updateOne({ userId }, { account: accountOfUser, accountId: accountId });
-        if (imported) {
-          const trades = await fetchUserTrades(userId, accountId);
-          // Send the response indicating success
-          res.status(200).json(trades);
-        } else {
-          res.status(400).send("Couldn't import the csv file.")
-        }
-      });
+    if (broker == brokers.Tradovate) {
+      fs.createReadStream(req.file.path)
+        .pipe(parse({ delimiter: ',' }))
+        .on('data', (row) => {
+          tradesData.push(row);
+        })
+        .on('end', async () => {
+          fs.unlinkSync(req.file.path); // Remove the temporary file
+          await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
+          const accountOfUser = await Account.findOne({ _id: accountId });
+          await SelectedAccountModel.updateOne({ userId }, { account: accountOfUser, accountId: accountId });
+          if (imported) {
+            const trades = await fetchUserTrades(userId, accountId);
+            // Send the response indicating success
+            res.status(200).json(trades);
+          } else {
+            res.status(400).send("Couldn't import the csv file.")
+          }
+        });
+    } else if (broker == brokers.Binance) {
+      await buildTradesDataByBinanceCSV(req.file.path, userId, accountId)//
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error when importing trades' });
