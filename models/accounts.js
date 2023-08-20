@@ -11,10 +11,6 @@ const AccountsSchema = new Mongoose.Schema({
         required: true
     },
 
-    IsSelected: {
-        type: String,
-        required: true
-    },
     trades: {
         type: Array,
         ref: 'Trade',
