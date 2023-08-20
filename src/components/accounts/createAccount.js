@@ -61,8 +61,7 @@ export default function AccountModal(props) {
   }, [accountInfo]);
 
   const checkAccountExists = (accountList, accountName) => {
-    console.log(accountName);
-    console.log(accountList);
+ 
     const selectedAccount = accountList.find((account) => account.AccountName === accountName);
     return selectedAccount !== undefined;
   };
@@ -75,7 +74,7 @@ export default function AccountModal(props) {
         IsSelected: 'true',
       };
 
-      console.log("user", user);
+
 
       await api
         .post('/api/createAccount', { userId: user._id, data }, configAuth)

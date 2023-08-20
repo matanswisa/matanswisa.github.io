@@ -60,8 +60,6 @@ const authSlice = createSlice({
             state.user.accounts = currAccounts;
         },
         setTradesList(state, action) {
-            console.log(action.payload);
-
             state.currentAccount.trades = action.payload;
         },
     },

@@ -62,7 +62,7 @@ export default function BasicModal() {
 
     const handleCloseMenu = async (accountId) => {
         const token = localStorage.getItem("token");
-        console.log("token", token);
+       
         try {
             // Prepare the request body data to be sent with the DELETE request
             const requestData = {
@@ -82,7 +82,7 @@ export default function BasicModal() {
             dispatch(updateAccountList(accounts));
 
             const account = accounts.find(account => account._id == currentAccount._id);
-            console.log('accounts', accounts, 'account', account);
+            
             if (!account && accounts.length > 0) {
                 dispatch(setCurrentAccount(accounts[0]));
             } else {

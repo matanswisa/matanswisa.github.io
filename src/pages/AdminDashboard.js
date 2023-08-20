@@ -206,7 +206,7 @@ const UsersManagementPage = () => {
 
         const token = localStorage.getItem("token");
         try {
-            console.log("id", id);
+           
             // Assuming the correct endpoint is '/api/auth/deleteUser'
             await api.delete('/api/auth/deleteUser', {
                 headers: {
@@ -326,9 +326,9 @@ const UsersManagementPage = () => {
                     Authorization: `Bearer ${token}`,
                 },
             }).then((res) => {
-                console.log("Fetch!", res.data);
+              
                 setUsers([...res.data]);
-                console.log(users);
+               
             })
     }
 

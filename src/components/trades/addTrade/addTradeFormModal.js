@@ -130,7 +130,7 @@ export default function TradeModal(props) {
     if (field === 'positionSymbol' && event !== null) {
       dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.year });
     } else if (event !== null) {
-      console.log(`field: ${field}, value: ${event.target.value}`)
+    
       dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.target.value });
     }
   };
@@ -170,7 +170,7 @@ export default function TradeModal(props) {
             // props.updateTradeLists()
 
             reduxDispatch(setTradesList(res.data));
-            console.log(res.data);
+      
             notifyToast("Trade added successfully", "success");
             handleClose();
 
@@ -180,7 +180,7 @@ export default function TradeModal(props) {
           })
       }
       else if (editMode === true) {
-        console.log('inside edit trade!', tradeInfo?._id);
+   
         data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
         await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth)
           .then((res) => {

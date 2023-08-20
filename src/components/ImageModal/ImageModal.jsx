@@ -22,7 +22,7 @@ const ImageDialog = ({ open, handleClose, imageData, tradeComments }) => {
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: `image/png` });
-        console.log(blob)
+        
         saveAs(blob, 'trade_image.' + 'png');
     };
 

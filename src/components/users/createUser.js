@@ -213,7 +213,7 @@ function BasicModal(props) {
   }
 
   const handleCreateUser = () => {
-    console.log(licenseTime);
+
     if (validateForm()) {
 
       api
@@ -226,7 +226,7 @@ function BasicModal(props) {
 
         })
         .then(async (response) => {
-          console.log('User created successfully:', response.data);
+  
           handleSendMail();
           await props.handleOpenModal(false);
           await notifyToast("User added successfully", "success");

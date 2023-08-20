@@ -65,7 +65,7 @@ export default function MultipleSelectPlaceholder(props) {
   const handleChange = (event) => {
     const accountId = event.target.value
     api.post('/api/setSelectedAccount', { userId: user._id, accountId }, configAuth).then((res) => {
-      console.log(res.data);
+    
       setSelectedAccount(res.data.AccountName)
       setSelectedAccountColor(res.data.Label);
       dispatch(setCurrentAccount(res.data));

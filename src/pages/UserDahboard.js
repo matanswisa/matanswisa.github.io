@@ -55,7 +55,7 @@ export default function UserDahsboard(props) {
           }
         })
         .then((response) => {
-          console.log(response);
+         
           notifyToast("Password Updated successfully", "success");
           props.handleOpenModal(false);
           // Fetch list of users from "/api/users" route
@@ -68,7 +68,7 @@ export default function UserDahsboard(props) {
             .then((response) => {
               if (props?.handleFetchUsers)
                 props.handleFetchUsers();
-              console.log('List of users:', response.data);
+          
               // Perform any further actions with the list of users
             })
             .catch((error) => {

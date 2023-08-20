@@ -92,7 +92,7 @@ const style = {
 
 export default function Diveder(props) {
   const date = props.trade._id;
-  console.log(date);
+
   const [trades, setTrades] = useState([]);
   const totalPnL = props.trade.totalPnL;
   const isNegative = totalPnL < 0;
