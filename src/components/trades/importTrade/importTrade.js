@@ -63,50 +63,48 @@ export default function BasicModal(props) {
     setBroker(event.target.value);
   };
 
-
-
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount)
-
-  // /////////////////////import trades///////////////////
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const [csvData, setCsvData] = useState(null);
   const fileInputRefTrade = useRef(null);
 
-  const isCSVFile = (file) => {
-    return file.type === 'text/csv' || file.name.endsWith('.csv');
-  };
+  // /////////////////////import trades///////////////////
+  // const [selectedFile, setSelectedFile] = useState(null);
 
-  const isValidColumnNames = (data) => {
-    // Add your updated validation logic for column names here
-    const requiredColumns = [
-      'Position ID', 'Timestamp', 'Trade Date', 'Net Pos', 'Net Price', 'Bought',
-      'Avg. Buy', 'Sold', 'Avg. Sell', 'Account', 'Contract', 'Product', 'Product Description',
-      '_priceFormat', '_priceFormatType', '_tickSize', 'Pair ID', 'Buy Fill ID', 'Sell Fill ID',
-      'Paired Qty', 'Buy Price', 'Sell Price', 'P/L', 'Currency', 'Bought Timestamp', 'Sold Timestamp'
-    ];
-    return requiredColumns.every((col) => data[0].hasOwnProperty(col));
-  };
+  // const [csvData, setCsvData] = useState(null);
 
-  const handleMergeRows = (data) => {
-    // Group the rows by the 'Position ID' field
-    const groupedRows = data.reduce((acc, row) => {
-      const id = row['Position ID'];
-      if (!acc[id]) {
-        acc[id] = { ...row }; // Make a copy of the row to avoid mutation
-        acc[id]['P/L'] = parseFloat(row['P/L'] || 0); // Initialize the sum of P/L
-      } else {
-        acc[id]['P/L'] += parseFloat(row['P/L'] || 0); // Add the P/L to the existing sum
-        acc[id]['Sold Timestamp'] = row['Sold Timestamp']; // Update the 'Sold Timestamp' with the current row's value
-      }
-      return acc;
-    }, {});
-    // Convert the object back to an array
-    const mergedRows = Object.values(groupedRows);
+  // const isCSVFile = (file) => {
+  //   return file.type === 'text/csv' || file.name.endsWith('.csv');
+  // };
 
-    return mergedRows;
-  };
+  // const isValidColumnNames = (data) => {
+  //   // Add your updated validation logic for column names here
+  //   const requiredColumns = [
+  //     'Position ID', 'Timestamp', 'Trade Date', 'Net Pos', 'Net Price', 'Bought',
+  //     'Avg. Buy', 'Sold', 'Avg. Sell', 'Account', 'Contract', 'Product', 'Product Description',
+  //     '_priceFormat', '_priceFormatType', '_tickSize', 'Pair ID', 'Buy Fill ID', 'Sell Fill ID',
+  //     'Paired Qty', 'Buy Price', 'Sell Price', 'P/L', 'Currency', 'Bought Timestamp', 'Sold Timestamp'
+  //   ];
+  //   return requiredColumns.every((col) => data[0].hasOwnProperty(col));
+  // };
+
+  // const handleMergeRows = (data) => {
+  //   // Group the rows by the 'Position ID' field
+  //   const groupedRows = data.reduce((acc, row) => {
+  //     const id = row['Position ID'];
+  //     if (!acc[id]) {
+  //       acc[id] = { ...row }; // Make a copy of the row to avoid mutation
+  //       acc[id]['P/L'] = parseFloat(row['P/L'] || 0); // Initialize the sum of P/L
+  //     } else {
+  //       acc[id]['P/L'] += parseFloat(row['P/L'] || 0); // Add the P/L to the existing sum
+  //       acc[id]['Sold Timestamp'] = row['Sold Timestamp']; // Update the 'Sold Timestamp' with the current row's value
+  //     }
+  //     return acc;
+  //   }, {});
+  //   // Convert the object back to an array
+  //   const mergedRows = Object.values(groupedRows);
+
+  //   return mergedRows;
+  // };
 
 
   const validationBeforeImportCsvFileFromTradeovate = (file) => {

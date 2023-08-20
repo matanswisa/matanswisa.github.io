@@ -39,7 +39,6 @@ const style = {
 };
 
 export default function AccountModal(props) {
-  // const [accounts, setAccounts] = useState([]);
   const accounts = useSelector(selectUserAccounts);
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);

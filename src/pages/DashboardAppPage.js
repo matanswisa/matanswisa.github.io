@@ -102,7 +102,7 @@ export default function DashboardAppPage() {
     Alltrades = [];
   }
 
-  const theme = useTheme();
+ 
 
   const [losingTrades, setLosingTrades] = useState(0);
   const [winningTrades, setWinningTrades] = useState(0);

@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import { useEffect, useState } from 'react';
 import { selectCurrentAccount, selectUser, selectUserAccounts } from '../../redux-toolkit/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAccounts, setCurrentAccount } from '../../redux-toolkit/userSlice';
+import {  setCurrentAccount } from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
 
 

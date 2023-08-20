@@ -12,7 +12,7 @@ import { styled } from '@mui/material/styles';
 import api from '../../../api/api'
 import Paper from '@mui/material/Paper';
 import Modal from '@mui/material/Modal';
-import userSlice, { selectCurrentAccount , selectUser} from '../../../redux-toolkit/userSlice';
+import  { selectCurrentAccount } from '../../../redux-toolkit/userSlice';
 import { useSelector } from 'react-redux'
 import {
  
