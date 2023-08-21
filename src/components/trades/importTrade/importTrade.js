@@ -175,19 +175,6 @@ export default function BasicModal(props) {
 
   const validationBeforeImportCsvFileFromBinance = (file) => {
 
-
-    const requiredColumnsBinance = [
-      "Date(UTC)",
-      "Symbol",
-      "Side",
-      "Price",
-      "Quantity",
-      "Amount",
-      "Fee",
-      "Fee Coin",
-      "Realized Profit",
-      "Quote Asset"
-    ];
     let validationPassed = true;
 
     if (!file.name.endsWith('.xlsx')) {
@@ -196,23 +183,11 @@ export default function BasicModal(props) {
       return false; // Validation failed
     }
 
-
-    Papa.parse(file, {
-      complete: (result) => {
-        const headers = result.data[0]; // Assuming the first row contains column headers
-
-        // Check if all required columns are present
-        const missingColumns = requiredColumnsBinance.filter(column => !headers.includes(column));
-        if (missingColumns.length > 0) {
-          notifyToast('Please select the correct file.', 'error');
-          validationPassed = false; // Validation failed
-        } else {
-          // Validation passed
-          validationPassed = true;
-        }
-      }
-    });
-
+    if (!file.name.includes('Export Trade History')) {
+      validationPassed = false;
+      notifyToast('File name should  be "Export Trade History".', 'error');
+      return false; // Validation failed
+     }
 
     return validationPassed;
   };
