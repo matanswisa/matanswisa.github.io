@@ -24,8 +24,12 @@ import {
 } from '@mui/material/colors';
 import { Grid } from 'rsuite';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser, setCurrentAccount, updateAccountList , selectUserAccounts} from '../../redux-toolkit/userSlice';
+import { selectUser, setCurrentAccount, updateAccountList, selectUserAccounts } from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
+
+import BinanceIcon from '../brokersIcons/binance.svg'
+import TradeovateIcon from '../brokersIcons/Tradovate.svg'
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -52,6 +56,15 @@ export default function AccountModal(props) {
   const dispatch = useDispatch();
 
 
+
+  const [broker, setBroker] = React.useState(1);
+
+  const handleChange = (event) => {
+    setBroker(event.target.value);
+  };
+
+
+
   useEffect(() => {
     if (accountInfo && typeof accountInfo === 'object') {
       setAccountName(accountInfo.AccountName || '');
@@ -60,7 +73,7 @@ export default function AccountModal(props) {
   }, [accountInfo]);
 
   const checkAccountExists = (accountList, accountName) => {
- 
+
     const selectedAccount = accountList.find((account) => account.AccountName === accountName);
     return selectedAccount !== undefined;
   };
@@ -70,7 +83,7 @@ export default function AccountModal(props) {
       const data = {
         AccountName: accountName,
         Label: selectedColor,
-       
+
       };
 
 
@@ -119,9 +132,9 @@ export default function AccountModal(props) {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '30%',
-    minWidth: '400px', // Adjust the size as needed
-    height: '20vh', // Increase the height to 80% of the viewport height
+    width: '22%',
+    minWidth: '300px', // Adjust the size as needed
+    height: '55vh', // Increase the height to 80% of the viewport height
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -131,112 +144,170 @@ export default function AccountModal(props) {
   };
 
   const validateForm = () => {
-    if (accountName === ''){
+    if (accountName === '') {
 
       notifyToast('Account type is missing', 'warning');
       return false;
     }
 
-    if (checkAccountExists(accounts, accountName))
-     {
-      
+    if (checkAccountExists(accounts, accountName)) {
+
       notifyToast('Account already exist', 'warning');
       return false;
-     }
+    }
 
-     return true;
+    return true;
   };
   return (
     <div>
       <Button onClick={handleOpen}>Open modal</Button>
       <Box sx={style}>
-        <Grid>
+      <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
           {edit === true ? (
             <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: 'left', marginTop: 0 }}>
               Update Account
             </Typography>
           ) : (
-            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: 'left', marginTop: 0 }}>
+            <Typography id="modal-modal-title" variant="h4" component="h2" sx={{ textAlign: 'left', marginTop: 0 }}>
               Create Account
             </Typography>
           )}
         </Grid>
 
-        <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+        <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2  }}>
+          <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
+            Account Name
+          </Typography>
           <TextField
+          
             required
             id="outlined-required"
-            label="Account Name"
+
             sx={{ mr: 2 }}
             defaultValue={accountName}
             onChange={(e) => setAccountName(e.target.value)}
           />
-
-          <Select size="small" value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
-            <MenuItem value={red[500]}></MenuItem>
-            <MenuItem value={red[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: red[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={blue[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: blue[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={green[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: green[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={brown[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: brown[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-
-            <MenuItem value={yellow[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: yellow[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={orange[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: orange[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={purple[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: purple[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={pink[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: pink[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={cyan[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: cyan[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={lightGreen[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: lightGreen[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={lime[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: lime[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-            <MenuItem value={blueGrey[500]}>
-              <ListItemIcon>
-                <div style={{ backgroundColor: blueGrey[500], width: '24px', height: '24px' }}></div>
-              </ListItemIcon>
-            </MenuItem>
-          </Select>
         </Grid>
+
+        <Grid  sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
+        <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2}}>
+            Broker
+          </Typography>
+          <Select
+            sx={{ mt: 3, ml: 2 }}
+            name="broker"
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={broker}
+            label="broker"
+            onChange={handleChange}
+            inputProps={{
+              name: 'age',
+              id: 'uncontrolled-native',
+            }}
+          >
+            <MenuItem value={1}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img
+                  src={TradeovateIcon} // Use the imported SVG component here
+                  alt="Binance"
+                  width={140}
+                  height={30}
+                  style={{ marginRight: '8px' }}
+                />
+
+              </div>
+            </MenuItem>
+            <MenuItem value={2}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img
+                  src={BinanceIcon} // Use the imported SVG component here
+                  alt="Binance"
+                  width={100}
+                  height={30}
+                  style={{ marginRight: '8px' }}
+                />
+
+              </div>
+            </MenuItem>
+            {/* <MenuItem value={3}>Interactiv</MenuItem> */}
+          </Select>
+
+        </Grid>
+
+
+        <Grid  sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
+        <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
+            Account Symbol
+          </Typography>
+        <Select sx={{ mt: 3, ml: 2 }} size="small" value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
+          <MenuItem value={red[500]}></MenuItem>
+          <MenuItem value={red[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: red[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem value={blue[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: blue[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem value={green[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: green[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem value={brown[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: brown[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+
+          <MenuItem value={yellow[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: yellow[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem value={orange[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: orange[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem value={purple[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: purple[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem value={pink[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: pink[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem value={cyan[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: cyan[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem value={lightGreen[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: lightGreen[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem value={lime[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: lime[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+          <MenuItem value={blueGrey[500]}>
+            <ListItemIcon>
+              <div style={{ backgroundColor: blueGrey[500], width: '24px', height: '24px' }}></div>
+            </ListItemIcon>
+          </MenuItem>
+        </Select>
+
+        
+          </Grid>
+
 
         <Box
           sx={{
