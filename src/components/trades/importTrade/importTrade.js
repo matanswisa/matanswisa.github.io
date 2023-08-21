@@ -26,6 +26,7 @@ import Process from '../../processBar/process'
 
 import BinanceIcon from '../../brokersIcons/binance.svg'
 import TradeovateIcon from '../../brokersIcons/Tradovate.svg'
+import { brokers } from '../../brokersNames/brokers';
 
 const style = {
   position: 'absolute',
@@ -70,44 +71,6 @@ export default function BasicModal(props) {
   const currentAccount = useSelector(selectCurrentAccount)
   const fileInputRefTrade = useRef(null);
 
-  // /////////////////////import trades///////////////////
-  // const [selectedFile, setSelectedFile] = useState(null);
-
-  // const [csvData, setCsvData] = useState(null);
-
-  // const isCSVFile = (file) => {
-  //   return file.type === 'text/csv' || file.name.endsWith('.csv');
-  // };
-
-  // const isValidColumnNames = (data) => {
-  //   // Add your updated validation logic for column names here
-  //   const requiredColumns = [
-  //     'Position ID', 'Timestamp', 'Trade Date', 'Net Pos', 'Net Price', 'Bought',
-  //     'Avg. Buy', 'Sold', 'Avg. Sell', 'Account', 'Contract', 'Product', 'Product Description',
-  //     '_priceFormat', '_priceFormatType', '_tickSize', 'Pair ID', 'Buy Fill ID', 'Sell Fill ID',
-  //     'Paired Qty', 'Buy Price', 'Sell Price', 'P/L', 'Currency', 'Bought Timestamp', 'Sold Timestamp'
-  //   ];
-  //   return requiredColumns.every((col) => data[0].hasOwnProperty(col));
-  // };
-
-  // const handleMergeRows = (data) => {
-  //   // Group the rows by the 'Position ID' field
-  //   const groupedRows = data.reduce((acc, row) => {
-  //     const id = row['Position ID'];
-  //     if (!acc[id]) {
-  //       acc[id] = { ...row }; // Make a copy of the row to avoid mutation
-  //       acc[id]['P/L'] = parseFloat(row['P/L'] || 0); // Initialize the sum of P/L
-  //     } else {
-  //       acc[id]['P/L'] += parseFloat(row['P/L'] || 0); // Add the P/L to the existing sum
-  //       acc[id]['Sold Timestamp'] = row['Sold Timestamp']; // Update the 'Sold Timestamp' with the current row's value
-  //     }
-  //     return acc;
-  //   }, {});
-  //   // Convert the object back to an array
-  //   const mergedRows = Object.values(groupedRows);
-
-  //   return mergedRows;
-  // };
 
 
   const validationBeforeImportCsvFileFromTradeovate = (file) => {
@@ -187,7 +150,7 @@ export default function BasicModal(props) {
       validationPassed = false;
       notifyToast('File name should  be "Export Trade History".', 'error');
       return false; // Validation failed
-     }
+    }
 
     return validationPassed;
   };
@@ -313,31 +276,18 @@ export default function BasicModal(props) {
               id: 'uncontrolled-native',
             }}
           >
-            <MenuItem value={1}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img
-              src={TradeovateIcon} // Use the imported SVG component here
-              alt="Binance"
-              width={124}
-              height={74}
-              style={{ marginRight: '8px' }}
-            />
-            
-          </div>
+            <MenuItem value={currentAccount?.Broker}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img
+                  src={currentAccount?.Broker == brokers.Tradovate ? TradeovateIcon : BinanceIcon} // Use the imported SVG component here
+                  alt={currentAccount?.Broker == brokers.Tradovate ? "Tradovate" : "Binance"}
+                  width={124}
+                  height={74}
+                  style={{ marginRight: '8px' }}
+                />
+
+              </div>
             </MenuItem>
-            <MenuItem value={2}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img
-              src={BinanceIcon} // Use the imported SVG component here
-              alt="Binance"
-              width={124}
-              height={74}
-              style={{ marginRight: '8px' }}
-            />
-            
-          </div>
-        </MenuItem>
-            {/* <MenuItem value={3}>Interactiv</MenuItem> */}
           </Select>
 
           {isUploading ? (
