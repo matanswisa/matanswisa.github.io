@@ -83,7 +83,7 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
       duration: "",
       commission: parseFloat(trade["Fee"]).toFixed(2),
       comments: "",
-      netPnL: trade["Realized Profit"],
+      netPnL:parseFloat(trade["Realized Profit"]).toFixed(2),
       transactionId: uuidv4(), // Generate a unique ID using uuid
     }
 
