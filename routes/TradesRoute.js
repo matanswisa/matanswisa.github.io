@@ -79,7 +79,7 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
 router.post("/importTrades", authenticateToken, upload.single('file'), async (req, res) => {
   try {
     const { userId, accountId, broker } = req.body;
-    let imported;
+  
     const tradesData = [];
 
     if (broker == brokers.Tradovate) {
@@ -93,17 +93,15 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
           await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
           const accountOfUser = await Account.findOne({ _id: accountId });
           await SelectedAccountModel.updateOne({ userId }, { account: accountOfUser, accountId: accountId });
-          if (imported) {
-            const trades = await fetchUserTrades(userId, accountId);
-            // Send the response indicating success
-            res.status(200).json(trades);
-          } else {
-            res.status(400).send("Couldn't import the csv file.")
-          }
+          
+          const trades = await fetchUserTrades(userId, accountId);
+          res.status(200).json(trades);
+     
         });
     } else if (broker == brokers.Binance) {
       await buildTradesDataByBinanceCSV(req.file.path, userId, accountId);
-
+      const trades = await fetchUserTrades(userId, accountId);
+      res.status(200).json(trades);
       
     }
   } catch (err) {
