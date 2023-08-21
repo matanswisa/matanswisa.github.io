@@ -69,14 +69,14 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
   for (let i = 0; i < mergedRows.length; i++) {
 
     const trade = mergedRows[i];
-
+    console.log("veeew" ,trade);
     const data = {
       entryDate: trade["Date(UTC)"] || "",
       symbol: trade["Symbol"] || "",
       status: trade["Realized Profit"] < 0 ? "Loss" : trade["Realized Profit"] > 0 ? "Win" : "Break Even",
       netROI: 0,
       stopPrice: 0,
-      longShort: mergedRows['Side'] == "SELL" ? "Short" : "Long",
+      longShort: trade['Side'] == "SELL" ? "Short" : "Long",
       contracts: trade["Quantity"] || "",
       entryPrice: trade["Price"] || "",
       exitPrice: 0,
@@ -87,10 +87,11 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
       transactionId: uuidv4(), // Generate a unique ID using uuid
     }
 
+    console.log(data);
 
     //Code is repeat itself need to create functions for later use
     const existingTrade = await Trade.findOne({ transactionId: data.transactionId });
-    console.log(existingTrade);
+  
     if (!existingTrade) {
       const newTrade = await Trade.create({
         entryDate: data.entryDate,
@@ -108,6 +109,7 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
         transactionId: data.transactionId
       });
 
+   
       trades.push(newTrade);
       const user = await User.findById(userId);
       const account = user.accounts.find(acc => acc._id == accountId);
@@ -123,9 +125,9 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
 
 
   for (const data of excelJsonData) {
-    console.log('Before the object is been filtered-', { symbol: data.Symbol, longShort: data.Side == "SELL" ? "Short" : "Long" });
-    let trade = await Trade.findOne({ symbol: data.Symbol, longShort: data.Side == "SELL" ? "Short" : "Long" });
-    console.log(trade);
+   
+    let trade = await Trade.findOne({  entryPrice: data.Price});
+    // let account = Account.findOne({ _id: accountId })
     if (trade) {
       trade.tradesHistory.push({
         entryDate: data["Date(UTC)"] || "",
@@ -144,39 +146,35 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
         transactionId: trade.transactionId, // Generate a unique ID using uuid
       });
 
+
+
+    //   account.trade.tradesHistory.push({
+    //     entryDate: data["Date(UTC)"] || "",
+    //     symbol: data["Symbol"] || "",
+    //     status: data["Realized Profit"] < 0 ? "Loss" : data["Realized Profit"] > 0 ? "Win" : "Break Even",
+    //     netROI: 0,
+    //     stopPrice: 0,
+    //     longShort: data['Side'] == "SELL" ? "Short" : "Long",
+    //     contracts: data["Quantity"] || "",
+    //     entryPrice: data["Price"] || "",
+    //     exitPrice: 0,
+    //     duration: "",
+    //     commission: parseFloat(data["Fee"]).toFixed(2),
+    //     comments: "",
+    //     netPnL: data["Realized Profit"],
+    //     transactionId: trade.transactionId, // Generate a unique ID using uuid
+    //   });
+
+
       await trade.save();
+    //   await account.trade.save();
+    
     } else {
       console.log(`No trade found for symbol ${data.Symbol} and longShort ${data.Side}`);
     }
   }
 
 
-
-
-  // excelJsonData.forEach(async data => {
-
-
-
-  //   let trade =  await Trade.findOne({symbol: data.Symbol, longShort: data.Side});
-
-  //   trade.tradesHistory.push({
-  //     entryDate: data.entryDate,
-  //     symbol: data.symbol,
-  //     status: data.status,
-  //     netROI: data.netROI,
-  //     longShort: data.longShort,
-  //     contracts: data.contracts,
-  //     entryPrice: data.entryPrice,
-  //     stopPrice: data.stopPrice,
-  //     exitPrice: data.exitPrice,
-  //     duration: data.duration,
-  //     commission:data.commission,
-  //     netPnL: data.netPnL,
-  //     transactionId: data.transactionId
-  // });
-  // trade.save();
-
-  // });
 
 
 };
