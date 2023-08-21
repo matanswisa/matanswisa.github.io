@@ -1,0 +1,1 @@
+export const brokers = { Tradovate: 1, Binance: 2 };

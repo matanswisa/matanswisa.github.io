@@ -51,27 +51,7 @@ import { Grid } from 'rsuite';
 // ----------------------------------------------------------------------
 import { selectCurrentAccount, selectUser, setTradesList, selectUserAccounts } from '../redux-toolkit/userSlice';
 import { configAuth } from '../api/configAuth';
-
-
-const TABLE_HEAD = [
-  { id: 'entryDate', label: 'Open Date', alignRight: false },
-  { id: 'symbol', label: 'Symbol', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-  { id: 'netROI', label: 'Net ROI', alignRight: false },
-  { id: 'longShort', label: 'Long / Short', alignRight: false },
-  { id: 'contracts', label: 'Contracts', alignRight: false },
-  // { id: 'entryPrice', label: 'Entry Price', alignRight: false },
-  // { id: 'exitPrice', label: 'Exit Price', alignRight: false },
-  // { id: 'stopPrice', label: 'Stop Price', alignRight: false },
-  { id: 'duration', label: 'Duration', alignRight: false },
-  { id: 'commission', label: 'Commission', alignRight: false },
-  { id: 'netPnL', label: 'Net P&L', alignRight: false },
-  { id: 'image', label: 'Image', alignRight: false },
-  { id: 'edit', label: 'Edit', alignRight: false },
-  { id: 'delete', label: 'Delete', alignRight: false },
-  { id: 'comments', label: 'comments', alignRight: false }
-];
-
+import { brokers } from "../components/brokersNames/brokers.js";
 const sumPnL = (trades) => {
   let sum = 0;
   trades.forEach((trade) => {
@@ -130,7 +110,51 @@ export default function UserPage() {
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
+  // console.log(currentAccount.Broker);
   const userAccounts = useSelector(selectUserAccounts);
+
+let TABLE_HEAD;
+
+
+if(currentAccount.Broker == brokers.Tradovate){
+
+  TABLE_HEAD = [
+   { id: 'entryDate', label: 'Open Date', alignRight: false },
+   { id: 'symbol', label: 'Symbol', alignRight: false },
+   { id: 'status', label: 'Status', alignRight: false },
+   { id: 'netROI', label: 'Net ROI', alignRight: false },
+   { id: 'longShort', label: 'Long / Short', alignRight: false },
+   { id: 'contracts', label: 'Contracts', alignRight: false },
+   { id: 'duration', label: 'Duration', alignRight: false },
+   { id: 'commission', label: 'Commission', alignRight: false },
+   { id: 'netPnL', label: 'Net P&L', alignRight: false },
+   { id: 'image', label: 'Image', alignRight: false },
+   { id: 'edit', label: 'Edit', alignRight: false },
+   { id: 'delete', label: 'Delete', alignRight: false },
+   { id: 'comments', label: 'comments', alignRight: false }
+  ];
+
+}
+else if(currentAccount.Broker == brokers.Binance){
+  TABLE_HEAD = [
+   { id: 'entryDate', label: 'Open Date', alignRight: false },
+   { id: 'symbol', label: 'Symbol', alignRight: false },
+   { id: 'status', label: 'Status', alignRight: false },
+  
+   { id: 'longShort', label: 'Long / Short', alignRight: false },
+   { id: 'Quantity', label: 'Quantity', alignRight: false },
+   { id: 'commission', label: 'Commission', alignRight: false },
+   { id: 'netPnL', label: 'Net P&L', alignRight: false },
+   { id: 'image', label: 'Image', alignRight: false },
+   { id: 'edit', label: 'Edit', alignRight: false },
+   { id: 'delete', label: 'Delete', alignRight: false },
+   { id: 'comments', label: 'comments', alignRight: false }
+  ];
+
+}
+
+
+
 
   function handleCellClick(parameter, info) {
     return function () {
@@ -485,10 +509,12 @@ export default function UserPage() {
                               {sentenceCase(trade.status)}
                             </Label>
                           </TableCell>
+                          {currentAccount.Broker == 1?
                           <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
+                          :''}
                           <TableCell align="center">{trade.longShort}</TableCell>
                           <TableCell align="center">{trade.contracts}</TableCell>
-
+                        {currentAccount.Broker == 1?
                           <TableCell align="center">
                             {trade.duration !== undefined && trade.duration > 0 ? (
                               <React.Fragment>
@@ -500,6 +526,7 @@ export default function UserPage() {
                               "N/A"
                             )}
                           </TableCell>
+                   :"" }
 
 
                           <TableCell align="center">
