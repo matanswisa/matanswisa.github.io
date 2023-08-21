@@ -48,6 +48,8 @@ export default function AccountModal(props) {
   const handleClose = () => props.handleOpenModal(false);
   const [accountName, setAccountName] = useState('');
   const [selectedColor, setSelectedColor] = useState(red[500]);
+  const [broker, setBroker] = React.useState(1);
+
   const { notifyToast } = props;
   const { edit } = props;
   const { accountInfo } = props;
@@ -57,7 +59,6 @@ export default function AccountModal(props) {
 
 
 
-  const [broker, setBroker] = React.useState(1);
 
   const handleChange = (event) => {
     setBroker(event.target.value);
@@ -82,6 +83,7 @@ export default function AccountModal(props) {
     if (validateForm()) {
       const data = {
         AccountName: accountName,
+        Broker: broker,
         Label: selectedColor,
 
       };
@@ -108,6 +110,7 @@ export default function AccountModal(props) {
       const data = {
         accountId: accountInfo._id, // Include the _id property for updating the correct account
         AccountName: accountName,
+        Broker: broker,
         Label: selectedColor,
         userId: user._id,
       };
@@ -182,13 +185,13 @@ export default function AccountModal(props) {
           
             required
             id="outlined-required"
-
+            value={accountName}
             sx={{ mr: 2 }}
             defaultValue={accountName}
             onChange={(e) => setAccountName(e.target.value)}
           />
         </Grid>
-
+        {edit === false ?
         <Grid  sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
         <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2}}>
             Broker
@@ -200,6 +203,7 @@ export default function AccountModal(props) {
             id="demo-simple-select"
             value={broker}
             label="broker"
+            defaultValue={broker}
             onChange={handleChange}
             inputProps={{
               name: 'age',
@@ -233,7 +237,7 @@ export default function AccountModal(props) {
             {/* <MenuItem value={3}>Interactiv</MenuItem> */}
           </Select>
 
-        </Grid>
+        </Grid>  : ''}
 
 
         <Grid  sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
