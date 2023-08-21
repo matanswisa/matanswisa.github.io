@@ -5,6 +5,11 @@ const AccountsSchema = new Mongoose.Schema({
         type: String,
         required: true
     },
+    
+    Broker: {
+        type: Number,
+        required: true
+    },
 
     Label: {
         type: String,
