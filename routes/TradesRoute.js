@@ -78,11 +78,12 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
 
 router.post("/importTrades", authenticateToken, upload.single('file'), async (req, res) => {
   try {
-    const { userId, accountId, broker } = req.body;
-  
+    const { userId, accountId } = req.body;
+    const accountOfUser = await Account.findOne({ _id: accountId });
+    
     const tradesData = [];
 
-    if (broker == brokers.Tradovate) {
+    if (accountOfUser.Broker == brokers.Tradovate) { /// check which type of broker in account user have.
       fs.createReadStream(req.file.path)
         .pipe(parse({ delimiter: ',' }))
         .on('data', (row) => {
@@ -98,7 +99,7 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
           res.status(200).json(trades);
      
         });
-    } else if (broker == brokers.Binance) {
+    } else if (accountOfUser.Broker == brokers.Binance) {
       await buildTradesDataByBinanceCSV(req.file.path, userId, accountId);
       const trades = await fetchUserTrades(userId, accountId);
       res.status(200).json(trades);
