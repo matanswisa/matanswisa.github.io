@@ -113,46 +113,64 @@ export default function UserPage() {
   // console.log(currentAccount.Broker);
   const userAccounts = useSelector(selectUserAccounts);
 
-let TABLE_HEAD;
+  let TABLE_HEAD = [
+    { id: 'entryDate', label: 'Open Date', alignRight: false },
+    { id: 'symbol', label: 'Symbol', alignRight: false },
+    { id: 'status', label: 'Status', alignRight: false },
+    { id: 'netROI', label: 'Net ROI', alignRight: false },
+    { id: 'longShort', label: 'Long / Short', alignRight: false },
+    { id: 'contracts', label: 'Contracts', alignRight: false },
+    { id: 'duration', label: 'Duration', alignRight: false },
+    { id: 'commission', label: 'Commission', alignRight: false },
+    { id: 'netPnL', label: 'Net P&L', alignRight: false },
+    { id: 'image', label: 'Image', alignRight: false },
+    { id: 'edit', label: 'Edit', alignRight: false },
+    { id: 'delete', label: 'Delete', alignRight: false },
+    { id: 'comments', label: 'comments', alignRight: false }
+  ];;
 
 
-if(currentAccount.Broker == brokers.Tradovate){
+  if (currentAccount !== null) {
 
-  TABLE_HEAD = [
-   { id: 'entryDate', label: 'Open Date', alignRight: false },
-   { id: 'symbol', label: 'Symbol', alignRight: false },
-   { id: 'status', label: 'Status', alignRight: false },
-   { id: 'netROI', label: 'Net ROI', alignRight: false },
-   { id: 'longShort', label: 'Long / Short', alignRight: false },
-   { id: 'contracts', label: 'Contracts', alignRight: false },
-   { id: 'duration', label: 'Duration', alignRight: false },
-   { id: 'commission', label: 'Commission', alignRight: false },
-   { id: 'netPnL', label: 'Net P&L', alignRight: false },
-   { id: 'image', label: 'Image', alignRight: false },
-   { id: 'edit', label: 'Edit', alignRight: false },
-   { id: 'delete', label: 'Delete', alignRight: false },
-   { id: 'comments', label: 'comments', alignRight: false }
-  ];
 
-}
-else if(currentAccount.Broker == brokers.Binance){
-  TABLE_HEAD = [
-   { id: 'entryDate', label: 'Open Date', alignRight: false },
-   { id: 'symbol', label: 'Symbol', alignRight: false },
-   { id: 'status', label: 'Status', alignRight: false },
-  
-   { id: 'longShort', label: 'Long / Short', alignRight: false },
-   { id: 'Quantity', label: 'Quantity', alignRight: false },
-   { id: 'commission', label: 'Commission', alignRight: false },
-   { id: 'netPnL', label: 'Net P&L', alignRight: false },
-   { id: 'image', label: 'Image', alignRight: false },
-   { id: 'edit', label: 'Edit', alignRight: false },
-   { id: 'delete', label: 'Delete', alignRight: false },
-   { id: 'comments', label: 'comments', alignRight: false }
-  ];
+    if (currentAccount?.Broker == brokers.Tradovate) {
 
-}
+      TABLE_HEAD = [
+        { id: 'entryDate', label: 'Open Date', alignRight: false },
+        { id: 'symbol', label: 'Symbol', alignRight: false },
+        { id: 'status', label: 'Status', alignRight: false },
+        { id: 'netROI', label: 'Net ROI', alignRight: false },
+        { id: 'longShort', label: 'Long / Short', alignRight: false },
+        { id: 'contracts', label: 'Contracts', alignRight: false },
+        { id: 'duration', label: 'Duration', alignRight: false },
+        { id: 'commission', label: 'Commission', alignRight: false },
+        { id: 'netPnL', label: 'Net P&L', alignRight: false },
+        { id: 'image', label: 'Image', alignRight: false },
+        { id: 'edit', label: 'Edit', alignRight: false },
+        { id: 'delete', label: 'Delete', alignRight: false },
+        { id: 'comments', label: 'comments', alignRight: false }
+      ];
 
+    }
+    else if (currentAccount?.Broker == brokers.Binance) {
+      TABLE_HEAD = [
+        { id: 'entryDate', label: 'Open Date', alignRight: false },
+        { id: 'symbol', label: 'Symbol', alignRight: false },
+        { id: 'status', label: 'Status', alignRight: false },
+
+        { id: 'longShort', label: 'Long / Short', alignRight: false },
+        { id: 'Quantity', label: 'Quantity', alignRight: false },
+        { id: 'commission', label: 'Commission', alignRight: false },
+        { id: 'netPnL', label: 'Net P&L', alignRight: false },
+        { id: 'image', label: 'Image', alignRight: false },
+        { id: 'edit', label: 'Edit', alignRight: false },
+        { id: 'delete', label: 'Delete', alignRight: false },
+        { id: 'comments', label: 'comments', alignRight: false }
+      ];
+
+    }
+
+  }
 
 
 
@@ -509,24 +527,24 @@ else if(currentAccount.Broker == brokers.Binance){
                               {sentenceCase(trade.status)}
                             </Label>
                           </TableCell>
-                          {currentAccount.Broker == 1?
-                          <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
-                          :''}
+                          {currentAccount.Broker == 1 ?
+                            <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
+                            : ''}
                           <TableCell align="center">{trade.longShort}</TableCell>
                           <TableCell align="center">{trade.contracts}</TableCell>
-                        {currentAccount.Broker == 1?
-                          <TableCell align="center">
-                            {trade.duration !== undefined && trade.duration > 0 ? (
-                              <React.Fragment>
-                                {trade.duration >= 60 && `${Math.floor(trade.duration / 60)} Hr `}
-                                {Math.floor(trade.duration % 60) > 0 && `${Math.floor(trade.duration % 60)} Min `}
-                                {Math.floor((trade.duration % 1) * 60) > 0 && `${Math.floor((trade.duration % 1) * 60)} Sec`}
-                              </React.Fragment>
-                            ) : (
-                              "N/A"
-                            )}
-                          </TableCell>
-                   :"" }
+                          {currentAccount.Broker == 1 ?
+                            <TableCell align="center">
+                              {trade.duration !== undefined && trade.duration > 0 ? (
+                                <React.Fragment>
+                                  {trade.duration >= 60 && `${Math.floor(trade.duration / 60)} Hr `}
+                                  {Math.floor(trade.duration % 60) > 0 && `${Math.floor(trade.duration % 60)} Min `}
+                                  {Math.floor((trade.duration % 1) * 60) > 0 && `${Math.floor((trade.duration % 1) * 60)} Sec`}
+                                </React.Fragment>
+                              ) : (
+                                "N/A"
+                              )}
+                            </TableCell>
+                            : ""}
 
 
                           <TableCell align="center">
