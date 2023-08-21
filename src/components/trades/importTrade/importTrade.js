@@ -26,7 +26,7 @@ import Process from '../../processBar/process'
 
 import BinanceIcon from '../../brokersIcons/binance.svg'
 import TradeovateIcon from '../../brokersIcons/Tradovate.svg'
-
+import { brokers } from "../../brokersNames/brokers.js";
 const style = {
   position: 'absolute',
   top: '50%',
@@ -55,19 +55,23 @@ export default function BasicModal(props) {
 
 
 
+
+
+
   const dispatch = useDispatch();
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
 
-  const [broker, setBroker] = React.useState(1);
+  const currentAccount = useSelector(selectCurrentAccount)
 
-  const handleChange = (event) => {
-    setBroker(event.target.value);
-  };
+  const [broker, setBroker] = React.useState(currentAccount.broker);
+
+  // const handleChange = (event) => {
+  //   setBroker(event.target.value);
+  // };
 
   const user = useSelector(selectUser);
-  const currentAccount = useSelector(selectCurrentAccount)
   const fileInputRefTrade = useRef(null);
 
   // /////////////////////import trades///////////////////
@@ -201,12 +205,12 @@ export default function BasicModal(props) {
       const file = event.target.files[0];
       let isValidFile;
 
-      if (broker == 1) {
+      if (currentAccount.Broker == brokers.Tradovate) {
 
         isValidFile = validationBeforeImportCsvFileFromTradeovate(file);
       }
 
-      else if (broker == 2) {
+      else if (currentAccount.Broker == brokers.Binance) {
         isValidFile = validationBeforeImportCsvFileFromBinance(file);
       }
 
@@ -222,7 +226,7 @@ export default function BasicModal(props) {
         formData.append('file', file);
         formData.append('userId', user._id);
         formData.append('accountId', currentAccount._id);
-        formData.append('broker', broker);
+   
         const token = localStorage.getItem('token');
         const headersForImportTrades = {
           headers: {
@@ -300,46 +304,76 @@ export default function BasicModal(props) {
             import Trades
           </Typography>
 
-          <Select
-            sx={{ mt: 3 }}
-            name="broker"
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={broker}
-            label="broker"
-            onChange={handleChange}
-            inputProps={{
-              name: 'age',
-              id: 'uncontrolled-native',
-            }}
-          >
-            <MenuItem value={1}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img
-              src={TradeovateIcon} // Use the imported SVG component here
-              alt="Binance"
-              width={124}
-              height={74}
-              style={{ marginRight: '8px' }}
-            />
-            
-          </div>
-            </MenuItem>
-            <MenuItem value={2}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img
-              src={BinanceIcon} // Use the imported SVG component here
-              alt="Binance"
-              width={124}
-              height={74}
-              style={{ marginRight: '8px' }}
-            />
-            
-          </div>
-        </MenuItem>
-            {/* <MenuItem value={3}>Interactiv</MenuItem> */}
-          </Select>
+          {/* <Select
+  sx={{ mt: 3 }}
+  name="broker"
+  labelId="demo-simple-select-label"
+  id="demo-simple-select"
+  value={currentAccount.broker == brokers.Tradovate ? TradeovateIcon : currentAccount.broker == brokers.Binance ? BinanceIcon : ""}
+  label="broker"
+  onChange={handleChange}
+  inputProps={{
+    name: 'age',
+    id: 'uncontrolled-native',
+  }}
+>
+  <MenuItem value={1}>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <img
+        src={currentAccount.broker == brokers.Tradovate ? TradeovateIcon : currentAccount.broker == brokers.Binance ? BinanceIcon : ""}
+        width={124}
+        height={74}
+        style={{ marginRight: '8px' }}
+      />
+    </div>
+  </MenuItem>
+</Select> */}
+<Select
+  sx={{ mt: 3 }}
+  name="broker"
+  labelId="demo-simple-select-label"
+  id="demo-simple-select"
+  value={currentAccount.broker}
+  defaultValue={currentAccount.broker}
+  label="broker"
+  // onChange={handleChange}
+  inputProps={{
+    name: 'age',
+    id: 'uncontrolled-native',
+  }}
+>
 
+
+
+  
+  <MenuItem value={currentAccount.broker === brokers.Tradovate  ? brokers.Tradovate : brokers.Binance}>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+
+      {currentAccount.broker === brokers.Tradovate ? 
+      
+      <img
+        src={TradeovateIcon}
+        width={124}
+        height={74}
+        style={{ marginRight: '8px' }}
+      />
+      :
+
+
+        <img
+        src={BinanceIcon}
+        width={124}
+        height={74}
+        style={{ marginRight: '8px' }}
+      />
+      
+      
+      }
+      
+     
+    </div>
+  </MenuItem>
+</Select>
           {isUploading ? (
             <Process duration={processDuration} />
           ) : (
