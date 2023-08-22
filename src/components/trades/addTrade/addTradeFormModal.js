@@ -143,22 +143,51 @@ export default function TradeModal(props) {
 
 
   const handleSaveTrade = async () => {
-    const data = {
-      entryDate: positionDate,
-      symbol: positionSymbol,
-      status: positionStatus,
-      netROI,
-      stopPrice,
-      longShort: positionType,
-      contracts: contractsCounts,
-      entryPrice: entryPrice,
-      exitPrice: exitPrice,
-      duration: positionDuration,
-      commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
-      comments,
-      netPnL: positionStatus == "Loss" ? netPnL * -1 : netPnL,
-      tradeId: tradeInfo?._id || '',
+    let data = {};
+
+    if (currentAccount?.Broker === brokers.Tradovate) {
+      data = {
+        entryDate: positionDate,
+        symbol: positionSymbol,
+        status: positionStatus,
+        netROI,
+        stopPrice,
+        longShort: positionType,
+        contracts: contractsCounts,
+        entryPrice: entryPrice,
+        exitPrice: exitPrice,
+        duration: positionDuration,
+        commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
+        comments,
+        netPnL: positionStatus == "Loss" ? netPnL * -1 : netPnL,
+        tradeId: tradeInfo?._id || '',
+        
+      }
     }
+
+    else if(currentAccount?.Broker === brokers.Binance){
+
+          data = {
+            entryDate: positionDate,
+            symbol: positionSymbol,
+            status: positionStatus,
+            netROI: 0,
+            stopPrice,
+            longShort: positionType,
+            contracts: contractsCounts,
+            entryPrice: entryPrice,
+            exitPrice: 0,
+            duration: 0,
+            commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
+            comments,
+            netPnL: positionStatus == "Loss" ? netPnL * -1 : netPnL,
+            tradeId: tradeInfo?._id || '',
+          } 
+           
+
+    }
+   
+   
 
     if (validateForm()) {
       if (!editMode) {
