@@ -69,7 +69,7 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
   for (let i = 0; i < mergedRows.length; i++) {
 
     const trade = mergedRows[i];
-    console.log("veeew" ,trade);
+   
     const data = {
       entryDate: trade["Date(UTC)"] || "",
       symbol: trade["Symbol"] || "",
@@ -87,7 +87,7 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
       transactionId: uuidv4(), // Generate a unique ID using uuid
     }
 
-    console.log(data);
+   
 
     //Code is repeat itself need to create functions for later use
     const existingTrade = await Trade.findOne({ transactionId: data.transactionId });

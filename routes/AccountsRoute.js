@@ -107,7 +107,7 @@ router.post('/setSelectedAccount', authenticateToken, async (req, res) => {
     //   await SelectedAccountModel.updateOne({ userId }, { accountId: accountId, account: requestedAccount });
     //   return res.status(200).json(requestedAccount);
     // }
-    console.log(selectedAccount);
+  
 
     //First time for intializing selected account.
     if (!selectedAccount) {
@@ -191,7 +191,7 @@ router.put("/editAccount", authenticateToken, async (req, res) => {
 
     // Find the account to update in the user's accounts array
     const accountToUpdate = user.accounts.find((account) => account._id == accountId);
-    console.log(accountToUpdate);
+   
     if (!accountToUpdate) {
       return res.status(400).json({ error: 'Account not found for this user' });
     }
