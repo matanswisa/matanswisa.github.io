@@ -9,7 +9,9 @@ import { styled } from '@mui/material/styles';
 import api from '../../../api/api'
 import Paper from '@mui/material/Paper';
 import Modal from '@mui/material/Modal';
-
+import { selectCurrentAccount, selectUser, setTradesList, selectUserAccounts } from '../../../redux-toolkit/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { brokers } from '../../brokersNames/brokers.js'
 import {
     IconButton,
     Dialog,
@@ -28,21 +30,8 @@ const ProfitFactor = (trade) => {
 
 
 
-const columns = [
- 
-    { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
-    { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
-    { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
-    { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
-    { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false, },
-    { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
-    { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
-    { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
-  
-];
 
 
-  
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -86,8 +75,8 @@ const style = {
 
 export default function AddFarshel(props) {
     const trade = props.trade;
-    let rows ;
-    
+    let rows;
+
     const totalPnL = props.trade.totalPnL;
     const isNegative = totalPnL < 0;
     const winRate = ((props.trade.win / (props.trade.win + props.trade.loss)) * 100).toFixed(2);
@@ -97,7 +86,64 @@ export default function AddFarshel(props) {
     const [openCommend, setCommendOpen] = React.useState(false);
     const [trades, setTrades] = useState([]);
 
+    const currentAccount = useSelector(selectCurrentAccount);
 
+
+
+    let columns = [
+        { field: 'time', headerName: 'Time', width: 100, editable: false, },
+        { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
+        { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
+        { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
+        { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
+        { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false, },
+        { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
+        { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
+        { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
+
+    ];
+
+
+
+
+    if (currentAccount !== null) {
+
+
+        if (currentAccount?.Broker == brokers.Tradovate) {
+
+            columns = [
+                { field: 'time', headerName: 'Time', width: 120, editable: false, },
+                { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
+                { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
+                { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
+                { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
+                { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false, },
+                { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
+                { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
+                { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
+
+            ];
+
+
+        }
+        else if (currentAccount?.Broker == brokers.Binance) {
+
+
+            columns = [
+                { field: 'time', headerName: 'Time', width: 120, editable: false, },
+                { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
+                { field: 'quantity', headerName: 'Quantity', width: 100, editable: false, },
+                { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
+                { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
+                { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
+
+            ];
+
+        }
+
+
+
+    }
 
 
     const handleCellClick = (params) => {
@@ -120,7 +166,7 @@ export default function AddFarshel(props) {
         const hours = Math.floor(absoluteDurationInMinutes / 60);
         const minutes = Math.floor(absoluteDurationInMinutes % 60);
         const seconds = Math.floor((absoluteDurationInMinutes % 1) * 60);
-    
+
         // Format the duration as a string
         let formattedDuration = '';
         if (hours > 0) {
@@ -132,39 +178,58 @@ export default function AddFarshel(props) {
         if (seconds > 0) {
             formattedDuration += `${seconds} Sec`;
         }
-    
+
         // If all values are zero, display "N/A"
         if (!formattedDuration.trim()) {
             formattedDuration = "N/A";
         }
-    
-        return {
-            id: trade._id,
-            symbol: trade.symbol,
-            netROI: trade.netROI + "%",
-            entryPrice: trade.entryPrice,
-            exitPrice: trade.exitPrice,
-            contracts: trade.contracts,
-            duration: formattedDuration,
-            commission: trade.commission ? "$" + trade.commission : "N/A",
-            netPnL: "$" + trade.netPnL,
-        };
+
+
+
+
+
+        if (currentAccount?.Broker === brokers.Tradovate) {
+            return {
+                id: trade._id,
+                time: trade.entryDate.split('T')[0],
+                symbol: trade.symbol,
+                netROI: trade.netROI + "%",
+                entryPrice: trade.entryPrice,
+                exitPrice: trade.exitPrice,
+                contracts: trade.contracts,
+                duration: formattedDuration,
+                commission: trade.commission ? "$" + trade.commission : "N/A",
+                netPnL: "$" + trade.netPnL,
+            };
+        } else if (currentAccount?.Broker === brokers.Binance) {
+            return {
+                id: trade._id,
+                time: trade.entryDate.split('T')[0],
+                symbol: trade.symbol,    
+                entryPrice: trade.entryPrice,
+                quantity: trade.contracts,  
+                commission: trade.commission ? "$" + trade.commission : "N/A",
+                netPnL: "$" + trade.netPnL,
+            };
+        }
+        
+
     }
-   
+
     console.log(trade);
-    if(trade.tradesHistory.length  == 0 ){
+    if (trade.tradesHistory.length == 0) {
 
-     rows = [transformTrade(trade)];
+        rows = [transformTrade(trade)];
 
 
     }
-    else{
+    else {
 
 
 
-    
-         rows = trade.tradesHistory.map((trade) => {
-       
+
+        rows = trade.tradesHistory.map((trade) => {
+
 
             console.log(trade.duration);
             // Calculate the duration in hours, minutes, and seconds format
@@ -191,27 +256,38 @@ export default function AddFarshel(props) {
                 formattedDuration = "N/A";
             }
 
-          
-          
+
+
+         
+        if (currentAccount?.Broker === brokers.Tradovate) {
             return {
                 id: trade._id,
+                time: trade.entryDate.split('T')[0],
                 symbol: trade.symbol,
                 netROI: trade.netROI + "%",
                 entryPrice: trade.entryPrice,
                 exitPrice: trade.exitPrice,
                 contracts: trade.contracts,
-                duration: formattedDuration, // Use the formatted duration instead of the raw value
+                duration: formattedDuration,
                 commission: trade.commission ? "$" + trade.commission : "N/A",
                 netPnL: "$" + trade.netPnL,
-                
-              
             };
-      
-        
-    });
+        } else if (currentAccount?.Broker === brokers.Binance) {
+            return {
+                id: trade._id,
+                time: trade.entryDate.split('T')[0],
+                symbol: trade.symbol,    
+                entryPrice: trade.entryPrice,
+                quantity: trade.contracts,  
+                commission: trade.commission ? "$" + trade.commission : "N/A",
+                netPnL: "$" + trade.netPnL,
+            };
+        }
+
+        });
 
 
-        
+
     }
 
 

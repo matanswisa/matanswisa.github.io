@@ -13,7 +13,7 @@ import api from '../../../api/api'
 import Paper from '@mui/material/Paper';
 import Modal from '@mui/material/Modal';
 import  { selectCurrentAccount } from '../../../redux-toolkit/userSlice';
-import { useSelector } from 'react-redux'
+
 import {
  
   Dialog,
@@ -23,6 +23,8 @@ import {
   
 } from '@mui/material';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { brokers } from '../../brokersNames/brokers.js'
 import { configAuth } from '../../../api/configAuth';
 
 const ProfitFactor = (trade) => {
@@ -35,19 +37,6 @@ const ProfitFactor = (trade) => {
 
 
 
-const columns = [
-  { field: 'id', headerName: 'ID', width: 30 },
-  { field: 'symbol', headerName: 'Symbol', width: 100, editable: false,},
-  { field: 'status', headerName: 'Status', width: 100, editable: false,},
-  { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false,},
-  { field: 'longShort', headerName: 'Long / Short', width: 100, editable: false,},
-  { field: 'contracts', headerName: 'Contracts', width: 100, editable: false,},
-
-  { field: 'duration', headerName: 'Duration', width: 170, editable: false,},
-  { field: 'commission', headerName: 'Commission', width: 100, editable: false,},
-  { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false,},
-  { field: 'comments', headerName: 'comments', width: 100, editable: false,},
-];
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -105,6 +94,64 @@ export default function Diveder(props) {
   const [selectedComment, setSelectedComment] = useState('');
   const currentAccount = useSelector(selectCurrentAccount);
 
+
+
+
+  let columns = [
+    { field: 'id', headerName: 'ID', width: 30 },
+    { field: 'symbol', headerName: 'Symbol', width: 100, editable: false,},
+    { field: 'status', headerName: 'Status', width: 100, editable: false,},
+    { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false,},
+    { field: 'longShort', headerName: 'Long / Short', width: 100, editable: false,},
+    { field: 'contracts', headerName: 'Contracts', width: 100, editable: false,},
+  
+    { field: 'duration', headerName: 'Duration', width: 170, editable: false,},
+    { field: 'commission', headerName: 'Commission', width: 100, editable: false,},
+    { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false,},
+    { field: 'comments', headerName: 'comments', width: 100, editable: false,},
+  ];
+  
+  
+  
+
+
+if (currentAccount !== null) {
+  if (currentAccount?.Broker == brokers.Tradovate) {
+
+    columns = [
+      { field: 'id', headerName: 'ID', width: 30 },
+      { field: 'symbol', headerName: 'Symbol', width: 100, editable: false,},
+      { field: 'status', headerName: 'Status', width: 100, editable: false,},
+      { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false,},
+      { field: 'longShort', headerName: 'Long / Short', width: 100, editable: false,},
+      { field: 'contracts', headerName: 'Contracts', width: 100, editable: false,},
+    
+      { field: 'duration', headerName: 'Duration', width: 170, editable: false,},
+      { field: 'commission', headerName: 'Commission', width: 100, editable: false,},
+      { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false,},
+      { field: 'comments', headerName: 'comments', width: 100, editable: false,},
+    ];
+
+  }
+  else if (currentAccount?.Broker == brokers.Binance) {
+
+    columns = [
+      { field: 'id', headerName: 'ID', width: 30 },
+      { field: 'symbol', headerName: 'Symbol', width: 100, editable: false,},
+      { field: 'status', headerName: 'Status', width: 100, editable: false,},
+      { field: 'longShort', headerName: 'Long / Short', width: 100, editable: false,},
+      { field: 'quantity', headerName: 'Quantity', width: 100, editable: false,},
+      { field: 'commission', headerName: 'Commission', width: 100, editable: false,},
+      { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false,},
+      { field: 'comments', headerName: 'comments', width: 100, editable: false,},
+    ];
+    
+  }
+
+}
+
+
+
   const handleCellClick = (params) => {
     if (params.field === 'comments') {
       setSelectedComment(params.value);
@@ -139,6 +186,11 @@ export default function Diveder(props) {
       formattedDuration = "N/A";
     }
   
+
+
+
+    if (currentAccount?.Broker === brokers.Tradovate) {
+      
     return {
       id: trade._id,
       symbol: trade.symbol,
@@ -151,6 +203,25 @@ export default function Diveder(props) {
       netPnL: "$" + trade.netPnL,
       comments: trade.comments,
     };
+  } else if (currentAccount?.Broker === brokers.Binance) {
+    
+    return {
+      id: trade._id,
+      symbol: trade.symbol,
+      status: trade.status,
+    
+      longShort: trade.longShort,
+      quantity: trade.contracts,
+    
+      commission: trade.commission ? "$" + trade.commission : "N/A",
+      netPnL: "$" + trade.netPnL,
+      comments: trade.comments,
+    };
+  }
+  
+
+
+    
   });
   
   
