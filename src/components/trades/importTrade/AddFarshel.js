@@ -57,7 +57,8 @@ function getFormattedDate(dateString) {
     return `${abbreviatedWeekday}, ${abbreviatedMonth} ${day} ${year}`;
 }
 
-const style = {
+
+let style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
@@ -69,6 +70,9 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
+
+
+
 
 
 
@@ -87,6 +91,10 @@ export default function AddFarshel(props) {
     const [trades, setTrades] = useState([]);
 
     const currentAccount = useSelector(selectCurrentAccount);
+
+
+
+   
 
 
 
@@ -111,6 +119,20 @@ export default function AddFarshel(props) {
 
         if (currentAccount?.Broker == brokers.Tradovate) {
 
+            
+             style = {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 990,
+                height: 480,
+                bgcolor: 'background.paper',
+                border: '2px solid #000',
+                boxShadow: 24,
+                p: 4,
+            };
+
             columns = [
                 { field: 'time', headerName: 'Time', width: 120, editable: false, },
                 { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
@@ -128,6 +150,19 @@ export default function AddFarshel(props) {
         }
         else if (currentAccount?.Broker == brokers.Binance) {
 
+    
+            style = {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 750,
+                height: 480,
+                bgcolor: 'background.paper',
+                border: '2px solid #000',
+                boxShadow: 24,
+                p: 4,
+            };
 
             columns = [
                 { field: 'time', headerName: 'Time', width: 120, editable: false, },

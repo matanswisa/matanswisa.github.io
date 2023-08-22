@@ -63,7 +63,7 @@ function getFormattedDate(dateString) {
   return `${abbreviatedWeekday}, ${abbreviatedMonth} ${day} ${year}`;
 }
   
-const style = {
+let style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -118,6 +118,20 @@ export default function Diveder(props) {
 if (currentAccount !== null) {
   if (currentAccount?.Broker == brokers.Tradovate) {
 
+
+    style = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 1200,
+      height :560,
+      bgcolor: 'background.paper',
+      border: '2px solid #000',
+      boxShadow: 24,
+      p: 4,
+    };
+
     columns = [
       { field: 'id', headerName: 'ID', width: 30 },
       { field: 'symbol', headerName: 'Symbol', width: 100, editable: false,},
@@ -134,6 +148,22 @@ if (currentAccount !== null) {
 
   }
   else if (currentAccount?.Broker == brokers.Binance) {
+
+
+
+    style = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 880,
+      height :560,
+      bgcolor: 'background.paper',
+      border: '2px solid #000',
+      boxShadow: 24,
+      p: 4,
+    };
+
 
     columns = [
       { field: 'id', headerName: 'ID', width: 30 },
