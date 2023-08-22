@@ -308,7 +308,7 @@ export default function BasicModal(props) {
                 <Iconify icon={'eva:question-mark-circle-outline'} />
               </IconButton>
 
-              {showStepper && <StepperModal name={broker} handleOpenModal={setShowStepper} />}
+              {showStepper && <StepperModal name={currentAccount?.Broker} handleOpenModal={setShowStepper} />}
             </>
           )}
         </Box>
