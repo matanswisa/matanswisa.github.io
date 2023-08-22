@@ -164,12 +164,12 @@ export default function BasicModal(props) {
       const file = event.target.files[0];
       let isValidFile;
 
-      if (broker == 1) {
+      if (currentAccount?.Broker === brokers.Tradovate) {
 
         isValidFile = validationBeforeImportCsvFileFromTradeovate(file);
       }
 
-      else if (broker == 2) {
+      else if (currentAccount?.Broker === brokers.Binance) {
         isValidFile = validationBeforeImportCsvFileFromBinance(file);
       }
 
