@@ -18,8 +18,8 @@ import { selectCurrentAccount, selectUser, setTradesList } from '../../../redux-
 import StepperModal from '../ExplanationOfImportTrades/StepperModal';
 import {
 
-  IconButton
-
+  IconButton,
+TextField
 
 } from '@mui/material';
 import Process from '../../processBar/process'
@@ -263,32 +263,24 @@ export default function BasicModal(props) {
             import Trades
           </Typography>
 
-          <Select
-            sx={{ mt: 3 }}
-            name="broker"
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={broker}
-            label="broker"
-            onChange={handleChange}
-            inputProps={{
-              name: 'age',
-              id: 'uncontrolled-native',
-            }}
-          >
-            <MenuItem value={currentAccount?.Broker}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <img
-                  src={currentAccount?.Broker == brokers.Tradovate ? TradeovateIcon : BinanceIcon} // Use the imported SVG component here
-                  alt={currentAccount?.Broker == brokers.Tradovate ? "Tradovate" : "Binance"}
-                  width={124}
-                  height={74}
-                  style={{ marginRight: '8px' }}
-                />
+          <TextField
+  sx={{ mt: 3 }}
+  label="Broker"
+  
 
-              </div>
-            </MenuItem>
-          </Select>
+  InputProps={{
+    startAdornment: (
+      <img
+        src={currentAccount?.Broker === brokers.Tradovate ? TradeovateIcon : BinanceIcon}
+       
+        width={144}
+        height={54}
+        style={{ marginRight: '8px' }}
+      />
+    ),
+  }}
+/>
+
 
           {isUploading ? (
             <Process duration={processDuration} />
