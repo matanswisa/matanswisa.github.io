@@ -80,13 +80,14 @@ router.post('/getSelectedAccount', authenticateToken, async (req, res) => {
   const selectedAccount = await SelectedAccountModel.findOne({ userId: userId });
   const user = await User.findById(userId);
 
-
+  console.log(selectedAccount);
   if (!selectedAccount && !user?.accounts.length) {
     res.status(400).send('No selected account found');
   } else if (!selectedAccount && user?.accounts.length) {
     res.status(200).send('ok');
   } else if (selectedAccount && user?.accounts.length) {
-    res.status(200).json(selectedAccount.account);
+    if (selectedAccount.account == null) return res.status(200).json(user.accounts[0]);
+    return res.status(200).json(selectedAccount.account);
   }
 });
 
@@ -181,7 +182,7 @@ router.post("/createAccount", authenticateToken, async (req, res) => {
 
 router.put("/editAccount", authenticateToken, async (req, res) => {
   const { userId, accountId, AccountName, Label, Broker } = req.body;
- 
+
   try {
     const user = await User.findById(userId);
 
@@ -195,16 +196,16 @@ router.put("/editAccount", authenticateToken, async (req, res) => {
     if (!accountToUpdate) {
       return res.status(400).json({ error: 'Account not found for this user' });
     }
-    console.log("beofre"  ,accountToUpdate);
+    console.log("beofre", accountToUpdate);
     // Update the account properties
     accountToUpdate.AccountName = AccountName;
     accountToUpdate.Broker = Broker;
     accountToUpdate.Label = Label;
-    console.log("after"  ,accountToUpdate);
+    console.log("after", accountToUpdate);
     const accounts = user.accounts.filter(account => account._id != accountId);
 
     accounts.push(accountToUpdate);
-    await Account.findOneAndUpdate({ _id: accountId }, { AccountName, Label ,Broker});
+    await Account.findOneAndUpdate({ _id: accountId }, { AccountName, Label, Broker });
     await User.findByIdAndUpdate(userId, { accounts });
 
 
