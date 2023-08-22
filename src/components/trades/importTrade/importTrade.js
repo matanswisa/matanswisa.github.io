@@ -266,7 +266,7 @@ export default function BasicModal(props) {
           <TextField
   sx={{ mt: 3 }}
   label="Broker"
-  
+  disabled
 
   InputProps={{
     startAdornment: (
