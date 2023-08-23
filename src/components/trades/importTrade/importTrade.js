@@ -205,7 +205,7 @@ export default function BasicModal(props) {
         setProcessDuration(3000); // Reset process duration
         dispatch(setTradesList(response.data));
 
-        notifyToast('Upload csv file successfully', 'success');
+        notifyToast('Trades from ' + currentAccount?.Broker +  ' import successfully', 'success');
         setProcessDuration(1000); // Reset process duration
         handleClose();
         // Handle success or show a success message to the user
