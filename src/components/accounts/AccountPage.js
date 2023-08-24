@@ -81,13 +81,18 @@ export default function BasicModal() {
 
             dispatch(updateAccountList(accounts));
 
-            const account = accounts.find(account => account._id == currentAccount._id);
+            if (currentAccount) {
+                const account = accounts.find(account => account._id == currentAccount._id);
             
-            if (!account && accounts.length > 0) {
+                if (!account && accounts.length > 0) {
+                    dispatch(setCurrentAccount(accounts[0]));
+                } else {
+                    dispatch(setCurrentAccount(null));
+                }
+            } else if (accounts.length > 0) {
                 dispatch(setCurrentAccount(accounts[0]));
-            } else {
-                dispatch(setCurrentAccount(null));
             }
+            
 
             // Notify and fetch accounts
             notifyToast("Delete account Successfully ", 'success');
