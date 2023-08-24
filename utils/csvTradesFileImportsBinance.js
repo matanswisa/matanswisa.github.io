@@ -51,8 +51,6 @@ function handleMergeRows(excelJsonData) {
 
 
 
-
-
 export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) => {
 
 
@@ -69,7 +67,7 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
   for (let i = 0; i < mergedRows.length; i++) {
 
     const trade = mergedRows[i];
-   
+
     const data = {
       entryDate: trade["Date(UTC)"] || "",
       symbol: trade["Symbol"] || "",
@@ -83,15 +81,15 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
       duration: "",
       commission: parseFloat(trade["Fee"]).toFixed(2),
       comments: "",
-      netPnL:parseFloat(trade["Realized Profit"]).toFixed(2),
+      netPnL: parseFloat(trade["Realized Profit"]).toFixed(2),
       transactionId: uuidv4(), // Generate a unique ID using uuid
     }
 
-   
+
 
     //Code is repeat itself need to create functions for later use
     const existingTrade = await Trade.findOne({ transactionId: data.transactionId });
-  
+
     if (!existingTrade) {
       const newTrade = await Trade.create({
         entryDate: data.entryDate,
@@ -109,7 +107,7 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
         transactionId: data.transactionId
       });
 
-   
+
       trades.push(newTrade);
       const user = await User.findById(userId);
       const account = user.accounts.find(acc => acc._id == accountId);
@@ -125,8 +123,12 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
 
 
   for (const data of excelJsonData) {
-   
-    let trade = await Trade.findOne({  entryPrice: data.Price});
+
+    const longShort = data['Side'] == "SELL" ? "Short" : "Long";
+    const symbol = data['Symbol'];
+    const filter = { entryPrice: data.Price, longShort, symbol };
+    console.log(filter);
+    let trade = await Trade.findOne(filter);
     // let account = Account.findOne({ _id: accountId })
     if (trade) {
       trade.tradesHistory.push({
@@ -146,29 +148,26 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
         transactionId: trade.transactionId, // Generate a unique ID using uuid
       });
 
-
-
-    //   account.trade.tradesHistory.push({
-    //     entryDate: data["Date(UTC)"] || "",
-    //     symbol: data["Symbol"] || "",
-    //     status: data["Realized Profit"] < 0 ? "Loss" : data["Realized Profit"] > 0 ? "Win" : "Break Even",
-    //     netROI: 0,
-    //     stopPrice: 0,
-    //     longShort: data['Side'] == "SELL" ? "Short" : "Long",
-    //     contracts: data["Quantity"] || "",
-    //     entryPrice: data["Price"] || "",
-    //     exitPrice: 0,
-    //     duration: "",
-    //     commission: parseFloat(data["Fee"]).toFixed(2),
-    //     comments: "",
-    //     netPnL: data["Realized Profit"],
-    //     transactionId: trade.transactionId, // Generate a unique ID using uuid
-    //   });
-
+      console.log(trade);
 
       await trade.save();
-    //   await account.trade.save();
-    
+      //   await account.trade.save();
+      const user = await User.findById(userId);
+      let tempAccount = user.accounts.find(acc => acc._id == accountId);
+      let tempTrades = tempAccount.trades.filter(tr => tr.transactionId != trade.transactionId);
+      tempTrades.push(trade);
+      tempAccount.trades = tempTrades;
+      const userAccountWithNewUpdatedAccount = user.accounts.filter(account => account._id != accountId);
+      userAccountWithNewUpdatedAccount.push(tempAccount);
+
+      // user.accounts = userAccountWithNewUpdatedAccount;
+      await User.updateOne({ _id: userId }, { accounts: userAccountWithNewUpdatedAccount })
+
+      await Account.updateOne({ _id: accountId }, { trades: tempAccount.trades }); //pararm 1 = where update  param 2 = what update 
+
+      //Remove current trade without the partials
+      // user.trades.filter(trade => trade._id ===)
+
     } else {
       console.log(`No trade found for symbol ${data.Symbol} and longShort ${data.Side}`);
     }
