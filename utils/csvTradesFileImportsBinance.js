@@ -127,7 +127,7 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
     const longShort = data['Side'] == "SELL" ? "Short" : "Long";
     const symbol = data['Symbol'];
     const filter = { entryPrice: data.Price, longShort, symbol };
-    console.log(filter);
+ 
     let trade = await Trade.findOne(filter);
     // let account = Account.findOne({ _id: accountId })
     if (trade) {
@@ -148,8 +148,7 @@ export const buildTradesDataByBinanceCSV = async (ExcelFile, userId, accountId) 
         transactionId: trade.transactionId, // Generate a unique ID using uuid
       });
 
-      console.log(trade);
-
+   
       await trade.save();
       //   await account.trade.save();
       const user = await User.findById(userId);

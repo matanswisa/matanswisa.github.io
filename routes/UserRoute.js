@@ -183,7 +183,7 @@ router.get('/users', authenticateToken, authorizeRole(roles.admin), async (req, 
 
 
 router.delete('/deleteUser', authenticateToken, authorizeRole(roles.admin), async (req, res) => {
-    console.log(req.body);
+   
     try {
         const { id } = req.body;
         const deletedUser = await User.findByIdAndDelete(id);
