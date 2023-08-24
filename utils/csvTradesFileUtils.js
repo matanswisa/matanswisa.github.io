@@ -21,8 +21,13 @@ function groupByPositionId(array) {
 }
 
 const handleMergeRows = (data) => {
+
     const groupedRows = data.reduce((acc, row) => {
         const id = row['Position ID'];
+        if (row['Buy Price'] === '' || row['Sell Price'] === '' || row['P/L'] === '') {
+            return acc; // Skip rows with null values
+        }
+
         if (!acc[id]) {
             acc[id] = {
                 ...row,
@@ -37,6 +42,7 @@ const handleMergeRows = (data) => {
 
         return acc;
     }, {});
+
 
 
     const positionsIdsObject = groupByPositionId(data)
@@ -56,15 +62,15 @@ const handleMergeRows = (data) => {
     for (const id in groupedRows) {
         if (groupedRows.hasOwnProperty(id)) {
             const times = timesObject[id]
-         
+
             // groupedRows[id]['LongShort'] = times.time2 >= times.time1  && firstSoldTimestamp < firstBoughtTimestamp ? "Short" : "Long";
-            groupedRows[id]['LongShort'] = (times.time2 >= times.time1 && firstSoldTimestamp < firstBoughtTimestamp)? "Short"  : ((times.time1 >= times.time2 && firstBoughtTimestamp < firstSoldTimestamp)  ? "Short": "Long");
+            groupedRows[id]['LongShort'] = (times.time2 >= times.time1 && firstSoldTimestamp < firstBoughtTimestamp) ? "Short" : ((times.time1 >= times.time2 && firstBoughtTimestamp < firstSoldTimestamp) ? "Short" : "Long");
 
         }
     }
 
     const mergedRows = Object.values(groupedRows);
-   
+
     return mergedRows;
 };
 
@@ -77,18 +83,29 @@ const calcCommission = (contractName) => {
 }
 
 export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) => {
-    
+
     const mergedRows = handleMergeRows(csvData);
 
-    const count = csvData.length; // Total number of trades
+    let count = csvData.length; // Total number of trades
     // let successCount = 0;
 
     let tradesWithPartiels = [];
 
     for (let i = 0; i < csvData.length; i++) {
+
+        if (
+            csvData[i]["Buy Price"] === "" ||
+            csvData[i]["Sell Price"] === "" ||
+            csvData[i]["P/L"] === "" ||
+            csvData[i]["Bought Timestamp"] === "" ||
+            csvData[i]["Sold Timestamp"] === ""
+        ) {
+            count-=1;
+            continue; // Skip rows with empty fields
+        }
         let commissionSize = calcCommission(csvData[i]["Product Description"]) * -1;
         let totalCommissionInDollars = commissionSize * csvData[i]["Paired Qty"];
-        
+
         const netROI = ((csvData[i]["Sell Price"] - csvData[i]["Buy Price"]) / csvData[i]["Buy Price"]) * 100;
         const data = {
             entryDate: csvData[i]["Bought Timestamp"] || "",
@@ -135,7 +152,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
 
 
 
-   
+
 
 
     for (let i = 0; i < mergedRows.length; i++) {
