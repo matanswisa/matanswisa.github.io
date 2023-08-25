@@ -197,11 +197,11 @@ const calcCommission = (contractName) => {
 export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) => 
 {
 
-        
     const subTrades = handleSubTrades(csvData);
-
+    let transUniqeNumber = 0;
     for (let i of Object.keys(subTrades)) {
-      
+        
+        
         let father = handleMergeRows(subTrades[i]);
         // console.log(father);
         const firstKey = Object.keys(father)[0];
@@ -226,7 +226,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
             commission: totalCommissionInDollars,
             comments: "",
             netPnL: father[firstKey]["P/L"] !== undefined ? father[firstKey]["P/L"] + totalCommissionInDollars : "",
-            transactionId: father[firstKey]["Position ID"],
+            transactionId: father[firstKey]["Position ID"] + transUniqeNumber++,
         }
 
 
@@ -250,7 +250,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
         //Code is repeat itself need to create functions for later use
         const existingTrade = await Trade.findOne({ transactionId: data.transactionId });
 
-        if (existingTrade) {
+        if (!existingTrade) {
             const newTrade = await Trade.create({
                 entryDate: data.entryDate,
                 symbol: data.symbol,
