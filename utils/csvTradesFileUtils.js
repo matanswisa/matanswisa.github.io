@@ -23,34 +23,33 @@ import User from "../models/user.js";
 // }
 
 
-
-
 const handleMergeRows = (data) => {
+    const groupedRows = data.reduce((acc, row) => {
+        const id = row['Position ID'];
+        if (row['Buy Price'] === '' || row['Sell Price'] === '' || row['P/L'] === '') {
+            return acc; // Skip rows with null values
+        }
 
-            const groupedRows = data.reduce((acc, row) => {
-                const id = row['Position ID'];
-                if (row['Buy Price'] === '' || row['Sell Price'] === '' || row['P/L'] === '') {
-                    return acc; // Skip rows with null values
-                }
+        if (!acc[id]) {
+            acc[id] = {
+                ...row,
+                'P/L': parseFloat(row['P/L'] || 0),
+                'Paired Qty': parseFloat(row['Paired Qty'] || 0),
+                'time1': 0,
+                'time2': 0
+            };
+        } else {
+            acc[id]['P/L'] += parseFloat(row['P/L'] || 0);
+            acc[id]['Paired Qty'] += parseFloat(row['Paired Qty'] || 0);
+            acc[id]['Sold Timestamp'] = row['Sold Timestamp'];
+        }
 
-                if (!acc[id]) {
-                    acc[id] = {
-                        ...row,
-                        'P/L': parseFloat(row['P/L'] || 0),
-                        'time1': 0,
-                        'time2': 0
-                    };
-                } else {
-                    acc[id]['P/L'] += parseFloat(row['P/L'] || 0);
-                    acc[id]['Sold Timestamp'] = row['Sold Timestamp'];
-                }
+        return acc;
+    }, {});
 
-                return acc;
-            }, {});
-            
-            return groupedRows;
-
+    return Object.values(groupedRows);
 }
+
 
 
 const handleSubTrades = (data) => {
@@ -86,6 +85,8 @@ const handleSubTrades = (data) => {
                 groupedData[positionId].push(item);
             }
         });
+            // Loop through each group and add the numeric value to 'Position ID'
+     
         return groupedData;
     
     } else {
@@ -196,21 +197,19 @@ const calcCommission = (contractName) => {
 export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) => 
 {
 
-    const subTrades = handleSubTrades(csvData);
-    for (let i of Object.keys(subTrades)) {
         
+    const subTrades = handleSubTrades(csvData);
+
+    for (let i of Object.keys(subTrades)) {
+      
         let father = handleMergeRows(subTrades[i]);
         // console.log(father);
         const firstKey = Object.keys(father)[0];
        
-      
-
-        let commissionSize = calcCommission(father[firstKey]["Product Description"]) * -1;
-        let totalCommissionInDollars = commissionSize * father[firstKey]["Bought"];
-
-
-      
-
+        let commissionSize = calcCommission(father[firstKey]["Product Description"]) * -1;  
+        let totalCommissionInDollars = commissionSize * father[firstKey]["Paired Qty"];
+     
+                
         const netROI = ((father[firstKey]["Sell Price"] - father[firstKey]["Buy Price"]) / father[firstKey]["Buy Price"]) * 100;
         const data = {
             entryDate: father[firstKey]["Bought Timestamp"] || "",
@@ -220,7 +219,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
             stopPrice: 0,   
             // longShort: father[firstKey]['LongShort'],
             longShort: "Long",
-            contracts: father[firstKey]["Bought"] || "",
+            contracts: father[firstKey]["Paired Qty"] || "",
             entryPrice: father[firstKey]["Buy Price"] || "",
             exitPrice: father[firstKey]["Sell Price"] || "",
             duration: "",
@@ -229,8 +228,6 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
             netPnL: father[firstKey]["P/L"] !== undefined ? father[firstKey]["P/L"] + totalCommissionInDollars : "",
             transactionId: father[firstKey]["Position ID"],
         }
-
-
 
 
         const boughtTimestamp = new Date(father[firstKey]["Bought Timestamp"]);
@@ -253,7 +250,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
         //Code is repeat itself need to create functions for later use
         const existingTrade = await Trade.findOne({ transactionId: data.transactionId });
 
-        if (!existingTrade) {
+        if (existingTrade) {
             const newTrade = await Trade.create({
                 entryDate: data.entryDate,
                 symbol: data.symbol,
