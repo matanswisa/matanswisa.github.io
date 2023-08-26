@@ -24,6 +24,27 @@ import User from "../models/user.js";
 
 
 const handleMergeRows = (data) => {
+     let firstBoughtTimestamp = data[0]['Bought Timestamp'];
+      let firstSoldTimestamp = data[0]['Sold Timestamp'];
+
+       const  timesObject = { time1: 0, time2: 0 };
+     
+        timesObject['time1'] = Math.abs(new Date(data[0]['Bought Timestamp']) - new Date(data[data.length - 1]['Sold Timestamp']));   //Time1= arr[0][buytime stamp] - arr[len-1][sold timestamp]
+     
+        timesObject['time2'] = Math.abs(new Date(data[0]['Sold Timestamp']) - new Date(data[data.length - 1]['Bought Timestamp']));
+
+        
+      ///  timesObject['LongShort'] = Time2 > time1 ? "Short" : "Long";
+   
+    // for (const id in groupedRows) {
+    //     if (groupedRows.hasOwnProperty(id)) {
+    //         const times = timesObject[id]
+
+    //         // groupedRows[id]['LongShort'] = times.time2 >= times.time1  && firstSoldTimestamp < firstBoughtTimestamp ? "Short" : "Long";
+    //         groupedRows[id]['LongShort'] = (times.time2 >= times.time1 && firstSoldTimestamp < firstBoughtTimestamp) ? "Short" : ((times.time1 >= times.time2 && firstBoughtTimestamp < firstSoldTimestamp) ? "Short" : "Long");
+    //     }
+    // }
+
     const groupedRows = data.reduce((acc, row) => {
         const id = row['Position ID'];
         if (row['Buy Price'] === '' || row['Sell Price'] === '' || row['P/L'] === '') {
@@ -35,16 +56,17 @@ const handleMergeRows = (data) => {
                 ...row,
                 'P/L': parseFloat(row['P/L'] || 0),
                 'Paired Qty': parseFloat(row['Paired Qty'] || 0),
-                'time1': 0,
-                'time2': 0
+                'LongShort':(timesObject.time2 >= (timesObject.time2 >= timesObject.time1 && firstSoldTimestamp < firstBoughtTimestamp) ? "Short" : ((timesObject.time1 >= timesObject.time2 && firstBoughtTimestamp < firstSoldTimestamp) ? "Short" : "Long")),
+                'Duration' : Math.max(timesObject.time1,timesObject.time2)
             };
         } else {
             acc[id]['P/L'] += parseFloat(row['P/L'] || 0);
             acc[id]['Paired Qty'] += parseFloat(row['Paired Qty'] || 0);
             acc[id]['Sold Timestamp'] = row['Sold Timestamp'];
+            
         }
-
         return acc;
+
     }, {});
 
     return Object.values(groupedRows);
@@ -157,34 +179,16 @@ function countRepeatedPricesAndFindHighest(groupedArrays) {
 
 
 
-//     const positionsIdsObject = groupByPositionId(data)
-//     let firstBoughtTimestamp;
-//     let firstSoldTimestamp;
-//     const timesObject = {};
-//     for (let key in positionsIdsObject) {
-//         const dataOfPositions = positionsIdsObject[key];
-//         timesObject[key] = { time1: 0, time2: 0 };
-//         firstBoughtTimestamp = dataOfPositions[0]['Bought Timestamp'];
-//         firstSoldTimestamp = dataOfPositions[0]['Sold Timestamp'];
-//         timesObject[key]['time1'] = Math.abs(new Date(dataOfPositions[0]['Bought Timestamp']) - new Date(dataOfPositions[dataOfPositions.length - 1]['Sold Timestamp']));   //Time1= arr[0][buytime stamp] - arr[len-1][sold timestamp]
-//         timesObject[key]['time2'] = Math.abs(new Date(dataOfPositions[0]['Sold Timestamp']) - new Date(dataOfPositions[dataOfPositions.length - 1]['Bought Timestamp']));
-//         // timesObject[key]['LongShort'] = Time2 > time1 ? "Short" : "Long";
-//     }
+    // const positionsIdsObject = groupByPositionId(data)
+    // let firstBoughtTimestamp;
+    // let firstSoldTimestamp;
+    // const timesObject = {};
+ 
 
-//     for (const id in groupedRows) {
-//         if (groupedRows.hasOwnProperty(id)) {
-//             const times = timesObject[id]
+    // const mergedRows = Object.values(groupedRows);
 
-//             // groupedRows[id]['LongShort'] = times.time2 >= times.time1  && firstSoldTimestamp < firstBoughtTimestamp ? "Short" : "Long";
-//             groupedRows[id]['LongShort'] = (times.time2 >= times.time1 && firstSoldTimestamp < firstBoughtTimestamp) ? "Short" : ((times.time1 >= times.time2 && firstBoughtTimestamp < firstSoldTimestamp) ? "Short" : "Long");
+    // return mergedRows;
 
-//         }
-//     }
-
-//     const mergedRows = Object.values(groupedRows);
-
-//     return mergedRows;
-// };
 
 const calcCommission = (contractName) => {
     if (contractName.includes("Micro")) {
@@ -203,7 +207,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
         
         
         let father = handleMergeRows(subTrades[i]);
-        // console.log(father);
+    
         const firstKey = Object.keys(father)[0];
        
         let commissionSize = calcCommission(father[firstKey]["Product Description"]) * -1;  
@@ -217,8 +221,8 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
             status: father[firstKey]["P/L"] < 0 ? "Loss" : father[firstKey]["P/L"] > 0 ? "Win" : "Break Even",
             netROI: netROI.toFixed(2),
             stopPrice: 0,   
-            // longShort: father[firstKey]['LongShort'],
-            longShort: "Long",
+           
+            longShort: father[firstKey]["LongShort"] || "",
             contracts: father[firstKey]["Paired Qty"] || "",
             entryPrice: father[firstKey]["Buy Price"] || "",
             exitPrice: father[firstKey]["Sell Price"] || "",
@@ -230,12 +234,10 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
         }
 
 
-        const boughtTimestamp = new Date(father[firstKey]["Bought Timestamp"]);
-        const soldTimestamp = new Date(father[firstKey]["Sold Timestamp"]);
+        
 
-
-        const timeDifferenceInMinutes = (soldTimestamp - boughtTimestamp) / (1000 * 60);
-        const absoluteDurationInMinutes = Math.abs(timeDifferenceInMinutes)
+        
+        const absoluteDurationInMinutes = Math.abs( father[firstKey]["Duration"]) /(1000 * 60);
         data.duration = absoluteDurationInMinutes || "";
 
 
