@@ -19,7 +19,7 @@ import StepperModal from '../ExplanationOfImportTrades/StepperModal';
 import {
 
   IconButton,
-TextField
+  TextField
 
 } from '@mui/material';
 import Process from '../../processBar/process'
@@ -203,9 +203,13 @@ export default function BasicModal(props) {
 
         clearInterval(timer); // Clear the timer when upload is complete
         setProcessDuration(3000); // Reset process duration
-        dispatch(setTradesList(response.data));
-        notifyToast("Trades from " + (currentAccount?.Broker == brokers.Binance ? "Binance" : "Tradovate") + ' import successfully', 'success');
+        dispatch(setTradesList(response.data.trades));
+        if (response.data.isAllUploaded) {
+          notifyToast(response.data.message, 'success');
+        } else {
+          notifyToast(response.data.message, 'warning');
 
+        }
 
         setProcessDuration(1000); // Reset process duration
         handleClose();
@@ -265,22 +269,22 @@ export default function BasicModal(props) {
           </Typography>
 
           <TextField
-  sx={{ mt: 3 }}
-  label="Broker"
-  disabled
+            sx={{ mt: 3 }}
+            label="Broker"
+            disabled
 
-  InputProps={{
-    startAdornment: (
-      <img
-        src={currentAccount?.Broker === brokers.Tradovate ? TradeovateIcon : BinanceIcon}
-       
-        width={144}
-        height={54}
-        style={{ marginRight: '8px' }}
-      />
-    ),
-  }}
-/>
+            InputProps={{
+              startAdornment: (
+                <img
+                  src={currentAccount?.Broker === brokers.Tradovate ? TradeovateIcon : BinanceIcon}
+
+                  width={144}
+                  height={54}
+                  style={{ marginRight: '8px' }}
+                />
+              ),
+            }}
+          />
 
 
           {isUploading ? (
