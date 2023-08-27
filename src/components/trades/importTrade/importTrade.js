@@ -19,7 +19,7 @@ import StepperModal from '../ExplanationOfImportTrades/StepperModal';
 import {
 
   IconButton,
-TextField
+  TextField
 
 } from '@mui/material';
 import Process from '../../processBar/process'
@@ -56,19 +56,23 @@ export default function BasicModal(props) {
 
 
 
+
+
+
   const dispatch = useDispatch();
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
 
-  const [broker, setBroker] = React.useState(1);
+  const currentAccount = useSelector(selectCurrentAccount)
 
-  const handleChange = (event) => {
-    setBroker(event.target.value);
-  };
+  const [broker, setBroker] = React.useState(currentAccount.broker);
+
+  // const handleChange = (event) => {
+  //   setBroker(event.target.value);
+  // };
 
   const user = useSelector(selectUser);
-  const currentAccount = useSelector(selectCurrentAccount)
   const fileInputRefTrade = useRef(null);
 
 
@@ -185,7 +189,7 @@ export default function BasicModal(props) {
         formData.append('file', file);
         formData.append('userId', user._id);
         formData.append('accountId', currentAccount._id);
-        formData.append('broker', broker);
+
         const token = localStorage.getItem('token');
         const headersForImportTrades = {
           headers: {
@@ -264,22 +268,22 @@ export default function BasicModal(props) {
           </Typography>
 
           <TextField
-  sx={{ mt: 3 }}
-  label="Broker"
-  disabled
+            sx={{ mt: 3 }}
+            label="Broker"
+            disabled
 
-  InputProps={{
-    startAdornment: (
-      <img
-        src={currentAccount?.Broker === brokers.Tradovate ? TradeovateIcon : BinanceIcon}
-       
-        width={144}
-        height={54}
-        style={{ marginRight: '8px' }}
-      />
-    ),
-  }}
-/>
+            InputProps={{
+              startAdornment: (
+                <img
+                  src={currentAccount?.Broker === brokers.Tradovate ? TradeovateIcon : BinanceIcon}
+
+                  width={144}
+                  height={54}
+                  style={{ marginRight: '8px' }}
+                />
+              ),
+            }}
+          />
 
 
           {isUploading ? (
