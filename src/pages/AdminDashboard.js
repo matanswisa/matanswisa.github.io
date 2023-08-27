@@ -215,7 +215,7 @@ const UsersManagementPage = () => {
                 data: { id }, // Make sure this is the correct format for the API
             });
             fetchUsers();
-            notifyToast("Delete account Successfully ", 'warning');
+            notifyToast("Delete account Successfully ", 'success');
 
             // Optionally, you can fetch the updated list of users after deletion
 

@@ -386,7 +386,7 @@ export default function UserPage() {
     const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, configAuth);
     dispatch(setTradesList(res.data))
 
-    notifyToast("Delete trade Successfully", 'warning');
+    notifyToast("Delete trade Successfully", 'success');
     toggleShow();
   }
 
