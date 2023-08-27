@@ -207,9 +207,14 @@ export default function BasicModal(props) {
 
         clearInterval(timer); // Clear the timer when upload is complete
         setProcessDuration(3000); // Reset process duration
-        dispatch(setTradesList(response.data));
+        dispatch(setTradesList(response.data.trades));
+        if (response.data.isAllUploaded) {
+          notifyToast(response.data.message, 'success');
+        } else {
+          notifyToast(response.data.message, 'warning');
 
-        notifyToast('Upload csv file successfully', 'success');
+        }
+
         setProcessDuration(1000); // Reset process duration
         handleClose();
         // Handle success or show a success message to the user

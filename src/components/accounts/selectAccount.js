@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import { useEffect, useState } from 'react';
 import { selectCurrentAccount, selectUser, selectUserAccounts } from '../../redux-toolkit/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import {  setCurrentAccount } from '../../redux-toolkit/userSlice';
+import { setCurrentAccount } from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
 
 
@@ -52,6 +52,7 @@ export default function MultipleSelectPlaceholder(props) {
         Authorization: `Bearer ${token}`,
       }
     }).then((res) => {
+      console.log(res.data);
       // dispatch(setCurrentAccount(res.data));
       setSelectedAccountColor(res.data.Label);
       setSelectedAccount(res.data.AccountName);
@@ -65,7 +66,7 @@ export default function MultipleSelectPlaceholder(props) {
   const handleChange = (event) => {
     const accountId = event.target.value
     api.post('/api/setSelectedAccount', { userId: user._id, accountId }, configAuth).then((res) => {
-    
+
       setSelectedAccount(res.data.AccountName)
       setSelectedAccountColor(res.data.Label);
       dispatch(setCurrentAccount(res.data));
