@@ -33,9 +33,9 @@ import api from '../../api/api';
 import { ToastContainer, } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentAccount, selectUser, selectUserAccounts, setCurrentAccount, updateAccountList } from '../../redux-toolkit/userSlice';
+import {selectMessages} from '../../redux-toolkit/messagesSlice';
 import MultipleSelectPlaceholder from './selectAccount';
-
-
+import {getMsg} from '../../utils/messeageUtils';
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -49,8 +49,14 @@ export default function BasicModal() {
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
     const user = useSelector(selectUser);
     const currentAccount = useSelector(selectCurrentAccount);
+    // console.log(messages.find(msg => msg.type == "success"));
     const dispatch = useDispatch();
     const accounts = useSelector(selectUserAccounts);
+    
+
+    const messages = useSelector(selectMessages);
+    // notifyToast(getMsg(messages,"success",0).msgText, getMsg(messages,"success",0).msgType);
+   
 
 
     const getAccountInfoById = (accountList, accountid) => {
@@ -95,7 +101,7 @@ export default function BasicModal() {
             
 
             // Notify and fetch accounts
-            notifyToast("Delete account Successfully ", 'success');
+            notifyToast(getMsg(messages,"success",0).msgText, getMsg(messages,"success",0).msgType);
             setAnchorEl(null);
         } catch (error) {
             // Handle errors if any
