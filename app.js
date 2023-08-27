@@ -11,7 +11,7 @@ import adminSeeder from './utils/adminSeeder.js';
 import authRouter from './routes/auth.js';
 import AccountRoute from './routes/AccountsRoute.js'
 import SendMailRoute from './routes/sendMail.js'
-
+import MessagesRoute from './routes/messeagesRoute.js'
 connectDB();
 adminSeeder();
 
@@ -29,7 +29,7 @@ app.use("/api/auth", userRoute);
 app.use("/api/auth", authRouter);
 app.use("/api", SendMailRoute);
 app.use("/api", AccountRoute);
-
+app.use("/api", MessagesRoute);
 
 const port = normalizePort(process.env.PORT || '8000');
 
