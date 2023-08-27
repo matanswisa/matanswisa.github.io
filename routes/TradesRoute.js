@@ -75,12 +75,11 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
 
 
 
-
 router.post("/importTrades", authenticateToken, upload.single('file'), async (req, res) => {
   try {
     const { userId, accountId } = req.body;
     const accountOfUser = await Account.findOne({ _id: accountId });
-    
+
     const tradesData = [];
 
     if (accountOfUser.Broker == brokers.Tradovate) { /// check which type of broker in account user have.
@@ -91,26 +90,26 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
         })
         .on('end', async () => {
           fs.unlinkSync(req.file.path); // Remove the temporary file
-          await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
+          const result = await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
+          console.log(result);
           const accountOfUser = await Account.findOne({ _id: accountId });
           await SelectedAccountModel.updateOne({ userId }, { account: accountOfUser, accountId: accountId });
-          
+
           const trades = await fetchUserTrades(userId, accountId);
-          res.status(200).json(trades);
-     
+          res.status(200).json({ trades, message: result.message, isAllUploaded: result.isAllUploaded });
+
         });
     } else if (accountOfUser.Broker == brokers.Binance) {
       await buildTradesDataByBinanceCSV(req.file.path, userId, accountId);
       const trades = await fetchUserTrades(userId, accountId);
       res.status(200).json(trades);
-      
+
     }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error when importing trades' });
   }
 });
-
 
 
 
@@ -319,7 +318,7 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
     const tradesByDate = trades.reduce((result, trade) => {
       const tradeDate = trade.entryDate.substring(0, 10); // Extract YYYY-MM-DD from the full entryDate
       const existingEntry = result.find(entry => entry._id === tradeDate);
-  
+
       if (existingEntry) {
         if (trade.status === 'Loss') {
           existingEntry.lossCount++;

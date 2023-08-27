@@ -4,6 +4,17 @@ import Trade from "../models/trade.js";
 import User from "../models/user.js";
 
 
+const emptyFields = ['Pair ID', 'Buy Fill ID', 'Sell Fill ID', 'Paired Qty', 'Buy Price', 'Sell Price', 'P/L', 'Currency', 'Bought Timestamp', 'Sold Timestamp']
+
+function removeObjectsWithEmptyFields(arrayOfObjects, emptyFields = ['Pair ID', 'Buy Fill ID', 'Sell Fill ID', 'Paired Qty', 'Buy Price', 'Sell Price', 'P/L', 'Currency', 'Bought Timestamp', 'Sold Timestamp']) {
+    return arrayOfObjects.filter(item => {
+        const hasEmptyField = emptyFields.some(field => !item[field]);
+        return !hasEmptyField;
+    });
+}
+
+
+
 function groupByPositionId(array) {
     const grouped = {};
 
@@ -22,7 +33,11 @@ function groupByPositionId(array) {
 
 const handleMergeRows = (data) => {
 
-    const groupedRows = data.reduce((acc, row) => {
+    //Deleting any 'empty row' - objects which missing important values.
+    const tradesCsvDataWithoutEmptyRows = removeObjectsWithEmptyFields(data)
+
+
+    const groupedRows = tradesCsvDataWithoutEmptyRows.reduce((acc, row) => {
         const id = row['Position ID'];
         if (row['Buy Price'] === '' || row['Sell Price'] === '' || row['P/L'] === '') {
             return acc; // Skip rows with null values
@@ -56,7 +71,6 @@ const handleMergeRows = (data) => {
         firstSoldTimestamp = dataOfPositions[0]['Sold Timestamp'];
         timesObject[key]['time1'] = Math.abs(new Date(dataOfPositions[0]['Bought Timestamp']) - new Date(dataOfPositions[dataOfPositions.length - 1]['Sold Timestamp']));   //Time1= arr[0][buytime stamp] - arr[len-1][sold timestamp]
         timesObject[key]['time2'] = Math.abs(new Date(dataOfPositions[0]['Sold Timestamp']) - new Date(dataOfPositions[dataOfPositions.length - 1]['Bought Timestamp']));
-        // timesObject[key]['LongShort'] = Time2 > time1 ? "Short" : "Long";
     }
 
     for (const id in groupedRows) {
@@ -82,14 +96,36 @@ const calcCommission = (contractName) => {
     return 3;
 }
 
+
+function sumArrayOfLengthsAndTradeHistory(obj) {
+    let totalLength = 0;
+
+    for (const key in obj) {
+        if (Array.isArray(obj[key])) {
+            totalLength += obj[key].length;
+
+            for (const item of obj[key]) {
+                if (item.hasOwnProperty('tradeHistory') && Array.isArray(item.tradeHistory)) {
+                    totalLength += item.tradeHistory.length;
+                }
+            }
+        }
+    }
+
+    return totalLength;
+}
+
+
+
 export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) => {
 
     const mergedRows = handleMergeRows(csvData);
 
     let count = csvData.length; // Total number of trades
-    // let successCount = 0;
-
+    let uploadedTradeCounter = 0;
     let tradesWithPartiels = [];
+    let isAllUploaded = false;
+
 
     for (let i = 0; i < csvData.length; i++) {
 
@@ -100,7 +136,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
             csvData[i]["Bought Timestamp"] === "" ||
             csvData[i]["Sold Timestamp"] === ""
         ) {
-            count-=1;
+            count -= 1;
             continue; // Skip rows with empty fields
         }
         let commissionSize = calcCommission(csvData[i]["Product Description"]) * -1;
@@ -144,6 +180,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
             data.netROI = 0;
         }
         tradesWithPartiels.push(data);
+
     }
 
     if (!(count === tradesWithPartiels.length))
@@ -205,10 +242,13 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
             data.netROI = 0;
         }
 
+
         //Code is repeat itself need to create functions for later use
-        const existingTrade = await Trade.findOne({ transactionId: data.transactionId });
+        const account = await Account.findOne({ _id: accountId });
+        const existingTrade = account.trades.find((trd) => trd.transactionId == data.transactionId);
 
         if (!existingTrade) {
+            uploadedTradeCounter++;
             const newTrade = await Trade.create({
                 entryDate: data.entryDate,
                 symbol: data.symbol,
@@ -225,14 +265,17 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
                 transactionId: data.transactionId
             });
 
-
             const user = await User.findById(userId);
             const account = user.accounts.find(acc => acc._id == accountId);
             account.trades.push(newTrade);
             const tempAccounts = user.accounts.filter(acc => acc._id != accountId);
             tempAccounts.push(account);
+            await Account.updateOne({ _id: accountId }, account);
             await User.updateOne({ _id: userId }, { accounts: tempAccounts });
             await SelectedAccountModel.updateOne({ userId }, { accountId, account });
+            // return {isUp:true};
+            // return 
+            isAllUploaded = true;
         }
     }
 
@@ -241,7 +284,6 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
 
     for (let i = 0; i < tradesWithPartiels.length; i++) {
         const transactionId = tradesWithPartiels[i]["transactionId"];
-
         if (!tradeGroups[transactionId]) {
             tradeGroups[transactionId] = [tradesWithPartiels[i]];
         } else {
@@ -253,13 +295,18 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
     for (const transactionId in tradeGroups) {
         const tradeGroup = tradeGroups[transactionId];
 
-        // Find an existing trade with the same transactionId
-        const existingTrade = await Trade.findOne({ transactionId });
+        //Code is repeat itself need to create functions for later use
+        const account = await Account.findOne({ _id: accountId });
+        console.log(tradeGroup)
+        const existingTrade = account.trades.find((trd) => trd.transactionId == tradeGroup[0].transactionId);
 
         if (existingTrade) {
+            // uploadedTradeCounter++;
             // Update existing trade's tradesHistory
+
             existingTrade.tradesHistory.push(...tradeGroup);
-            await existingTrade.save();
+
+            const updatedTrade = await Trade.updateOne({ _id: existingTrade._id }, { existingTrade })
 
             const user = await User.findById(userId);
             const account = user.accounts.find(acc => acc._id == accountId);
@@ -277,6 +324,17 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
         }
     }
 
+    const totalLengthOfFathersTradesAndPartials = sumArrayOfLengthsAndTradeHistory(tradeGroups);
+    console.log("Counter is=", uploadedTradeCounter, "totalLengthOfFathersTradesAndPartials=", totalLengthOfFathersTradesAndPartials)
 
-    return true;
+
+    if (!uploadedTradeCounter) {
+        isAllUploaded = false;
+
+        return { isAllUploaded, message: "All the imported trades are already exists." };
+    } else if (uploadedTradeCounter >= 1 && uploadedTradeCounter < totalLengthOfFathersTradesAndPartials) {
+        return { isAllUploaded, message: "Uploaded succeffully parts of the imported trades" };
+    } else if (uploadedTradeCounter === totalLengthOfFathersTradesAndPartials) {
+        return { isAllUploaded, message: 'Trades from Tradovate Import successfully' }
+    }
 }
