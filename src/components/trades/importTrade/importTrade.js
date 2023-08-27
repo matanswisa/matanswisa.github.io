@@ -109,7 +109,7 @@ export default function BasicModal(props) {
 
     if (!file.name.endsWith('.csv')) {
       validationPassed = false;
-      notifyToast('Please select a CSV  file.', 'error');
+      notifyToast('Please select a CSV  file.', 'warning');
       return false; // Validation failed
     }
 
@@ -142,7 +142,7 @@ export default function BasicModal(props) {
 
     if (!file.name.endsWith('.xlsx')) {
       validationPassed = false;
-      notifyToast('Please select a  Excel file.', 'error');
+      notifyToast('Please select a  Excel file.', 'warning');
       return false; // Validation failed
     }
 
@@ -217,7 +217,7 @@ export default function BasicModal(props) {
       } catch (error) {
         setIsUploading(false);
         console.error('Error uploading file:', error);
-        notifyToast('Error uploading file' + error.message, 'error');
+        notifyToast('Error uploading file' + error.message, 'warning');
         // Handle error or show an error message to the user
       } finally {
         setIsUploading(false);

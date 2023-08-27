@@ -44,7 +44,7 @@ export default function LoginForm() {
       if (err.response && err.response.data && err.response.data.isLicenseExpried) {
         notifyToast("Your license has expired. Please renew it to continue using the service.", "info");
     } else {
-        notifyToast("Sorry, the password you entered is incorrect. Please try again.", "error");
+        notifyToast("Sorry, One or more login details are incorrect. Please try again.", "error");
     }
     
     })

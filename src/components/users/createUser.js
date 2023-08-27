@@ -94,12 +94,12 @@ function BasicModal(props) {
 
   const validateForm = () => {
     if (checkUsernameExist(username)) {
-      notifyToast("Username already exist", "error");
+      notifyToast("Username already exist", "warning");
       return false;
     }
 
     if (checkEmailExist(email)) {
-      notifyToast("Email already exist", "error");
+      notifyToast("Email already exist", "warning");
       return false;
     }
 
