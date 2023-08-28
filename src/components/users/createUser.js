@@ -11,6 +11,15 @@ import Select from '@mui/material/Select';
 import api from '../../api/api';
 import PropTypes from 'prop-types';
 
+
+
+import { useDispatch, useSelector } from 'react-redux';
+import {selectMessages} from '../../redux-toolkit/messagesSlice'
+import {getMsg} from '../../utils/messeageUtils';
+import { msgType} from '../../utils/messagesEnum.js';
+import {msgNumber} from '../../utils/msgNumbers.js';
+
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -45,6 +54,8 @@ function BasicModal(props) {
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
   const [users, setUsers] = useState([]);
+
+  const messages = useSelector(selectMessages);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -94,12 +105,14 @@ function BasicModal(props) {
 
   const validateForm = () => {
     if (checkUsernameExist(username)) {
-      notifyToast("Username already exist", "error");
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[19]).msgText, getMsg(messages,msgType.warnings,msgNumber[19]).msgType);
+   //   notifyToast("Username already exist", "warning");
       return false;
     }
 
     if (checkEmailExist(email)) {
-      notifyToast("Email already exist", "error");
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[18]).msgText, getMsg(messages,msgType.warnings,msgNumber[18]).msgType);
+     // notifyToast("Email already exist", "warning");
       return false;
     }
 
@@ -111,18 +124,30 @@ function BasicModal(props) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (password === '' || email === '' || username === '') {
-      if (password === '') notifyToast("Password is missing", "warning");
-      if (email === '') notifyToast("Email is missing", "warning");
-      if (username === '') notifyToast("Username is missing", "warning");
+
+      if (password === '') 
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[17]).msgText, getMsg(messages,msgType.warnings,msgNumber[17]).msgType);
+      //notifyToast("Password is missing", "warning");
+
+      if (email === '')
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[16]).msgText, getMsg(messages,msgType.warnings,msgNumber[16]).msgType);
+     //  notifyToast("Email is missing", "warning");
+
+
+      if (username === '')
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[15]).msgText, getMsg(messages,msgType.warnings,msgNumber[15]).msgType);
+      // notifyToast("Username is missing", "warning");
       return false;
 
     }
 
     if (password.length < 6) {
-      notifyToast("Password less than 6 characters", "warning");
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[8]).msgText, getMsg(messages,msgType.warnings,msgNumber[8]).msgType);
+     // notifyToast("Password less than 6 characters", "warning");
       return false;
     } else if (!emailRegex.test(email)) {
-      notifyToast("Invalid email format", "warning");
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[13]).msgText, getMsg(messages,msgType.warnings,msgNumber[13]).msgType);
+     // notifyToast("Invalid email format", "warning");
       return false;
     } else {
       // Your code for successful form submission goes here
@@ -202,10 +227,11 @@ function BasicModal(props) {
     }
 
     await api.post('/api/sendEmail', data).then((res) => {
-      notifyToast("mail Send successfully", "success");
+      notifyToast(getMsg(messages,msgType.success,msgNumber[7]).msgText, getMsg(messages,msgType.success,msgNumber[7]).msgType);
+   //   notifyToast("mail Send successfully", "success");
     }).catch((err) => {
-
-      notifyToast("Mail not send", "error");
+      notifyToast(getMsg(messages,msgType.errors,msgNumber[8]).msgText, getMsg(messages,msgType.errors,msgNumber[8]).msgType);
+     // notifyToast("Mail not send", "error");
       console.log(err);
       return false;
     })
@@ -229,7 +255,10 @@ function BasicModal(props) {
   
           handleSendMail();
           await props.handleOpenModal(false);
-          await notifyToast("User added successfully", "success");
+
+          await   notifyToast(getMsg(messages,msgType.success,msgNumber[8]).msgText, getMsg(messages,msgType.success,msgNumber[8]).msgType);
+
+         // notifyToast("User added successfully", "success");
           // Fetch list of users from "/api/users" route
         })
         .catch((error) => {

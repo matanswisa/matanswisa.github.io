@@ -36,6 +36,12 @@ import { selectCurrentAccount, selectUser, selectUserAccounts, setCurrentAccount
 import MultipleSelectPlaceholder from './selectAccount';
 
 
+
+import {selectMessages} from '../../redux-toolkit/messagesSlice';
+import {getMsg} from '../../utils/messeageUtils';
+import { msgType} from '../../utils/messagesEnum.js';
+import {msgNumber} from '../../utils/msgNumbers.js';
+
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -49,8 +55,18 @@ export default function BasicModal() {
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
     const user = useSelector(selectUser);
     const currentAccount = useSelector(selectCurrentAccount);
+    // console.log(messages.find(msg => msg.type == "success"));
     const dispatch = useDispatch();
     const accounts = useSelector(selectUserAccounts);
+    
+
+
+    const messages = useSelector(selectMessages);
+  
+
+
+    
+  
 
 
     const getAccountInfoById = (accountList, accountid) => {
@@ -95,7 +111,7 @@ export default function BasicModal() {
             
 
             // Notify and fetch accounts
-            notifyToast("Delete account Successfully ", 'success');
+            notifyToast(getMsg(messages,msgType.success,msgNumber[1]).msgText, getMsg(messages,msgType.success,msgNumber[1]).msgType);
             setAnchorEl(null);
         } catch (error) {
             // Handle errors if any

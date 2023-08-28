@@ -12,6 +12,15 @@ import { useDispatch } from 'react-redux';
 import useToast from '../../../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+
+import { useSelector } from 'react-redux';
+
+
+import {selectMessages} from '../../../redux-toolkit/messagesSlice'
+import {getMsg} from '../../../utils/messeageUtils';
+import { msgType} from '../../../utils/messagesEnum.js';
+import {msgNumber} from '../../../utils/msgNumbers.js';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
@@ -30,6 +39,7 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const messages = useSelector(selectMessages);
 
   const handleLoginForm = () => {
     if (!username || !password) return
@@ -42,9 +52,11 @@ export default function LoginForm() {
     }).catch((err) => {
       console.log(err.response.data.isLicenseExpired);
       if (err.response && err.response.data && err.response.data.isLicenseExpried) {
-        notifyToast("Your license has expired. Please renew it to continue using the service.", "info");
+        notifyToast(getMsg(messages,msgType.warnings,msgNumber[30]).msgText, getMsg(messages,msgType.warnings,msgNumber[30]).msgType);
+       // notifyToast("Your license has expired. Please renew it to continue using the service.", "info");
     } else {
-        notifyToast("Sorry, the password you entered is incorrect. Please try again.", "error");
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[14]).msgText, getMsg(messages,msgType.warnings,msgNumber[14]).msgType);
+       // Toast("Sorry, One or more login details are incorrect. Please try again.", "error");
     }
     
     })

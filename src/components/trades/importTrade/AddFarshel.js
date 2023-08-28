@@ -94,7 +94,7 @@ export default function AddFarshel(props) {
 
 
 
-   
+
 
 
 
@@ -119,8 +119,8 @@ export default function AddFarshel(props) {
 
         if (currentAccount?.Broker == brokers.Tradovate) {
 
-            
-             style = {
+
+            style = {
                 position: 'absolute',
                 top: '50%',
                 left: '50%',
@@ -150,7 +150,7 @@ export default function AddFarshel(props) {
         }
         else if (currentAccount?.Broker == brokers.Binance) {
 
-    
+
             style = {
                 position: 'absolute',
                 top: '50%',
@@ -240,14 +240,14 @@ export default function AddFarshel(props) {
             return {
                 id: trade._id,
                 time: trade.entryDate.split('T')[0],
-                symbol: trade.symbol,    
+                symbol: trade.symbol,
                 entryPrice: trade.entryPrice,
-                quantity: trade.contracts,  
+                quantity: trade.contracts,
                 commission: trade.commission ? "$" + trade.commission : "N/A",
                 netPnL: "$" + trade.netPnL,
             };
         }
-        
+
 
     }
 
@@ -263,7 +263,7 @@ export default function AddFarshel(props) {
 
 
 
-        rows = trade.tradesHistory.map((trade) => {
+        rows = trade.tradesHistory.map((trade, indx) => {
 
 
             console.log(trade.duration);
@@ -293,35 +293,35 @@ export default function AddFarshel(props) {
 
 
 
-         
-        if (currentAccount?.Broker === brokers.Tradovate) {
-            return {
-                id: trade._id,
-                time: trade.entryDate.split('T')[0],
-                symbol: trade.symbol,
-                netROI: trade.netROI + "%",
-                entryPrice: trade.entryPrice,
-                exitPrice: trade.exitPrice,
-                contracts: trade.contracts,
-                duration: formattedDuration,
-                commission: trade.commission ? "$" + trade.commission : "N/A",
-                netPnL: "$" + trade.netPnL,
-            };
-        } else if (currentAccount?.Broker === brokers.Binance) {
-            return {
-                id: trade._id,
-                time: trade.entryDate.split('T')[0],
-                symbol: trade.symbol,    
-                entryPrice: trade.entryPrice,
-                quantity: trade.contracts,  
-                commission: trade.commission ? "$" + trade.commission : "N/A",
-                netPnL: "$" + trade.netPnL,
-            };
-        }
+
+            if (currentAccount?.Broker === brokers.Tradovate) {
+                return {
+                    id: indx,
+                    time: trade.entryDate.split('T')[0],
+                    symbol: trade.symbol,
+                    netROI: trade.netROI + "%",
+                    entryPrice: trade.entryPrice,
+                    exitPrice: trade.exitPrice,
+                    contracts: trade.contracts,
+                    duration: formattedDuration,
+                    commission: trade.commission ? "$" + trade.commission : "N/A",
+                    netPnL: "$" + trade.netPnL,
+                };
+            } else if (currentAccount?.Broker === brokers.Binance) {
+                return {
+                    id: trade._id,
+                    time: trade.entryDate.split('T')[0],
+                    symbol: trade.symbol,
+                    entryPrice: trade.entryPrice,
+                    quantity: trade.contracts,
+                    commission: trade.commission ? "$" + trade.commission : "N/A",
+                    netPnL: "$" + trade.netPnL,
+                };
+            }
 
         });
 
-
+        console.log(rows);
 
     }
 
@@ -342,6 +342,7 @@ export default function AddFarshel(props) {
 
                     <Box sx={{ height: 400, width: '95%' }}>
                         <DataGrid
+                            id={`${Math.random(1 * 10)}`}
                             rows={rows}
                             columns={columns}
                             initialState={{

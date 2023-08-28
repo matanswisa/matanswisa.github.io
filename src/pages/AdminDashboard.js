@@ -38,6 +38,15 @@ import DialogContentText from '@mui/material/DialogContentText';
 import { Grid } from 'rsuite';
 
 
+import { useDispatch, useSelector } from 'react-redux';
+import {selectMessages} from '../redux-toolkit/messagesSlice';
+
+import {getMsg} from '../utils/messeageUtils';
+import { msgType} from '../utils/messagesEnum.js';
+import {msgNumber} from '../utils/msgNumbers.js';
+
+
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -164,6 +173,9 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
 // Main component for Users Management Page
 const UsersManagementPage = () => {
 
+    
+    const messages = useSelector(selectMessages);
+
     const [openmodal, setIsOpenmodal] = useState(false);
     const [users, setUsers] = useState([]);
     const [userId, setUserId] = useState(null);
@@ -215,7 +227,8 @@ const UsersManagementPage = () => {
                 data: { id }, // Make sure this is the correct format for the API
             });
             fetchUsers();
-            notifyToast("Delete account Successfully ", 'warning');
+            notifyToast(getMsg(messages,msgType.success,msgNumber[12]).msgText, getMsg(messages,msgType.success,msgNumber[12]).msgType);
+            // notifyToast("Delete user Successfully ", 'success');
 
             // Optionally, you can fetch the updated list of users after deletion
 
@@ -266,17 +279,20 @@ const UsersManagementPage = () => {
     const validateForm = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email !== '' && !emailRegex.test(email)) {
-            notifyToast("Invalid email format", "warning");
+            notifyToast(getMsg(messages,msgType.warnings,msgNumber[12]).msgText, getMsg(messages,msgType.warnings,msgNumber[12]).msgType);
+            // notifyToast("Invalid email format", "warning");
             return false;
         }
 
         if (username.length < 8) {
-            notifyToast("user name less than 8 characters", "warning");
+            notifyToast(getMsg(messages,msgType.warnings,msgNumber[11]).msgText, getMsg(messages,msgType.warnings,msgNumber[11]).msgType);
+            // notifyToast("user name less than 8 characters", "warning");
             return false;
         }
 
         if (!checkLicenseTime(licenseTime)) {
-            notifyToast("Invalid date! Please choose a future date.", "warning");
+            notifyToast(getMsg(messages,msgType.warnings,msgNumber[10]).msgText, getMsg(messages,msgType.warnings,msgNumber[10]).msgType);
+            // notifyToast("Invalid date! Please choose a future date.", "warning");
             return false;
         }
 
@@ -306,7 +322,8 @@ const UsersManagementPage = () => {
                 });
                 fetchUsers();
                 handleClose();
-                notifyToast("update account Successfully  ", 'success');
+                notifyToast(getMsg(messages,msgType.success,msgNumber[13]).msgText, getMsg(messages,msgType.success,msgNumber[13]).msgType);
+                // notifyToast("update account Successfully  ", 'success');
 
             } catch (error) {
                 console.error('Failed to update user:', error);

@@ -8,11 +8,18 @@ import { useSelector } from 'react-redux';
 import { selectUserName } from '../redux-toolkit/userSlice';
 
 
+
+import {selectMessages} from '../redux-toolkit/messagesSlice'
+import {getMsg} from '../utils/messeageUtils';
+import { msgType} from '../utils/messagesEnum.js';
+import {msgNumber} from '../utils/msgNumbers.js';
+
+
 export default function UserDahsboard(props) {
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
-
+  const messages = useSelector(selectMessages);
   // const dispatch = useDispatch();
   const username = useSelector(selectUserName);
   const [password, setPassword] = useState('');
@@ -20,11 +27,14 @@ export default function UserDahsboard(props) {
   const validateForm = () => {
 
     if (password === '') {
-      if (password === '') notifyToast("Password is missing", "warning");
+      if (password === '')
+        notifyToast(getMsg(messages,msgType.warnings,msgNumber[9]).msgText, getMsg(messages,msgType.warnings,msgNumber[9]).msgType);
+       //notifyToast("Password is missing", "warning");
       return false;
     }
     if (password.length < 6) {
-      notifyToast("Password less than 6 characters", "warning");
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[8]).msgText, getMsg(messages,msgType.warnings,msgNumber[8]).msgType);
+    //  notifyToast("Password less than 6 characters", "warning");
       return false;
 
     } else {
@@ -51,8 +61,8 @@ export default function UserDahsboard(props) {
           }
         })
         .then((response) => {
-         
-          notifyToast("Password Updated successfully", "success");
+          notifyToast(getMsg(messages,msgType.success,msgNumber[11]).msgText, getMsg(messages,msgType.success,msgNumber[11]).msgType);
+         // notifyToast("Password Updated successfully", "success");
           props.handleOpenModal(false);
           // Fetch list of users from "/api/users" route
           api
@@ -73,7 +83,8 @@ export default function UserDahsboard(props) {
         })
         .catch((err) => {
           if (err.response && err.response.data && err.response.data.samePassword) {
-            notifyToast("Please enter a different password.", "info");
+            notifyToast(getMsg(messages,msgType.warnings,msgNumber[29]).msgText, getMsg(messages,msgType.warnings,msgNumber[29]).msgType);
+          //  notifyToast("Please enter a different password.", "warning");
             return;
           }
         });
