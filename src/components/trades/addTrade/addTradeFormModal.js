@@ -343,7 +343,8 @@ export default function TradeModal(props) {
   }
 
   const handleUpload = (tradeId) => {
-    if (!selectedFile) {
+    console.log(editMode);
+    if (!selectedFile && editMode == false) {
       notifyToast(getMsg(messages,msgType.errors,msgNumber[5]).msgText, getMsg(messages,msgType.errors,msgNumber[5]).msgType);
      // notifyToast("Don't have image file to upload", "error"); 
       return; 
