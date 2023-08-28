@@ -296,7 +296,7 @@ export default function AddFarshel(props) {
 
             if (currentAccount?.Broker === brokers.Tradovate) {
                 return {
-                    id: indx,
+                    id: trade._id,
                     time: trade.entryDate.split('T')[0],
                     symbol: trade.symbol,
                     netROI: trade.netROI + "%",
