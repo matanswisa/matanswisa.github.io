@@ -50,6 +50,15 @@ import ImageModal from '../components/ImageModal/ImageModal';
 import { Grid } from 'rsuite';
 // ----------------------------------------------------------------------
 import { selectCurrentAccount, selectUser, setTradesList, selectUserAccounts } from '../redux-toolkit/userSlice';
+
+
+import {selectMessages} from '../redux-toolkit/messagesSlice';
+
+import {getMsg} from '../utils/messeageUtils';
+import { msgType} from '../utils/messagesEnum.js';
+import {msgNumber} from '../utils/msgNumbers.js';
+
+
 import { configAuth } from '../api/configAuth';
 import { brokers } from "../components/brokersNames/brokers.js";
 const sumPnL = (trades) => {
@@ -106,6 +115,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 export default function UserPage() {
+
+
+  const messages = useSelector(selectMessages);
+
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
@@ -198,7 +211,11 @@ export default function UserPage() {
   };
 
   const handleUpload = (tradeId) => {
-    if (!selectedFile) { notifyToast("Couldn't upload the image", "error"); return; }
+    if (!selectedFile) { 
+      notifyToast(getMsg(messages,msgType.errors,msgNumber[9]).msgText, getMsg(messages,msgType.errors,msgNumber[9]).msgType);
+      
+     // notifyToast("Couldn't upload the image", "error"); return; }
+    }
     // Create a new FormData object
     const formData = new FormData();
     // Append the selected file to the FormData object
@@ -214,12 +231,14 @@ export default function UserPage() {
     })
       .then(response => response.json())
       .then(data => {
-        notifyToast("Trade image uploaded successfully", "success");
+        notifyToast(getMsg(messages,msgType.success,msgNumber[6]).msgText, getMsg(messages,msgType.success,msgNumber[6]).msgType);
+        // notifyToast("Trade image uploaded successfully", "success");
         dispatch(setTradesList(data));
       })
       .catch(error => {
+        notifyToast(getMsg(messages,msgType.errors,msgNumber[10]).msgText, getMsg(messages,msgType.errors,msgNumber[10]).msgType);
         // Handle any errors that occurred during the upload
-        notifyToast("Error uploading trade image", "error");
+        // notifyToast("Error uploading trade image", "error");
         console.error(error);
       });
   };
@@ -273,8 +292,8 @@ export default function UserPage() {
   const handleOpenModal = (tradeId) => {
 
     if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
-
-      notifyToast("before add trades you need create account", 'warning');
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[6]).msgText, getMsg(messages,msgType.warnings,msgNumber[6]).msgType);
+    //  notifyToast("before add trades you need create account", 'warning');
     }
     else {
       setIsOpenmodal(true);
@@ -292,8 +311,8 @@ export default function UserPage() {
   const handleOpenModalImportTrades = (tradeId) => {
 
     if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
-
-      notifyToast("before import trades you need create account", 'warning');
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[7]).msgText, getMsg(messages,msgType.warnings,msgNumber[7]).msgType);
+     // notifyToast("before import trades you need create account", 'warning');
     }
     else {
       setIsOpenmodalImportTrades(true);
@@ -385,8 +404,8 @@ export default function UserPage() {
     console.log(editTradeId);
     const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, configAuth);
     dispatch(setTradesList(res.data))
-
-    notifyToast("Delete trade Successfully", 'success');
+    notifyToast(getMsg(messages,msgType.success,msgNumber[14]).msgText, getMsg(messages,msgType.success,msgNumber[14]).msgType);
+   // notifyToast("Delete trade Successfully", 'success');
     toggleShow();
   }
 

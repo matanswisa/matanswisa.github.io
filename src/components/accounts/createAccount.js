@@ -23,14 +23,14 @@ import {
   blueGrey,
 } from '@mui/material/colors';
 import { Grid } from 'rsuite';
-import { useDispatch, useSelector } from 'react-redux';
+
 import { selectUser, setCurrentAccount, updateAccountList, selectUserAccounts } from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
 
 import BinanceIcon from '../brokersIcons/binance.svg'
 import TradeovateIcon from '../brokersIcons/Tradovate.svg'
 
-
+import { useDispatch, useSelector } from 'react-redux';
 import {selectMessages} from '../../redux-toolkit/messagesSlice';
 import {getMsg} from '../../utils/messeageUtils';
 import { msgType} from '../../utils/messagesEnum.js';
