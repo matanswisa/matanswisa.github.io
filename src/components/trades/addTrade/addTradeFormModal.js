@@ -28,6 +28,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentAccount, selectUser, setTradesList } from '../../../redux-toolkit/userSlice';
 import { configAuth } from '../../../api/configAuth';
 import {brokers} from '../../brokersNames/brokers.js'
+
+
+
+import {selectMessages} from '../../../redux-toolkit/messagesSlice';
+
+import {getMsg} from '../../../utils/messeageUtils';
+import { msgType} from '../../../utils/messagesEnum.js';
+import {msgNumber} from '../../../utils/msgNumbers.js';
+
+
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -53,6 +64,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function TradeModal(props) {
 
 
+  const messages = useSelector(selectMessages);
   ///symbol choose :
 
   const [value, setValue] = React.useState(0);
@@ -198,12 +210,14 @@ export default function TradeModal(props) {
             // props.updateTradeLists()
 
             reduxDispatch(setTradesList(res.data));
-      
-            notifyToast("Trade added successfully", "success");
+            notifyToast(getMsg(messages,msgType.success,msgNumber[4]).msgText, getMsg(messages,msgType.success,msgNumber[4]).msgType);
+
+          //  notifyToast("Trade added successfully", "success");
             handleClose();
 
           }).catch((err) => {
-            notifyToast("Couldn't add trade", "error");
+            notifyToast(getMsg(messages,msgType.errors,msgNumber[4]).msgText, getMsg(messages,msgType.errors,msgNumber[4]).msgType);
+          //  notifyToast("Couldn't add trade", "error");
             handleClose();
           })
       }
@@ -212,21 +226,45 @@ export default function TradeModal(props) {
         data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
         await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth)
           .then((res) => {
-            notifyToast("Trade Edit succssfully", "success")
+            notifyToast(getMsg(messages,msgType.success,msgNumber[5]).msgText, getMsg(messages,msgType.success,msgNumber[5]).msgType);
+      //      notifyToast("Trade Edit succssfully", "success")
             handleUpload(tradeInfo?._id);
             reduxDispatch(setTradesList(res.data));
 
             if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||
               contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
-              if (positionType === '') notifyToast("Position type is missing", "warning");
-              else if (positionStatus === '') notifyToast("Position status is missing", "warning");
-              else if (!netPnL) notifyToast("Net PnL is missing", "warning");
-              else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
-              else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
-              else if (!positionDate) notifyToast("Date field is missing", "warning");
-              else if (entryPrice < 1) notifyToast(" entry Price is missing", "warning");
-              else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate) notifyToast("exit Price  is missing", "warning");
+              if (positionType === '')
+              notifyToast(getMsg(messages,msgType.warnings,msgNumber[27]).msgText, getMsg(messages,msgType.warnings,msgNumber[27]).msgType);
+             //  notifyToast("Position type is missing", "warning");
+
+              else if (positionStatus === '') 
+              notifyToast(getMsg(messages,msgType.warnings,msgNumber[26]).msgText, getMsg(messages,msgType.warnings,msgNumber[26]).msgType);
+             //notifyToast("Position status is missing", "warning");
+
+              else if (!netPnL)
+              notifyToast(getMsg(messages,msgType.warnings,msgNumber[25]).msgText, getMsg(messages,msgType.warnings,msgNumber[25]).msgType);
+              // notifyToast("Net PnL is missing", "warning");
+
+              else if (!contractsCounts) 
+              notifyToast(getMsg(messages,msgType.warnings,msgNumber[24]).msgText, getMsg(messages,msgType.warnings,msgNumber[24]).msgType);
+            //  notifyToast("Number of contracts field is missing", "warning");
+
+              else if (positionSymbol === "") 
+              notifyToast(getMsg(messages,msgType.warnings,msgNumber[23]).msgText, getMsg(messages,msgType.warnings,msgNumber[23]).msgType);
+            //  notifyToast("Position symbol is missing", "warning");
+
+              else if (!positionDate) 
+              notifyToast(getMsg(messages,msgType.warnings,msgNumber[22]).msgText, getMsg(messages,msgType.warnings,msgNumber[22]).msgType);
+             // notifyToast("Date field is missing", "warning");
+
+              else if (entryPrice < 1) 
+              notifyToast(getMsg(messages,msgType.warnings,msgNumber[21]).msgText, getMsg(messages,msgType.warnings,msgNumber[21]).msgType);
+             // notifyToast(" entry Price is missing", "warning");
+
+              else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate)
+              notifyToast(getMsg(messages,msgType.warnings,msgNumber[20]).msgText, getMsg(messages,msgType.warnings,msgNumber[20]).msgType);
+               //notifyToast("exit Price  is missing", "warning");
 
 
               return false;
@@ -245,9 +283,9 @@ export default function TradeModal(props) {
     const currentDate = new Date().toISOString().slice(0, 10); // Get today's date in the format "YYYY-MM-DD"
 
     if (positionDate > currentDate) {
-      const errorMessage = "the selected date is above today's date.";
 
-      notifyToast(errorMessage, "warning");
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[28]).msgText, getMsg(messages,msgType.warnings,msgNumber[28]).msgType);
+     // notifyToast(errorMessage, "warning");
 
       return false;
 
@@ -256,14 +294,39 @@ export default function TradeModal(props) {
     if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
-      if (positionType === '') notifyToast("Position type is missing", "warning");
-      else if (positionStatus === '') notifyToast("Position status is missing", "warning");
-      else if (!netPnL) notifyToast("Net PnL is missing", "warning");
-      else if (!contractsCounts) notifyToast("Number of contracts field is missing", "warning");
-      else if (positionSymbol === "") notifyToast("Position symbol is missing", "warning");
-      else if (!positionDate) notifyToast("Date field is missing", "warning");
-      else if (entryPrice < 1) notifyToast(" entry Price is missing", "warning");
-      else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate)  notifyToast("exit Price  is missing", "warning");
+      if (positionType === '')
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[27]).msgText, getMsg(messages,msgType.warnings,msgNumber[27]).msgType);
+     //  notifyToast("Position type is missing", "warning");
+
+      else if (positionStatus === '') 
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[26]).msgText, getMsg(messages,msgType.warnings,msgNumber[26]).msgType);
+     //notifyToast("Position status is missing", "warning");
+
+      else if (!netPnL)
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[25]).msgText, getMsg(messages,msgType.warnings,msgNumber[25]).msgType);
+      // notifyToast("Net PnL is missing", "warning");
+
+      else if (!contractsCounts) 
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[24]).msgText, getMsg(messages,msgType.warnings,msgNumber[24]).msgType);
+    //  notifyToast("Number of contracts field is missing", "warning");
+
+      else if (positionSymbol === "") 
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[23]).msgText, getMsg(messages,msgType.warnings,msgNumber[23]).msgType);
+    //  notifyToast("Position symbol is missing", "warning");
+
+      else if (!positionDate) 
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[22]).msgText, getMsg(messages,msgType.warnings,msgNumber[22]).msgType);
+     // notifyToast("Date field is missing", "warning");
+
+      else if (entryPrice < 1) 
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[21]).msgText, getMsg(messages,msgType.warnings,msgNumber[21]).msgType);
+     // notifyToast(" entry Price is missing", "warning");
+
+      else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate)
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[20]).msgText, getMsg(messages,msgType.warnings,msgNumber[20]).msgType);
+       //notifyToast("exit Price  is missing", "warning");
+
+
 
 
 
@@ -280,7 +343,12 @@ export default function TradeModal(props) {
   }
 
   const handleUpload = (tradeId) => {
-    if (!selectedFile) { notifyToast("Don't have image file to upload", "error"); return; }
+    if (!selectedFile) {
+      notifyToast(getMsg(messages,msgType.errors,msgNumber[5]).msgText, getMsg(messages,msgType.errors,msgNumber[5]).msgType);
+     // notifyToast("Don't have image file to upload", "error"); 
+      return; 
+    
+    }
     // Create a new FormData object
     const formData = new FormData();
     // Append the selected file to the FormData object
@@ -313,7 +381,8 @@ export default function TradeModal(props) {
   useEffect(() => {
 
     if (selectedFile) {
-      notifyToast("Image successfully uploaded", "success");
+      notifyToast(getMsg(messages,msgType.success,msgNumber[6]).msgText, getMsg(messages,msgType.success,msgNumber[6]).msgType);
+   //   notifyToast("Image successfully uploaded", "success");
     }
   }, [selectedFile])
 

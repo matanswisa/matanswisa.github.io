@@ -28,6 +28,15 @@ import BinanceIcon from '../../brokersIcons/binance.svg'
 import TradeovateIcon from '../../brokersIcons/Tradovate.svg'
 import { brokers } from '../../brokersNames/brokers';
 
+
+
+import {selectMessages} from '../../../redux-toolkit/messagesSlice';
+
+import {getMsg} from '../../../utils/messeageUtils';
+import { msgType} from '../../../utils/messagesEnum.js';
+import {msgNumber} from '../../../utils/msgNumbers.js';
+
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -55,6 +64,9 @@ export default function BasicModal(props) {
   };
 
 
+
+
+  const messages = useSelector(selectMessages);
 
   const dispatch = useDispatch();
   const handleOpen = () => props.handleOpenModal(true);
@@ -109,7 +121,9 @@ export default function BasicModal(props) {
 
     if (!file.name.endsWith('.csv')) {
       validationPassed = false;
-      notifyToast('Please select a CSV  file.', 'warning');
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[3]).msgText, getMsg(messages,msgType.warnings,msgNumber[3]).msgType);
+
+ //     notifyToast('Please select a CSV  file.', 'warning');
       return false; // Validation failed
     }
 
@@ -121,7 +135,9 @@ export default function BasicModal(props) {
         // Check if all required columns are present
         const missingColumns = requiredColumnsTradeOvate.filter(column => !headers.includes(column));
         if (missingColumns.length > 0) {
-          notifyToast('Please select the correct file.', 'error');
+          notifyToast(getMsg(messages,msgType.errors,msgNumber[6]).msgText, getMsg(messages,msgType.errors,msgNumber[6]).msgType);
+
+     //     notifyToast('Please select the correct file.', 'error');
           validationPassed = false; // Validation failed
         } else {
           // Validation passed
@@ -142,13 +158,15 @@ export default function BasicModal(props) {
 
     if (!file.name.endsWith('.xlsx')) {
       validationPassed = false;
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[4]).msgText, getMsg(messages,msgType.warnings,msgNumber[4]).msgType);
       notifyToast('Please select a  Excel file.', 'warning');
       return false; // Validation failed
     }
 
     if (!file.name.includes('Export Trade History')) {
       validationPassed = false;
-      notifyToast('File name should  be "Export Trade History".', 'error');
+      notifyToast(getMsg(messages,msgType.errors,msgNumber[2]).msgText, getMsg(messages,msgType.errors,msgNumber[2]).msgType);
+   //   notifyToast('File name should  be "Export Trade History".', 'error');
       return false; // Validation failed
     }
 
@@ -205,6 +223,7 @@ export default function BasicModal(props) {
         setProcessDuration(3000); // Reset process duration
         dispatch(setTradesList(response.data.trades));
         if (response.data.isAllUploaded) {
+       //   notifyToast(getMsg(messages,msgType.success,msgNumber[6]).msgText, getMsg(messages,msgType.success,msgNumber[6]).msgType);
           notifyToast(response.data.message, 'success');
         } else {
           notifyToast(response.data.message, 'warning');
@@ -217,7 +236,8 @@ export default function BasicModal(props) {
       } catch (error) {
         setIsUploading(false);
         console.error('Error uploading file:', error);
-        notifyToast('Error uploading file' + error.message, 'warning');
+        notifyToast(getMsg(messages,msgType.errors,msgNumber[13]).msgText, getMsg(messages,msgType.errors,msgNumber[13]).msgType);
+      //  notifyToast('Error uploading file' + error.message, 'warning');
         // Handle error or show an error message to the user
       } finally {
         setIsUploading(false);
