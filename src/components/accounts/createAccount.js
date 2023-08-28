@@ -30,6 +30,14 @@ import { configAuth } from '../../api/configAuth';
 import BinanceIcon from '../brokersIcons/binance.svg'
 import TradeovateIcon from '../brokersIcons/Tradovate.svg'
 
+
+import {selectMessages} from '../../redux-toolkit/messagesSlice';
+import {getMsg} from '../../utils/messeageUtils';
+import { msgType} from '../../utils/messagesEnum.js';
+import {msgNumber} from '../../utils/msgNumbers.js';
+
+
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -49,6 +57,10 @@ export default function AccountModal(props) {
   const [accountName, setAccountName] = useState('');
   const [selectedColor, setSelectedColor] = useState(red[500]);
   const [broker, setBroker] = React.useState(1);
+
+
+  const messages = useSelector(selectMessages);
+  
 
   const { notifyToast } = props;
   const { edit } = props;
@@ -93,13 +105,15 @@ export default function AccountModal(props) {
       await api
         .post('/api/createAccount', { userId: user._id, data }, configAuth)
         .then(async (res) => {
-          notifyToast('Account added successfully', 'success');
+          notifyToast(getMsg(messages,msgType.success,msgNumber[2]).msgText, getMsg(messages,msgType.success,msgNumber[2]).msgType);
+          // notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
           dispatch(updateAccountList(res.data))
           dispatch(setCurrentAccount(res.data[res.data.length - 1]));
         })
         .catch((err) => {
-          notifyToast("Couldn't add Account", 'error');
+          notifyToast(getMsg(messages,msgType.errors,msgNumber[1]).msgText, getMsg(messages,msgType.errors,msgNumber[1]).msgType);
+          // notifyToast("Couldn't add Account", 'error');
           return false;
         });
     }
@@ -118,14 +132,16 @@ export default function AccountModal(props) {
       await api
         .put('/api/editAccount', data, configAuth) // Use api.put and pass the account id in the URL
         .then((res) => {
-          notifyToast('Account updated successfully', 'success');
+          // notifyToast('Account updated successfully', 'success');
+          notifyToast(getMsg(messages,msgType.success,msgNumber[3]).msgText, getMsg(messages,msgType.success,msgNumber[3]).msgType);
           props.handleOpenModal(false);
           // props.fetchAccounts();
           dispatch(updateAccountList(res.data))
 
         })
         .catch((err) => {
-          notifyToast("Couldn't update account", 'error');
+          notifyToast(getMsg(messages,msgType.errors,msgNumber[3]).msgText, getMsg(messages,msgType.errors,msgNumber[3]).msgType);
+          // notifyToast("Couldn't update account", 'error');
         });
     }
   };
@@ -148,14 +164,14 @@ export default function AccountModal(props) {
 
   const validateForm = () => {
     if (accountName === '') {
-
-      notifyToast('Account type is missing', 'warning');
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[1]).msgText, getMsg(messages,msgType.warnings,msgNumber[1]).msgType);
+      // notifyToast('Account type is missing', 'warning');
       return false;
     }
 
     if (checkAccountExists(accounts, accountName)) {
-
-      notifyToast('Account already exist', 'warning');
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[2]).msgText, getMsg(messages,msgType.warnings,msgNumber[2]).msgType);
+      // notifyToast('Account already exist', 'warning');
       return false;
     }
 

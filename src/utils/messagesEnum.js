@@ -1,0 +1,1 @@
+export const msgType = { errors: 1, warnings: 2 , success:3};
