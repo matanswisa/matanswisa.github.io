@@ -52,15 +52,16 @@ import { Grid } from 'rsuite';
 import { selectCurrentAccount, selectUser, setTradesList, selectUserAccounts } from '../redux-toolkit/userSlice';
 
 
-import {selectMessages} from '../redux-toolkit/messagesSlice';
+import { selectMessages } from '../redux-toolkit/messagesSlice';
 
-import {getMsg} from '../utils/messeageUtils';
-import { msgType} from '../utils/messagesEnum.js';
-import {msgNumber} from '../utils/msgNumbers.js';
+import { getMsg } from '../utils/messeageUtils';
+import { msgType } from '../utils/messagesEnum.js';
+import { msgNumber } from '../utils/msgNumbers.js';
 
 
 import { configAuth } from '../api/configAuth';
 import { brokers } from "../components/brokersNames/brokers.js";
+import { handleUploadTradeImage } from '../utils/uploadImage';
 const sumPnL = (trades) => {
   let sum = 0;
   trades.forEach((trade) => {
@@ -211,11 +212,14 @@ export default function UserPage() {
   };
 
   const handleUpload = (tradeId) => {
-    if (!selectedFile) { 
-      notifyToast(getMsg(messages,msgType.errors,msgNumber[9]).msgText, getMsg(messages,msgType.errors,msgNumber[9]).msgType);
-      
-     // notifyToast("Couldn't upload the image", "error"); return; }
+    console.log("Inside upload new image but adding trade!", tradeId)
+
+    if (!selectedFile && !tradeId) {
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[9]).msgText, getMsg(messages, msgType.errors, msgNumber[9]).msgType);
+
+      // notifyToast("Couldn't upload the image", "error"); return; }
     }
+    console.log(user);
     // Create a new FormData object
     const formData = new FormData();
     // Append the selected file to the FormData object
@@ -223,20 +227,17 @@ export default function UserPage() {
     formData.append('tradeId', tradeId);
     formData.append('userId', user._id)
     formData.append('accountId', currentAccount._id)
-
+    console.log("formData", formData);
     // Make a POST request to the server with the file data
-    fetch('http://localhost:8000/api/uploadTradeImage', {
-      method: 'POST',
-      body: formData
-    })
+    api.post('http://localhost:8000/api/uploadTradeImage', formData, { headers: { ...configAuth['headers'], 'Content-Type': 'multipart/form-data' } })
       .then(response => response.json())
       .then(data => {
-        notifyToast(getMsg(messages,msgType.success,msgNumber[6]).msgText, getMsg(messages,msgType.success,msgNumber[6]).msgType);
+        notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
         // notifyToast("Trade image uploaded successfully", "success");
         dispatch(setTradesList(data));
       })
       .catch(error => {
-        notifyToast(getMsg(messages,msgType.errors,msgNumber[10]).msgText, getMsg(messages,msgType.errors,msgNumber[10]).msgType);
+        notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
         // Handle any errors that occurred during the upload
         // notifyToast("Error uploading trade image", "error");
         console.error(error);
@@ -248,12 +249,6 @@ export default function UserPage() {
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
-
-  useEffect(() => {
-    if (editTradeId?._id && selectedFile !== null) {
-      handleUpload(editTradeId._id);
-    }
-  }, [selectedFile])
 
 
 
@@ -292,8 +287,8 @@ export default function UserPage() {
   const handleOpenModal = (tradeId) => {
 
     if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[6]).msgText, getMsg(messages,msgType.warnings,msgNumber[6]).msgType);
-    //  notifyToast("before add trades you need create account", 'warning');
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[6]).msgText, getMsg(messages, msgType.warnings, msgNumber[6]).msgType);
+      //  notifyToast("before add trades you need create account", 'warning');
     }
     else {
       setIsOpenmodal(true);
@@ -311,8 +306,8 @@ export default function UserPage() {
   const handleOpenModalImportTrades = (tradeId) => {
 
     if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[7]).msgText, getMsg(messages,msgType.warnings,msgNumber[7]).msgType);
-     // notifyToast("before import trades you need create account", 'warning');
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[7]).msgText, getMsg(messages, msgType.warnings, msgNumber[7]).msgType);
+      // notifyToast("before import trades you need create account", 'warning');
     }
     else {
       setIsOpenmodalImportTrades(true);
@@ -404,8 +399,8 @@ export default function UserPage() {
     console.log(editTradeId);
     const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, configAuth);
     dispatch(setTradesList(res.data))
-    notifyToast(getMsg(messages,msgType.success,msgNumber[14]).msgText, getMsg(messages,msgType.success,msgNumber[14]).msgType);
-   // notifyToast("Delete trade Successfully", 'success');
+    notifyToast(getMsg(messages, msgType.success, msgNumber[14]).msgText, getMsg(messages, msgType.success, msgNumber[14]).msgType);
+    // notifyToast("Delete trade Successfully", 'success');
     toggleShow();
   }
 
