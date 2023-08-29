@@ -1,5 +1,5 @@
 
-
+// Import trades from Tradovate CSV data, filter, sort, and process each trade
 export const importTradesFromTradovate = async (csvData, userId, accountId) => {
     const trades = csvData;
     const filteredTrades = filterCanceledTrades(trades);
@@ -10,9 +10,10 @@ export const importTradesFromTradovate = async (csvData, userId, accountId) => {
     for(let i = 0 ;i < sortedTrades.length; i++){  /// runing on intire data
 
         let EndIdxOfCurrTrade = (CalcIndexsOfTradeByCsvData(sortedTrades));   //get index of end in curr trade.
-        //console.log(EndIdxOfCurrTrade);
+     
         calcTradeDataAndInsertToDb(sortedTrades,i,EndIdxOfCurrTrade);   // handle trade info and insert to db.
         sortedTrades = DataRemovalByIdx(sortedTrades, CalcIndexsOfTradeByCsvData(sortedTrades)); // after  insert db remove from orgingal data curr trade and going to next trade.
+       
     }
 
   //  printTrades(sortedTrades);
