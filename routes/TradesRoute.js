@@ -49,6 +49,10 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
   try {
     const { userId, accountId, tradeData } = req.body;
     const user = await User.findById(userId);
+    console.log(user);
+    if (!user) {
+      return res.status(400).send("Can't add trade missing params.")
+    }
     let accounts = user.accounts;
     const accountObj = user.accounts.find(account => account._id == accountId);
 
@@ -412,6 +416,8 @@ router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
 
   try {
     const { tradeId, userId, accountId } = req.body;
+    console.log("This is what inside req.body - ", { tradeId, userId, accountId });
+    console.log("this is req.body", req.body);
     if (!req.file) return res.status(400).send("No image file to upload");
     const { path, originalname } = req.file;
     // Handle the uploaded image as needed
