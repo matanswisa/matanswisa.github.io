@@ -5,8 +5,6 @@ export const importTradesFromTradovate = async (csvData, userId, accountId) => {
     const filteredTrades = filterCanceledTrades(trades);
     let sortedTrades = sortByTimestamp(filteredTrades);
   
-
-    
     for(let i = 0 ;i < sortedTrades.length; i++){  /// runing on intire data
 
         let EndIdxOfCurrTrade = (CalcIndexsOfTradeByCsvData(sortedTrades));   //get index of end in curr trade.
@@ -18,6 +16,8 @@ export const importTradesFromTradovate = async (csvData, userId, accountId) => {
 
   //  printTrades(sortedTrades);
 }
+
+
 
 
 const filterCanceledTrades = (trades) => {
@@ -33,39 +33,62 @@ const sortByTimestamp = (trades) => {
     });
 
 }
+// const CalcIndexsOfTradeByCsvData = (trades) => {
+//     let endOfTradeRowIdx;
+//     let diffBettwenConract = 0;
+
+
+
+//     let sellSideSymbol = 0; // Initialize with default values
+//     let buySideSymbol = 0; // Initialize with default values
+//     if (trades[0]["B/S"] == ' Sell' || trades[0]["B/S"] == 'Sell' ) {
+//         sellSideSymbol = 1; // Update values based on trade type
+//         buySideSymbol = -1; // Update values based on trade type
+//     }
+//     else if (trades[0]["B/S"] == " Buy" || trades[0]["B/S"] == "Buy") {
+//         buySideSymbol = 1; // Update values based on trade type
+//         sellSideSymbol = -1; // Update values based on trade type
+//     }
+    
+//     for (let row = 0; row < trades.length; row++) {
+    
+//         const filledQty = parseInt(trades[row]["filledQty"], 10);
+//         const tradeSideSymbol = trades[row]["B/S"] == ' Sell' || trades[row]["B/S"] == 'Sell' ? sellSideSymbol : buySideSymbol;
+        
+//         // console.log(`Row ${row}: tradeSideSymbol = ${tradeSideSymbol}`); // Debug print
+//         // console.log("tradesign",tradeSideSymbol);
+//         diffBettwenConract += filledQty * tradeSideSymbol;
+//         // console.log("sum",diffBettwenConract);
+//         if (diffBettwenConract === 0) {
+//             endOfTradeRowIdx = row;
+//             break;
+//         }
+//     }
+
+   
+//     return endOfTradeRowIdx;
+// }
+
+
 const CalcIndexsOfTradeByCsvData = (trades) => {
     let endOfTradeRowIdx;
-    let diffBettwenConract = 0;
+    let diffBettwenBuy = 0;
+    let diffBettwenSell = 0;
 
-
-
-    let sellSideSymbol = 0; // Initialize with default values
-    let buySideSymbol = 0; // Initialize with default values
-    if (trades[0]["B/S"] == ' Sell' || trades[0]["B/S"] == 'Sell' ) {
-        sellSideSymbol = 1; // Update values based on trade type
-        buySideSymbol = -1; // Update values based on trade type
-    }
-    else if (trades[0]["B/S"] == " Buy" || trades[0]["B/S"] == "Buy") {
-        buySideSymbol = 1; // Update values based on trade type
-        sellSideSymbol = -1; // Update values based on trade type
-    }
-    
     for (let row = 0; row < trades.length; row++) {
-    
         const filledQty = parseInt(trades[row]["filledQty"], 10);
-        const tradeSideSymbol = trades[row]["B/S"] == ' Sell' || trades[row]["B/S"] == 'Sell' ? sellSideSymbol : buySideSymbol;
-        
-        // console.log(`Row ${row}: tradeSideSymbol = ${tradeSideSymbol}`); // Debug print
-        // console.log("tradesign",tradeSideSymbol);
-        diffBettwenConract += filledQty * tradeSideSymbol;
-        // console.log("sum",diffBettwenConract);
-        if (diffBettwenConract === 0) {
+        if (trades[row]["B/S"] === ' Sell' || trades[row]["B/S"] === 'Sell') {
+            diffBettwenSell += filledQty;
+        } else if (trades[row]["B/S"] === " Buy" || trades[row]["B/S"] === "Buy") {
+            diffBettwenBuy += filledQty;
+        }
+
+        if (diffBettwenBuy === diffBettwenSell) {
             endOfTradeRowIdx = row;
             break;
         }
     }
 
-   
     return endOfTradeRowIdx;
 }
 

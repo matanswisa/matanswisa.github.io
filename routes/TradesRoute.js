@@ -92,8 +92,8 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
         .on('end', async () => {
           fs.unlinkSync(req.file.path); // Remove the temporary file
           const result = await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
-          importTradesFromTradovate(tradesData, userId, accountId); 
-          console.log(result);
+         importTradesFromTradovate(tradesData, userId, accountId); 
+       
           const accountOfUser = await Account.findOne({ _id: accountId });
           await SelectedAccountModel.updateOne({ userId }, { account: accountOfUser, accountId: accountId });
 
