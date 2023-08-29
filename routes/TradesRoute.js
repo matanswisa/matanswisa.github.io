@@ -17,6 +17,7 @@ import { buildTradesDataByTradovateCSV } from "../utils/csvTradesFileUtils.js";
 import { buildTradesDataByBinanceCSV } from "../utils/csvTradesFileImportsBinance.js"
 import SelectedAccountModel from "../models/selectedAccount.js";
 import { brokers } from "../utils/brokers.js";
+import { importTradesFromTradovate } from "../utils/importTradesFromTradovate/importTradesFromTradovate.js";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = dirname(currentFilePath);
@@ -91,6 +92,7 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
         .on('end', async () => {
           fs.unlinkSync(req.file.path); // Remove the temporary file
           const result = await buildTradesDataByTradovateCSV(tradesData, userId, accountId);
+          importTradesFromTradovate(tradesData, userId, accountId); 
           console.log(result);
           const accountOfUser = await Account.findOne({ _id: accountId });
           await SelectedAccountModel.updateOne({ userId }, { account: accountOfUser, accountId: accountId });
