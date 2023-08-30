@@ -297,7 +297,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
 
         //Code is repeat itself need to create functions for later use
         const account = await Account.findOne({ _id: accountId });
-        console.log(tradeGroup)
+      
         const existingTrade = account.trades.find((trd) => trd.transactionId == tradeGroup[0].transactionId);
 
         if (existingTrade) {
@@ -325,7 +325,7 @@ export const buildTradesDataByTradovateCSV = async (csvData, userId, accountId) 
     }
 
     const totalLengthOfFathersTradesAndPartials = sumArrayOfLengthsAndTradeHistory(tradeGroups);
-    console.log("Counter is=", uploadedTradeCounter, "totalLengthOfFathersTradesAndPartials=", totalLengthOfFathersTradesAndPartials)
+    // console.log("Counter is=", uploadedTradeCounter, "totalLengthOfFathersTradesAndPartials=", totalLengthOfFathersTradesAndPartials)
 
 
     if (!uploadedTradeCounter) {
