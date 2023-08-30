@@ -124,18 +124,63 @@ const DataRemovalByIdx = (data, EndIdxOfCurrTrade) => {
     //     data = data.slice(EndIdxOfCurrTrade + 1);
 
     // }
-    console.log("You got sliced champ , current data-", data.length, "After I cut you big boy-", newData.length);
+   /// console.log("You got sliced champ , current data-", data.length, "After I cut you big boy-", newData.length);
     return newData;
 }
 
 
 const calcTradeDataAndInsertToDb = (data, i, EndIdxOfCurrTrade) => {
-    console.log("Trade Number : ", i + 1);
-    for (let i = 0; i <= EndIdxOfCurrTrade; i++) {
+    
+
+    handleMainTradeAndInsertToDb(data,i+1, EndIdxOfCurrTrade);
+
+  
+}
 
 
-        console.log(data[i]);
-    }
+
+const handleMainTradeAndInsertToDb = (mainTrade,TradeNumber, EndIdxOfCurrTrade) =>{
+
+    console.log("Trade number " , TradeNumber, " Results: ");
+
+    // Extract relevant information from the mainTrade data
+    const tradeData = mainTrade.slice(0, EndIdxOfCurrTrade + 1);
+  
+     // Calculate net PnL
+    const netPnL = tradeData.reduce((acc, trade) => {
+        const avgFillPrice = parseFloat(trade['Avg Fill Price']);
+        const filledQty = parseInt(trade['Filled Qty']);
+        const pnl = (avgFillPrice - parseFloat(trade.avgPrice)) * filledQty;
+        return acc + pnl;
+    }, 0);
+
+
+
+
+    const startTime = new Date(tradeData[0]['Fill Time']);
+    const endTime = new Date(tradeData[EndIdxOfCurrTrade]['Fill Time']);
+    const tradeDuration = (endTime - startTime) / 1000; // Duration in seconds
+
+
+     // Calculate commission based on 'Product Description'
+     const commission = tradeData[0]['Product Description'].includes('Micro') ? -1 : -3;
+
+     // Determine if the trade is a win, loss, or break even
+    const tradeResult = netPnL > 0 ? 'Win' : (netPnL < 0 ? 'Loss' : 'Break Even');   // valid
+
+    // Determine if the trade is long or short
+    const tradeDirection = tradeData[0]['B/S'] === 'Buy' ? 'Long' : 'Short';        // valid
+
+
+     // Extract date and time
+     const tradeDateTime = startTime.toLocaleString();                               /// valid
+
+    console.log("Net PnL:", netPnL.toFixed(2));
+    console.log("Trade Duration (seconds):", tradeDuration);
+    console.log("Trade Result:", tradeResult);
+    console.log("Trade Direction:", tradeDirection);
+    console.log("Trade Date and Time:", tradeDateTime);
+    console.log("commission:", commission);
 }
 
 const printTrades = (trades) => {
