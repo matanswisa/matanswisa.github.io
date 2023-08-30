@@ -21,7 +21,7 @@ export const importTradesFromTradovate = async (csvData, userId, accountId) => {
 
 
 
-    //  printTrades(sortedTrades);
+    printTrades(sortedTrades);
 }
 
 function removeLeadingSpaces(trades) {
