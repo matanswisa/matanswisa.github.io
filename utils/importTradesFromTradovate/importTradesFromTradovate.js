@@ -19,7 +19,6 @@ export const importTradesFromTradovate = async (csvData, userId, accountId) => {
         i++;
     }
 
-    calcTradeDataAndInsertToDb(sortedTrades, i, EndIdxOfCurrTrade + 1);   // handle trade info and insert to db.
 
 
     //  printTrades(sortedTrades);
