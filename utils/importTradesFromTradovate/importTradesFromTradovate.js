@@ -7,12 +7,15 @@ export const importTradesFromTradovate = async (csvData, userId, accountId) => {
     const filteredTrades = filterCanceledTrades(trades);
 
     let sortedTrades = sortByTimestamp(filteredTrades);
+
+
   
     for(let i = 0 ;i < sortedTrades.length; i++){  /// runing on intire data
 
         let EndIdxOfCurrTrade = (CalcIndexsOfTradeByCsvData(sortedTrades));   //get index of end in curr trade.
-     
+        console.log(EndIdxOfCurrTrade);
         calcTradeDataAndInsertToDb(sortedTrades,i,EndIdxOfCurrTrade);   // handle trade info and insert to db.
+      
         sortedTrades = DataRemovalByIdx(sortedTrades, CalcIndexsOfTradeByCsvData(sortedTrades)); // after  insert db remove from orginal data  the curr trade and going to next trade.
        
     }
@@ -119,10 +122,12 @@ const DataRemovalByIdx = (data,EndIdxOfCurrTrade ) =>
 
 const calcTradeDataAndInsertToDb = (data,i,EndIdxOfCurrTrade) =>
 {
+    console.log("Trade Number : " , i+1);
+for(let i = 0 ; i<= EndIdxOfCurrTrade; i++){
+  
 
-   
-        console.log("trade number ",i+1 ," indexes  is from  0 to :" ,  EndIdxOfCurrTrade);
-
+    console.log(data[i]);
+}
 }
 
 const printTrades = (trades) => {
