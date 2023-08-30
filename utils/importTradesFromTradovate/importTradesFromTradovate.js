@@ -124,29 +124,30 @@ const DataRemovalByIdx = (data, EndIdxOfCurrTrade) => {
     //     data = data.slice(EndIdxOfCurrTrade + 1);
 
     // }
-   /// console.log("You got sliced champ , current data-", data.length, "After I cut you big boy-", newData.length);
+    /// console.log("You got sliced champ , current data-", data.length, "After I cut you big boy-", newData.length);
     return newData;
 }
 
 
 const calcTradeDataAndInsertToDb = (data, i, EndIdxOfCurrTrade) => {
-    
 
-    handleMainTradeAndInsertToDb(data,i+1, EndIdxOfCurrTrade);
 
-  
+    handleMainTradeAndInsertToDb(data, i + 1, EndIdxOfCurrTrade);
+
+    handlePartialTradeAndInsertToDb(data, i + 1, EndIdxOfCurrTrade);
+
 }
 
 
 
-const handleMainTradeAndInsertToDb = (mainTrade,TradeNumber, EndIdxOfCurrTrade) =>{
+const handleMainTradeAndInsertToDb = (mainTrade, TradeNumber, EndIdxOfCurrTrade) => {
 
-    console.log("Trade number " , TradeNumber, " Results: ");
+    console.log("Trade number ", TradeNumber, " Results: ");
 
     // Extract relevant information from the mainTrade data
     const tradeData = mainTrade.slice(0, EndIdxOfCurrTrade + 1);
-  
-     // Calculate net PnL
+
+    // Calculate net PnL
     const netPnL = tradeData.reduce((acc, trade) => {
         const avgFillPrice = parseFloat(trade['Avg Fill Price']);
         const filledQty = parseInt(trade['Filled Qty']);
@@ -162,18 +163,22 @@ const handleMainTradeAndInsertToDb = (mainTrade,TradeNumber, EndIdxOfCurrTrade) 
     const tradeDuration = (endTime - startTime) / 1000; // Duration in seconds
 
 
-     // Calculate commission based on 'Product Description'
-     const commission = tradeData[0]['Product Description'].includes('Micro') ? -1 : -3;
 
-     // Determine if the trade is a win, loss, or break even
+
+    // Calculate commission based on 'Product Description'
+    const commission = tradeData[0]['Product Description'].includes('Micro') ? -1 : -3;  //valid
+
+    // Determine if the trade is a win, loss, or break even
     const tradeResult = netPnL > 0 ? 'Win' : (netPnL < 0 ? 'Loss' : 'Break Even');   // valid
 
     // Determine if the trade is long or short
     const tradeDirection = tradeData[0]['B/S'] === 'Buy' ? 'Long' : 'Short';        // valid
 
 
-     // Extract date and time
-     const tradeDateTime = startTime.toLocaleString();                               /// valid
+    // Extract date and time
+    const tradeDateTime = startTime.toLocaleString();                               /// valid
+
+
 
     console.log("Net PnL:", netPnL.toFixed(2));
     console.log("Trade Duration (seconds):", tradeDuration);
@@ -182,6 +187,17 @@ const handleMainTradeAndInsertToDb = (mainTrade,TradeNumber, EndIdxOfCurrTrade) 
     console.log("Trade Date and Time:", tradeDateTime);
     console.log("commission:", commission);
 }
+
+
+
+const handlePartialTradeAndInsertToDb = (Trade, TradeNumber, EndIdxOfCurrTrade) => {
+
+    console.log("Trade number ", TradeNumber, "Partial Results: ");
+
+
+}
+
+filterCanceledTrades
 
 const printTrades = (trades) => {
     console.log(trades);
