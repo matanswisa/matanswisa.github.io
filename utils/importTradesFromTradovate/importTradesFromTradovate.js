@@ -3,10 +3,12 @@
 export const importTradesFromTradovate = async (csvData, userId, accountId) => {
     let trades = csvData;
     trades = removeLeadingSpaces(trades);
+
     const filteredTrades = filterCanceledTrades(trades);
+
     let sortedTrades = sortByTimestamp(filteredTrades);
   
-    for(let i = 0 ;i < 15; i++){  /// runing on intire data
+    for(let i = 0 ;i < sortedTrades.length; i++){  /// runing on intire data
 
         let EndIdxOfCurrTrade = (CalcIndexsOfTradeByCsvData(sortedTrades));   //get index of end in curr trade.
      
@@ -31,10 +33,8 @@ function removeLeadingSpaces(trades) {
 
 
 const filterCanceledTrades = (trades) => {
-    for(let i = 0 ;i < trades.length;i++){
-        console.log(trades[0]["Status"]);
-    }
-    return trades.filter(trade => trade.Status !== ' Canceled') ;
+   
+    return trades.filter(trade => trade.Status !== 'Canceled') ;
 
 }
 
@@ -47,7 +47,6 @@ const sortByTimestamp = (trades) => {
     });
 
 }
-// const CalcIndexsOfTradeByCsvData = (trades) => {
 //     let endOfTradeRowIdx;
 //     let diffBettwenConract = 0;
 
@@ -121,23 +120,8 @@ const DataRemovalByIdx = (data,EndIdxOfCurrTrade ) =>
 const calcTradeDataAndInsertToDb = (data,i,EndIdxOfCurrTrade) =>
 {
 
-    // let data = {
-    //     netPNL: 0,
-    //     tradeStatus: '',
-    //     symbol: '',
-    //     duration: '',
-    //   };
-
-    //   const buyTrade = trades[0];
-    //   const sellTrade = trades[1];
-
-    //   for(let trade = 0 ; trade <= EndIdxOfCurrTrade; trade++){
-          
-    //       console.log(data[trade]);
-          
-    //     }
-        
-     //   console.log("trade number ",i+1 ," indexes  is from  0 to :" ,  EndIdxOfCurrTrade);
+   
+        console.log("trade number ",i+1 ," indexes  is from  0 to :" ,  EndIdxOfCurrTrade);
 
 }
 
