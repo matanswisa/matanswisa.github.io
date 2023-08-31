@@ -177,6 +177,7 @@ export default function DashboardAppPage() {
   const [dailyNetCumulative, setDailyNetCumulative] = useState([]);
 
 
+  // this post handle "Winning % By Trades" cake.
   useEffect(() => {
     api.post('/api/WinAndLossTotalTime', { trades: Alltrades }, configAuth).then(
       (res) => {
@@ -203,7 +204,7 @@ export default function DashboardAppPage() {
 
 
 
-
+  // this post handle  "Winning % By Days" cake. 
   useEffect(() => {
     api.post('/api/ShowInfoByDates', { trades: Alltrades }, configAuth).then(
       (res) => {
@@ -225,7 +226,7 @@ export default function DashboardAppPage() {
   }, [])
 
 
-
+// this post handle calendar data. 
   useEffect(() => {
     if (trades.length) {
       api.post("/api/ShowNumOfTradeTotalPnlInfoByDates", { trades: Alltrades }, configAuth).then(
