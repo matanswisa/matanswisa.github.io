@@ -290,7 +290,7 @@ export default function UserPage() {
 
 
   const handleOpenModal = (tradeId) => {
-
+    setEditMode(false);
     if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
       notifyToast(getMsg(messages,msgType.warnings,msgNumber[6]).msgText, getMsg(messages,msgType.warnings,msgNumber[6]).msgType);
     //  notifyToast("before add trades you need create account", 'warning');
@@ -476,6 +476,7 @@ export default function UserPage() {
           </div>
 
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
+
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
             key={editTradeId._id}
             openModal={openmodal}

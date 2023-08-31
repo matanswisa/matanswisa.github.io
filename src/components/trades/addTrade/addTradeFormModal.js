@@ -27,15 +27,15 @@ import './addTrade.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentAccount, selectUser, setTradesList } from '../../../redux-toolkit/userSlice';
 import { configAuth } from '../../../api/configAuth';
-import {brokers} from '../../brokersNames/brokers.js'
+import { brokers } from '../../brokersNames/brokers.js'
 
 
 
-import {selectMessages} from '../../../redux-toolkit/messagesSlice';
+import { selectMessages } from '../../../redux-toolkit/messagesSlice';
 
-import {getMsg} from '../../../utils/messeageUtils';
-import { msgType} from '../../../utils/messagesEnum.js';
-import {msgNumber} from '../../../utils/msgNumbers.js';
+import { getMsg } from '../../../utils/messeageUtils';
+import { msgType } from '../../../utils/messagesEnum.js';
+import { msgNumber } from '../../../utils/msgNumbers.js';
 
 
 
@@ -92,6 +92,7 @@ export default function TradeModal(props) {
   const { notifyToast } = props;
   const tradeInfo = props?.tradeInfo;
   const editMode = props?.isEditMode;
+  console.log(editMode);
   const prevStatusState = props?.prevState;
 
   const reduxDispatch = useDispatch();
@@ -142,7 +143,7 @@ export default function TradeModal(props) {
     if (field === 'positionSymbol' && event !== null) {
       dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.year });
     } else if (event !== null) {
-    
+
       dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.target.value });
     }
   };
@@ -173,11 +174,11 @@ export default function TradeModal(props) {
         comments,
         netPnL: positionStatus == "Loss" ? netPnL * -1 : netPnL,
         tradeId: tradeInfo?._id || '',
-        
+
       }
     }
 
-    else if(currentAccount?.Broker === brokers.Binance){
+    else if (currentAccount?.Broker === brokers.Binance) {
 
       data = {
         entryDate: positionDate,
@@ -189,19 +190,19 @@ export default function TradeModal(props) {
         contracts: contractsCounts,
         entryPrice: entryPrice,
         exitPrice: tradeInfo?.exitPrice || 0,
-        duration:tradeInfo?.duration || 0,
+        duration: tradeInfo?.duration || 0,
         commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
         comments,
         netPnL: positionStatus == "Loss" ? netPnL * -1 : netPnL,
         tradeId: tradeInfo?._id || '',
-        
+
       }
     }
-   
-   
+
+
 
     if (validateForm()) {
-            if (!editMode) {
+      if (!editMode) {
         await api
           .post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth).then((res) => {
             if (selectedFile !== null) {
@@ -210,24 +211,24 @@ export default function TradeModal(props) {
             // props.updateTradeLists()
 
             reduxDispatch(setTradesList(res.data));
-            notifyToast(getMsg(messages,msgType.success,msgNumber[4]).msgText, getMsg(messages,msgType.success,msgNumber[4]).msgType);
+            notifyToast(getMsg(messages, msgType.success, msgNumber[4]).msgText, getMsg(messages, msgType.success, msgNumber[4]).msgType);
 
-          //  notifyToast("Trade added successfully", "success");
+            //  notifyToast("Trade added successfully", "success");
             handleClose();
 
           }).catch((err) => {
-            notifyToast(getMsg(messages,msgType.errors,msgNumber[4]).msgText, getMsg(messages,msgType.errors,msgNumber[4]).msgType);
-          //  notifyToast("Couldn't add trade", "error");
+            notifyToast(getMsg(messages, msgType.errors, msgNumber[4]).msgText, getMsg(messages, msgType.errors, msgNumber[4]).msgType);
+            //  notifyToast("Couldn't add trade", "error");
             handleClose();
           })
       }
       else if (editMode === true) {
-   
+
         data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
         await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth)
           .then((res) => {
-            notifyToast(getMsg(messages,msgType.success,msgNumber[5]).msgText, getMsg(messages,msgType.success,msgNumber[5]).msgType);
-      //      notifyToast("Trade Edit succssfully", "success")
+            notifyToast(getMsg(messages, msgType.success, msgNumber[5]).msgText, getMsg(messages, msgType.success, msgNumber[5]).msgType);
+            //      notifyToast("Trade Edit succssfully", "success")
             handleUpload(tradeInfo?._id);
             reduxDispatch(setTradesList(res.data));
 
@@ -235,36 +236,36 @@ export default function TradeModal(props) {
               contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
               if (positionType === '')
-              notifyToast(getMsg(messages,msgType.warnings,msgNumber[27]).msgText, getMsg(messages,msgType.warnings,msgNumber[27]).msgType);
-             //  notifyToast("Position type is missing", "warning");
+                notifyToast(getMsg(messages, msgType.warnings, msgNumber[27]).msgText, getMsg(messages, msgType.warnings, msgNumber[27]).msgType);
+              //  notifyToast("Position type is missing", "warning");
 
-              else if (positionStatus === '') 
-              notifyToast(getMsg(messages,msgType.warnings,msgNumber[26]).msgText, getMsg(messages,msgType.warnings,msgNumber[26]).msgType);
-             //notifyToast("Position status is missing", "warning");
+              else if (positionStatus === '')
+                notifyToast(getMsg(messages, msgType.warnings, msgNumber[26]).msgText, getMsg(messages, msgType.warnings, msgNumber[26]).msgType);
+              //notifyToast("Position status is missing", "warning");
 
               else if (!netPnL)
-              notifyToast(getMsg(messages,msgType.warnings,msgNumber[25]).msgText, getMsg(messages,msgType.warnings,msgNumber[25]).msgType);
+                notifyToast(getMsg(messages, msgType.warnings, msgNumber[25]).msgText, getMsg(messages, msgType.warnings, msgNumber[25]).msgType);
               // notifyToast("Net PnL is missing", "warning");
 
-              else if (!contractsCounts) 
-              notifyToast(getMsg(messages,msgType.warnings,msgNumber[24]).msgText, getMsg(messages,msgType.warnings,msgNumber[24]).msgType);
-            //  notifyToast("Number of contracts field is missing", "warning");
+              else if (!contractsCounts)
+                notifyToast(getMsg(messages, msgType.warnings, msgNumber[24]).msgText, getMsg(messages, msgType.warnings, msgNumber[24]).msgType);
+              //  notifyToast("Number of contracts field is missing", "warning");
 
-              else if (positionSymbol === "") 
-              notifyToast(getMsg(messages,msgType.warnings,msgNumber[23]).msgText, getMsg(messages,msgType.warnings,msgNumber[23]).msgType);
-            //  notifyToast("Position symbol is missing", "warning");
+              else if (positionSymbol === "")
+                notifyToast(getMsg(messages, msgType.warnings, msgNumber[23]).msgText, getMsg(messages, msgType.warnings, msgNumber[23]).msgType);
+              //  notifyToast("Position symbol is missing", "warning");
 
-              else if (!positionDate) 
-              notifyToast(getMsg(messages,msgType.warnings,msgNumber[22]).msgText, getMsg(messages,msgType.warnings,msgNumber[22]).msgType);
-             // notifyToast("Date field is missing", "warning");
+              else if (!positionDate)
+                notifyToast(getMsg(messages, msgType.warnings, msgNumber[22]).msgText, getMsg(messages, msgType.warnings, msgNumber[22]).msgType);
+              // notifyToast("Date field is missing", "warning");
 
-              else if (entryPrice < 1) 
-              notifyToast(getMsg(messages,msgType.warnings,msgNumber[21]).msgText, getMsg(messages,msgType.warnings,msgNumber[21]).msgType);
-             // notifyToast(" entry Price is missing", "warning");
+              else if (entryPrice < 1)
+                notifyToast(getMsg(messages, msgType.warnings, msgNumber[21]).msgText, getMsg(messages, msgType.warnings, msgNumber[21]).msgType);
+              // notifyToast(" entry Price is missing", "warning");
 
               else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate)
-              notifyToast(getMsg(messages,msgType.warnings,msgNumber[20]).msgText, getMsg(messages,msgType.warnings,msgNumber[20]).msgType);
-               //notifyToast("exit Price  is missing", "warning");
+                notifyToast(getMsg(messages, msgType.warnings, msgNumber[20]).msgText, getMsg(messages, msgType.warnings, msgNumber[20]).msgType);
+              //notifyToast("exit Price  is missing", "warning");
 
 
               return false;
@@ -284,8 +285,8 @@ export default function TradeModal(props) {
 
     if (positionDate > currentDate) {
 
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[28]).msgText, getMsg(messages,msgType.warnings,msgNumber[28]).msgType);
-     // notifyToast(errorMessage, "warning");
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[28]).msgText, getMsg(messages, msgType.warnings, msgNumber[28]).msgType);
+      // notifyToast(errorMessage, "warning");
 
       return false;
 
@@ -295,36 +296,36 @@ export default function TradeModal(props) {
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
       if (positionType === '')
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[27]).msgText, getMsg(messages,msgType.warnings,msgNumber[27]).msgType);
-     //  notifyToast("Position type is missing", "warning");
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[27]).msgText, getMsg(messages, msgType.warnings, msgNumber[27]).msgType);
+      //  notifyToast("Position type is missing", "warning");
 
-      else if (positionStatus === '') 
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[26]).msgText, getMsg(messages,msgType.warnings,msgNumber[26]).msgType);
-     //notifyToast("Position status is missing", "warning");
+      else if (positionStatus === '')
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[26]).msgText, getMsg(messages, msgType.warnings, msgNumber[26]).msgType);
+      //notifyToast("Position status is missing", "warning");
 
       else if (!netPnL)
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[25]).msgText, getMsg(messages,msgType.warnings,msgNumber[25]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[25]).msgText, getMsg(messages, msgType.warnings, msgNumber[25]).msgType);
       // notifyToast("Net PnL is missing", "warning");
 
-      else if (!contractsCounts) 
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[24]).msgText, getMsg(messages,msgType.warnings,msgNumber[24]).msgType);
-    //  notifyToast("Number of contracts field is missing", "warning");
+      else if (!contractsCounts)
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[24]).msgText, getMsg(messages, msgType.warnings, msgNumber[24]).msgType);
+      //  notifyToast("Number of contracts field is missing", "warning");
 
-      else if (positionSymbol === "") 
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[23]).msgText, getMsg(messages,msgType.warnings,msgNumber[23]).msgType);
-    //  notifyToast("Position symbol is missing", "warning");
+      else if (positionSymbol === "")
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[23]).msgText, getMsg(messages, msgType.warnings, msgNumber[23]).msgType);
+      //  notifyToast("Position symbol is missing", "warning");
 
-      else if (!positionDate) 
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[22]).msgText, getMsg(messages,msgType.warnings,msgNumber[22]).msgType);
-     // notifyToast("Date field is missing", "warning");
+      else if (!positionDate)
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[22]).msgText, getMsg(messages, msgType.warnings, msgNumber[22]).msgType);
+      // notifyToast("Date field is missing", "warning");
 
-      else if (entryPrice < 1) 
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[21]).msgText, getMsg(messages,msgType.warnings,msgNumber[21]).msgType);
-     // notifyToast(" entry Price is missing", "warning");
+      else if (entryPrice < 1)
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[21]).msgText, getMsg(messages, msgType.warnings, msgNumber[21]).msgType);
+      // notifyToast(" entry Price is missing", "warning");
 
       else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate)
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[20]).msgText, getMsg(messages,msgType.warnings,msgNumber[20]).msgType);
-       //notifyToast("exit Price  is missing", "warning");
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[20]).msgText, getMsg(messages, msgType.warnings, msgNumber[20]).msgType);
+      //notifyToast("exit Price  is missing", "warning");
 
 
 
@@ -345,10 +346,10 @@ export default function TradeModal(props) {
   const handleUpload = (tradeId) => {
     console.log(editMode);
     if (!selectedFile && editMode == false) {
-      notifyToast(getMsg(messages,msgType.errors,msgNumber[5]).msgText, getMsg(messages,msgType.errors,msgNumber[5]).msgType);
-     // notifyToast("Don't have image file to upload", "error"); 
-      return; 
-    
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[5]).msgText, getMsg(messages, msgType.errors, msgNumber[5]).msgType);
+      // notifyToast("Don't have image file to upload", "error"); 
+      return;
+
     }
     // Create a new FormData object
     const formData = new FormData();
@@ -382,495 +383,500 @@ export default function TradeModal(props) {
   useEffect(() => {
 
     if (selectedFile) {
-      notifyToast(getMsg(messages,msgType.success,msgNumber[6]).msgText, getMsg(messages,msgType.success,msgNumber[6]).msgType);
-   //   notifyToast("Image successfully uploaded", "success");
+      notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
+      //   notifyToast("Image successfully uploaded", "success");
     }
   }, [selectedFile])
 
   return (
-    
+
     currentAccount?.Broker === brokers.Tradovate ?
-    <Modal
-      open={props.openModal}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid container spacing={28}>
+      <Modal
+        open={props.openModal}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={28}>
 
 
-            <Grid item xs={6} md={7}>
+              <Grid item xs={6} md={7}>
+                <Item>
+                  {' '}
+                  {editMode == true ?
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                     Edit Trade
+                    </Typography>:editMode == false || editMode == undefined ?   <Typography id="modal-modal-title" variant="h6" component="h2">
+                      Add New Trade
+                    </Typography> : ""
+
+}
+                </Item>
+              </Grid>
+
+              <Grid item xs={6} md={4}>
+                <Grid item xs={6} md={4}>
+                  <label htmlFor="file-input">
+                    <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      component="span"
+                      startIcon={<Iconify icon={'eva:file-add-outline'} />}
+                      onClick={handleButtonClick}
+                    >
+                      Upload Image
+                    </Button>
+                  </label>
+
+                </Grid>
+              </Grid>
+            </Grid >
+          </Box >
+
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
+            <Grid item xs={6}>
+              <Item>
+                <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                  <TextField
+                    id="outlined-multiline-flexible"
+                    label="Comments"
+                    value={comments}
+                    multiline
+                    maxRows={7}
+                    onChange={(e) => handlePositionFieldInput(e, 'comments')}
+                  />
+                </Box>{' '}
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                  <TextField id="standard-basic" required="true"
+                    value={positionDate}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
+                    label="Open Date" variant="standard" type="date" />
+                </Box>{' '}
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-standard-label"
+                    id="demo-simple-select-standard"
+                    value={positionType}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionType')}
+                    label="Type"
+                    required="true"
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={'Short'}>Short</MenuItem>
+                    <MenuItem value={'Long'}>Long</MenuItem>
+
+                  </Select>
+                </FormControl>
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                  <Tabs value={value} onChange={handleChange} centered >
+                    <Tab label="Futuers" style={labelStyle} />
+                    <Tab label="Stocks" style={labelStyle} />
+                    <Tab label="Crypto" style={labelStyle} />
+                  </Tabs>
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    required="true"
+                    options={activeTickers}
+                    value={positionSymbol}
+                    onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
+                    sx={{ width: 600 }}
+                    renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol} variant="standard" />}
+                  />
+                </Box>
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+
               <Item>
                 {' '}
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                  Add New Trade
-                </Typography>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-standard-label"
+                    id="demo-simple-select-standard"
+                    value={positionStatus}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionStatus')}
+                    label="Status"
+                    required="true"
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={'Win'}>Win</MenuItem>
+                    <MenuItem value={'Loss'}>Loss</MenuItem>
+                    <MenuItem value={'BreakEven'}>Break Even</MenuItem>
+                  </Select>
+                </FormControl>
+              </Item>
+
+            </Grid>
+          </Grid>
+
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
+            <Grid item xs={6}>
+              <Item>
+                {' '}
+                <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                  <TextField
+                    className="standard-basic"
+                    value={positionDuration}
+                    onFocus={(e) => clearPositionFieldInput(e, 'positionDuration')}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionDuration')}
+                    label="Duration"
+                    variant="standard"
+                  />
+                </Box>
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                {' '}
+                <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                  <TextField
+                    className="outlined-number"
+
+                    type="number"
+                    value={positionCommision}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
+                    onFocus={(e) => clearPositionFieldInput(e, 'positionCommision')}
+                    label="Commission"
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Box>
               </Item>
             </Grid>
 
-            <Grid item xs={6} md={4}>
-              <Grid item xs={6} md={4}>
-                <label htmlFor="file-input">
-                  <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    component="span"
-                    startIcon={<Iconify icon={'eva:file-add-outline'} />}
-                    onClick={handleButtonClick}
-                  >
-                    Upload Image
-                  </Button>
-                </label>
-
-              </Grid>
-            </Grid>
-          </Grid >
-        </Box >
-
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
-          <Grid item xs={6}>
-            <Item>
-              <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <TextField
-                  id="outlined-multiline-flexible"
-                  label="Comments"
-                  value={comments}
-                  multiline
-                  maxRows={7}
-                  onChange={(e) => handlePositionFieldInput(e, 'comments')}
-                />
-              </Box>{' '}
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <TextField id="standard-basic" required="true"
-                  value={positionDate}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
-                  label="Open Date" variant="standard" type="date" />
-              </Box>{' '}
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
-                <Select
-                  labelId="demo-simple-select-standard-label"
-                  id="demo-simple-select-standard"
-                  value={positionType}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionType')}
-                  label="Type"
-                  required="true"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={'Short'}>Short</MenuItem>
-                  <MenuItem value={'Long'}>Long</MenuItem>
-
-                </Select>
-              </FormControl>
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <Tabs value={value} onChange={handleChange} centered >
-                  <Tab label="Futuers" style={labelStyle} />
-                  <Tab label="Stocks" style={labelStyle} />
-                  <Tab label="Crypto" style={labelStyle} />
-                </Tabs>
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  required="true"
-                  options={activeTickers}
-                  value={positionSymbol}
-                  onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
-                  sx={{ width: 600 }}
-                  renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol} variant="standard" />}
-                />
-              </Box>
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-
-            <Item>
-              {' '}
-              <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
-                <Select
-                  labelId="demo-simple-select-standard-label"
-                  id="demo-simple-select-standard"
-                  value={positionStatus}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionStatus')}
-                  label="Status"
-                  required="true"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={'Win'}>Win</MenuItem>
-                  <MenuItem value={'Loss'}>Loss</MenuItem>
-                  <MenuItem value={'BreakEven'}>Break Even</MenuItem>
-                </Select>
-              </FormControl>
-            </Item>
-
-          </Grid>
-        </Grid>
-
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
-          <Grid item xs={6}>
-            <Item>
-              {' '}
-              <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <TextField
-                  className="standard-basic"
-                  value={positionDuration}
-                  onFocus={(e) => clearPositionFieldInput(e, 'positionDuration')}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionDuration')}
-                  label="Duration"
-                  variant="standard"
-                />
-              </Box>
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              {' '}
-              <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+            <Grid item xs={6}>
+              <Item>
+                {' '}
                 <TextField
                   className="outlined-number"
 
+                  label="Entry Price"
+                  value={entryPrice}
                   type="number"
-                  value={positionCommision}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'positionCommision')}
-                  label="Commission"
+                  onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'entryPrice')}
                   InputLabelProps={{ shrink: true }}
                 />
-              </Box>
-            </Item>
-          </Grid>
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <TextField
+                  className="outlined-number"
 
-          <Grid item xs={6}>
-            <Item>
-              {' '}
-              <TextField
-                className="outlined-number"
-
-                label="Entry Price"
-                value={entryPrice}
-                type="number"
-                onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
-                onFocus={(e) => clearPositionFieldInput(e, 'entryPrice')}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <TextField
-                className="outlined-number"
-
-                label="Exit Price"
-                value={exitPrice}
-                onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
-                onFocus={(e) => clearPositionFieldInput(e, 'exitPrice')}
-                type="number"
-                InputLabelProps={{ shrink: true }}
-              />
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <TextField
-                className="outlined-number"
-                required="true"
-                label="Contracts"
-                value={contractsCounts}
-                onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
-                onFocus={(e) => clearPositionFieldInput(e, 'contractsCounts')}
-                type="number"
-                InputLabelProps={{ shrink: true }}
-              />
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              {' '}
-              <TextField
-                className="outlined-number"
-                required="true"
-                label="Net P&L"
-                value={netPnL}
-                onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
-                onFocus={(e) => clearPositionFieldInput(e, 'netPnL')}
-                type="number"
-                InputLabelProps={{ shrink: true }}
-              />
-            </Item>
-          </Grid>
-
-          <Grid item xs={6}>
-            <Item>
-              <TextField
-                className="outlined-number"
-                label="Net ROI"
-                type="number"
-                value={netROI}
-                onChange={(e) => handlePositionFieldInput(e, 'netROI')}
-                onFocus={(e) => clearPositionFieldInput(e, 'netROI')}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <TextField
-                className="outlined-number"
-                label="Stop loss"
-                type="number"
-                value={stopPrice}
-                onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
-                onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Item>
-          </Grid>
-          <Item>
-            <br />
-            <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
-          </Item >
-        </Grid >
-      </Box >
-    </Modal > :  currentAccount?.Broker === brokers.Binance ? <Modal
-      open={props.openModal}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid container spacing={28}>
-
-
-            <Grid item xs={6} md={7}>
+                  label="Exit Price"
+                  value={exitPrice}
+                  onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'exitPrice')}
+                  type="number"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <TextField
+                  className="outlined-number"
+                  required="true"
+                  label="Contracts"
+                  value={contractsCounts}
+                  onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'contractsCounts')}
+                  type="number"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
               <Item>
                 {' '}
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                  Add New Trade
-                </Typography>
+                <TextField
+                  className="outlined-number"
+                  required="true"
+                  label="Net P&L"
+                  value={netPnL}
+                  onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'netPnL')}
+                  type="number"
+                  InputLabelProps={{ shrink: true }}
+                />
               </Item>
             </Grid>
 
-            <Grid item xs={6} md={4}>
-              <Grid item xs={6} md={4}>
-                <label htmlFor="file-input">
-                  <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    component="span"
-                    startIcon={<Iconify icon={'eva:file-add-outline'} />}
-                    onClick={handleButtonClick}
-                  >
-                    Upload Image
-                  </Button>
-                </label>
-
-              </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <TextField
+                  className="outlined-number"
+                  label="Net ROI"
+                  type="number"
+                  value={netROI}
+                  onChange={(e) => handlePositionFieldInput(e, 'netROI')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'netROI')}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Item>
             </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <TextField
+                  className="outlined-number"
+                  label="Stop loss"
+                  type="number"
+                  value={stopPrice}
+                  onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Item>
+            </Grid>
+            <Item>
+              <br />
+              <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
+            </Item >
           </Grid >
         </Box >
+      </Modal > : currentAccount?.Broker === brokers.Binance ? <Modal
+        open={props.openModal}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={28}>
 
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
-          <Grid item xs={6}>
-            <Item>
-              <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <TextField
-                  id="outlined-multiline-flexible"
-                  label="Comments"
-                  value={comments}
-                  multiline
-                  maxRows={7}
-                  onChange={(e) => handlePositionFieldInput(e, 'comments')}
-                />
-              </Box>{' '}
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <TextField id="standard-basic" required="true"
-                  value={positionDate}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
-                  label="Open Date" variant="standard" type="date" />
-              </Box>{' '}
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
-                <Select
-                  labelId="demo-simple-select-standard-label"
-                  id="demo-simple-select-standard"
-                  value={positionType}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionType')}
-                  label="Type"
-                  required="true"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={'Short'}>Short</MenuItem>
-                  <MenuItem value={'Long'}>Long</MenuItem>
 
-                </Select>
-              </FormControl>
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                <Tabs value={value} onChange={handleChange} centered >
-                  <Tab label="Futuers" style={labelStyle} />
-                  <Tab label="Stocks" style={labelStyle} />
-                  <Tab label="Crypto" style={labelStyle} />
-                </Tabs>
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  required="true"
-                  options={activeTickers}
-                  value={positionSymbol}
-                  onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
-                  sx={{ width: 600 }}
-                  renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol} variant="standard" />}
-                />
-              </Box>
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
+              <Grid item xs={6} md={7}>
+                <Item>
+                  {' '}
+                  <Typography id="modal-modal-title" variant="h6" component="h2">
+                    Add New Trade
+                  </Typography>
+                </Item>
+              </Grid>
 
-            <Item>
-              {' '}
-              <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
-                <Select
-                  labelId="demo-simple-select-standard-label"
-                  id="demo-simple-select-standard"
-                  value={positionStatus}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionStatus')}
-                  label="Status"
-                  required="true"
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={'Win'}>Win</MenuItem>
-                  <MenuItem value={'Loss'}>Loss</MenuItem>
-                  <MenuItem value={'BreakEven'}>Break Even</MenuItem>
-                </Select>
-              </FormControl>
-            </Item>
+              <Grid item xs={6} md={4}>
+                <Grid item xs={6} md={4}>
+                  <label htmlFor="file-input">
+                    <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      component="span"
+                      startIcon={<Iconify icon={'eva:file-add-outline'} />}
+                      onClick={handleButtonClick}
+                    >
+                      Upload Image
+                    </Button>
+                  </label>
 
+                </Grid>
+              </Grid>
+            </Grid >
+          </Box >
+
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
+            <Grid item xs={6}>
+              <Item>
+                <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                  <TextField
+                    id="outlined-multiline-flexible"
+                    label="Comments"
+                    value={comments}
+                    multiline
+                    maxRows={7}
+                    onChange={(e) => handlePositionFieldInput(e, 'comments')}
+                  />
+                </Box>{' '}
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                  <TextField id="standard-basic" required="true"
+                    value={positionDate}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
+                    label="Open Date" variant="standard" type="date" />
+                </Box>{' '}
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-standard-label"
+                    id="demo-simple-select-standard"
+                    value={positionType}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionType')}
+                    label="Type"
+                    required="true"
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={'Short'}>Short</MenuItem>
+                    <MenuItem value={'Long'}>Long</MenuItem>
+
+                  </Select>
+                </FormControl>
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                  <Tabs value={value} onChange={handleChange} centered >
+                    <Tab label="Futuers" style={labelStyle} />
+                    <Tab label="Stocks" style={labelStyle} />
+                    <Tab label="Crypto" style={labelStyle} />
+                  </Tabs>
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    required="true"
+                    options={activeTickers}
+                    value={positionSymbol}
+                    onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
+                    sx={{ width: 600 }}
+                    renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol} variant="standard" />}
+                  />
+                </Box>
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+
+              <Item>
+                {' '}
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-standard-label"
+                    id="demo-simple-select-standard"
+                    value={positionStatus}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionStatus')}
+                    label="Status"
+                    required="true"
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={'Win'}>Win</MenuItem>
+                    <MenuItem value={'Loss'}>Loss</MenuItem>
+                    <MenuItem value={'BreakEven'}>Break Even</MenuItem>
+                  </Select>
+                </FormControl>
+              </Item>
+
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
-     
-          <Grid item xs={6}>
-            <Item>
-              {' '}
-              <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
+
+            <Grid item xs={6}>
+              <Item>
+                {' '}
+                <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
+                  <TextField
+                    className="outlined-number"
+
+                    type="number"
+                    value={positionCommision}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
+                    onFocus={(e) => clearPositionFieldInput(e, 'positionCommision')}
+                    label="Commission"
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Box>
+              </Item>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Item>
+                {' '}
                 <TextField
                   className="outlined-number"
 
+                  label="Entry Price"
+                  value={entryPrice}
                   type="number"
-                  value={positionCommision}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'positionCommision')}
-                  label="Commission"
+                  onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'entryPrice')}
                   InputLabelProps={{ shrink: true }}
                 />
-              </Box>
-            </Item>
-          </Grid>
+              </Item>
+            </Grid>
 
-          <Grid item xs={6}>
-            <Item>
-              {' '}
-              <TextField
-                className="outlined-number"
+            <Grid item xs={6}>
+              <Item>
+                <TextField
+                  className="outlined-number"
+                  required="true"
+                  label="Quantity"
+                  value={contractsCounts}
+                  onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'contractsCounts')}
+                  type="number"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                {' '}
+                <TextField
+                  className="outlined-number"
+                  required="true"
+                  label="Net P&L"
+                  value={netPnL}
+                  onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'netPnL')}
+                  type="number"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Item>
+            </Grid>
 
-                label="Entry Price"
-                value={entryPrice}
-                type="number"
-                onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
-                onFocus={(e) => clearPositionFieldInput(e, 'entryPrice')}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Item>
-          </Grid>
-         
-          <Grid item xs={6}>
-            <Item>
-              <TextField
-                className="outlined-number"
-                required="true"
-                label="Quantity"
-                value={contractsCounts}
-                onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
-                onFocus={(e) => clearPositionFieldInput(e, 'contractsCounts')}
-                type="number"
-                InputLabelProps={{ shrink: true }}
-              />
-            </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>
-              {' '}
-              <TextField
-                className="outlined-number"
-                required="true"
-                label="Net P&L"
-                value={netPnL}
-                onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
-                onFocus={(e) => clearPositionFieldInput(e, 'netPnL')}
-                type="number"
-                InputLabelProps={{ shrink: true }}
-              />
-            </Item>
-          </Grid>
 
-         
-          <Grid item xs={6}>
+            <Grid item xs={6}>
+              <Item>
+                <TextField
+                  className="outlined-number"
+                  label="Stop loss"
+                  type="number"
+                  value={stopPrice}
+                  onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
+                  onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Item>
+            </Grid>
             <Item>
-              <TextField
-                className="outlined-number"
-                label="Stop loss"
-                type="number"
-                value={stopPrice}
-                onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
-                onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Item>
-          </Grid>
-          <Item>
-            <br />
-            <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
-          </Item >
-        </Grid >
-      </Box >
-    </Modal > : ""
+              <br />
+              <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
+            </Item >
+          </Grid >
+        </Box >
+      </Modal > : ""
   );
 }
