@@ -356,12 +356,12 @@ export default function TradeModal(props) {
   }
 
   const handleUpload = (tradeId) => {
-    console.log("Inside upload new image but partials!")
-    if (!selectedFile) {
-      notifyToast(getMsg(messages, msgType.errors, msgNumber[5]).msgText, getMsg(messages, msgType.errors, msgNumber[5]).msgType);
-      // notifyToast("Don't have image file to upload", "error"); 
-      return;
-
+    console.log(editMode);
+    if (!selectedFile && editMode == false) {
+      notifyToast(getMsg(messages,msgType.errors,msgNumber[5]).msgText, getMsg(messages,msgType.errors,msgNumber[5]).msgType);
+     // notifyToast("Don't have image file to upload", "error"); 
+      return; 
+    
     }
     // Create a new FormData object
     const formData = new FormData();

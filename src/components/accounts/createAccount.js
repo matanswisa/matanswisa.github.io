@@ -120,7 +120,7 @@ export default function AccountModal(props) {
   };
 
   const handleEditAccount = async () => {
-    if (validateForm()) {
+    if (validateFormEdit()) {
       const data = {
         accountId: accountInfo._id, // Include the _id property for updating the correct account
         AccountName: accountName,
@@ -174,6 +174,23 @@ export default function AccountModal(props) {
       // notifyToast('Account already exist', 'warning');
       return false;
     }
+
+    return true;
+  };
+
+
+  const validateFormEdit = () => {
+    if (accountName === '' ) {
+      notifyToast(getMsg(messages,msgType.warnings,msgNumber[1]).msgText, getMsg(messages,msgType.warnings,msgNumber[1]).msgType);
+      // notifyToast('Account type is missing', 'warning');
+      return false;
+    }
+
+    // if (checkAccountExists(accounts, accountName)) {
+    //   notifyToast(getMsg(messages,msgType.warnings,msgNumber[2]).msgText, getMsg(messages,msgType.warnings,msgNumber[2]).msgType);
+    //   // notifyToast('Account already exist', 'warning');
+    //   return false;
+    // }
 
     return true;
   };
