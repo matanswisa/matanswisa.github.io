@@ -118,15 +118,21 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function UserPage() {
 
 
-  const messages = useSelector(selectMessages);
 
+//------------------------------------------------   States ----------------------------------------------------- //
+  const messages = useSelector(selectMessages);
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
-  // console.log(currentAccount.Broker);
   const userAccounts = useSelector(selectUserAccounts);
 
+
+
+
+
+//------------------------- Handle table Cols Struct for each broker  ------------------------------------------- //
+   // default struct
   let TABLE_HEAD = [
     { id: 'entryDate', label: 'Open Date', alignRight: false },
     { id: 'symbol', label: 'Symbol', alignRight: false },
@@ -145,10 +151,9 @@ export default function UserPage() {
 
 
   if (currentAccount !== null) {
-
-
+ // Check if the current account's broker is Tradovate
     if (currentAccount?.Broker == brokers.Tradovate) {
-
+  // Define table columns for Tradovate broker
       TABLE_HEAD = [
         { id: 'entryDate', label: 'Open Date', alignRight: false },
         { id: 'symbol', label: 'Symbol', alignRight: false },
@@ -164,14 +169,14 @@ export default function UserPage() {
         { id: 'delete', label: 'Delete', alignRight: false },
         { id: 'comments', label: 'comments', alignRight: false }
       ];
-
+// Check if the current account's broker is Binance
     }
     else if (currentAccount?.Broker == brokers.Binance) {
+         // Define table columns for Binance broker
       TABLE_HEAD = [
         { id: 'entryDate', label: 'Open Date', alignRight: false },
         { id: 'symbol', label: 'Symbol', alignRight: false },
         { id: 'status', label: 'Status', alignRight: false },
-
         { id: 'longShort', label: 'Long / Short', alignRight: false },
         { id: 'Quantity', label: 'Quantity', alignRight: false },
         { id: 'commission', label: 'Commission', alignRight: false },
@@ -181,9 +186,7 @@ export default function UserPage() {
         { id: 'delete', label: 'Delete', alignRight: false },
         { id: 'comments', label: 'comments', alignRight: false }
       ];
-
     }
-
   }
 
 
@@ -203,7 +206,7 @@ export default function UserPage() {
   };
 
 
-  //Upload image related code:
+  //------------------------------------------------   Upload image related code ----------------------------------------------------- //
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
@@ -249,6 +252,8 @@ export default function UserPage() {
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
+
+ 
 
 
 

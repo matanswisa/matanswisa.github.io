@@ -89,6 +89,14 @@ const ProfitFactor = (trades) => {
 
 
 export default function DashboardAppPage() {
+  const [losingTrades, setLosingTrades] = useState(0);
+  const [winningTrades, setWinningTrades] = useState(0);
+  const [breakEvenTrades, setbreakEvenTrades] = useState(0);
+  const [losingTradesInDays, setLosingTradesInDays] = useState(0);
+  const [winningTradesInDays, setWinningTradesInDays] = useState(0);
+  const [calendarTrades, setCalendarTrades] = useState([]);
+  const [trades, setTrades] = useState([]);
+  const [dailyNetCumulative, setDailyNetCumulative] = useState([]);
 
 
 
@@ -100,23 +108,9 @@ export default function DashboardAppPage() {
   }
   else {
     Alltrades = [];
-  }
-
- 
-
-  const [losingTrades, setLosingTrades] = useState(0);
-  const [winningTrades, setWinningTrades] = useState(0);
-  const [breakEvenTrades, setbreakEvenTrades] = useState(0);
-
-
-  const [losingTradesInDays, setLosingTradesInDays] = useState(0);
-  const [winningTradesInDays, setWinningTradesInDays] = useState(0);
-
-
-  const [calendarTrades, setCalendarTrades] = useState([]);
-
-
-
+  }  
+  
+  
 
   const DailyNetCumulativeDateProfit = () => {
     const WinTradesDates = [];
@@ -124,10 +118,10 @@ export default function DashboardAppPage() {
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL > 0) {
         WinTradesDates.push(trade._id);
-      }
-    });
+      }  
+    });  
     return WinTradesDates;
-  }
+  }  
 
 
   const DailyNetCumulativeDateLoss = () => {
@@ -136,10 +130,10 @@ export default function DashboardAppPage() {
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL < 0) {
         WinTradesDates.push(trade._id);
-      }
-    });
+      }  
+    });  
     return WinTradesDates;
-  }
+  }  
 
 
 
@@ -149,11 +143,11 @@ export default function DashboardAppPage() {
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL > 0) {
         WinTrades.push(trade.totalPnL);
-      }
-    });
+      }  
+    });  
 
     return WinTrades;
-  }
+  }  
 
 
 
@@ -164,17 +158,12 @@ export default function DashboardAppPage() {
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL < 0) {
         LossTrades.push(trade.totalPnL);
-      }
-    });
+      }  
+    });  
 
     return LossTrades;
-  }
+  }  
 
-
-  const [trades, setTrades] = useState([]);
-
-
-  const [dailyNetCumulative, setDailyNetCumulative] = useState([]);
 
 
   // this post handle "Winning % By Trades" cake.
