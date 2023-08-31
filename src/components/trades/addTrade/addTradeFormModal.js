@@ -223,7 +223,8 @@ export default function TradeModal(props) {
           })
       }
       else if (editMode === true) {
-
+        
+        if(validateForm()){
         data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
         await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth)
           .then((res) => {
@@ -232,50 +233,14 @@ export default function TradeModal(props) {
             handleUpload(tradeInfo?._id);
             reduxDispatch(setTradesList(res.data));
 
-            if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||
-              contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
-
-              if (positionType === '')
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[27]).msgText, getMsg(messages, msgType.warnings, msgNumber[27]).msgType);
-              //  notifyToast("Position type is missing", "warning");
-
-              else if (positionStatus === '')
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[26]).msgText, getMsg(messages, msgType.warnings, msgNumber[26]).msgType);
-              //notifyToast("Position status is missing", "warning");
-
-              else if (!netPnL)
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[25]).msgText, getMsg(messages, msgType.warnings, msgNumber[25]).msgType);
-              // notifyToast("Net PnL is missing", "warning");
-
-              else if (!contractsCounts)
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[24]).msgText, getMsg(messages, msgType.warnings, msgNumber[24]).msgType);
-              //  notifyToast("Number of contracts field is missing", "warning");
-
-              else if (positionSymbol === "")
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[23]).msgText, getMsg(messages, msgType.warnings, msgNumber[23]).msgType);
-              //  notifyToast("Position symbol is missing", "warning");
-
-              else if (!positionDate)
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[22]).msgText, getMsg(messages, msgType.warnings, msgNumber[22]).msgType);
-              // notifyToast("Date field is missing", "warning");
-
-              else if (entryPrice < 1)
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[21]).msgText, getMsg(messages, msgType.warnings, msgNumber[21]).msgType);
-              // notifyToast(" entry Price is missing", "warning");
-
-              else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate)
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[20]).msgText, getMsg(messages, msgType.warnings, msgNumber[20]).msgType);
-              //notifyToast("exit Price  is missing", "warning");
-
-
-              return false;
-            }
-            return true;
+          
+            props.handleOpenModal(true);
           });
       }
 
-      //Upload image related code:
 
+      //Upload image related code:
+    }
     }
   };
 
