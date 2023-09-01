@@ -118,21 +118,53 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function UserPage() {
 
 
-
-//------------------------------------------------   States ----------------------------------------------------- //
+  //------------------------------------------------   States ----------------------------------------------------- //
   const messages = useSelector(selectMessages);
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
   const userAccounts = useSelector(selectUserAccounts);
+  const totalTrades = Object.keys(trades).length;
+  const [basicModal, setBasicModal] = useState(false);
+  const toggleShow = () => setBasicModal(!basicModal);
+  const [openmodal, setIsOpenmodal] = useState(false);
+  const [openmodalfarshel, setIsOpenFarshelmodal] = useState(false);
+  const [selectedTrade, setSelectedTrade] = useState(null);
+  const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);
+  const [open, setOpen] = useState(null);
+  const [selected, setSelected] = useState([]);
+  const [orderBy, setOrderBy] = useState('name');
 
 
+  //search states
+  const [filterName, setFilterName] = useState('');
+  const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
+  const [order, setOrder] = useState('asc');
 
 
+  //table config states:
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const filteredUsers = applySortFilter(trades, getComparator(order, orderBy), filterName);
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - trades.length) : 0;
+  const isNotFound = !filteredUsers.length && !!filterName;
+  const [opendialog, setDialogOpen] = useState(false);
 
-//------------------------- Handle table Cols Struct for each broker  ------------------------------------------- //
-   // default struct
+
+  //edit modal States
+  const [editTradeId, setEditTradeId] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+
+
+  //Image modal States
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [imageData, setImageData] = useState('');
+  const [imageId, setimageId] = useState('');
+
+
+  //------------------------- Handle table Cols Struct for each broker  ------------------------------------------- //
+  // default struct
   let TABLE_HEAD = [
     { id: 'entryDate', label: 'Open Date', alignRight: false },
     { id: 'symbol', label: 'Symbol', alignRight: false },
@@ -151,9 +183,9 @@ export default function UserPage() {
 
 
   if (currentAccount !== null) {
- // Check if the current account's broker is Tradovate
+    // Check if the current account's broker is Tradovate
     if (currentAccount?.Broker == brokers.Tradovate) {
-  // Define table columns for Tradovate broker
+      // Define table columns for Tradovate broker
       TABLE_HEAD = [
         { id: 'entryDate', label: 'Open Date', alignRight: false },
         { id: 'symbol', label: 'Symbol', alignRight: false },
@@ -169,10 +201,10 @@ export default function UserPage() {
         { id: 'delete', label: 'Delete', alignRight: false },
         { id: 'comments', label: 'comments', alignRight: false }
       ];
-// Check if the current account's broker is Binance
+      // Check if the current account's broker is Binance
     }
     else if (currentAccount?.Broker == brokers.Binance) {
-         // Define table columns for Binance broker
+      // Define table columns for Binance broker
       TABLE_HEAD = [
         { id: 'entryDate', label: 'Open Date', alignRight: false },
         { id: 'symbol', label: 'Symbol', alignRight: false },
@@ -190,7 +222,6 @@ export default function UserPage() {
   }
 
 
-
   function handleCellClick(parameter, info) {
     return function () {
       if (parameter === 'comments') {
@@ -205,8 +236,7 @@ export default function UserPage() {
     setCommendOpen(false);
   };
 
-
-  //------------------------------------------------   Upload image related code ----------------------------------------------------- //
+  //------------------------------------------------handle Upload image ----------------------------------------------------- //
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
@@ -253,19 +283,17 @@ export default function UserPage() {
     fileInputRef.current.click();
   };
 
- 
 
 
-
+ //------------------------------------------------handle alert ----------------------------------------------------- //
   const showToast = useToast();
   const notifyToast = (Msg, Type) => {
 
     showToast(Msg, Type);
   }
 
-
+//------------------------------------------------handle trade by current account selected ----------------------------------------------------- //
   let trades;
-
   if (currentAccount?.trades) {
 
     trades = currentAccount?.trades;
@@ -275,17 +303,6 @@ export default function UserPage() {
     trades = [];
   }
 
-
-
-  const totalTrades = Object.keys(trades).length;
-
-  const [basicModal, setBasicModal] = useState(false);
-  const toggleShow = () => setBasicModal(!basicModal);
-
-  const [openmodal, setIsOpenmodal] = useState(false);
-  const [openmodalfarshel, setIsOpenFarshelmodal] = useState(false);
-  const [selectedTrade, setSelectedTrade] = useState(null);
-  const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);
   const dispatch = useDispatch();
 
 
@@ -320,23 +337,7 @@ export default function UserPage() {
 
   };
 
-
-
-
-
-
-
-  const [open, setOpen] = useState(null);
-  const [page, setPage] = useState(0);
-  const [order, setOrder] = useState('asc');
-  const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('name');
-  const [filterName, setFilterName] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
-
-
-
+  //------------------------------------------------handle Serach by date ----------------------------------------------------- //
   const formatDate = (dateString) => {
     const options = {
       year: "numeric",
@@ -350,11 +351,18 @@ export default function UserPage() {
     return date.toLocaleDateString("en-GB", options);
   }
 
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
+  };
+
+  const handleClearDate = () => {
+    setSelectedDate(null);
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
   };
 
   const handleSelectAllClick = (event) => {
@@ -366,14 +374,7 @@ export default function UserPage() {
     setSelected([]);
   };
 
-  const handleClearDate = () => {
-    setSelectedDate(null);
-  };
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
-
+  //------------------------- handle table pages view ------------------------------------------- //
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -383,40 +384,15 @@ export default function UserPage() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - trades.length) : 0;
-  const filteredUsers = applySortFilter(trades, getComparator(order, orderBy), filterName);
-  const isNotFound = !filteredUsers.length && !!filterName;
 
-  const [opendialog, setDialogOpen] = useState(false);
-
+  //------------------------------------- handle dialogs  ------------------------------------------- //
   const handleClickDialogOpen = () => {
     setDialogOpen(true);
   };
 
-
-
-
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
-
-  const deleteTrade = async (tradeId) => {
-    console.log(editTradeId);
-    const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, configAuth);
-    dispatch(setTradesList(res.data))
-    notifyToast(getMsg(messages, msgType.success, msgNumber[14]).msgText, getMsg(messages, msgType.success, msgNumber[14]).msgType);
-    // notifyToast("Delete trade Successfully", 'success');
-    toggleShow();
-  }
-
-  const [editTradeId, setEditTradeId] = useState(null);
-  const [editMode, setEditMode] = useState(false);
-
-
-  //Image modal related code 
-  const [imageModalOpen, setImageModalOpen] = useState(false);
-  const [imageData, setImageData] = useState('');
-  const [imageId, setimageId] = useState('');
 
   // Function to handle opening the dialog and setting the image data
   const handleOpenDialog = (imageData) => {
@@ -429,6 +405,19 @@ export default function UserPage() {
     setImageModalOpen(false);
     setImageData('');
   };
+
+
+  //--------------------------------------- handle delete trade ------------------------------------------- //
+  const deleteTrade = async (tradeId) => {
+    console.log(editTradeId);
+    const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, configAuth);
+    dispatch(setTradesList(res.data))
+    notifyToast(getMsg(messages, msgType.success, msgNumber[14]).msgText, getMsg(messages, msgType.success, msgNumber[14]).msgType);
+    // notifyToast("Delete trade Successfully", 'success');
+    toggleShow();
+  }
+
+
 
 
 
