@@ -89,6 +89,7 @@ const ProfitFactor = (trades) => {
 
 
 export default function DashboardAppPage() {
+  //------------------------------------------------   States ----------------------------------------------------- //
   const [losingTrades, setLosingTrades] = useState(0);
   const [winningTrades, setWinningTrades] = useState(0);
   const [breakEvenTrades, setbreakEvenTrades] = useState(0);
@@ -97,10 +98,9 @@ export default function DashboardAppPage() {
   const [calendarTrades, setCalendarTrades] = useState([]);
   const [trades, setTrades] = useState([]);
   const [dailyNetCumulative, setDailyNetCumulative] = useState([]);
-
-
-
   const currentAccount = useSelector(selectCurrentAccount)
+
+//------------------------------------------------handle trade by current account selected ----------------------------------------------------- //
   let Alltrades;
   if (currentAccount?.trades) {
 
@@ -110,8 +110,9 @@ export default function DashboardAppPage() {
     Alltrades = [];
   }  
   
-  
+// ------------------------------------------handle "Daily Net "Daily Net Cumulative Profit"-------------------------------------------
 
+  /*This function save Date for each day with profit and show the dates on the graph -> "Daily Net Cumulative Profit" */
   const DailyNetCumulativeDateProfit = () => {
     const WinTradesDates = [];
 
@@ -123,35 +124,34 @@ export default function DashboardAppPage() {
     return WinTradesDates;
   }  
 
-
-  const DailyNetCumulativeDateLoss = () => {
-    const WinTradesDates = [];
-
-    dailyNetCumulative.forEach((trade) => {
-      if (trade.totalPnL < 0) {
-        WinTradesDates.push(trade._id);
-      }  
-    });  
-    return WinTradesDates;
-  }  
-
-
-
+  /*This function save Profit for each day with profit and show the Profits on the graph -> "Daily Net Cumulative Profit" */
   const DailyNetCumulativePnlProfit = () => {
     const WinTrades = [];
-
+  
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL > 0) {
         WinTrades.push(trade.totalPnL);
       }  
     });  
-
+  
     return WinTrades;
   }  
 
+// -----------------------------------------------handle "Daily Net Cumulative Loss" ----------------------------------------------
 
+ /*This function save Date for each day with Losses and show the dates on the graph -> "Daily Net Cumulative Loss"*/
+  const DailyNetCumulativeDateLoss = () => {
+    const LossTradesDates = [];
 
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL < 0) {
+        LossTradesDates.push(trade._id);
+      }  
+    });  
+    return LossTradesDates;
+  }  
 
+ /*This function save Losses for each day with Loss and show the Losses on the graph ->  "Daily Net Cumulative Loss" */
   const DailyNetCumulativePnlLoss = () => {
     const LossTrades = [];
 
@@ -164,9 +164,12 @@ export default function DashboardAppPage() {
     return LossTrades;
   }  
 
+//-------------------------------------------------------------------------------------------------------------------------
 
 
-  // this post handle "Winning % By Trades" cake.
+// this post handle "Winning % By Trades" cake.
+
+
   useEffect(() => {
     api.post('/api/WinAndLossTotalTime', { trades: Alltrades }, configAuth).then(
       (res) => {
