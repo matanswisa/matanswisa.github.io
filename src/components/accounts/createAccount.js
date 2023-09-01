@@ -8,70 +8,37 @@ import { useState } from 'react';
 import api from '../../api/api';
 import { useEffect } from 'react';
 import { Select, MenuItem, ListItemIcon, Alert } from '@mui/material';
-import {
-  red,
-  blue,
-  green,
-  yellow,
-  orange,
-  purple,
-  pink,
-  cyan,
-  brown,
-  lightGreen,
-  lime,
-  blueGrey,
-} from '@mui/material/colors';
+import {red,blue,green,yellow,orange,purple,pink,cyan,brown,lightGreen,lime,blueGrey,} from '@mui/material/colors';
 import { Grid } from 'rsuite';
-
 import { selectUser, setCurrentAccount, updateAccountList, selectUserAccounts } from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
-
 import BinanceIcon from '../brokersIcons/binance.svg'
 import TradeovateIcon from '../brokersIcons/Tradovate.svg'
-
 import { useDispatch, useSelector } from 'react-redux';
 import {selectMessages} from '../../redux-toolkit/messagesSlice';
 import {getMsg} from '../../utils/messeageUtils';
 import { msgType} from '../../utils/messagesEnum.js';
 import {msgNumber} from '../../utils/msgNumbers.js';
 
-
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '4px solid #000',
-  boxShadow: 4,
-  p: 4,
-};
-
+//--------------------------------------------This component show Create account Modal -------------------------------------------//
 export default function AccountModal(props) {
+
+//------------------------------------------------  States ----------------------------------------------------- //
   const accounts = useSelector(selectUserAccounts);
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const [accountName, setAccountName] = useState('');
   const [selectedColor, setSelectedColor] = useState(red[500]);
   const [broker, setBroker] = React.useState(1);
-
-
   const messages = useSelector(selectMessages);
-  
-
   const { notifyToast } = props;
   const { edit } = props;
   const { accountInfo } = props;
-
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
 
 
-
-
+//handle state of broker when change in select option
   const handleChange = (event) => {
     setBroker(event.target.value);
   };
@@ -85,23 +52,19 @@ export default function AccountModal(props) {
     }
   }, [accountInfo]);
 
-  const checkAccountExists = (accountList, accountName) => {
 
+//this function check if account name already exist before created.
+  const checkAccountExists = (accountList, accountName) => {
     const selectedAccount = accountList.find((account) => account.AccountName === accountName);
     return selectedAccount !== undefined;
   };
 
-  const handleCreateAccount = async () => {
-    if (validateForm()) {
-      const data = {
-        AccountName: accountName,
-        Broker: broker,
-        Label: selectedColor,
 
-      };
-
-
-
+//------------------------------------------------ handle create account -----------------------------------------------------//
+const handleCreateAccount = async () => {
+    if (validateForm())
+     {
+      const data = { AccountName: accountName, Broker: broker,Label: selectedColor,};
       await api
         .post('/api/createAccount', { userId: user._id, data }, configAuth)
         .then(async (res) => {
@@ -119,6 +82,8 @@ export default function AccountModal(props) {
     }
   };
 
+
+//------------------------------------------------ handle edit account -----------------------------------------------------//
   const handleEditAccount = async () => {
     if (validateFormEdit()) {
       const data = {
@@ -128,7 +93,6 @@ export default function AccountModal(props) {
         Label: selectedColor,
         userId: user._id,
       };
-
       await api
         .put('/api/editAccount', data, configAuth) // Use api.put and pass the account id in the URL
         .then((res) => {
@@ -146,6 +110,8 @@ export default function AccountModal(props) {
     }
   };
 
+
+//------------------------------------------------ handle style for create account modal -----------------------------------------------------//  
   const style = {
     position: 'absolute',
     top: '50%',
@@ -162,6 +128,8 @@ export default function AccountModal(props) {
     alignItems: 'flex-end', // Align buttons to the right
   };
 
+
+//------------------------------------------------ handle validateForm before create account -----------------------------------------------------//  
   const validateForm = () => {
     if (accountName === '') {
       notifyToast(getMsg(messages,msgType.warnings,msgNumber[1]).msgText, getMsg(messages,msgType.warnings,msgNumber[1]).msgType);
@@ -174,26 +142,20 @@ export default function AccountModal(props) {
       // notifyToast('Account already exist', 'warning');
       return false;
     }
-
     return true;
   };
 
-
+//------------------------------------------------ handle validateForm before edit account -----------------------------------------------------//  
   const validateFormEdit = () => {
     if (accountName === '' ) {
       notifyToast(getMsg(messages,msgType.warnings,msgNumber[1]).msgText, getMsg(messages,msgType.warnings,msgNumber[1]).msgType);
       // notifyToast('Account type is missing', 'warning');
       return false;
     }
-
-    // if (checkAccountExists(accounts, accountName)) {
-    //   notifyToast(getMsg(messages,msgType.warnings,msgNumber[2]).msgText, getMsg(messages,msgType.warnings,msgNumber[2]).msgType);
-    //   // notifyToast('Account already exist', 'warning');
-    //   return false;
-    // }
-
     return true;
   };
+
+
   return (
     <div>
       <Button onClick={handleOpen}>Open modal</Button>
@@ -272,7 +234,6 @@ export default function AccountModal(props) {
 
         </Grid>  : ''}
 
-
         <Grid  sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
         <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
             Account Symbol
@@ -342,10 +303,7 @@ export default function AccountModal(props) {
           </MenuItem>
         </Select>
 
-        
           </Grid>
-
-
         <Box
           sx={{
             display: 'flex',
@@ -365,7 +323,6 @@ export default function AccountModal(props) {
           </Button>
         </Box>
       </Box>
-      {/* </Modal> */}
     </div>
   );
 }

@@ -47,9 +47,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function BasicModal() {
 
-
     //------------------------------------------------   States ----------------------------------------------------- //
-
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
@@ -62,16 +60,11 @@ export default function BasicModal() {
     const [accountIdToDelete, setAccountIdToDelete] = useState('');
     const [openmodal, setIsOpenmodal] = useState(false);
 
-
-
-
-
+    
     const getAccountInfoById = (accountList, accountid) => {
         const selectedAccount = accountList.find(account => account._id === accountid);
         setAccountInfoInEdit(selectedAccount);
     };
-
-
 
 //--------------- handle Delete account after user press "confirm" button when want delete account----------------- //
     
