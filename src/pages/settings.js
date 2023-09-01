@@ -7,6 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import useToast from '../hooks/alert'
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+
+
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
 
@@ -45,9 +48,6 @@ const MyTabs = () => {
     setSelectedTab(newValue);
   };
 
-  // const handleNavigateToDashboard = () => {
-  //   navigate('/dashboard'); // Replace '/dashboard' with the path to your dashboard page
-  // };
   return (
     <div>
        <ToastContainer />
@@ -55,13 +55,14 @@ const MyTabs = () => {
       <Tabs value={selectedTab} onChange={handleTabChange} centered>
 
         
+
       {parsedData.user.role == 1 ?   <Tab label="Users Management" /> :   <Tab label="User Management" />
       }
        
-
+       
+       {/* This tabs need be for both types of user (admin and regular user.) */}
         <Tab label="Accounts" />
-
-        
+ 
         {/* <Tab label="Languages" />    #############Version 2##############
         <Tab label="Colors" /> */}
         
@@ -69,28 +70,28 @@ const MyTabs = () => {
       </Tabs>
 
 
+        {/* Tabs for Admin only */}
+      {parsedData.user.role == 1 ? 
+      <TabPanel value={selectedTab} index={0}>
 
-
-      {parsedData.user.role == 1 ? <TabPanel value={selectedTab} index={0}>
         <AdminManagementPage />
-      </TabPanel> : <TabPanel value={selectedTab} index={0}>
-        <UsersManagementPage notifyToast={notifyToast} />
+
+
+      </TabPanel>
+      
+       /* Tabs for Regular user only */
+      :<TabPanel value={selectedTab} index={0}>
+
+        <UsersManagementPage notifyToast={notifyToast} />     { /* Tab for regular user to manage password*/}
+
       </TabPanel>}
 
 
       <TabPanel value={selectedTab} index={1}>
        
-      <AccountPage/>
-      </TabPanel>
-{/* 
-      <TabPanel value={selectedTab} index={2}>    #############Version 2##############
-       
+      <AccountPage/>                                           { /* Tab for regular user to manage accounts*/}
 
       </TabPanel>
-      <TabPanel value={selectedTab} index={3}>
-     
-      </TabPanel> */}
-      {/* Add more TabPanels here for additional tabs */}
 
     </div>
   );

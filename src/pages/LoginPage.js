@@ -50,8 +50,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Login | Trading </title>
-        
+        <title> Login | TradeExalt </title>
       </Helmet>
     
       <StyledRoot>
