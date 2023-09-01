@@ -89,7 +89,7 @@ const ProfitFactor = (trades) => {
 
 
 export default function DashboardAppPage() {
-  //------------------------------------------------   States ----------------------------------------------------- //
+  //------------------------------------------------   States ----------------------------------------------------------------------------------
   const [losingTrades, setLosingTrades] = useState(0);
   const [winningTrades, setWinningTrades] = useState(0);
   const [breakEvenTrades, setbreakEvenTrades] = useState(0);
@@ -100,7 +100,7 @@ export default function DashboardAppPage() {
   const [dailyNetCumulative, setDailyNetCumulative] = useState([]);
   const currentAccount = useSelector(selectCurrentAccount)
 
-//------------------------------------------------handle trade by current account selected ----------------------------------------------------- //
+//------------------------------------------------handle trade by current account selected -----------------------------------------------------
   let Alltrades;
   if (currentAccount?.trades) {
 
@@ -110,7 +110,7 @@ export default function DashboardAppPage() {
     Alltrades = [];
   }  
   
-// ------------------------------------------handle "Daily Net "Daily Net Cumulative Profit"-------------------------------------------
+// ------------------------------------------handle "Daily Net "Daily Net Cumulative Profit"-----------------------------------------------------
 
   /*This function save Date for each day with profit and show the dates on the graph -> "Daily Net Cumulative Profit" */
   const DailyNetCumulativeDateProfit = () => {
@@ -137,7 +137,7 @@ export default function DashboardAppPage() {
     return WinTrades;
   }  
 
-// -----------------------------------------------handle "Daily Net Cumulative Loss" ----------------------------------------------
+// -----------------------------------------------handle "Daily Net Cumulative Loss" -------------------------------------------------------------
 
  /*This function save Date for each day with Losses and show the dates on the graph -> "Daily Net Cumulative Loss"*/
   const DailyNetCumulativeDateLoss = () => {
@@ -164,11 +164,7 @@ export default function DashboardAppPage() {
     return LossTrades;
   }  
 
-//-------------------------------------------------------------------------------------------------------------------------
-
-
-// this post handle "Winning % By Trades" cake.
-
+//-----------------------------------------------handle "Winning % By Trades" cake. --------------------------------------------------------------
 
   useEffect(() => {
     api.post('/api/WinAndLossTotalTime', { trades: Alltrades }, configAuth).then(
@@ -194,9 +190,8 @@ export default function DashboardAppPage() {
     ).catch()
   }, [])
 
-
-
-  // this post handle  "Winning % By Days" cake. 
+//-----------------------------------------------handle "Winning % By Days" cake.------------------------------------------------------------------
+ 
   useEffect(() => {
     api.post('/api/ShowInfoByDates', { trades: Alltrades }, configAuth).then(
       (res) => {
@@ -217,8 +212,8 @@ export default function DashboardAppPage() {
     ).catch()
   }, [])
 
+//-----------------------------------------------handle calendar data.----------------------------------------------------------------------------
 
-// this post handle calendar data. 
   useEffect(() => {
     if (trades.length) {
       api.post("/api/ShowNumOfTradeTotalPnlInfoByDates", { trades: Alltrades }, configAuth).then(
@@ -228,6 +223,8 @@ export default function DashboardAppPage() {
       ).catch()
     }
   }, [trades])
+
+
 
   return (
     <>
@@ -241,10 +238,7 @@ export default function DashboardAppPage() {
 
 
         </div>
-        <Typography variant="h4" sx={{ mb: 3 }}>
-          Hi, Welcome back
-        </Typography>
-
+       
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
@@ -296,14 +290,14 @@ export default function DashboardAppPage() {
                     },
                   ]}
                 />
-
-
               </Grid>
             </Grid>
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
+
             <Grid container spacing={3}>
+
               <Grid item xs={12}>
 
                 <AppCurrentVisits
@@ -315,7 +309,6 @@ export default function DashboardAppPage() {
                   ]}
                   chartColors={[Colors.green, Colors.red]}
                 />
-
                 <AppCurrentVisits
                   title="Winning % By Days"
                   chartData={[
@@ -324,10 +317,15 @@ export default function DashboardAppPage() {
                   ]}
                   chartColors={[Colors.green, Colors.red]}
                 />
+
               </Grid>
+
             </Grid>
+
           </Grid>
+
         </Grid>
+
         <Grid container spacing={4}>
           <Grid item xs={12}>
             <Calendar />
