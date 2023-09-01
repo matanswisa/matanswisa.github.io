@@ -116,14 +116,26 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 export default function UserPage() {
+//---------------------------------------------------------handle currentAccount selected ----------------------------------------------------- //
 
+  const currentAccount = useSelector(selectCurrentAccount);
 
-  //------------------------------------------------   States ----------------------------------------------------- //
+//------------------------------------------------handle trade by current account selected ----------------------------------------------------- //
+  let trades;
+  if (currentAccount?.trades) {
+
+    trades = currentAccount?.trades;
+
+  }
+  else {
+    trades = [];
+  }
+//------------------------------------------------   States ----------------------------------------------------- //
   const messages = useSelector(selectMessages);
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
-  const currentAccount = useSelector(selectCurrentAccount);
+ 
   const userAccounts = useSelector(selectUserAccounts);
   const totalTrades = Object.keys(trades).length;
   const [basicModal, setBasicModal] = useState(false);
@@ -292,16 +304,7 @@ export default function UserPage() {
     showToast(Msg, Type);
   }
 
-//------------------------------------------------handle trade by current account selected ----------------------------------------------------- //
-  let trades;
-  if (currentAccount?.trades) {
 
-    trades = currentAccount?.trades;
-
-  }
-  else {
-    trades = [];
-  }
 
   const dispatch = useDispatch();
 
