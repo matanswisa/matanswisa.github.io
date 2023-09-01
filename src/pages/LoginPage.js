@@ -55,14 +55,10 @@ export default function LoginPage() {
     
       <StyledRoot>
   
-      
-
         {mdUp && (
           <StyledSection>
             <LogoImage w = '500px' h = '400px' />
-        
-  
-        
+
           </StyledSection>
         )}
 

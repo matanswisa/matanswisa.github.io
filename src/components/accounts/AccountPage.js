@@ -19,14 +19,11 @@ import {
 } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import DialogContentText from '@mui/material/DialogContentText';
-
 import ChildModal from './createAccount'
 import DeleteIcon from '@mui/icons-material/Delete'; // Import DeleteIcon
 import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
-
 import { useState, useRef, useEffect } from 'react';
 import Iconify from '../../components/iconify/Iconify';
-
 import useToast from '../../hooks/alert';
 import 'react-toastify/dist/ReactToastify.css';
 import api from '../../api/api';
@@ -34,39 +31,39 @@ import { ToastContainer, } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentAccount, selectUser, selectUserAccounts, setCurrentAccount, updateAccountList } from '../../redux-toolkit/userSlice';
 import MultipleSelectPlaceholder from './selectAccount';
-
-
-
-import {selectMessages} from '../../redux-toolkit/messagesSlice';
-import {getMsg} from '../../utils/messeageUtils';
-import { msgType} from '../../utils/messagesEnum.js';
-import {msgNumber} from '../../utils/msgNumbers.js';
+import { selectMessages } from '../../redux-toolkit/messagesSlice';
+import { getMsg } from '../../utils/messeageUtils';
+import { msgType } from '../../utils/messagesEnum.js';
+import { msgNumber } from '../../utils/msgNumbers.js';
 
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
+
+
+//--------------------------------------------This modal show AccountManagment Page -------------------------------------------//
+
 export default function BasicModal() {
 
-    //const toggleShow = () => setBasicModal(!basicModal);
+
+    //------------------------------------------------   States ----------------------------------------------------- //
+
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
     const user = useSelector(selectUser);
     const currentAccount = useSelector(selectCurrentAccount);
-    // console.log(messages.find(msg => msg.type == "success"));
     const dispatch = useDispatch();
     const accounts = useSelector(selectUserAccounts);
-    
-
-
     const messages = useSelector(selectMessages);
-  
+    const [opendialog, setDialogOpen] = useState(false);
+    const [accountIdToDelete, setAccountIdToDelete] = useState('');
+    const [openmodal, setIsOpenmodal] = useState(false);
 
 
-    
-  
+
 
 
     const getAccountInfoById = (accountList, accountid) => {
@@ -76,9 +73,11 @@ export default function BasicModal() {
 
 
 
+//--------------- handle Delete account after user press "confirm" button when want delete account----------------- //
+    
     const handleCloseMenu = async (accountId) => {
         const token = localStorage.getItem("token");
-       
+
         try {
             // Prepare the request body data to be sent with the DELETE request
             const requestData = {
@@ -99,7 +98,7 @@ export default function BasicModal() {
 
             if (currentAccount) {
                 const account = accounts.find(account => account._id == currentAccount._id);
-            
+
                 if (!account && accounts.length > 0) {
                     dispatch(setCurrentAccount(accounts[0]));
                 } else {
@@ -108,10 +107,10 @@ export default function BasicModal() {
             } else if (accounts.length > 0) {
                 dispatch(setCurrentAccount(accounts[0]));
             }
-            
+
 
             // Notify and fetch accounts
-            notifyToast(getMsg(messages,msgType.success,msgNumber[1]).msgText, getMsg(messages,msgType.success,msgNumber[1]).msgType);
+            notifyToast(getMsg(messages, msgType.success, msgNumber[1]).msgText, getMsg(messages, msgType.success, msgNumber[1]).msgType);
             setAnchorEl(null);
         } catch (error) {
             // Handle errors if any
@@ -119,44 +118,32 @@ export default function BasicModal() {
         }
     };
 
-
-
-
-    const handleEditCloseMenu = async (accountId) => {
-        getAccountInfoById(accounts, accountId);
-        setEditMode(true);
-        setIsOpenmodal(true);
-
-    }
-
-
-    const [opendialog, setDialogOpen] = useState(false);
-    const [accountIdToDelete, setAccountIdToDelete] = useState('');
-
-
-    
+//------------------------------------------------   handle dialog states ----------------------------------------------------- //
     const handleClickDialogOpen = (accountId) => {
         setAccountIdToDelete(accountId);
         setDialogOpen(true);
     };
 
-
     const handleDialogClose = () => {
         setDialogOpen(false);
     };
-
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
-
-    const [openmodal, setIsOpenmodal] = useState(false);
+//------------------------------------------------   handle modals states ----------------------------------------------------- //
+    const handleEditCloseMenu = async (accountId) => {
+        getAccountInfoById(accounts, accountId);
+        setEditMode(true);
+        setIsOpenmodal(true);
+    }
     const handleOpenCreateAccountModal = (tradeId) => {
         setEditMode(false);
         setIsOpenmodal(true);
     };
 
+//------------------------------------------------   handle alert -------------------------------------------------------------- //
 
     const showToast = useToast();
     const notifyToast = (Msg, Type) => {
@@ -164,6 +151,7 @@ export default function BasicModal() {
         showToast(Msg, Type);
     }
 
+ //------------------------------------------------   style of account page -------------------------------------------------------------- //
     const containerStyle = {
         display: 'flex',
         justifyContent: 'space-between',
@@ -171,10 +159,7 @@ export default function BasicModal() {
     };
 
 
-
     return (
-
-
         <Container maxWidth="lg">
             <ToastContainer />
 
@@ -245,7 +230,7 @@ export default function BasicModal() {
                                             <DeleteIcon onClick={() => handleClickDialogOpen(account._id)} />
                                         </IconButton>
 
-                                      
+
                                         <Dialog
                                             open={opendialog}
                                             TransitionComponent={Transition}
@@ -285,7 +270,7 @@ export default function BasicModal() {
 
             <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 2 }}>
 
-
+                {/* open create account modal when editmode = false    ***OR***    open edit account modal when edit  = true */}
                 {openmodal && editMode === false && <ChildModal edit={editMode} notifyToast={notifyToast} openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
                 {(openmodal) === true && editMode === true ? <ChildModal
                     openModal={openmodal}
