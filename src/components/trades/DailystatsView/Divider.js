@@ -36,9 +36,6 @@ const ProfitFactor = (trade) => {
 }
 
 
-
-
-
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -77,11 +74,12 @@ let style = {
 };
 
 
-
-
+//------------------------------------------------this component is each child from list in "DailyStatsPage" -----------------------------------------------------//
 export default function Diveder(props) {
-  const date = props.trade._id;
 
+
+  //------------------------------------------------  States ----------------------------------------------------- //
+  const date = props.trade._id;
   const [trades, setTrades] = useState([]);
   const totalPnL = props.trade.totalPnL;
   const isNegative = totalPnL < 0;
@@ -90,13 +88,15 @@ export default function Diveder(props) {
   const [openCommend, setCommendOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
   const [selectedComment, setSelectedComment] = useState('');
   const currentAccount = useSelector(selectCurrentAccount);
 
 
 
+ //------------------------- Handle table Cols Struct for each broker  ------------------------------------------- //
 
+
+ //default cols.
   let columns = [
     { field: 'id', headerName: 'ID', width: 30 },
     { field: 'symbol', headerName: 'Symbol', width: 100, editable: false,},
@@ -104,7 +104,6 @@ export default function Diveder(props) {
     { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false,},
     { field: 'longShort', headerName: 'Long / Short', width: 100, editable: false,},
     { field: 'contracts', headerName: 'Contracts', width: 100, editable: false,},
-  
     { field: 'duration', headerName: 'Duration', width: 170, editable: false,},
     { field: 'commission', headerName: 'Commission', width: 100, editable: false,},
     { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false,},
@@ -112,13 +111,9 @@ export default function Diveder(props) {
   ];
   
   
-  
-
-
 if (currentAccount !== null) {
+// Check if the current account's broker is Tradovate and Define table columns for Tradovate broker
   if (currentAccount?.Broker == brokers.Tradovate) {
-
-
     style = {
       position: 'absolute',
       top: '50%',
@@ -147,10 +142,9 @@ if (currentAccount !== null) {
     ];
 
   }
+
+// Check if the current account's broker is Binance  and table columns for Binance broker
   else if (currentAccount?.Broker == brokers.Binance) {
-
-
-
     style = {
       position: 'absolute',
       top: '50%',
@@ -163,8 +157,6 @@ if (currentAccount !== null) {
       boxShadow: 24,
       p: 4,
     };
-
-
     columns = [
       { field: 'id', headerName: 'ID', width: 30 },
       { field: 'symbol', headerName: 'Symbol', width: 100, editable: false,},
@@ -175,11 +167,8 @@ if (currentAccount !== null) {
       { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false,},
       { field: 'comments', headerName: 'comments', width: 100, editable: false,},
     ];
-    
   }
-
 }
-
 
 
   const handleCellClick = (params) => {
@@ -192,8 +181,12 @@ if (currentAccount !== null) {
   const handleCloseCommend = () => {
     setCommendOpen(false);
   };
+
+
+//------------------------- Handle Calculating the data before presenting it in a table ------------------------------------------- //
   const rows = trades.map((trade) => {
-    // Calculate the duration in hours, minutes, and seconds format
+
+    // Before displaying the total trade time in the table calc this time to : hours, minutes, and seconds format
     const durationInMinutes = trade.duration || 0;
     const hours = Math.floor(durationInMinutes / 60);
     const minutes = Math.floor(durationInMinutes % 60);
@@ -216,11 +209,7 @@ if (currentAccount !== null) {
       formattedDuration = "N/A";
     }
   
-
-
-
     if (currentAccount?.Broker === brokers.Tradovate) {
-      
     return {
       id: trade._id,
       symbol: trade.symbol,
@@ -233,9 +222,10 @@ if (currentAccount !== null) {
       netPnL: "$" + trade.netPnL,
       comments: trade.comments,
     };
-  } else if (currentAccount?.Broker === brokers.Binance) {
-    
-    return {
+  } 
+
+  else if (currentAccount?.Broker === brokers.Binance) {
+  return {
       id: trade._id,
       symbol: trade.symbol,
       status: trade.status,
@@ -248,16 +238,7 @@ if (currentAccount !== null) {
       comments: trade.comments,
     };
   }
-  
-
-
-    
   });
-  
-  
- 
-  
-
   
   useEffect(() => {
     api.post('/api/ShowInfoBySpecificDate',{trades:currentAccount.trades, date:date},configAuth)
@@ -270,15 +251,7 @@ if (currentAccount !== null) {
       });
   }, []);
 
-
-  
-
-  
-
-
-
   return (
-
     <Box sx={{ width: '1400px', maxWidth: 1200, bgcolor: 'background.paper' }}>
       <Box sx={{ my: 8, mx: 2 }}>
         <Grid container rowSpacing={3} alignItems="center">
