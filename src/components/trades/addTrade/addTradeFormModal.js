@@ -229,7 +229,7 @@ export default function TradeModal(props) {
                 dispatch(setTradesList(data));
               })
               .catch(error => {
-                notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
+               // notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
                 // Handle any errors that occurred during the upload
                 // notifyToast("Error uploading trade image", "error");
                 console.error(error);

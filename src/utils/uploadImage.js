@@ -21,7 +21,7 @@ export const handleUploadTradeImage = async (tradeId, userId, accountId, selecte
     // .catch(error => {
     //     notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
     //     // Handle any errors that occurred during the upload
-    //     // notifyToast("Error uploading trade image", "error");
+   
     //     console.error(error);
     // });
     return response;
