@@ -30,7 +30,6 @@ const CalendarComponent = () => {
   const currentAccount = useSelector(selectCurrentAccount);
 
 
-
   useEffect(() => {
     if (currentAccount?.trades && currentAccount.trades.length) {
       api.post('/api/ShowNumOfTradeTotalPnlInfoByDates', { trades: currentAccount.trades }, configAuth)
@@ -40,11 +39,6 @@ const CalendarComponent = () => {
         .catch();
     }
   }, []);
-
-
-
-
-
 
   function renderCell(date) {
     const list = getTodoList(calendarTrades, date);

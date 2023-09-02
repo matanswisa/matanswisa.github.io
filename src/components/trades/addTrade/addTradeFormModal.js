@@ -61,14 +61,29 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 
-
+//--------------------------------------------This component show Addtrade Modal -------------------------------------------//
 export default function TradeModal(props) {
 
 
-  const messages = useSelector(selectMessages);
-  ///symbol choose :
 
+  //------------------------------------------------  States ----------------------------------------------------- //
+  const messages = useSelector(selectMessages);
   const [value, setValue] = React.useState(0);
+  const user = useSelector(selectUser);
+  const currentAccount = useSelector(selectCurrentAccount);
+  const handleOpen = () => props.handleOpenModal(true);
+  const handleClose = () => props.handleOpenModal(false);
+  const { notifyToast } = props;
+  const tradeInfo = props?.tradeInfo;
+  const editMode = props?.isEditMode;
+  const prevStatusState = props?.prevState;
+  const reduxDispatch = useDispatch();
+  const fileInputRef = React.useRef(null);
+
+
+
+
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -79,23 +94,8 @@ export default function TradeModal(props) {
     minWidth: 0, // Adjust as needed
     fontSize: '14px', // Adjust font size as needed
     padding: '6px 12px', // Adjust padding as needed
-
-
-
   };
-  ////
-
-  const user = useSelector(selectUser);
-  const currentAccount = useSelector(selectCurrentAccount);
-
-  const handleOpen = () => props.handleOpenModal(true);
-  const handleClose = () => props.handleOpenModal(false);
-  const { notifyToast } = props;
-  const tradeInfo = props?.tradeInfo;
-  const editMode = props?.isEditMode;
-  const prevStatusState = props?.prevState;
-
-  const reduxDispatch = useDispatch();
+  
 
   const initialState = {
     positionType: tradeInfo?.longShort || '',
@@ -137,8 +137,6 @@ export default function TradeModal(props) {
   const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netPnL, netROI, positionDate, stopPrice, positionSymbol } = formState;
 
 
-
-
   const handlePositionFieldInput = (event, field) => {
     if (field === 'positionSymbol' && event !== null) {
       dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.year });
@@ -148,13 +146,9 @@ export default function TradeModal(props) {
     }
   };
 
-  const clearPositionFieldInput = (event, field) => {
-    // Currently removed the function that make the inputes field clear
-    // dispatch({ type: 'DELETE_FIELD', field: `${field}`, value: event.target.value });
-  }
+//------------------------------------------------ handle check broker before save  new trade -----------------------------------------------------//
 
-
-
+// before add new trade this condition check which broker in selected account to Adjust the fields structs that come from the data 
   const handleSaveTrade = async () => {
     let data = {};
 
@@ -199,8 +193,7 @@ export default function TradeModal(props) {
       }
     }
 
-
-
+//-------------------------------------------------------------- handle new trade adding -------------------------------------------------------------//
     if (validateForm()) {
       if (!editMode) {
         await api
@@ -209,10 +202,8 @@ export default function TradeModal(props) {
               handleUpload(res.data.tradeId);
             }
             // props.updateTradeLists()
-
             reduxDispatch(setTradesList(res.data));
             notifyToast(getMsg(messages, msgType.success, msgNumber[4]).msgText, getMsg(messages, msgType.success, msgNumber[4]).msgType);
-
             //  notifyToast("Trade added successfully", "success");
             handleClose();
 
@@ -222,8 +213,10 @@ export default function TradeModal(props) {
             handleClose();
           })
       }
-      else if (editMode === true) {
 
+//------------------------------------------------------- handle edit trade ----------------------------------------------------------------------------//
+      else if (editMode === true) {
+        if (validateForm()) {  
         data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
         await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth)
           .then((res) => {
@@ -243,54 +236,15 @@ export default function TradeModal(props) {
               });
 
             reduxDispatch(setTradesList(res.data));
-
-            if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||
-              contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
-
-              if (positionType === '')
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[27]).msgText, getMsg(messages, msgType.warnings, msgNumber[27]).msgType);
-              //  notifyToast("Position type is missing", "warning");
-
-              else if (positionStatus === '')
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[26]).msgText, getMsg(messages, msgType.warnings, msgNumber[26]).msgType);
-              //notifyToast("Position status is missing", "warning");
-
-              else if (!netPnL)
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[25]).msgText, getMsg(messages, msgType.warnings, msgNumber[25]).msgType);
-              // notifyToast("Net PnL is missing", "warning");
-
-              else if (!contractsCounts)
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[24]).msgText, getMsg(messages, msgType.warnings, msgNumber[24]).msgType);
-              //  notifyToast("Number of contracts field is missing", "warning");
-
-              else if (positionSymbol === "")
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[23]).msgText, getMsg(messages, msgType.warnings, msgNumber[23]).msgType);
-              //  notifyToast("Position symbol is missing", "warning");
-
-              else if (!positionDate)
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[22]).msgText, getMsg(messages, msgType.warnings, msgNumber[22]).msgType);
-              // notifyToast("Date field is missing", "warning");
-
-              else if (entryPrice < 1)
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[21]).msgText, getMsg(messages, msgType.warnings, msgNumber[21]).msgType);
-              // notifyToast(" entry Price is missing", "warning");
-
-              else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate)
-                notifyToast(getMsg(messages, msgType.warnings, msgNumber[20]).msgText, getMsg(messages, msgType.warnings, msgNumber[20]).msgType);
-              //notifyToast("exit Price  is missing", "warning");
-
-
-              return false;
-            }
-            return true;
           });
       }
 
-      //Upload image related code:
-
+    }
     }
   };
 
+
+  //------------------------------------------------ handle validation before add new trade -----------------------------------------------------//
   const validateForm = () => {
 
     const currentDate = new Date().toISOString().slice(0, 10); // Get today's date in the format "YYYY-MM-DD"
@@ -339,10 +293,6 @@ export default function TradeModal(props) {
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[20]).msgText, getMsg(messages, msgType.warnings, msgNumber[20]).msgType);
       //notifyToast("exit Price  is missing", "warning");
 
-
-
-
-
       return false;
     }
     return true;
@@ -386,14 +336,14 @@ export default function TradeModal(props) {
       });
   };
 
-  const fileInputRef = React.useRef(null);
+
 
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
 
-  useEffect(() => {
 
+  useEffect(() => {
     if (selectedFile) {
       notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
       //   notifyToast("Image successfully uploaded", "success");
@@ -546,7 +496,7 @@ export default function TradeModal(props) {
                   <TextField
                     className="standard-basic"
                     value={positionDuration}
-                    onFocus={(e) => clearPositionFieldInput(e, 'positionDuration')}
+              
                     onChange={(e) => handlePositionFieldInput(e, 'positionDuration')}
                     label="Duration"
                     variant="standard"
@@ -564,7 +514,7 @@ export default function TradeModal(props) {
                     type="number"
                     value={positionCommision}
                     onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
-                    onFocus={(e) => clearPositionFieldInput(e, 'positionCommision')}
+                  
                     label="Commission"
                     InputLabelProps={{ shrink: true }}
                   />
@@ -582,7 +532,7 @@ export default function TradeModal(props) {
                   value={entryPrice}
                   type="number"
                   onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'entryPrice')}
+                 
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
@@ -595,8 +545,7 @@ export default function TradeModal(props) {
                   label="Exit Price"
                   value={exitPrice}
                   onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'exitPrice')}
-                  type="number"
+                 
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
@@ -609,7 +558,7 @@ export default function TradeModal(props) {
                   label="Contracts"
                   value={contractsCounts}
                   onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'contractsCounts')}
+                
                   type="number"
                   InputLabelProps={{ shrink: true }}
                 />
@@ -624,7 +573,7 @@ export default function TradeModal(props) {
                   label="Net P&L"
                   value={netPnL}
                   onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'netPnL')}
+                 
                   type="number"
                   InputLabelProps={{ shrink: true }}
                 />
@@ -639,7 +588,7 @@ export default function TradeModal(props) {
                   type="number"
                   value={netROI}
                   onChange={(e) => handlePositionFieldInput(e, 'netROI')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'netROI')}
+                 
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
@@ -652,7 +601,7 @@ export default function TradeModal(props) {
                   type="number"
                   value={stopPrice}
                   onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
+              
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
@@ -810,7 +759,7 @@ export default function TradeModal(props) {
                     type="number"
                     value={positionCommision}
                     onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
-                    onFocus={(e) => clearPositionFieldInput(e, 'positionCommision')}
+               
                     label="Commission"
                     InputLabelProps={{ shrink: true }}
                   />
@@ -828,7 +777,7 @@ export default function TradeModal(props) {
                   value={entryPrice}
                   type="number"
                   onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'entryPrice')}
+                 
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
@@ -842,7 +791,7 @@ export default function TradeModal(props) {
                   label="Quantity"
                   value={contractsCounts}
                   onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'contractsCounts')}
+                 
                   type="number"
                   InputLabelProps={{ shrink: true }}
                 />
@@ -857,7 +806,7 @@ export default function TradeModal(props) {
                   label="Net P&L"
                   value={netPnL}
                   onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'netPnL')}
+                
                   type="number"
                   InputLabelProps={{ shrink: true }}
                 />
@@ -873,7 +822,7 @@ export default function TradeModal(props) {
                   type="number"
                   value={stopPrice}
                   onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
-                  onFocus={(e) => clearPositionFieldInput(e, 'stopPrice')}
+               
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
