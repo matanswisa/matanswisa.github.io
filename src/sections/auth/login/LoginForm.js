@@ -8,25 +8,17 @@ import Iconify from '../../../components/iconify';
 import api from '../../../api/api';
 import { login } from '../../../redux-toolkit/userSlice';
 import { useDispatch } from 'react-redux';
-
 import useToast from '../../../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-
 import { useSelector } from 'react-redux';
-
-
 import {selectMessages} from '../../../redux-toolkit/messagesSlice'
 import {getMsg} from '../../../utils/messeageUtils';
-import { msgType} from '../../../utils/messagesEnum.js';
+import { msgType} from  '../../../utils/messagesEnum'
 import {msgNumber} from '../../../utils/msgNumbers.js';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
-
-
-  
   const showToast = useToast();
   const notifyToast = (Msg, Type) => {
 
@@ -40,7 +32,7 @@ export default function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const messages = useSelector(selectMessages);
-
+  console.log(messages);
   const handleLoginForm = () => {
     if (!username || !password) return
     api.post('/api/auth/login', { username, password }).then((res) => {
@@ -50,15 +42,14 @@ export default function LoginForm() {
       navigate('/dashboard/app', { replace: true });
       dispatch(login(res.data));
     }).catch((err) => {
-      console.log(err.response.data.isLicenseExpired);
-      if (err.response && err.response.data && err.response.data.isLicenseExpried) {
+     
+    if (err.response && err.response.data && err.response.data.isLicenseExpried) {
         notifyToast(getMsg(messages,msgType.warnings,msgNumber[30]).msgText, getMsg(messages,msgType.warnings,msgNumber[30]).msgType);
        // notifyToast("Your license has expired. Please renew it to continue using the service.", "info");
     } else {
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[14]).msgText, getMsg(messages,msgType.warnings,msgNumber[14]).msgType);
-       // Toast("Sorry, One or more login details are incorrect. Please try again.", "error");
+       notifyToast(getMsg(messages,msgType.warnings,msgNumber[32]).msgText, getMsg(messages,msgType.warnings,msgNumber[32]).msgType);
+      // notifyToast("Sorry, One or more login details are incorrect. Please try again.","error");
     }
-    
     })
   };
 
