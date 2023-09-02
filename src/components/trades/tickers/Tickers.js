@@ -1,4 +1,4 @@
-
+// -------------------------------------------- select options tickers appear in manual add trade --------------------------------------------------
 export const tickerArrays = [
   [
     { label: 'E-mini S&P 500 Futures', year: 'ES' },

@@ -1,8 +1,7 @@
 
+// --------------------------------------handle validation before import trades from tradovate--------------------------------------------------
 
 const validationBeforeImportCsvFileFromTradeovate = (file) => {
-   
-
     let validationPassed = true;
 
     if (!file.name.endsWith('.csv')) {

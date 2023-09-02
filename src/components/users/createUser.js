@@ -10,15 +10,11 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Select from '@mui/material/Select';
 import api from '../../api/api';
 import PropTypes from 'prop-types';
-
-
-
 import { useDispatch, useSelector } from 'react-redux';
 import {selectMessages} from '../../redux-toolkit/messagesSlice'
 import {getMsg} from '../../utils/messeageUtils';
 import { msgType} from '../../utils/messagesEnum.js';
 import {msgNumber} from '../../utils/msgNumbers.js';
-
 
 const style = {
   position: 'absolute',
@@ -33,8 +29,7 @@ const style = {
   p: 4,
 };
 
-
-
+//  ------------------------------------------- create security random password when create user -------------------------------------------
 const generatePassword = () => {
   const length = 10;
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
@@ -50,19 +45,24 @@ const generatePassword = () => {
 
 
 
+//  ------------------------------------------- component show create user modal ------------------------------------------------------------
 function BasicModal(props) {
+
+
+//-------------------------------------------------------------- States --------------------------------------------------------------------- 
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
   const [users, setUsers] = useState([]);
-
   const messages = useSelector(selectMessages);
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [licenseTime, setLicenseTime] = useState();
   const [isTrial, setisTrial] = useState(false);
 
+
+
+// This function call when admin click "Generate" button in create user modal and create random security password && username.
   const handleGenerateUser = () => {
     const generatedUsername = generatePassword();
     const generatedPassword = generatePassword();
@@ -70,6 +70,8 @@ function BasicModal(props) {
     setUsername(generatedUsername);
     setPassword(generatedPassword);
   };
+
+
 
 
   function fetchUsers() {
@@ -91,22 +93,25 @@ function BasicModal(props) {
   }, []);
 
 
+  // before create user check if username not exist.
   function checkUsernameExist(username) {
     return users.some(user => user.username === username);
   }
 
 
-
+// before create user check if email not exist.
   function checkEmailExist(email) {
     return users.some(user => user.email === email);
   }
 
 
 
+
+  //validation form before create user.
   const validateForm = () => {
     if (checkUsernameExist(username)) {
       notifyToast(getMsg(messages,msgType.warnings,msgNumber[19]).msgText, getMsg(messages,msgType.warnings,msgNumber[19]).msgType);
-   //   notifyToast("Username already exist", "warning");
+   // notifyToast("Username already exist", "warning");
       return false;
     }
 
@@ -116,10 +121,7 @@ function BasicModal(props) {
       return false;
     }
 
-
-
     // Assuming password, email, and username are defined and assigned values somewhere above this function
-
     // Email validation regex pattern
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -158,10 +160,9 @@ function BasicModal(props) {
   };
 
 
-
+  // this function create a msg of 2 types : "Trial" and "Regular"  , after create the msg struct , send email with this info of user properties to user created. 
   const handleSendMail = async () => {
     let welcomeMessage;
-
 
     const formattedLicenseDate = licenseTime.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -217,7 +218,6 @@ function BasicModal(props) {
 
       }
 
-
     const data = {
       to: email,
       subject: 'Welcome to TradeExalt!',
@@ -238,10 +238,9 @@ function BasicModal(props) {
 
   }
 
+  //this function call after user click on  "Create" Button. 
   const handleCreateUser = () => {
-
     if (validateForm()) {
-
       api
         .post('/api/auth/register', {
           username: username,
@@ -252,14 +251,11 @@ function BasicModal(props) {
 
         })
         .then(async (response) => {
-  
-          handleSendMail();
+           handleSendMail();
           await props.handleOpenModal(false);
-
           await   notifyToast(getMsg(messages,msgType.success,msgNumber[8]).msgText, getMsg(messages,msgType.success,msgNumber[8]).msgType);
-
-         // notifyToast("User added successfully", "success");
-          // Fetch list of users from "/api/users" route
+          // notifyToast("User added successfully", "success");
+            // Fetch list of users from "/api/users" route
         })
         .catch((error) => {
           console.error('Failed to create user:', error);
@@ -278,8 +274,6 @@ function BasicModal(props) {
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
-
-
 
   const handleChange = (event) => {
     const selectedValue = event.target.value;
