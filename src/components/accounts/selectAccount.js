@@ -56,8 +56,6 @@ export default function MultipleSelectPlaceholder(props) {
         Authorization: `Bearer ${token}`,
       }
     }).then((res) => {
-      console.log(res.data);
-      // dispatch(setCurrentAccount(res.data));
       setSelectedAccountColor(res.data.Label);
       setSelectedAccount(res.data.AccountName);
     }).catch((err) => {
@@ -86,7 +84,7 @@ export default function MultipleSelectPlaceholder(props) {
 
 
 
-  
+
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };

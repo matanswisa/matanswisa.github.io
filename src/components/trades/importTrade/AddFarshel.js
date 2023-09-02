@@ -20,18 +20,12 @@ import {
     DialogActions,
 
 } from '@mui/material';
+
+
 const ProfitFactor = (trade) => {
-
-
-    if (trade.totalLoss === 0 || trade.totalWin === 0) return 0;
-
+   if (trade.totalLoss === 0 || trade.totalWin === 0) return 0;
     return (trade.totalWin / trade.totalLoss < 0 ? trade.totalWin / trade.totalLoss * -1 : trade.totalWin / trade.totalLoss).toFixed(2);
 }
-
-
-
-
-
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -57,7 +51,6 @@ function getFormattedDate(dateString) {
     return `${abbreviatedWeekday}, ${abbreviatedMonth} ${day} ${year}`;
 }
 
-
 let style = {
     position: 'absolute',
     top: '50%',
@@ -72,15 +65,11 @@ let style = {
 };
 
 
-
-
-
-
-
 export default function AddFarshel(props) {
+
+    //------------------------------------------------  States ----------------------------------------------------- //
     const trade = props.trade;
     let rows;
-
     const totalPnL = props.trade.totalPnL;
     const isNegative = totalPnL < 0;
     const winRate = ((props.trade.win / (props.trade.win + props.trade.loss)) * 100).toFixed(2);
@@ -89,14 +78,7 @@ export default function AddFarshel(props) {
     const [selectedComment, setSelectedComment] = useState('');
     const [openCommend, setCommendOpen] = React.useState(false);
     const [trades, setTrades] = useState([]);
-
     const currentAccount = useSelector(selectCurrentAccount);
-
-
-
-
-
-
 
     let columns = [
         { field: 'time', headerName: 'Time', width: 100, editable: false, },
@@ -108,18 +90,10 @@ export default function AddFarshel(props) {
         { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
         { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
         { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
-
     ];
 
-
-
-
     if (currentAccount !== null) {
-
-
         if (currentAccount?.Broker == brokers.Tradovate) {
-
-
             style = {
                 position: 'absolute',
                 top: '50%',
@@ -143,14 +117,10 @@ export default function AddFarshel(props) {
                 { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
                 { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
                 { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
-
             ];
-
-
         }
+
         else if (currentAccount?.Broker == brokers.Binance) {
-
-
             style = {
                 position: 'absolute',
                 top: '50%',
@@ -171,15 +141,9 @@ export default function AddFarshel(props) {
                 { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
                 { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
                 { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
-
             ];
-
         }
-
-
-
     }
-
 
     const handleCellClick = (params) => {
         if (params.field === 'comments') {
@@ -191,8 +155,6 @@ export default function AddFarshel(props) {
     const handleCloseCommend = () => {
         setCommendOpen(false);
     };
-
-
 
     function transformTrade(trade) {
         // Calculate the duration in hours, minutes, and seconds format
@@ -219,10 +181,6 @@ export default function AddFarshel(props) {
             formattedDuration = "N/A";
         }
 
-
-
-
-
         if (currentAccount?.Broker === brokers.Tradovate) {
             return {
                 id: trade._id,
@@ -247,24 +205,15 @@ export default function AddFarshel(props) {
                 netPnL: "$" + trade.netPnL,
             };
         }
-
-
     }
 
     console.log(trade);
     if (trade.tradesHistory.length == 0) {
 
         rows = [transformTrade(trade)];
-
-
     }
     else {
-
-
-
-
         rows = trade.tradesHistory.map((trade, indx) => {
-
 
             console.log(trade.duration);
             // Calculate the duration in hours, minutes, and seconds format
@@ -290,9 +239,6 @@ export default function AddFarshel(props) {
             if (!formattedDuration.trim()) {
                 formattedDuration = "N/A";
             }
-
-
-
 
             if (currentAccount?.Broker === brokers.Tradovate) {
                 return {
@@ -321,14 +267,7 @@ export default function AddFarshel(props) {
 
         });
 
-        console.log(rows);
-
     }
-
-
-
-
-
 
     return (
         <div>
