@@ -1,12 +1,9 @@
 import Divider from '../components/trades/DailystatsView/Divider'
-
 import { Helmet } from 'react-helmet-async';
 import { filter, includes, lowerCase } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-// @mui
 import {
   Card,
   Table,
@@ -31,9 +28,6 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
-
-
-// components
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Iconify from '../components/iconify';
@@ -41,13 +35,16 @@ import api from '../api/api';
 import userSlice, { selectCurrentAccount , selectUser} from '../redux-toolkit/userSlice';
 import { configAuth } from '../api/configAuth';
 
+
+
 export default function DailyStatsPage() {
+
+
+//------------------------------------------------   States ----------------------------------------------------- //
   const [trades, setTrades] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
   const currentAccount = useSelector(selectCurrentAccount);
  
-
-
 
   useEffect(() => {
     if (currentAccount?.trades && currentAccount.trades.length) {
@@ -63,9 +60,7 @@ export default function DailyStatsPage() {
   }, []);
 
 
-
-  
-
+//handle filter reuslts by date
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
@@ -99,8 +94,6 @@ export default function DailyStatsPage() {
     </div>
     
       </FormControl>
-   
-    
       <Container>
         <div style={{ maxHeight: '850px', maxWidth: '1400px', overflowY: 'scroll' }}>
           <Typography variant="h4" gutterBottom>

@@ -29,7 +29,7 @@ const style = {
   p: 4,
 };
 
-//  ------------------------------------------- create security random password when create user -------------------------------------------
+//------------------------------------------- create security random password when create user -------------------------------------------
 const generatePassword = () => {
   const length = 10;
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
@@ -45,7 +45,7 @@ const generatePassword = () => {
 
 
 
-//  ------------------------------------------- component show create user modal ------------------------------------------------------------
+//------------------------------------------- component show create user modal ------------------------------------------------------------
 function BasicModal(props) {
 
 
