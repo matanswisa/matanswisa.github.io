@@ -256,44 +256,44 @@ export default function UserPage() {
       setSelectedFile(event.target.files[0]);
   };
 
-  const handleUpload = (tradeId) => {
-    console.log("Inside upload new image but adding trade!", tradeId)
+  // const handleUpload = (tradeId) => {
+  //   console.log("Inside upload new image but adding trade!", tradeId)
 
-    if (!selectedFile && !tradeId) {
-      notifyToast(getMsg(messages, msgType.errors, msgNumber[9]).msgText, getMsg(messages, msgType.errors, msgNumber[9]).msgType);
+  //   if (!selectedFile && !tradeId) {
+  //     notifyToast(getMsg(messages, msgType.errors, msgNumber[9]).msgText, getMsg(messages, msgType.errors, msgNumber[9]).msgType);
 
-      // notifyToast("Couldn't upload the image", "error"); return; }
-    }
-    console.log(user);
-    // Create a new FormData object
-    const formData = new FormData();
-    // Append the selected file to the FormData object
-    formData.append('file', selectedFile);
-    formData.append('tradeId', tradeId);
-    formData.append('userId', user._id)
-    formData.append('accountId', currentAccount._id)
-    console.log("formData", formData);
-    // Make a POST request to the server with the file data
-    api.post('http://localhost:8000/api/uploadTradeImage', formData, { headers: { ...configAuth['headers'], 'Content-Type': 'multipart/form-data' } })
-      .then(response => response.json())
-      .then(data => {
-        notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
-        // notifyToast("Trade image uploaded successfully", "success");
-        dispatch(setTradesList(data));
-      })
-      .catch(error => {
-       // notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
-        // Handle any errors that occurred during the upload
-        // notifyToast("Error uploading trade image", "error");
-        console.error(error);
-      });
-  };
+  //     // notifyToast("Couldn't upload the image", "error"); return; }
+  //   }
+  //   console.log(user);
+  //   // Create a new FormData object
+  //   const formData = new FormData();
+  //   // Append the selected file to the FormData object
+  //   formData.append('file', selectedFile);
+  //   formData.append('tradeId', tradeId);
+  //   formData.append('userId', user._id)
+  //   formData.append('accountId', currentAccount._id)
+  //   console.log("formData", formData);
+  //   // Make a POST request to the server with the file data
+  //   api.post('http://localhost:8000/api/uploadTradeImage', formData, { headers: { ...configAuth['headers'], 'Content-Type': 'multipart/form-data' } })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
+  //       // notifyToast("Trade image uploaded successfully", "success");
+  //       dispatch(setTradesList(data));
+  //     })
+  //     .catch(error => {
+  //      // notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
+  //       // Handle any errors that occurred during the upload
+  //       // notifyToast("Error uploading trade image", "error");
+  //       console.error(error);
+  //     });
+  // };
 
-  const fileInputRef = React.useRef(null);
+  // const fileInputRef = React.useRef(null);
 
-  const handleButtonClick = () => {
-    fileInputRef.current.click();
-  };
+  // const handleButtonClick = () => {
+  //   fileInputRef.current.click();
+  // };
 
 
 
