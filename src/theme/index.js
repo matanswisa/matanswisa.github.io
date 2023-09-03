@@ -1,36 +1,27 @@
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
-// @mui
+import { useEffect, useState } from 'react';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider as MUIThemeProvider, createTheme, StyledEngineProvider } from '@mui/material/styles';
-//
-import palette from './palette';
 import shadows from './shadows';
 import typography from './typography';
 import GlobalStyles from './globalStyles';
 import customShadows from './customShadows';
 import componentsOverride from './overrides';
-
-// ----------------------------------------------------------------------
+import { useSelector } from 'react-redux';
+import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
+import { getDarkOrLightModeStyle } from './palette';
 
 ThemeProvider.propTypes = {
   children: PropTypes.node,
 };
 
 export default function ThemeProvider({ children }) {
-  const themeOptions = useMemo(
-    () => ({
-      palette,
-      shape: { borderRadius: 6 },
-      typography,
-      shadows: shadows(),
-      customShadows: customShadows(),
-    }),
-    []
-  );
+  const darkmode = useSelector(selectDarkMode);
+  const [theme, setTheme] = useState(createTheme(getThemeOptions(darkmode)));
 
-  const theme = createTheme(themeOptions);
-  theme.components = componentsOverride(theme);
+  useEffect(() => {
+    setTheme(createTheme(getThemeOptions(darkmode)));
+  }, [darkmode]);
 
   return (
     <StyledEngineProvider injectFirst>
@@ -41,4 +32,16 @@ export default function ThemeProvider({ children }) {
       </MUIThemeProvider>
     </StyledEngineProvider>
   );
+}
+
+function getThemeOptions(darkmode) {
+  const palette = getDarkOrLightModeStyle(darkmode);
+
+  return {
+    palette,
+    shape: { borderRadius: 6 },
+    typography,
+    shadows: shadows(palette),
+    customShadows: customShadows(palette),
+  };
 }

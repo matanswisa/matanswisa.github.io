@@ -1,13 +1,15 @@
 // @mui
 import { alpha } from '@mui/material/styles';
 //
-import palette from './palette';
+// import getPallete from './palette';
+// const palette = getPallete();
 
 // ----------------------------------------------------------------------
 
-const color = palette.grey[500];
 
-export default function customShadows() {
+export default function customShadows(palette) {
+  const color = palette.grey[500];
+  // palette
   const transparent = alpha(color, 0.16);
   return {
     z1: `0 1px 2px 0 ${transparent}`,
