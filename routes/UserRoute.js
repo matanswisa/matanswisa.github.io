@@ -223,12 +223,10 @@ router.put("/updateUserPassword", authenticateToken, async (req, res) => {
             return res.status(400).send('data is missing');
         }
 
-        const { username, password } = req.body.data;
-
-
-
-
-        if (password === "222222") {
+        const { username, password } = req.body;
+        const userInfo = await User.findOne({ username});
+       
+        if (password === userInfo.password) {
             return res.status(400).json({ message: "same password", samePassword: true });
             //    res.status(500).send(`same password`);
         }
