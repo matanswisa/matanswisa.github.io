@@ -10,10 +10,11 @@ import MultipleSelectPlaceholder from '../../components/accounts/selectAccount';
 import api from '../../api/api';
 
 import { configAuth } from '../../api/configAuth';
-import { setCurrentAccount , selectUserAccounts} from '../../redux-toolkit/userSlice';
+import { setCurrentAccount, selectUserAccounts } from '../../redux-toolkit/userSlice';
 
 import { useDispatch, useSelector } from 'react-redux';
 import Switch from '@mui/material/Switch';
+import { selectDarkMode, toggleDarkMode } from '../../redux-toolkit/darkModeSlice';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -93,9 +94,21 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
   const userAccounts = useSelector(selectUserAccounts);
+  const dispatch = useDispatch();
+
+  const changeDarkMode = () => {
+    console.log("inside change dark mode ----")
+    dispatch(toggleDarkMode());
+  }
+
+  const darkMode = useSelector(selectDarkMode);
+
+  useEffect(() => {
+    console.log("darkMode changed !", darkMode)
+  }, [darkMode])
 
   return (
-    
+
     <StyledRoot>
 
 
@@ -104,12 +117,12 @@ export default function DashboardLayout() {
       <Nav openNav={open} onCloseNav={() => setOpen(false)} />
 
       <Main>
-        
-       {userAccounts.length > 0 &&  <MultipleSelectPlaceholder />}
-       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
-        <MaterialUISwitch />
-      </div>
-  
+
+        {userAccounts.length > 0 && <MultipleSelectPlaceholder />}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
+          <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
+        </div>
+
         <AppBar />
         <Outlet />
       </Main>
