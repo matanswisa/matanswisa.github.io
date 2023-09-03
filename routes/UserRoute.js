@@ -11,6 +11,7 @@ configDotenv();
 const { JWT_SECRET_KEY } = process.env;
 const router = express.Router();
 
+//--------------------------------------- handle create user------------------------------------------- //
 router.post('/register', async (req, res) => {
     const { username, password, email, license } = req.body;
     if (password.length < 6) {
@@ -55,6 +56,7 @@ router.post('/register', async (req, res) => {
     });
 });
 
+//--------------------------------------- handle login ------------------------------------------- //
 router.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -62,7 +64,6 @@ router.post('/login', async (req, res, next) => {
             message: "Username or Password not present",
         });
     }
-
     try {
         const user = await User.findOne({ username });
 
@@ -75,21 +76,15 @@ router.post('/login', async (req, res, next) => {
             // comparing given password with hashed password
             bcrypt.compare(password, user.password).then(function (result) {
                 if (result) {
-
                     if (user.license && user.role == 0) {
-
                         const currentDate = new Date(); // Get the current date
                         const userLicenseDate = new Date(user.license); // Convert the user's license date to a Date object
-
-
                         if (userLicenseDate <= currentDate) {
                             console.log("Your license has expired. Please renew it to continue using the service.");
 
                             return res.status(400).json({ message: "Login not successful", isLicenseExpried: true });
                         }
-
                     }
-
                     const maxAge = 24 * 60 * 60;
                     const token = jwt.sign(
                         { id: user._id, username, role: user.role },
@@ -110,8 +105,6 @@ router.post('/login', async (req, res, next) => {
                             role: user.role,
                             email: user.email,
                             accounts: user.accounts,
-
-
                         },
                         token: token
                     });
@@ -180,10 +173,8 @@ router.get('/users', authenticateToken, authorizeRole(roles.admin), async (req, 
 });
 
 
-
-
+//--------------------------------------- handle delete user ------------------------------------------- //
 router.delete('/deleteUser', authenticateToken, authorizeRole(roles.admin), async (req, res) => {
-   
     try {
         const { id } = req.body;
         const deletedUser = await User.findByIdAndDelete(id);
@@ -199,8 +190,7 @@ router.delete('/deleteUser', authenticateToken, authorizeRole(roles.admin), asyn
     }
 });
 
-
-
+//--------------------------------------- handle update user ------------------------------------------- //
 router.put("/updateUser", authenticateToken, async (req, res) => {
     try {
         if (!req.body) {

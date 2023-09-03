@@ -6,10 +6,8 @@ import { dirname } from 'path';
 import path from 'path';
 import fs from 'fs';
 const router = Router();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 const imagePath = path.join(__dirname, 'logo.png');
 
 // Check if the file exists before proceeding
@@ -23,7 +21,6 @@ fs.access(imagePath, fs.constants.F_OK, (err) => {
   // ... Your email sending code here
 });
 
-
 const transporter = nodemailer.createTransport({
     host: 'smtp.office365.com',
     port: 587,
@@ -34,9 +31,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
+//--------------------------------------- handle send mail with logo and terms.------------------------------------------- //
 router.post('/sendEmail', (req, res) => {
-  
   const { to, subject, text ,isTrial } = req.body;
   let mailOptions;
   if(isTrial === true){
@@ -51,12 +47,9 @@ router.post('/sendEmail', (req, res) => {
           path: path.join(__dirname, 'logo.png'), // logo need to by the terms : "Terms.png"
           cid: 'tradeexalt_logo',
         },
-      
       ],
     };
-  
   }
-
   else{
      mailOptions = {
       from: 'tradeExalt@outlook.co.il',
@@ -76,11 +69,7 @@ router.post('/sendEmail', (req, res) => {
         },
       ],
     };
-
-
   }
-  
-
   // Send email
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
