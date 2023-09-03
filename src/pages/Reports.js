@@ -289,11 +289,11 @@ export default function UserPage() {
   //     });
   // };
 
-  // const fileInputRef = React.useRef(null);
+  const fileInputRef = React.useRef(null);
 
-  // const handleButtonClick = () => {
-  //   fileInputRef.current.click();
-  // };
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
 
 
 
