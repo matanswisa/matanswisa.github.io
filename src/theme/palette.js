@@ -80,16 +80,34 @@ const palette = {
   error: ERROR,
   grey: GREY,
   divider: alpha(GREY[500], 0.24),
+
+
+  
   text: {
     primary: GREY[800],
     secondary: GREY[600],
     disabled: GREY[500],
   },
+  
   background: {
     paper: '#fff',
     default: GREY[100],
     neutral: GREY[200],
   },
+
+
+  // textDarkMode: {
+  //   primary: '#fff',
+  //   secondary:  '#fff',
+  //   disabled:  '#fff',
+  // },
+
+  // backgroundDarkMode: {
+  //   paper:'#000',
+  //   default:'#000',
+  //   neutral:'#000',
+  // },
+
   action: {
     active: GREY[600],
     hover: alpha(GREY[500], 0.08),
