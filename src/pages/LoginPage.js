@@ -10,6 +10,9 @@ import Iconify from '../components/iconify';
 // sections
 import { LoginForm } from '../sections/auth/login';
 import LogoImage from '../components/logo/logoImage'
+
+import { useDispatch, useSelector } from 'react-redux';
+import { selectMode } from '../redux-toolkit/darkModeSlice';
 // ----------------------------------------------------------------------
 
 const StyledRoot = styled('div')(({ theme }) => ({
@@ -42,9 +45,13 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 
 
-
-
 export default function LoginPage() {
+  
+
+  
+  const mode = useSelector(selectMode);
+  console.log("$$$$$$$",mode);
+
   const mdUp = useResponsive('up', 'md');
 
   return (
