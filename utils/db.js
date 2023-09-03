@@ -12,6 +12,9 @@ const connectDB = async () => {
         useUnifiedTopology: true,
     });
     
+
+
+    // this function export a csv file for backup
    // '* * * * *' each 1m for test
     console.log("MongoDB Connected");
     cron.schedule('0 0 * * *', async () => {

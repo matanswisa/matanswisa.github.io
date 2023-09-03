@@ -2,7 +2,7 @@
 import { spawn } from 'child_process';
 const localDB = `mongodb://127.0.0.1:27017/trading-journal`;
 
-
+// this component get name of collection from db and export this data. (use for backup).
 const exportToCSV = async (collectionName, fields) => {
     try {
         const currentDate = new Date().toLocaleString().replace(/[/:\s]/g, '-'); // Format the date and time to remove special characters

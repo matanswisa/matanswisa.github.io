@@ -2,9 +2,6 @@ import { Router } from "express";
 import Trade from "../models/trade.js";
 import multer from 'multer';
 import Path from 'path';
-const router = Router();
-
-
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import fs from 'fs';
@@ -19,6 +16,7 @@ import SelectedAccountModel from "../models/selectedAccount.js";
 import { brokers } from "../utils/brokers.js";
 import { importTradesFromTradovate } from "../utils/importTradesFromTradovate/importTradesFromTradovate.js";
 
+const router = Router();
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = dirname(currentFilePath);
 const uploadsDirPath = Path.join(currentDirPath, '..', '/uploads/');
@@ -35,7 +33,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-
 //need to split to other file -
 async function getAccountOfUserById(userId, accountId) {
   const user = await User.findById(userId);
@@ -43,9 +40,8 @@ async function getAccountOfUserById(userId, accountId) {
   return accounts;
 }
 
-/**
- * //TODO: when adding a trade need to make sure i get the account ID and userId for related trades.
-  */
+
+//--------------------------------------- handle add manual trade ------------------------------------------- //
 router.post("/addTrade", authenticateToken, async (req, res) => {
   try {
     const { userId, accountId, tradeData } = req.body;
@@ -78,8 +74,7 @@ router.post("/addTrade", authenticateToken, async (req, res) => {
   }
 });
 
-
-
+//--------------------------------------- handle import trade fro csv file. ------------------------------------------- //
 router.post("/importTrades", authenticateToken, upload.single('file'), async (req, res) => {
   try {
     const { userId, accountId } = req.body;
@@ -117,44 +112,37 @@ router.post("/importTrades", authenticateToken, upload.single('file'), async (re
   }
 });
 
+// router.get('/fetchTrades', authenticateToken, async (req, res) => {
+//   try {
+//     const { userId, accountId } = req.body;
+//     const user = await User.findById(userId);
+//     if (!user?.accounts && !user?.accounts.length) return res.status(400).send("No Accounts exists for this user");
+//     if (!accounts?.trades) return res.status(400).send("No trades exists for this user account");
 
+//     const accounts = user.accounts.find(account => account._id == accountId);
 
+//     const tradesWithImage = await fetchTradesWithImages(accounts.trades);
+//     if (!tradesWithImage.length) return res.status(400).send("There isn't any trades to display");
+//     res.status(200).json({ accountId, trades: tradesWithImage });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send(err);
+//   }
+// });
 
-router.get('/fetchTrades', authenticateToken, async (req, res) => {
-  try {
-    const { userId, accountId } = req.body;
-    const user = await User.findById(userId);
-    if (!user?.accounts && !user?.accounts.length) return res.status(400).send("No Accounts exists for this user");
-    if (!accounts?.trades) return res.status(400).send("No trades exists for this user account");
-
-    const accounts = user.accounts.find(account => account._id == accountId);
-
-    const tradesWithImage = await fetchTradesWithImages(accounts.trades);
-    if (!tradesWithImage.length) return res.status(400).send("There isn't any trades to display");
-    res.status(200).json({ accountId, trades: tradesWithImage });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  }
-});
-
+//--------------------------------------- handle edit trade ------------------------------------------- //
 router.post("/editTrade", authenticateToken, async (req, res) => {
-
   try {
     const { userId, accountId, tradeId, tradeData } = req.body;
     //first updating the trade object and get it back
     const result = await Trade.findByIdAndUpdate(tradeId, tradeData);
-
     const account = await getAccountOfUserById(userId, accountId);
     const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id != tradeId);
     tradesWithoutCurrTrade.push(tradeData);
     account.trades = tradesWithoutCurrTrade;
     await User.findByIdAndUpdate(userId, { accounts: account });
     await Account.findOneAndUpdate({ _id: accountId }, account);
-
-
     const tradesWithImage = await fetchTradesWithImages(account.trades);
-
     res.status(200).json(tradesWithImage);
   } catch (err) {
     console.err(err);
@@ -162,24 +150,20 @@ router.post("/editTrade", authenticateToken, async (req, res) => {
   }
 });
 
+//--------------------------------------- handle delete trade ------------------------------------------- //
 router.post('/deleteTrade', authenticateToken, async (req, res) => {
   try {
-
     const { tradeId, accountId, userId } = req.body;
-
     // Assuming the 'Trade', 'User', 'Account', and 'getAccountOfUserById' functions are properly defined and working.
-
     const result = await Trade.findByIdAndDelete(tradeId);
 
     if (result) {
       const account = await getAccountOfUserById(userId, accountId);
       const tradesWithoutCurrTrade = account.trades.filter(trade => trade._id != tradeId);
       account.trades = tradesWithoutCurrTrade;
-
       await User.findByIdAndUpdate(userId, { accounts: account });
       await Account.findOneAndUpdate({ _id: accountId }, account);
       await SelectedAccountModel.updateOne({ userId }, { account: account });
-
       // Assuming 'fetchTradesWithImages' properly fetches trade data with images
       // const tradesWithImage = await fetchTradesWithImages(account.trades);
       const trades = await fetchUserTrades(userId, accountId);
@@ -192,89 +176,79 @@ router.post('/deleteTrade', authenticateToken, async (req, res) => {
   }
 });
 
+// router.get('/getDailyStats', async (req, res) => {
+//   try {
+//     const tradesByDate = await Trade.aggregate([
+//       {
+//         $group: {
+//           _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
+//           trades: { $push: '$$ROOT' },
+//         },
+//       },
+//       { $sort: { _id: -1 } }, // Sort by descending entryDate
+//     ]);
+//     // Iterate through the trades and read the image file to include the image data in the response
+//     for (const tradeGroup of tradesByDate) {
+//       for (const trade of tradeGroup.trades) {
+//         if (trade.image) {
+//           const imageData = fs.readFileSync(trade.image, 'base64');
+//           trade.image = imageData;
+//         }
+//       }
+//     }
+//     res.status(200).json(tradesByDate);
+//   } catch (error) {
+//     console.error('Error fetching trades:', error);
+//     res.status(500).json({ error: 'An error occurred' });
+//   }
+// });
 
-router.get('/getDailyStats', async (req, res) => {
-  try {
-    const tradesByDate = await Trade.aggregate([
-      {
-        $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$entryDate' } },
-          trades: { $push: '$$ROOT' },
-        },
-      },
-      { $sort: { _id: -1 } }, // Sort by descending entryDate
-    ]);
-
-    // Iterate through the trades and read the image file to include the image data in the response
-    for (const tradeGroup of tradesByDate) {
-      for (const trade of tradeGroup.trades) {
-        if (trade.image) {
-          const imageData = fs.readFileSync(trade.image, 'base64');
-          trade.image = imageData;
-        }
-      }
-    }
-
-    res.status(200).json(tradesByDate);
-  } catch (error) {
-    console.error('Error fetching trades:', error);
-    res.status(500).json({ error: 'An error occurred' });
-  }
-});
-
-
+//-----------------------------------------------handle "Winning % By Trades" cake. --------------------------------------------------------------
 router.post('/WinAndLossTotalTime', authenticateToken, async (req, res) => {
   try {
     const { trades } = req.body;
-
     let lossCount = 0;
     let winCount = 0;
     let breakEvenCount = 0;
-
     trades.forEach((trade) => {
       if (trade.status === 'Loss') {
         lossCount++;
       } else if (trade.status === 'Win') {
         winCount++;
       }
-
       if (trade.netPnL === 0) {
         breakEvenCount++;
       }
     });
-
     const updatedTradeStats = {
       lossCount,
       winCount,
       breakEvenCount,
     };
-
     res.status(200).json(updatedTradeStats);
   } catch (error) {
     res.status(500).json({ error: 'An error occurred' });
   }
 });
 
-
-
-
+//-----------------------------------------------handle calnder data .------------------------------------------------------------------
+// This route handles incoming POST requests to '/ShowNumOfTradeTotalPnlInfoByDates' to aggregate trade data
+// by date and calculate the total number of trades and total profit and loss (PnL) for each date.
+// It returns the aggregated data as JSON, sorted by date in descending order.
+// Authentication via 'authenticateToken' middleware is required for access.
 router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req, res) => {
   try {
     const { trades } = req.body;
-
     const tradesByDate = trades.reduce((result, trade) => {
       const tradeDate = trade.entryDate.substring(0, 10); // Extract YYYY-MM-DD from the full entryDate
       const existingEntry = result.find(entry => entry._id === tradeDate);
-
       if (existingEntry) {
         if (trade.status === 'Loss') {
           existingEntry.trades++;
           existingEntry.lossCount++;
-
         } else if (trade.status === 'Win') {
           existingEntry.trades++;
           existingEntry.winCount++;
-
         }
         existingEntry.totalPnL += trade.netPnL;
       } else {
@@ -286,9 +260,7 @@ router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req,
       }
       return result;
     }, []);
-
     tradesByDate.sort((a, b) => b._id.localeCompare(a._id)); // Sort by descending date
-
     res.status(200).json(tradesByDate);
   } catch (error) {
     console.error('Error fetching trades:', error);
@@ -296,20 +268,18 @@ router.post('/ShowNumOfTradeTotalPnlInfoByDates', authenticateToken, async (req,
   }
 });
 
-
-
-
-
-
+//-----------------------------------------------handle "Show Trades " list in Daily stats page.------------------------------------------------------------------
+// This route handles incoming POST requests to '/ShowInfoBySpecificDate' to filter trade data
+// by a specific date provided in the request body. It extracts trades from the given date
+// and returns them as a JSON response. Authentication via 'authenticateToken' middleware
+// is required for access.
 router.post('/ShowInfoBySpecificDate', authenticateToken, async (req, res) => {
   try {
     const { trades, date } = req.body;
-
     const tradesByDate = trades.filter(trade => {
       const tradeDate = new Date(trade.entryDate).toISOString().split('T')[0];
       return tradeDate === date;
     });
-
     res.json(tradesByDate);
   } catch (error) {
     console.error('Error fetching trades:', error);
@@ -317,22 +287,22 @@ router.post('/ShowInfoBySpecificDate', authenticateToken, async (req, res) => {
   }
 });
 
+//-----------------------------------------------handle "Winning % By Days" cake.------------------------------------------------------------------
+// This route handles incoming POST requests to '/ShowInfoByDates' to aggregate trade data by date.
+// It calculates daily statistics such as the count of wins, count of losses, and total profit and loss (PnL)
+// for each date in the provided trade data. The aggregated data is sorted by date in descending order.
+// Authentication via 'authenticateToken' middleware is required for access.
 router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
   try {
     const { trades } = req.body;
-
     const tradesByDate = trades.reduce((result, trade) => {
       const tradeDate = trade.entryDate.substring(0, 10); // Extract YYYY-MM-DD from the full entryDate
       const existingEntry = result.find(entry => entry._id === tradeDate);
-
       if (existingEntry) {
         if (trade.status === 'Loss') {
           existingEntry.lossCount++;
-
         } else if (trade.status === 'Win') {
           existingEntry.winCount++;
-
-
         }
         existingEntry.totalPnL += trade.netPnL;
       } else {
@@ -343,13 +313,9 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
           totalPnL: trade.netPnL,
         });
       }
-
-
       return result;
     }, []);
-
     tradesByDate.sort((a, b) => b._id.localeCompare(a._id)); // Sort by descending date
-
     res.json(tradesByDate);
   } catch (error) {
     console.error('Error fetching trades:', error);
@@ -357,16 +323,16 @@ router.post('/ShowInfoByDates', authenticateToken, async (req, res) => {
   }
 });
 
-
-
-
+//------------------------------------------------  handle dailystatsunfo data ----------------------------------------------------- //
+// This route handles incoming POST requests to '/DailyStatsInfo' to aggregate trade data by date.
+// It calculates daily statistics such as the number of trades, total profit and loss (PnL),
+// commission, wins, and losses, and returns the aggregated data in descending order by date.
+// Authentication via 'authenticateToken' middleware is required for access.
 router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
   try {
     const { trades } = req.body;
-
     const tradesByDate = trades.reduce((result, trade) => {
       const date = new Date(trade.entryDate).toISOString().substr(0, 10);
-
       if (!result[date]) {
         result[date] = {
           _id: date,
@@ -379,16 +345,12 @@ router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
           totalWin: 0,
         };
       }
-
       result[date].numberOfTrades++;
       result[date].Commission += trade.commission || 0;
-
       if (trade.status == "Win") {
-
         result[date].totalWin += trade.netPnL; // Subtract from totalLoss
         result[date].win++;
       } else if (trade.status == "Loss") {
-
         result[date].totalLoss -= trade.netPnL; // Subtract from totalLoss
         result[date].loss++;
       }
@@ -401,7 +363,6 @@ router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
 
     // Sort the array by date in descending order
     aggregatedData.sort((a, b) => b._id.localeCompare(a._id));
-
     res.json(aggregatedData);
   } catch (error) {
     console.error('Error fetching trades:', error);
@@ -409,13 +370,8 @@ router.post('/DailyStatsInfo', authenticateToken, async (req, res) => {
   }
 });
 
-
-
-
-
-
+//------------------------------------------------handle Upload image ----------------------------------------------------- // 
 router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
-
   try {
     const { tradeId, userId, accountId } = req.body;
     console.log("This is what inside req.body - ", { tradeId, userId, accountId });
@@ -424,38 +380,29 @@ router.post('/uploadTradeImage', upload.single('file'), async (req, res) => {
     const { path, originalname } = req.file;
     // Handle the uploaded image as needed
     // For example, you can save the image path or perform image processing
-
     // Update the Trade document with the image details
     const imagePath = Path.join(uploadsDirPath, originalname);
     const trade = await Trade.findOneAndUpdate({ _id: tradeId }, {
       image: imagePath
     });
-
     const user = await User.findOne({ _id: userId });
     const accountOfUser = user.accounts.find(acc => acc._id == accountId);
     const tradeOfAccount = accountOfUser.trades.find(trade => trade._id == tradeId);
-
     //updating user , and accounts and trades.
     tradeOfAccount.image = imagePath;
     accountOfUser.trades = accountOfUser.trades.filter(trade => trade._id != tradeId)
     user.accounts = user.accounts.filter(acc => acc._id != accountId);
     accountOfUser.trades.push(tradeOfAccount);
     user.accounts.push(accountOfUser);
-
     // User.findByIdAndUpdate(userId,{accounts:})
     user.save();
-
-
     const tradesWithImage = await fetchTradesWithImages(accountOfUser.trades);
     if (tradesWithImage && tradesWithImage.length) { return res.status(200).json(tradesWithImage) }
     return res.status(400).send("Can't save trading image");
-
   } catch (err) {
     console.error('Error uploading trade image:', err);
     res.status(500).json({ error: 'An error occurred while uploading the image' });
   }
 });
-
-
 
 export default router;

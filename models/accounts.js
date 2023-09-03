@@ -1,5 +1,6 @@
 import Mongoose from 'mongoose';
 
+
 const AccountsSchema = new Mongoose.Schema({
     AccountName: {
         type: String,
