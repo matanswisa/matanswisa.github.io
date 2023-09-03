@@ -103,10 +103,6 @@ export default function DashboardLayout() {
 
   const darkMode = useSelector(selectDarkMode);
 
-  useEffect(() => {
-    console.log("darkMode changed !", darkMode)
-  }, [darkMode])
-
   return (
 
     <StyledRoot>
