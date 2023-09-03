@@ -94,6 +94,12 @@ export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
   const userAccounts = useSelector(selectUserAccounts);
 
+    // Step 1: Create a boolean state variable
+    const [darkMode, setDarkMode] = useState(false);
+    console.log("ssssssssssss",darkMode);
+    const handleDarkModeToggle = () => {
+      setDarkMode(!darkMode);
+    };
   return (
     
     <StyledRoot>
@@ -107,7 +113,7 @@ export default function DashboardLayout() {
         
        {userAccounts.length > 0 &&  <MultipleSelectPlaceholder />}
        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
-        <MaterialUISwitch />
+        <MaterialUISwitch  checked={darkMode} onChange={handleDarkModeToggle}/>
       </div>
   
         <AppBar />
