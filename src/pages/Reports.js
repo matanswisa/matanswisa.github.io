@@ -101,10 +101,10 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const fetchTrades = async () => {
-  const result = await api.get('/api/fetchTrades', configAuth);
-  return result;
-}
+// const fetchTrades = async () => {
+//   const result = await api.get('/api/fetchTrades', configAuth);
+//   return result;
+// }
 // export let globalAlert;
 
 
