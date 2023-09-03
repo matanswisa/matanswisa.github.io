@@ -96,6 +96,17 @@ const palette = {
   },
 
 
+  action: {
+    active: GREY[600],
+    hover: alpha(GREY[500], 0.08),
+    selected: alpha(GREY[500], 0.16),
+    disabled: alpha(GREY[500], 0.8),
+    disabledBackground: alpha(GREY[500], 0.24),
+    focus: alpha(GREY[500], 0.24),
+    hoverOpacity: 0.08,
+    disabledOpacity: 0.48,
+  },
+
   // textDarkMode: {
   //   primary: '#fff',
   //   secondary:  '#fff',
@@ -121,16 +132,7 @@ const palette = {
   //   disabledOpacity: 0.48,
   // },
 
-  action: {
-    active: GREY[600],
-    hover: alpha(GREY[500], 0.08),
-    selected: alpha(GREY[500], 0.16),
-    disabled: alpha(GREY[500], 0.8),
-    disabledBackground: alpha(GREY[500], 0.24),
-    focus: alpha(GREY[500], 0.24),
-    hoverOpacity: 0.08,
-    disabledOpacity: 0.48,
-  },
+  
 };
 
 export default palette;
