@@ -108,6 +108,19 @@ const palette = {
   //   neutral:'#000',
   // },
 
+
+  
+  // action: {
+  //   active: GREY[300],
+  //   hover: alpha(GREY[500], 0.08),
+  //   selected: alpha(GREY[200], 0.16),
+  //   disabled: alpha(GREY[500], 0.8),
+  //   disabledBackground: alpha(GREY[500], 0.24),
+  //   focus: alpha(GREY[500], 0.24),
+  //   hoverOpacity: 0.08,
+  //   disabledOpacity: 0.48,
+  // },
+
   action: {
     active: GREY[600],
     hover: alpha(GREY[500], 0.08),
