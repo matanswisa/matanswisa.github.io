@@ -236,6 +236,7 @@ export default function TradeModal(props) {
               });
 
             reduxDispatch(setTradesList(res.data));
+            handleClose();
           });
       }
 
