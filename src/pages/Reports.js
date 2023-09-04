@@ -63,7 +63,7 @@ import { configAuth } from '../api/configAuth';
 import { brokers } from "../components/brokersNames/brokers.js";
 import { handleUploadTradeImage } from '../utils/uploadImage';
 import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
-
+import {selectlanguage } from '../redux-toolkit/languagesSlice';
 const sumPnL = (trades) => {
   let sum = 0;
   trades.forEach((trade) => {
@@ -136,6 +136,7 @@ export default function UserPage() {
 
 
   const darkMode = useSelector(selectDarkMode);
+  const isHebrew = useSelector(selectlanguage);
   const messages = useSelector(selectMessages);
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
@@ -202,23 +203,44 @@ export default function UserPage() {
   if (currentAccount !== null) {
     // Check if the current account's broker is Tradovate
     if (currentAccount?.Broker == brokers.Tradovate) {
-      // Define table columns for Tradovate broker
-      TABLE_HEAD = [
-        { id: 'entryDate', label: 'Open Date', alignRight: false },
-        { id: 'symbol', label: 'Symbol', alignRight: false },
-        { id: 'status', label: 'Status', alignRight: false },
-        { id: 'netROI', label: 'Net ROI', alignRight: false },
-        { id: 'longShort', label: 'Long / Short', alignRight: false },
-        { id: 'contracts', label: 'Contracts', alignRight: false },
-        { id: 'duration', label: 'Duration', alignRight: false },
-        { id: 'commission', label: 'Commission', alignRight: false },
-        { id: 'netPnL', label: 'Net P&L', alignRight: false },
-        { id: 'image', label: 'Image', alignRight: false },
-        { id: 'edit', label: 'Edit', alignRight: false },
-        { id: 'delete', label: 'Delete', alignRight: false },
-        { id: 'comments', label: 'comments', alignRight: false }
-      ];
-      // Check if the current account's broker is Binance
+
+      if(isHebrew  === false){
+        // Define table columns for Tradovate broker
+        TABLE_HEAD = [
+          { id: 'entryDate', label: 'Open Date', alignRight: false },
+          { id: 'symbol', label: 'Symbol', alignRight: false },
+          { id: 'status', label: 'Status', alignRight: false },
+          { id: 'netROI', label: 'Net ROI', alignRight: false },
+          { id: 'longShort', label: 'Long / Short', alignRight: false },
+          { id: 'contracts', label: 'Contracts', alignRight: false },
+          { id: 'duration', label: 'Duration', alignRight: false },
+          { id: 'commission', label: 'Commission', alignRight: false },
+          { id: 'netPnL', label: 'Net P&L', alignRight: false },
+          { id: 'image', label: 'Image', alignRight: false },
+          { id: 'edit', label: 'Edit', alignRight: false },
+          { id: 'delete', label: 'Delete', alignRight: false },
+          { id: 'comments', label: 'comments', alignRight: false }
+        ];
+        // Check if the current account's broker is Binance
+      }
+      else{
+        TABLE_HEAD = [
+          { id: 'הערות', label: 'הערות', alignRight: false },
+          { id: 'מחק', label: 'מחק', alignRight: false },
+          { id: 'ערוך', label: 'ערוך', alignRight: false },
+          { id: 'תמונה', label: 'תמונה', alignRight: false },
+          { id: 'רווח/הפסד נקי', label: 'רווח/הפסד נקי', alignRight: false },
+          { id: 'עמלה', label: 'עמלה', alignRight: false },
+          { id: 'זמן עסקה', label: 'זמן עסקה', alignRight: false },
+          { id: 'חוזים', label: 'חוזים', alignRight: false },
+          { id: 'לונג / שורט', label: 'לונג / שורט', alignRight: false },
+          { id: 'רוי נקי', label: 'רוי נקי', alignRight: false },
+          { id: 'סטטוס', label: 'סטטוס', alignRight: false },
+          { id: 'סימן', label: 'סימן', alignRight: false },
+          { id: 'תאריך כניסה', label: 'תאריך כניסה', alignRight: false },
+        ];
+      
+      }
     }
     else if (currentAccount?.Broker == brokers.Binance) {
       // Define table columns for Binance broker
