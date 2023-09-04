@@ -329,11 +329,11 @@ const handleCreateAccount = async () => {
             right: '16px',
           }}
         >
-          <Button variant="outlined" size="medium" onClick={handleClose}>
+          <Button variant="outlined" size="medium" onClick={handleClose}  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
             Cancel
           </Button>
 
-          <Button onClick={edit === true ? handleEditAccount : handleCreateAccount} variant="contained" size="medium">
+          <Button onClick={edit === true ? handleEditAccount : handleCreateAccount} variant="contained" size="medium"  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
             {edit === true ? 'Update' : 'Create'}
           </Button>
         </Box>

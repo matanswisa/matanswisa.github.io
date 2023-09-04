@@ -16,6 +16,8 @@ import {getMsg} from '../../utils/messeageUtils';
 import { msgType} from '../../utils/messagesEnum.js';
 import {msgNumber} from '../../utils/msgNumbers.js';
 
+import {selectDarkMode} from '../../redux-toolkit/darkModeSlice';
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -59,7 +61,7 @@ function BasicModal(props) {
   const [email, setEmail] = useState('');
   const [licenseTime, setLicenseTime] = useState();
   const [isTrial, setisTrial] = useState(false);
-
+  const darkMode = useSelector(selectDarkMode);
 
 
 // This function call when admin click "Generate" button in create user modal and create random security password && username.
@@ -338,11 +340,11 @@ function BasicModal(props) {
       ))}
     </Select>
             <Grid container justify="flex-end" style={{ marginRight: '15px' }}>
-              <Button variant="contained" onClick={handleGenerateUser}>
+              <Button variant="contained" onClick={handleGenerateUser}  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
                 Generate
               </Button>
 
-              <Button variant="contained" onClick={handleCreateUser}>
+              <Button variant="contained" onClick={handleCreateUser}  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
                 Create
               </Button>
             </Grid>

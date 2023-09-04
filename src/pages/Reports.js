@@ -62,6 +62,8 @@ import { msgNumber } from '../utils/msgNumbers.js';
 import { configAuth } from '../api/configAuth';
 import { brokers } from "../components/brokersNames/brokers.js";
 import { handleUploadTradeImage } from '../utils/uploadImage';
+import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
+
 const sumPnL = (trades) => {
   let sum = 0;
   trades.forEach((trade) => {
@@ -131,6 +133,9 @@ export default function UserPage() {
     trades = [];
   }
 //------------------------------------------------   States ----------------------------------------------------- //
+
+
+  const darkMode = useSelector(selectDarkMode);
   const messages = useSelector(selectMessages);
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
@@ -443,7 +448,8 @@ export default function UserPage() {
           <Button
             variant="contained"
             onClick={handleClearDate}
-            style={{ fontSize: "12px", minWidth: "80px" }}
+            style={{ fontSize: "12px", minWidth: "80px"  , backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
+        
           >
             Clear
           </Button>
@@ -457,12 +463,12 @@ export default function UserPage() {
           </Typography>
 
           <div>
-            <Button onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />} sx={{ marginRight: 2 }}>
+            <Button style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }} onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline"  />} sx={{ marginRight: 2 }}>
               Import Trades
             </Button>
             {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} />}
 
-            <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }} onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
               Add New Trade
             </Button>
           </div>
