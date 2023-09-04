@@ -26,6 +26,7 @@ import Process from '../../processBar/process'
 
 import BinanceIcon from '../../brokersIcons/binance.svg'
 import TradeovateIcon from '../../brokersIcons/Tradovate.svg'
+import TradeovateIconDarkMode from '../../brokersIcons/TradovateWhite.svg'
 import { brokers } from '../../brokersNames/brokers';
 
 
@@ -36,6 +37,7 @@ import { getMsg } from '../../../utils/messeageUtils';
 import { msgType } from '../../../utils/messagesEnum.js';
 import { msgNumber } from '../../../utils/msgNumbers.js';
 
+import {selectDarkMode} from '../../../redux-toolkit/darkModeSlice';
 
 const style = {
   position: 'absolute',
@@ -63,7 +65,7 @@ export default function BasicModal(props) {
     setShowStepper(true);
   };
 
-
+  const darkMode = useSelector(selectDarkMode);
 
 
   const messages = useSelector(selectMessages);
@@ -297,7 +299,7 @@ export default function BasicModal(props) {
             InputProps={{
               startAdornment: (
                 <img
-                  src={currentAccount?.Broker === brokers.Tradovate ? TradeovateIcon : BinanceIcon}
+                  src={currentAccount?.Broker === brokers.Tradovate ? darkMode ? TradeovateIconDarkMode : TradeovateIcon : BinanceIcon}
 
                   width={144}
                   height={54}
@@ -312,7 +314,7 @@ export default function BasicModal(props) {
             <Process duration={processDuration} />
           ) : (
             <>
-              <Button
+              <Button  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}
                 sx={{ mt: 5 }}
                 size="medium"
                 variant="contained"

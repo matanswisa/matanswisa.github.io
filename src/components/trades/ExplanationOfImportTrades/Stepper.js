@@ -7,7 +7,8 @@ import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-
+import {selectDarkMode} from '../../../redux-toolkit/darkModeSlice';
+import { useDispatch, useSelector } from 'react-redux';
 const steps = [
   [ //0 -> TradeOvate
   {
@@ -75,7 +76,7 @@ repeat the above steps periodically to keep your trade history up-to-date.`,
 export default function VerticalLinearStepper(props) {
 
   const brokerIdx = props.brokerNametoImport;
-
+  const darkMode = useSelector(selectDarkMode);
  
   const [activeStep, setActiveStep] = React.useState(0);
   const [number, setNumber] = React.useState(brokerIdx-1);
@@ -95,31 +96,31 @@ export default function VerticalLinearStepper(props) {
 
   return (
     <Box sx={{ maxWidth: 400 }}>
-      <Stepper activeStep={activeStep} orientation="vertical">
+      <Stepper activeStep={activeStep} orientation="vertical"  >
         {steps[number].map((step, index) => (
           step && 
-          <Step key={step.label}>
-            <StepLabel
+          <Step key={step.label}   >
+            <StepLabel  
               optional={
                 index === 2 ? (
-                  <Typography variant="caption">Last step</Typography>
+                  <Typography variant="caption" >Last step</Typography>
                 ) : null
               }
             >
               {step.label}
             </StepLabel>
-            <StepContent>
-              <Typography>{step.description}</Typography>
+            <StepContent >
+              <Typography >{step.description}</Typography>
               <Box sx={{ mb: 2 }}>
                 <div>
-                  <Button
+                  <Button style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}
                     variant="contained"
                     onClick={handleNext}
                     sx={{ mt: 1, mr: 1 }}
                   >
                     {index === steps[number].length - 1 ? 'Finish' : 'Continue'}
                   </Button>
-                  <Button
+                  <Button style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}
                     disabled={index === 0}
                     onClick={handleBack}
                     sx={{ mt: 1, mr: 1 }}
@@ -135,7 +136,7 @@ export default function VerticalLinearStepper(props) {
       {activeStep === steps[number].length && (
         <Paper square elevation={0} sx={{ p: 3 }}>
           <Typography>All steps completed - you&apos;re finished</Typography>
-          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
+          <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }} >
             Reset
           </Button>
         </Paper>
