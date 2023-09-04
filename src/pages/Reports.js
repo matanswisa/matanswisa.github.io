@@ -577,7 +577,7 @@ export default function UserPage() {
                             ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
                           </TableCell>
                           <TableCell align="right">
-                            <button
+                            <button style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}
                               onClick={() => {
                                 setEditMode(true);
                                 setIsOpenmodal(true);
@@ -588,7 +588,7 @@ export default function UserPage() {
                             </button>
                           </TableCell>
                           <TableCell align="right">
-                            <button onClick={() => {
+                            <button style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }} onClick={() => {
                               handleClickDialogOpen();
                             }}>
                               Delete

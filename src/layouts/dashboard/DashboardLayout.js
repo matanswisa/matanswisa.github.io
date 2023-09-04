@@ -97,7 +97,6 @@ export default function DashboardLayout() {
   const dispatch = useDispatch();
 
   const changeDarkMode = () => {
-    console.log("inside change dark mode ----")
     dispatch(toggleDarkMode());
   }
 

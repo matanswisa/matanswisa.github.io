@@ -18,6 +18,9 @@ import SvgColor from '../../../components/svg-color';
 import { initializeUser, logout, selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
 import useTokenValidation from '../../../hooks/validateToken';
 import LogoImage from '../../../components/logo/logoImage'
+
+
+import { selectDarkMode, toggleDarkMode } from '../../../redux-toolkit/darkModeSlice';
 // ----------------------------------------------------------------------
 
 const NAV_WIDTH = 280;
@@ -46,7 +49,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
   const dispatch = useDispatch();
   const { pathname } = useLocation();
-
+  const darkMode = useSelector(selectDarkMode);
   const isDesktop = useResponsive('up', 'lg');
 
   let navConfig
@@ -103,6 +106,11 @@ export default function Nav({ openNav, onCloseNav }) {
 
 
   const handleLogout = (e) => {
+    if(darkMode === true){
+      dispatch(toggleDarkMode());
+    }
+  
+    
     e.preventDefault();
     console.log(e);
 
@@ -131,7 +139,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
       <NavSection data={navConfig} />
 
-      <Button icon={'eva:pie-chart-outline'} onClick={handleLogout}>logout</Button>
+      <Button style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }} icon={'eva:pie-chart-outline'} onClick={handleLogout}>logout</Button>
       <Box sx={{ flexGrow: 1 }} />
 
     </Scrollbar>
