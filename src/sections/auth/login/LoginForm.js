@@ -57,9 +57,13 @@ export default function LoginForm() {
     <>
       <Stack spacing={3}>
       <ToastContainer />
-        <TextField name="User Name" label="User Name" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <TextField   InputLabelProps={{
+    style: { color: 'black' }, // Set the label color to black
+  }} name="User Name" label="User Name" value={username} onChange={(e) => setUsername(e.target.value)} />
 
-        <TextField
+        <TextField   InputLabelProps={{
+    style: { color: 'black' }, // Set the label color to black
+  }}
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}

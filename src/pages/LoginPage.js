@@ -19,6 +19,7 @@ const StyledRoot = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     display: 'flex',
   },
+  backgroundColor: 'white', // Set the background color to white
 }));
 
 const StyledSection = styled('div')(({ theme }) => ({
@@ -28,7 +29,8 @@ const StyledSection = styled('div')(({ theme }) => ({
   flexDirection: 'column',
   justifyContent: 'center',
   boxShadow: theme.customShadows.card,
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: 'white',
+
 }));
 
 const StyledContent = styled('div')(({ theme }) => ({

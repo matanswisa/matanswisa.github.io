@@ -106,9 +106,9 @@ export default function Nav({ openNav, onCloseNav }) {
 
 
   const handleLogout = (e) => {
-    if(darkMode === true){
-      dispatch(toggleDarkMode());
-    }
+    // if(darkMode === true){
+    //   dispatch(toggleDarkMode());
+    // }
   
     
     e.preventDefault();
