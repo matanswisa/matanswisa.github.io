@@ -3,6 +3,10 @@ import { Outlet } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 //
+
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+
 import Header from './header';
 import Nav from './nav';
 import AppBar from '../../components/appBar/appBar'
@@ -170,10 +174,16 @@ export default function DashboardLayout() {
           <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
         </div>
 
+        <Stack direction="row" spacing={1} alignItems="center">
+        <Typography>English</Typography>
+        <AntSwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }}  checked={isHebrew} onClick={changeLanguage} />
+        <Typography>Hebrew</Typography>
+      </Stack>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
+
+        {/* <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
           <AntSwitch checked={isHebrew} onClick={changeLanguage} />
-        </div>
+        </div> */}
         
 
         <AppBar />
