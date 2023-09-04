@@ -26,6 +26,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { brokers } from '../../brokersNames/brokers.js'
 import { configAuth } from '../../../api/configAuth';
+import {selectDarkMode} from '../../../redux-toolkit/darkModeSlice';
 
 const ProfitFactor = (trade) => {
   
@@ -79,6 +80,7 @@ export default function Diveder(props) {
 
 
   //------------------------------------------------  States ----------------------------------------------------- //
+  const darkMode = useSelector(selectDarkMode);
   const date = props.trade._id;
   const [trades, setTrades] = useState([]);
   const totalPnL = props.trade.totalPnL;
@@ -273,36 +275,36 @@ if (currentAccount !== null) {
 
       <Box sx={{ display: 'flex', justifyContent: 'center'   }}>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Item>
+          <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
             <Typography color="text.primary" variant="body1">
               Winners&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{props.trade.win}</b>
             </Typography>
           </Item>
-          <Item>
+          <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
             <Typography color="text.primary" variant="body1">
               Losers&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{props.trade.loss}</b>
             </Typography>
           </Item>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: '250px', marginRight: '240px' }}>
-          <Item>
+          <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
             <Typography color="text.primary" variant="body1">
               Win rate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{winRate} %</b>
             </Typography>
           </Item>
-          <Item>
+          <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
             <Typography color="text.primary" variant="body1">
               Gross P&L&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>${ props.trade.Commission < 0 ? totalPnL - props.trade.Commission : totalPnL}</b>
             </Typography>
           </Item>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Item>
+          <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
             <Typography color="text.primary" variant="body1">
               Commission&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>${props.trade.Commission}</b>
             </Typography>
           </Item>
-          <Item>
+          <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
             <Typography color="text.primary" variant="body1">
               Profit Factor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{ProfitFactor(props.trade)}</b>
             </Typography>
@@ -312,7 +314,7 @@ if (currentAccount !== null) {
 
       <Divider variant="middle" style={{ background: 'grey' }} spacing={25} />
       <Box sx={{ mt: 3, ml: 1, mb: 1 }}>
-        <Button onClick={handleOpen}>Show trades</Button>
+        <Button style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }} onClick={handleOpen}>Show trades</Button>
         <Modal
   open={open}
   onClose={handleClose}

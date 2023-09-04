@@ -34,6 +34,7 @@ import Iconify from '../components/iconify';
 import api from '../api/api';
 import userSlice, { selectCurrentAccount , selectUser} from '../redux-toolkit/userSlice';
 import { configAuth } from '../api/configAuth';
+import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
 
 
 
@@ -44,7 +45,8 @@ export default function DailyStatsPage() {
   const [trades, setTrades] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
   const currentAccount = useSelector(selectCurrentAccount);
- 
+  const darkMode = useSelector(selectDarkMode);
+
 
   useEffect(() => {
     if (currentAccount?.trades && currentAccount.trades.length) {
@@ -77,17 +79,18 @@ export default function DailyStatsPage() {
       <FormControl variant="outlined" style={{ minWidth: 120 }}>
       <div style={{ display: "flex", alignItems: "center" }}>
       <div style={{ marginRight: "10px" }}>
-        <DatePicker
+        <DatePicker 
           selected={selectedDate}
           onChange={handleDateChange}
           dateFormat="E, MMM d, yyyy"
           placeholderText="Select a date"
         />
       </div>
-      <Button
+      <Button  style={{  fontSize: "12px", minWidth: "80px",  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",   }}
+
         variant="contained"
         onClick={handleClearDate}
-        style={{ fontSize: "12px", minWidth: "80px" }}
+       
       >
         Clear
       </Button>
