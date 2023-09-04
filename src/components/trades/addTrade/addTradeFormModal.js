@@ -1,3 +1,7 @@
+
+
+
+
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -37,6 +41,7 @@ import { getMsg } from '../../../utils/messeageUtils';
 import { msgType } from '../../../utils/messagesEnum.js';
 import { msgNumber } from '../../../utils/msgNumbers.js';
 import { handleUploadTradeImage } from '../../../utils/uploadImage';
+import {selectDarkMode} from '../../../redux-toolkit/darkModeSlice';
 
 
 
@@ -65,8 +70,8 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function TradeModal(props) {
 
 
-
-  //------------------------------------------------  States ----------------------------------------------------- //
+//------------------------------------------------  States ----------------------------------------------------- //
+  const darkMode = useSelector(selectDarkMode);
   const messages = useSelector(selectMessages);
   const [value, setValue] = React.useState(0);
   const user = useSelector(selectUser);
@@ -366,9 +371,9 @@ export default function TradeModal(props) {
 
 
               <Grid item xs={6} md={7}>
-                <Item>
+                <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                   {' '}
-                  <Typography id="modal-modal-title" variant="h6" component="h2">
+                  <Typography id="modal-modal-title" variant="h6" component="h2" >
                     Add New Trade
                   </Typography>
                 </Item>
@@ -378,7 +383,7 @@ export default function TradeModal(props) {
                 <Grid item xs={6} md={4}>
                   <label htmlFor="file-input">
                     <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
-                    <Button
+                    <Button style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}
                       size="small"
                       variant="outlined"
                       component="span"
@@ -396,9 +401,9 @@ export default function TradeModal(props) {
 
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                  <TextField
+                  <TextField 
                     id="outlined-multiline-flexible"
                     label="Comments"
                     value={comments}
@@ -410,20 +415,20 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }} >
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <TextField id="standard-basic" required="true"
                     value={positionDate}
                     onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
                     label="Open Date" variant="standard" type="date" />
                 </Box>{' '}
-              </Item>
+              </Item >
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
                   <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
-                  <Select
+                  <Select  
                     labelId="demo-simple-select-standard-label"
                     id="demo-simple-select-standard"
                     value={positionType}
@@ -442,7 +447,7 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <Tabs value={value} onChange={handleChange} centered >
                     <Tab label="Futuers" style={labelStyle} />
@@ -460,11 +465,11 @@ export default function TradeModal(props) {
                     renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol} variant="standard" />}
                   />
                 </Box>
-              </Item>
+              </Item >
             </Grid>
             <Grid item xs={6}>
 
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 {' '}
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
                   <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
@@ -491,7 +496,7 @@ export default function TradeModal(props) {
 
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 {' '}
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <TextField
@@ -506,7 +511,7 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}> 
                 {' '}
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <TextField
@@ -524,7 +529,7 @@ export default function TradeModal(props) {
             </Grid>
 
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 {' '}
                 <TextField
                   className="outlined-number"
@@ -539,7 +544,7 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 <TextField
                   className="outlined-number"
 
@@ -552,7 +557,7 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 <TextField
                   className="outlined-number"
                   required="true"
@@ -566,7 +571,7 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 {' '}
                 <TextField
                   className="outlined-number"
@@ -582,7 +587,7 @@ export default function TradeModal(props) {
             </Grid>
 
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 <TextField
                   className="outlined-number"
                   label="Net ROI"
@@ -595,7 +600,7 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
                 <TextField
                   className="outlined-number"
                   label="Stop loss"
@@ -607,9 +612,9 @@ export default function TradeModal(props) {
                 />
               </Item>
             </Grid>
-            <Item>
+            <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}> 
               <br />
-              <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
+              <Button style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }} variant="contained" onClick={handleSaveTrade}>Save</Button>
             </Item >
           </Grid >
         </Box >
@@ -828,12 +833,24 @@ export default function TradeModal(props) {
                 />
               </Item>
             </Grid>
-            <Item>
+            <Item >
               <br />
-              <Button variant="contained" onClick={handleSaveTrade}>Save</Button>
+              <Button  variant="contained" onClick={handleSaveTrade} >Save</Button>
             </Item >
           </Grid >
         </Box >
       </Modal > : ""
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
