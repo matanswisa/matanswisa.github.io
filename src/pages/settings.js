@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import useToast from '../hooks/alert'
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { useDispatch, useSelector } from 'react-redux';
+import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
 
 
 const TabPanel = (props) => {
@@ -28,6 +29,10 @@ const TabPanel = (props) => {
 
 
 const MyTabs = () => {
+
+
+  const darkMode = useSelector(selectDarkMode);
+  console.log(darkMode);
 
     const dataFromLocalStorage = localStorage.getItem('user');
     // Parse the JSON data to get the JavaScript object
@@ -56,20 +61,20 @@ const MyTabs = () => {
 
         
 
-      {parsedData.user.role == 1 ?   <Tab label="Users Management" /> :   <Tab label="User Management" />
+      {parsedData.user.role == 1 ?   <Tab label="Users Management"style={{ color:selectedTab === 1 ? darkMode ? '#fff'  : '#326fd6': selectedTab === 0 ? darkMode ? '#fff': '#326fd6' : '#000',}} />  :   <Tab label="User Management" style={{ color:selectedTab === 1 ? darkMode ? '#fff'  : '#326fd6': selectedTab === 0 ? darkMode ? '#fff': '#326fd6' : '#000',}} />
       }
        
        
        {/* This tabs need be for both types of user (admin and regular user.) */}
-        <Tab label="Accounts" />
+       <Tab label="Accounts"  style={{ color:selectedTab === 1 ? darkMode ? '#fff'  : '#326fd6': selectedTab === 0 ? darkMode ? '#fff': '#326fd6' : '#000',}} /> 
  
+      </Tabs>
+
+
         {/* <Tab label="Languages" />    #############Version 2##############
         <Tab label="Colors" /> */}
         
         {/* Add more tabs here if needed */}
-      </Tabs>
-
-
         {/* Tabs for Admin only */}
       {parsedData.user.role == 1 ? 
       <TabPanel value={selectedTab} index={0}>
@@ -82,7 +87,7 @@ const MyTabs = () => {
        /* Tabs for Regular user only */
       :<TabPanel value={selectedTab} index={0}>
 
-        <UsersManagementPage notifyToast={notifyToast} />     { /* Tab for regular user to manage password*/}
+        <UsersManagementPage notifyToast={notifyToast}  />     { /* Tab for regular user to manage password*/}
 
       </TabPanel>}
 

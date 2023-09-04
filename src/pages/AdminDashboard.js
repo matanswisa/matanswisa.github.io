@@ -45,7 +45,7 @@ import {getMsg} from '../utils/messeageUtils';
 import { msgType} from '../utils/messagesEnum.js';
 import {msgNumber} from '../utils/msgNumbers.js';
 
-
+import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
 
 const style = {
     position: 'absolute',
@@ -68,6 +68,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 const UsersList = ({ users, onDelete, onUpdate }) => {
+    const darkMode = useSelector(selectDarkMode);
+   
     const convertDate = (dateString) => {
         const date = new Date(dateString);
         const day = date.getDate();
@@ -77,7 +79,7 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
         return `${day}/${month}/${year}`;
     };
 
-
+  
     const [opendialog, setDialogOpen] = useState(false);
 
     const handleClickDialogOpen = () => {
@@ -95,22 +97,22 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
                 <TableHead>
                     <TableRow>
                         <TableCell>
-                            <Typography color="black" variant="subtitle1" fontWeight="bold">
+                            <Typography   style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
                                 Username
                             </Typography>
 
                         </TableCell>
                         <TableCell>
-                            <Typography color="black" variant="subtitle1" fontWeight="bold">
+                            <Typography  style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
                                 Email
                             </Typography>
                         </TableCell>
                         <TableCell>
-                            <Typography color="black" variant="subtitle1" fontWeight="bold">
+                            <Typography  style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
                                 License
                             </Typography></TableCell>
                         <TableCell>
-                            <Typography color="black" variant="subtitle1" fontWeight="bold">
+                            <Typography  style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
                                 Actions
                             </Typography></TableCell>
                     </TableRow>
@@ -172,7 +174,7 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
 
 // Main component for Users Management Page
 const UsersManagementPage = () => {
-
+    const darkMode = useSelector(selectDarkMode);
     
     const messages = useSelector(selectMessages);
 
@@ -362,7 +364,7 @@ const UsersManagementPage = () => {
 
             <div style={containerStyle}>
 
-                <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
+                <Typography   style={{color: darkMode ? '#fff' : '#000', }} id="modal-modal-title" variant="h6" component="h2">
                     Users Management
                 </Typography>
                 <Button onClick={handleOpenModal}  startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'>Create User</Button>

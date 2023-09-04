@@ -14,12 +14,15 @@ import { selectUser, setCurrentAccount, updateAccountList, selectUserAccounts } 
 import { configAuth } from '../../api/configAuth';
 import BinanceIcon from '../brokersIcons/binance.svg'
 import TradeovateIcon from '../brokersIcons/Tradovate.svg'
+import TradeovateWhiteIcon from '../brokersIcons/TradovateWhite.svg'
 import { useDispatch, useSelector } from 'react-redux';
 import {selectMessages} from '../../redux-toolkit/messagesSlice';
 import {getMsg} from '../../utils/messeageUtils';
 import { msgType} from '../../utils/messagesEnum.js';
 import {msgNumber} from '../../utils/msgNumbers.js';
 
+
+import {selectDarkMode} from '../../redux-toolkit/darkModeSlice';
 //--------------------------------------------This component show Create account Modal -------------------------------------------//
 export default function AccountModal(props) {
 
@@ -37,6 +40,8 @@ export default function AccountModal(props) {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
 
+
+  const darkMode = useSelector(selectDarkMode);
 
 //handle state of broker when change in select option
   const handleChange = (event) => {
@@ -93,6 +98,7 @@ const handleCreateAccount = async () => {
         Label: selectedColor,
         userId: user._id,
       };
+
       await api
         .put('/api/editAccount', data, configAuth) // Use api.put and pass the account id in the URL
         .then((res) => {
@@ -186,53 +192,62 @@ const handleCreateAccount = async () => {
             onChange={(e) => setAccountName(e.target.value)}
           />
         </Grid>
-        {edit === false ?
-        <Grid  sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
-        <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2}}>
-            Broker
-          </Typography>
-          <Select
-            sx={{ mt: 3, ml: 2 }}
-            name="broker"
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={broker}
-            label="broker"
-            defaultValue={broker}
-            onChange={handleChange}
-            inputProps={{
-              name: 'age',
-              id: 'uncontrolled-native',
-            }}
-          >
-            <MenuItem value={1}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <img
-                  src={TradeovateIcon} // Use the imported SVG component here
-                  alt="Binance"
-                  width={140}
-                  height={30}
-                  style={{ marginRight: '8px' }}
-                />
-
-              </div>
-            </MenuItem>
-            <MenuItem value={2}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <img
-                  src={BinanceIcon} // Use the imported SVG component here
-                  alt="Binance"
-                  width={100}
-                  height={30}
-                  style={{ marginRight: '8px' }}
-                />
-
-              </div>
-            </MenuItem>
-            {/* <MenuItem value={3}>Interactiv</MenuItem> */}
-          </Select>
-
-        </Grid>  : ''}
+        {edit === false ? (
+  <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+    <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
+      Broker
+    </Typography>
+    <Select
+      sx={{ mt: 3, ml: 2 }}
+      name="broker"
+      labelId="demo-simple-select-label"
+      id="demo-simple-select"
+      value={broker}
+      label="broker"
+      defaultValue={broker}
+      onChange={handleChange}
+      inputProps={{
+        name: 'age',
+        id: 'uncontrolled-native',
+      }}
+    >
+      <MenuItem value={1}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {darkMode === true ? (
+            <img
+              src={TradeovateWhiteIcon} // Use the imported SVG component here
+              alt="TradeOvate"
+              width={140}
+              height={30}
+              style={{ marginRight: '8px' }}
+            />
+          ) : (
+            <img
+              src={TradeovateIcon} // Use the imported SVG component here
+              alt="TradeOvate"
+              width={140}
+              height={30}
+              style={{ marginRight: '8px' }}
+            />
+          )}
+        </div>
+      </MenuItem>
+      <MenuItem value={2}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src={BinanceIcon} // Use the imported SVG component here
+            alt="Binance"
+            width={100}
+            height={30}
+            style={{ marginRight: '8px' }}
+          />
+        </div>
+      </MenuItem>
+      {/* Commented out option */}
+      {/* <MenuItem value={3}>Interactiv</MenuItem> */}
+    </Select>
+  </Grid>
+) : null}
 
         <Grid  sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
         <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>

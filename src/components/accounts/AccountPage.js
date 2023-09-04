@@ -36,6 +36,8 @@ import { getMsg } from '../../utils/messeageUtils';
 import { msgType } from '../../utils/messagesEnum.js';
 import { msgNumber } from '../../utils/msgNumbers.js';
 
+
+import {selectDarkMode} from '../../redux-toolkit/darkModeSlice';
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -48,6 +50,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function BasicModal() {
 
     //------------------------------------------------   States ----------------------------------------------------- //
+    const darkMode = useSelector(selectDarkMode);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
     const [accountInfoInEdit, setAccountInfoInEdit] = React.useState('');
@@ -158,7 +161,7 @@ export default function BasicModal() {
 
 
             <div style={containerStyle}>
-                <Typography color="black" id="modal-modal-title" variant="h6" component="h2">
+                <Typography  style={{color: darkMode ? '#fff' : '#000', }} id="modal-modal-title" variant="h6" component="h2">
                     Accounts Management
                 </Typography>
                 <Button startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenCreateAccountModal} variant="contained">
@@ -173,7 +176,7 @@ export default function BasicModal() {
                         <TableHead>
                             <TableRow>
                                 <TableCell >
-                                    <Typography color="black" variant="subtitle1" fontWeight="bold">
+                                    <Typography   style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
                                         Name
                                     </Typography>
                                 </TableCell>
@@ -184,7 +187,7 @@ export default function BasicModal() {
                                 <TableCell >   </TableCell>
                                 <TableCell >   </TableCell>
                                 <TableCell >
-                                    <Typography color="black" variant="subtitle1" fontWeight="bold">
+                                    <Typography   style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
                                         Label
                                     </Typography>
                                 </TableCell>
@@ -194,7 +197,7 @@ export default function BasicModal() {
                                 <TableCell >   </TableCell>
                                 <TableCell >   </TableCell>
                                 <TableCell >   </TableCell>
-                                <TableCell >   <Typography color="black" variant="subtitle1" fontWeight="bold">
+                                <TableCell >   <Typography   style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
                                     Actions
                                 </Typography></TableCell>
                             </TableRow>
