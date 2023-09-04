@@ -367,7 +367,7 @@ const UsersManagementPage = () => {
                 <Typography   style={{color: darkMode ? '#fff' : '#000', }} id="modal-modal-title" variant="h6" component="h2">
                     Users Management
                 </Typography>
-                <Button onClick={handleOpenModal}  startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'>Create User</Button>
+                <Button onClick={handleOpenModal}  startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>Create User </Button>
             </div>
 
 

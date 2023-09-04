@@ -164,7 +164,7 @@ export default function BasicModal() {
                 <Typography  style={{color: darkMode ? '#fff' : '#000', }} id="modal-modal-title" variant="h6" component="h2">
                     Accounts Management
                 </Typography>
-                <Button startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenCreateAccountModal} variant="contained">
+                <Button startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenCreateAccountModal} variant="contained"   style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
                     Create Account
                 </Button>
             </div>
