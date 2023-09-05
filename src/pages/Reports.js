@@ -180,10 +180,11 @@ export default function UserPage() {
   const [imageData, setImageData] = useState('');
   const [imageId, setimageId] = useState('');
 
-
-  //------------------------- Handle table Cols Struct for each broker  ------------------------------------------- //
+  let TABLE_HEAD;
+    //------------------------- Handle table Cols Struct for each broker  ------------------------------------------- //
   // default struct
-  let TABLE_HEAD = [
+  if (isHebrew === false) {
+   TABLE_HEAD = [
     { id: 'entryDate', label: 'Open Date', alignRight: false },
     { id: 'symbol', label: 'Symbol', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
@@ -199,8 +200,28 @@ export default function UserPage() {
     { id: 'comments', label: 'comments', alignRight: false }
   ];;
 
+  }
+  else{
+    TABLE_HEAD = [
+      { id: 'הערות', label: 'הערות', alignRight: false },
+      { id: 'מחק', label: 'מחק', alignRight: false },
+      { id: 'ערוך', label: 'ערוך', alignRight: false },
+      { id: 'תמונה', label: 'תמונה', alignRight: false },
+      { id: 'רווח/הפסד נקי', label: 'רווח/הפסד נקי', alignRight: false },
+      { id: 'עמלה', label: 'עמלה', alignRight: false },
+      { id: 'זמן עסקה', label: 'זמן עסקה', alignRight: false },
+      { id: 'חוזים', label: 'חוזים', alignRight: false },
+      { id: 'לונג / שורט', label: 'לונג / שורט', alignRight: false },
+      { id: 'רוי נקי', label: 'רוי נקי', alignRight: false },
+      { id: 'סטטוס', label: 'סטטוס', alignRight: false },
+      { id: 'סימן', label: 'סימן', alignRight: false },
+      { id: 'תאריך כניסה', label: 'תאריך כניסה', alignRight: false },
+    ];
 
-  if (currentAccount !== null) {
+  }
+
+  if (currentAccount !== null) 
+  {
     // Check if the current account's broker is Tradovate
     if (currentAccount?.Broker == brokers.Tradovate) {
 
@@ -275,9 +296,7 @@ export default function UserPage() {
         { id: 'symbol', label: 'סמל', alignRight: false },
         { id: 'entryDate', label: 'תאריך פתיחה', alignRight: false },
     ];
-    
     }
-
     }
   }
 
