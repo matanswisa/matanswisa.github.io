@@ -62,8 +62,8 @@ import { msgNumber } from '../utils/msgNumbers.js';
 import { configAuth } from '../api/configAuth';
 import { brokers } from "../components/brokersNames/brokers.js";
 import { handleUploadTradeImage } from '../utils/uploadImage';
-import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
-import {selectlanguage } from '../redux-toolkit/languagesSlice';
+import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
+import { selectlanguage } from '../redux-toolkit/languagesSlice';
 const sumPnL = (trades) => {
   let sum = 0;
   trades.forEach((trade) => {
@@ -118,11 +118,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 export default function UserPage() {
-//---------------------------------------------------------handle currentAccount selected ----------------------------------------------------- //
+  //---------------------------------------------------------handle currentAccount selected ----------------------------------------------------- //
 
   const currentAccount = useSelector(selectCurrentAccount);
 
-//------------------------------------------------handle trade by current account selected ----------------------------------------------------- //
+  //------------------------------------------------handle trade by current account selected ----------------------------------------------------- //
   let trades;
   if (currentAccount?.trades) {
 
@@ -132,7 +132,7 @@ export default function UserPage() {
   else {
     trades = [];
   }
-//------------------------------------------------   States ----------------------------------------------------- //
+  //------------------------------------------------   States ----------------------------------------------------- //
 
 
   const darkMode = useSelector(selectDarkMode);
@@ -141,7 +141,7 @@ export default function UserPage() {
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
- 
+
   const userAccounts = useSelector(selectUserAccounts);
   const totalTrades = Object.keys(trades).length;
   const [basicModal, setBasicModal] = useState(false);
@@ -204,7 +204,7 @@ export default function UserPage() {
     // Check if the current account's broker is Tradovate
     if (currentAccount?.Broker == brokers.Tradovate) {
 
-      if(isHebrew  === false){
+      if (isHebrew === false) {
         // Define table columns for Tradovate broker
         TABLE_HEAD = [
           { id: 'entryDate', label: 'Open Date', alignRight: false },
@@ -223,7 +223,7 @@ export default function UserPage() {
         ];
         // Check if the current account's broker is Binance
       }
-      else{
+      else {
         TABLE_HEAD = [
           { id: 'הערות', label: 'הערות', alignRight: false },
           { id: 'מחק', label: 'מחק', alignRight: false },
@@ -239,10 +239,12 @@ export default function UserPage() {
           { id: 'סימן', label: 'סימן', alignRight: false },
           { id: 'תאריך כניסה', label: 'תאריך כניסה', alignRight: false },
         ];
-      
+
       }
     }
     else if (currentAccount?.Broker == brokers.Binance) {
+
+      if (isHebrew === false) {
       // Define table columns for Binance broker
       TABLE_HEAD = [
         { id: 'entryDate', label: 'Open Date', alignRight: false },
@@ -257,6 +259,25 @@ export default function UserPage() {
         { id: 'delete', label: 'Delete', alignRight: false },
         { id: 'comments', label: 'comments', alignRight: false }
       ];
+
+    }
+    else{
+      TABLE_HEAD = [
+        { id: 'comments', label: 'הערות', alignRight: false },
+        { id: 'delete', label: 'מחק', alignRight: false },
+        { id: 'edit', label: 'ערוך', alignRight: false },
+        { id: 'image', label: 'תמונה', alignRight: false },
+        { id: 'commission', label: 'עמלה', alignRight: false },
+        { id: 'netPnL', label: 'רווח נטו', alignRight: false },
+        { id: 'Quantity', label: 'כמות', alignRight: false },
+        { id: 'longShort', label: 'לונג/שורט', alignRight: false },
+        { id: 'status', label: 'סטטוס', alignRight: false },
+        { id: 'symbol', label: 'סמל', alignRight: false },
+        { id: 'entryDate', label: 'תאריך פתיחה', alignRight: false },
+    ];
+    
+    }
+
     }
   }
 
@@ -324,7 +345,7 @@ export default function UserPage() {
 
 
 
- //------------------------------------------------handle alert ----------------------------------------------------- //
+  //------------------------------------------------handle alert ----------------------------------------------------- //
   const showToast = useToast();
   const notifyToast = (Msg, Type) => {
 
@@ -454,9 +475,15 @@ export default function UserPage() {
   return (
     <>
 
-      <Helmet>
-        <title>All Trades</title>
-      </Helmet>
+      {isHebrew === false ?
+        <Helmet>
+          <title>All Trades</title>
+        </Helmet>
+        : <Helmet>
+          <title>כול הטריידים</title>
+        </Helmet>
+
+      }
       <Container>
 
         <div style={{ marginRight: "10px" }}>
@@ -464,34 +491,51 @@ export default function UserPage() {
             selected={selectedDate}
             onChange={handleDateChange}
             dateFormat="E, MMM d, yyyy"
-            placeholderText="Select a date"
+            
+            placeholderText=    {isHebrew === false ?"Select a date" : "בחר תאריך"}
           />
 
-          <Button
-            variant="contained"
-            onClick={handleClearDate}
-            style={{ fontSize: "12px", minWidth: "80px"  , backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
-        
-          >
-            Clear
-          </Button>
+
+          {isHebrew === false ?
+            <Button
+              variant="contained"
+              onClick={handleClearDate}
+              style={{ fontSize: "12px", minWidth: "80px", backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
+
+            >
+
+              Clear
+            </Button> : <Button
+              variant="contained"
+              onClick={handleClearDate}
+              style={{ fontSize: "12px", minWidth: "80px", backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
+
+            >
+
+              נקה
+            </Button>}
+
         </div>
 
         <ToastContainer />
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={6}>
-          <Typography variant="h4" gutterBottom>
-            Trades
-          </Typography>
+
+         
+            <Typography variant="h4" gutterBottom>
+            {isHebrew === false ?
+              "Trades" : "טריידים"}
+            </Typography> 
 
           <div>
-            <Button style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }} onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline"  />} sx={{ marginRight: 2 }}>
-              Import Trades
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />} sx={{ marginRight: 2 }}>
+            {isHebrew === false ?
+              "Import Trades" :  "ייבוא טרידיים"}
             </Button>
             {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} />}
 
-            <Button style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }} onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-              Add New Trade
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            {isHebrew === false ?   "Add New Trade" : "הוסף טרייד חדש"}
             </Button>
           </div>
 
@@ -599,7 +643,7 @@ export default function UserPage() {
                             ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
                           </TableCell>
                           <TableCell align="right">
-                            <button style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}
+                            <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
                               onClick={() => {
                                 setEditMode(true);
                                 setIsOpenmodal(true);
@@ -610,7 +654,7 @@ export default function UserPage() {
                             </button>
                           </TableCell>
                           <TableCell align="right">
-                            <button style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }} onClick={() => {
+                            <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }} onClick={() => {
                               handleClickDialogOpen();
                             }}>
                               Delete
@@ -698,7 +742,7 @@ export default function UserPage() {
       </Container >
 
       <Typography variant="h4" >
-        Total PnL : {sumPnL(trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(trades)}$</span> : <span style={totalPlColor}>{sumPnL(trades)}$</span>}
+      {isHebrew === false ?  "Total PnL": "רווח/הפסד כולל"} : {sumPnL(trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(trades)}$</span> : <span style={totalPlColor}>{sumPnL(trades)}$</span>}
       </Typography>
     </>
   );

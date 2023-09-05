@@ -19,7 +19,7 @@ import { initializeUser, logout, selectIsAdmin, selectUser, selectUserAdmin } fr
 import useTokenValidation from '../../../hooks/validateToken';
 import LogoImage from '../../../components/logo/logoImage'
 
-
+import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
 import { selectDarkMode, toggleDarkMode } from '../../../redux-toolkit/darkModeSlice';
 // ----------------------------------------------------------------------
 
@@ -46,6 +46,7 @@ export default function Nav({ openNav, onCloseNav }) {
   const [tokenIsValid] = useTokenValidation();
   const account = useSelector(selectUser)
   const isAdmin = useSelector(selectUserAdmin);
+  const isHebrew = useSelector(selectlanguage);
 
   const dispatch = useDispatch();
   const { pathname } = useLocation();
@@ -53,28 +54,35 @@ export default function Nav({ openNav, onCloseNav }) {
   const isDesktop = useResponsive('up', 'lg');
 
   let navConfig
+
+  //titles : 
+  const DashboardTitle = isHebrew ? 'דשבורד' : 'dashboard';
+  const DailyStatsTitle = isHebrew ? 'סטטיסטיקה יומית' : 'Daily Stats';
+  const ReportsTitle = isHebrew ? 'דוחות' : 'reports';
+  const SettingsTitle = isHebrew ? 'הגדרות' : 'Settings';
+  const logOutTitle = isHebrew ? 'התנתקות' : 'logout';
   if (tokenIsValid && isAdmin) {
     navConfig = [
       {
-        title: 'dashboard',
+        title: DashboardTitle ,
         path: '/dashboard/app',
         icon: icon('dashboard'),
       },
 
 
       {
-        title: 'Daily Stats',
+        title: DailyStatsTitle,
         path: '/dashboard/dailystatspage',
         icon: icon('ic_analytics'),
       },
       {
-        title: 'reports',
+        title: ReportsTitle,
         path: '/dashboard/reports',
         icon: icon('report'),
       },
 
       {
-        title: 'Settings',
+        title: SettingsTitle,
         path: '/dashboard/manage-users',
         icon: icon('settings')
       },
@@ -82,22 +90,22 @@ export default function Nav({ openNav, onCloseNav }) {
   }
   else if (!isAdmin && tokenIsValid) {
     navConfig = [{
-      title: 'dashboard',
+      title: DashboardTitle,
       path: '/dashboard/app',
       icon: icon('dashboard'),
     },
     {
-      title: 'Daily Stats',
+      title: DailyStatsTitle,
       path: '/dashboard/dailystatspage',
       icon: icon('ic_analytics'),
     },
     {
-      title: 'reports',
+      title: ReportsTitle,
       path: '/dashboard/reports',
       icon: icon('report'),
     },
     {
-      title: 'Settings',
+      title: SettingsTitle,
       path: '/dashboard/manage-users',
       icon: icon('settings')
     },
@@ -139,7 +147,8 @@ export default function Nav({ openNav, onCloseNav }) {
 
       <NavSection data={navConfig} />
 
-      <Button style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }} icon={'eva:pie-chart-outline'} onClick={handleLogout}>logout</Button>
+      <Button style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }} icon={'eva:pie-chart-outline'} onClick={handleLogout}> {isHebrew === false?
+      "logout" : "התנתקות"}</Button>
       <Box sx={{ flexGrow: 1 }} />
 
     </Scrollbar>
