@@ -178,7 +178,7 @@ export default function UserPage() {
     TABLE_HEAD = [
       { id: 'הערות', label: 'הערות', alignRight: false },
       { id: 'מחק', label: 'מחק', alignRight: false },
-      { id: 'ערוך', label: 'ערוך', alignRight: false },
+      { id: 'עריכה', label: 'עריכה', alignRight: false },
       { id: 'תמונה', label: 'תמונה', alignRight: false },
       { id: 'רווח/הפסד נקי', label: 'רווח/הפסד נקי', alignRight: false },
       { id: 'עמלה', label: 'עמלה', alignRight: false },
@@ -221,7 +221,7 @@ export default function UserPage() {
         TABLE_HEAD = [
           { id: 'הערות', label: 'הערות', alignRight: false },
           { id: 'מחק', label: 'מחק', alignRight: false },
-          { id: 'ערוך', label: 'ערוך', alignRight: false },
+          { id: 'עריכה', label: 'עריכה', alignRight: false },
           { id: 'תמונה', label: 'תמונה', alignRight: false },
           { id: 'רווח/הפסד נקי', label: 'רווח/הפסד נקי', alignRight: false },
           { id: 'עמלה', label: 'עמלה', alignRight: false },
@@ -259,7 +259,7 @@ export default function UserPage() {
       TABLE_HEAD = [
         { id: 'comments', label: 'הערות', alignRight: false },
         { id: 'delete', label: 'מחק', alignRight: false },
-        { id: 'edit', label: 'ערוך', alignRight: false },
+        { id: 'edit', label: 'עריכה', alignRight: false },
         { id: 'image', label: 'תמונה', alignRight: false },
         { id: 'commission', label: 'עמלה', alignRight: false },
         { id: 'netPnL', label: 'רווח נטו', alignRight: false },
@@ -573,24 +573,81 @@ export default function UserPage() {
                           </TableCell>
 
 
-
-
+                          {isHebrew === false?
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               {formatDate(trade.entryDate)}
                             </Stack>
-                          </TableCell>
-                          <TableCell align="center">{trade.symbol}</TableCell>
+                          </TableCell>:
+                           <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>}
+
+                          {isHebrew === false?
+                          <TableCell align="center">{trade.symbol}</TableCell>:
+                          <TableCell align="right">
+                          <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }} onClick={() => {
+                            handleClickDialogOpen();
+                          }}>
+                            מחק
+                          </button>
+                          <Dialog
+                            open={opendialog}
+                            TransitionComponent={Transition}
+
+                            onClose={handleDialogClose}
+                            aria-describedby="alert-dialog-slide-description"
+                          >
+                            <DialogTitle>{"אישור מחיקה"}</DialogTitle>
+                            <DialogContent>
+                              <DialogContentText id="alert-dialog-slide-description">
+                               האם אתה בטוח שברצונך למחוק את הטרייד?
+                              </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleDialogClose}>ביטול</Button>
+                              <Button onClick={() => {
+                                deleteTrade(editTradeId._id); // Now proceed with the deletion
+                                handleDialogClose(); // Close the dialog first
+                              }} color="primary">
+                                אישור
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
+                        </TableCell>}
+
+                          {isHebrew  === false ?
                           <TableCell align="center">
                             <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
                               {sentenceCase(trade.status)}
                             </Label>
-                          </TableCell>
+                          </TableCell> :
+                           <TableCell align="right">
+                           <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
+                             onClick={() => {
+                               setEditMode(true);
+                               setIsOpenmodal(true);
+                               setEditTradeId(trade);
+                             }}
+                           >
+                             ערוך
+                           </button>
+                         </TableCell>}
+                          
+
+
                           {currentAccount.Broker == 1 ?
                             <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
                             : ''}
-                          <TableCell align="center">{trade.longShort}</TableCell>
-                          <TableCell align="center">{trade.contracts}</TableCell>
+
+                          {isHebrew === false ?
+                          <TableCell align="center">{trade.longShort}</TableCell> : 
+                          <TableCell align="center">{trade.netPnL}$</TableCell>}
+
+                          {isHebrew === false ? 
+                          <TableCell align="center">{trade.contracts}</TableCell> :
+                          <TableCell align="center">
+                          {trade.commission ? trade.commission + "$" : "N/A"}
+                        </TableCell>}
+                          
                           {currentAccount.Broker == 1 ?
                             <TableCell align="center">
                               {trade.duration !== undefined && trade.duration > 0 ? (
@@ -605,11 +662,18 @@ export default function UserPage() {
                             </TableCell>
                             : ""}
 
-
+                          {isHebrew === false?
                           <TableCell align="center">
                             {trade.commission ? trade.commission + "$" : "N/A"}
-                          </TableCell>
-                          <TableCell align="center">{trade.netPnL}$</TableCell>
+                          </TableCell>:
+                               <TableCell align="center">{trade.contracts}</TableCell> }
+
+                          {isHebrew === false?
+                          <TableCell align="center">{trade.netPnL}$</TableCell>:
+                          <TableCell align="center">{trade.longShort}</TableCell>}
+
+                            
+                            {isHebrew === false?
                           <TableCell align="center">
                             <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
                             {trade.image ? (
@@ -617,7 +681,15 @@ export default function UserPage() {
                                 <Iconify icon={'eva:image-outline'} />
                               </IconButton>
                             ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
-                          </TableCell>
+                          </TableCell>:
+                            currentAccount.Broker == 1 ?
+                              <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
+                              : '' }
+
+
+
+
+                          {isHebrew === false ?
                           <TableCell align="right">
                             <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
                               onClick={() => {
@@ -628,7 +700,14 @@ export default function UserPage() {
                             >
                               Edit
                             </button>
-                          </TableCell>
+                          </TableCell>:
+                            <TableCell align="center">
+                            <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
+                              {sentenceCase(trade.status)}
+                            </Label>
+                          </TableCell>}
+
+                          {isHebrew  ===  false  ? 
                           <TableCell align="right">
                             <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }} onClick={() => {
                               handleClickDialogOpen();
@@ -658,10 +737,16 @@ export default function UserPage() {
                                 </Button>
                               </DialogActions>
                             </Dialog>
-                          </TableCell>
+                          </TableCell> :
+                              <TableCell align="center">{trade.symbol}</TableCell>}
 
+                            {isHebrew === false ? 
                           <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>
-
+                                :     <TableCell component="th" scope="row" padding="none">
+                                <Stack direction="row" alignItems="center" spacing={2}>
+                                  {formatDate(trade.entryDate)}
+                                </Stack>
+                              </TableCell>}
                         </TableRow>
                       );
                     })}
