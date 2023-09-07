@@ -27,6 +27,7 @@ import { Colors } from '../components/color-utils/Colors';
 
 
 import { selectCurrentAccount } from '../redux-toolkit/userSlice';
+import { selectlanguage } from '../redux-toolkit/languagesSlice';
 // ----------------------------------------------------------------------
 
 
@@ -90,6 +91,7 @@ const ProfitFactor = (trades) => {
 
 export default function DashboardAppPage() {
   //------------------------------------------------   States ----------------------------------------------------------------------------------
+  const isHebrew = useSelector(selectlanguage);
   const [losingTrades, setLosingTrades] = useState(0);
   const [winningTrades, setWinningTrades] = useState(0);
   const [breakEvenTrades, setbreakEvenTrades] = useState(0);
@@ -242,19 +244,19 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Total Net P&L" total={sumPnL(Alltrades)} icon={'eva:pie-chart-outline'} />
+            <AppWidgetSummary title={isHebrew === false ? "Total Net P&L": "רווח/הפסד טוטאל"} total={sumPnL(Alltrades)} icon={'eva:pie-chart-outline'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Profit Factor" total={ProfitFactor(Alltrades)} icon={'eva:grid-outline'} color="secondary" />
+            <AppWidgetSummary title={isHebrew === false ? "Profit Factor": "פקטור רווח"}  total={ProfitFactor(Alltrades)} icon={'eva:grid-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Average Winning Trade" total={avgWinningTrades(Alltrades)} icon={'eva:bar-chart-2-outline'} color="secondary" />
+            <AppWidgetSummary title= {isHebrew === false ? "Average Winning Trade": "ממוצע לטרייד מנצח"} total={avgWinningTrades(Alltrades)} icon={'eva:bar-chart-2-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Average Losing Trade" total={avgLosingTrades(Alltrades)} icon={'eva:bar-chart-outline'} color="secondary" />
+            <AppWidgetSummary title={isHebrew === false ?"Average Losing Trade" : "ממוצע לטרייד מפסיד"} total={avgLosingTrades(Alltrades)} icon={'eva:bar-chart-outline'} color="secondary" />
           </Grid>
         </Grid>
 
@@ -263,7 +265,7 @@ export default function DashboardAppPage() {
             <Grid container spacing={6}>
               <Grid item xs={12}>
                 <AppWebsiteVisits
-                  title="Daily Net Cumulative Profit"
+                  title={isHebrew === false ?"Daily Net Cumulative Profit" : "רווח נקי יומי מצטבר"} 
                   subheader=""
                   chartLabels={DailyNetCumulativeDateProfit()}
                   chartData={[
@@ -277,7 +279,7 @@ export default function DashboardAppPage() {
                   ]}
                 />
                 <AppWebsiteVisits
-                  title="Daily Net Cumulative Loss"
+                  title={isHebrew === false ?"Daily Net Cumulative Loss" : "הפסד נקי יומי מצטבר"} 
                   subheader=""
                   chartLabels={DailyNetCumulativeDateLoss()}
                   chartData={[
@@ -301,19 +303,19 @@ export default function DashboardAppPage() {
               <Grid item xs={12}>
 
                 <AppCurrentVisits
-                  title="Winning % By Trades"
+                  title={isHebrew === false ?"Winning % By Trades" : "ניצחון באחוזים בעסקאות"} 
                   chartData={[
-                    { label: 'Winners', value: winningTrades },
-                    { label: 'Losers', value: losingTrades },
-                    { label: 'Break Even', value: breakEvenTrades },
+                    { label:  isHebrew === false ?'Winners'  : "נצחונות", value: winningTrades },
+                    { label:   isHebrew === false ?'Losers'  : "הפסדים", value: losingTrades },
+                    { label:  isHebrew === false ?'Break Even'  : "ברייק איוון", value: breakEvenTrades },
                   ]}
                   chartColors={[Colors.green, Colors.red]}
                 />
                 <AppCurrentVisits
-                  title="Winning % By Days"
+                  title={isHebrew === false ?"Winning % By Days"  : "ניצחון באחוזים בימים"} 
                   chartData={[
-                    { label: 'Winners', value: winningTradesInDays },
-                    { label: 'Losers', value: losingTradesInDays },
+                    { label:  isHebrew === false ?'Winners'  : "נצחונות" , value: winningTradesInDays },
+                    { label: isHebrew === false ?'Losers'  : "הפסדים", value: losingTradesInDays },
                   ]}
                   chartColors={[Colors.green, Colors.red]}
                 />

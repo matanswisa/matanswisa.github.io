@@ -35,6 +35,7 @@ import api from '../api/api';
 import userSlice, { selectCurrentAccount , selectUser} from '../redux-toolkit/userSlice';
 import { configAuth } from '../api/configAuth';
 import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
+import { selectlanguage } from '../redux-toolkit/languagesSlice';
 
 
 
@@ -46,6 +47,7 @@ export default function DailyStatsPage() {
   const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
   const currentAccount = useSelector(selectCurrentAccount);
   const darkMode = useSelector(selectDarkMode);
+  const isHebrew = useSelector(selectlanguage);
 
 
   useEffect(() => {
@@ -74,7 +76,7 @@ export default function DailyStatsPage() {
   return (
     <>
       <Helmet>
-        <title>Daily Stats</title>
+        <title>{isHebrew === false ? "Daily Stats" : "סטטיסטיקה יומית"}</title>
       </Helmet>
       <FormControl variant="outlined" style={{ minWidth: 120 }}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -92,7 +94,7 @@ export default function DailyStatsPage() {
         onClick={handleClearDate}
        
       >
-        Clear
+      {isHebrew === false ? "Clear" : "נקה"}
       </Button>
     </div>
     
@@ -100,7 +102,8 @@ export default function DailyStatsPage() {
       <Container>
         <div style={{ maxHeight: '850px', maxWidth: '1400px', overflowY: 'scroll' }}>
           <Typography variant="h4" gutterBottom>
-            Daily Stats
+          {isHebrew === false ? "Daily Stats" : "סטטיסטיקה יומית"}
+       
           </Typography>
           {trades
             .filter((trade) => {

@@ -28,16 +28,14 @@ import BinanceIcon from '../../brokersIcons/binance.svg'
 import TradeovateIcon from '../../brokersIcons/Tradovate.svg'
 import TradeovateIconDarkMode from '../../brokersIcons/TradovateWhite.svg'
 import { brokers } from '../../brokersNames/brokers';
-
-
-
 import { selectMessages } from '../../../redux-toolkit/messagesSlice';
-
 import { getMsg } from '../../../utils/messeageUtils';
 import { msgType } from '../../../utils/messagesEnum.js';
 import { msgNumber } from '../../../utils/msgNumbers.js';
-
 import {selectDarkMode} from '../../../redux-toolkit/darkModeSlice';
+import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
+
+
 
 const style = {
   position: 'absolute',
@@ -55,6 +53,8 @@ const style = {
 
 
 export default function BasicModal(props) {
+  const isHebrew = useSelector(selectlanguage);
+
   const [showStepper, setShowStepper] = useState(false);
 
   const [isUploading, setIsUploading] = useState(false);
@@ -288,14 +288,14 @@ export default function BasicModal(props) {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h5" component="h2">
-            import Trades
+            {isHebrew === false ? "import Trades" : "ייבוא עסקאות"}
+            
           </Typography>
 
           <TextField
             sx={{ mt: 3 }}
-            label="Broker"
+            label={isHebrew === false ? "Broker" : "ברוקר"}
             disabled
-
             InputProps={{
               startAdornment: (
                 <img
@@ -322,7 +322,8 @@ export default function BasicModal(props) {
                 startIcon={<Iconify icon={'eva:file-add-outline'} />}
                 onClick={handleImportTrade}
               >
-                Import
+                  {isHebrew === false ? "Import" : "ייבא"}
+                
               </Button>
 
               <input

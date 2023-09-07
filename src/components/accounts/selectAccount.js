@@ -11,13 +11,13 @@ import { selectCurrentAccount, selectUser, selectUserAccounts } from '../../redu
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentAccount } from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
-
+import { selectlanguage } from '../../redux-toolkit/languagesSlice';
 
 //--------------------------------------------This component show Selected Account options on top left-------------------------------------------//
 export default function MultipleSelectPlaceholder(props) {
 
 
-//------------------------------------------------  States ----------------------------------------------------- //
+  //------------------------------------------------  States ----------------------------------------------------- //
   const [selectedAccountName, setSelectedAccount] = useState(''); //refers to account name*
   const [selectedAccountColor, setSelectedAccountColor] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,6 +25,7 @@ export default function MultipleSelectPlaceholder(props) {
   const accounts = useSelector(selectUserAccounts);
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
+  const isHebrew = useSelector(selectlanguage);
 
 
 
@@ -66,8 +67,8 @@ export default function MultipleSelectPlaceholder(props) {
 
 
 
-  
-//------------------------------------------------ handle update the new account choosen -----------------------------------------------------//
+
+  //------------------------------------------------ handle update the new account choosen -----------------------------------------------------//
   const handleChange = (event) => {
     const accountId = event.target.value
     api.post('/api/setSelectedAccount', { userId: user._id, accountId }, configAuth).then((res) => {
@@ -97,7 +98,7 @@ export default function MultipleSelectPlaceholder(props) {
   return (
     <Box>
       <FormControl>
-        <InputLabel id="demo-simple-select-label">Account</InputLabel>
+        <InputLabel id="demo-simple-select-label"> {isHebrew === false ?"Account":"חשבון"}</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
