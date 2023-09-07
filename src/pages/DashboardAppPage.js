@@ -265,7 +265,7 @@ export default function DashboardAppPage() {
             <Grid container spacing={6}>
               <Grid item xs={12}>
                 <AppWebsiteVisits
-                  title={isHebrew === false ?"Daily Net Cumulative Profit" : "רווח נקי יומי מצטבר"} 
+                  title={isHebrew === false ?"Daily Net Cumulative Profit" : "רווח יומי נקי מצטבר"} 
                   subheader=""
                   chartLabels={DailyNetCumulativeDateProfit()}
                   chartData={[
@@ -279,7 +279,7 @@ export default function DashboardAppPage() {
                   ]}
                 />
                 <AppWebsiteVisits
-                  title={isHebrew === false ?"Daily Net Cumulative Loss" : "הפסד נקי יומי מצטבר"} 
+                  title={isHebrew === false ?"Daily Net Cumulative Loss" : "הפסד יומי נקי מצטבר"} 
                   subheader=""
                   chartLabels={DailyNetCumulativeDateLoss()}
                   chartData={[
@@ -303,7 +303,7 @@ export default function DashboardAppPage() {
               <Grid item xs={12}>
 
                 <AppCurrentVisits
-                  title={isHebrew === false ?"Winning % By Trades" : "ניצחון באחוזים בעסקאות"} 
+                  title={isHebrew === false ?"Winning % By Trades" : "אחוזי ניצחון בעסקאות"} 
                   chartData={[
                     { label:  isHebrew === false ?'Winners'  : "נצחונות", value: winningTrades },
                     { label:   isHebrew === false ?'Losers'  : "הפסדים", value: losingTrades },
@@ -312,7 +312,7 @@ export default function DashboardAppPage() {
                   chartColors={[Colors.green, Colors.red]}
                 />
                 <AppCurrentVisits
-                  title={isHebrew === false ?"Winning % By Days"  : "ניצחון באחוזים בימים"} 
+                  title={isHebrew === false ?"Winning % By Days"  : "אחוזי ניצחון בימים"} 
                   chartData={[
                     { label:  isHebrew === false ?'Winners'  : "נצחונות" , value: winningTradesInDays },
                     { label: isHebrew === false ?'Losers'  : "הפסדים", value: losingTradesInDays },
