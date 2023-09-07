@@ -36,7 +36,7 @@ import { getMsg } from '../../utils/messeageUtils';
 import { msgType } from '../../utils/messagesEnum.js';
 import { msgNumber } from '../../utils/msgNumbers.js';
 
-
+import { selectlanguage } from '../../redux-toolkit/languagesSlice';
 import {selectDarkMode} from '../../redux-toolkit/darkModeSlice';
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -50,6 +50,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function BasicModal() {
 
     //------------------------------------------------   States ----------------------------------------------------- //
+    const isHebrew = useSelector(selectlanguage);
     const darkMode = useSelector(selectDarkMode);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
@@ -162,10 +163,12 @@ export default function BasicModal() {
 
             <div style={containerStyle}>
                 <Typography  style={{color: darkMode ? '#fff' : '#000', }} id="modal-modal-title" variant="h6" component="h2">
-                    Accounts Management
+                {isHebrew === false ? " Accounts Management" : "ניהול חשבונות"}
+                   
                 </Typography>
                 <Button startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenCreateAccountModal} variant="contained"   style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
-                    Create Account
+                {isHebrew === false ? "Create Account" : "יצירת חשבון"}
+                    
                 </Button>
             </div>
 
@@ -177,7 +180,8 @@ export default function BasicModal() {
                             <TableRow>
                                 <TableCell >
                                     <Typography   style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                        Name
+                                    {isHebrew === false ? "Account name" : "שם חשבון"}
+                                        
                                     </Typography>
                                 </TableCell>
                                 <TableCell >   </TableCell>
@@ -188,7 +192,8 @@ export default function BasicModal() {
                                 <TableCell >   </TableCell>
                                 <TableCell >
                                     <Typography   style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                        Label
+                                    {isHebrew === false ? "Label" : "סימן"}
+                                        
                                     </Typography>
                                 </TableCell>
                                 <TableCell >   </TableCell>
@@ -198,7 +203,8 @@ export default function BasicModal() {
                                 <TableCell >   </TableCell>
                                 <TableCell >   </TableCell>
                                 <TableCell >   <Typography   style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                    Actions
+                                {isHebrew === false ? "Actions" : "פעולות"}
+                                    
                                 </Typography></TableCell>
                             </TableRow>
                         </TableHead>
@@ -234,20 +240,23 @@ export default function BasicModal() {
                                             onClose={handleDialogClose}
                                             aria-describedby="alert-dialog-slide-description"
                                         >
-                                            <DialogTitle>{"Confirm Deletion"}</DialogTitle>
+                                            <DialogTitle>    {isHebrew === false ? "Confirm Deletion" : "אישור מחיקה"}</DialogTitle>
                                             <DialogContent>
                                                 <DialogContentText id="alert-dialog-slide-description">
-                                                    When deleting the account, all the trades under that account will be deleted. Are you sure?
+                                                {isHebrew === false ? " When deleting the account, all the trades under that account will be deleted. Are you sure?" : "בעת מחיקת חשבון זה כול העסקאות תחת אותו חשבון ימחקו לצמיתות האם אתה בטוח שברצונך לבצע פעולה זאת?"}
+                                    
+                                                   
                                                 </DialogContentText>
                                             </DialogContent>
                                             <DialogActions>
-                                                <Button onClick={handleDialogClose}>Cancel</Button>
+                                                <Button onClick={handleDialogClose}>   {isHebrew === false ? "Cancel" : "ביטול"}</Button>
                                                 <Button onClick={() => {
                                                     handleCloseMenu(accountIdToDelete);
 
                                                     handleDialogClose(); // Close the dialog first
-                                                }} color="primary">
-                                                    Confirm
+                                                  }} color="primary">
+                                                   {isHebrew === false ? "Confirm" : "אישור"}
+                                                 
                                                 </Button>
                                             </DialogActions>
                                         </Dialog>

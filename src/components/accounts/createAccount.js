@@ -21,12 +21,14 @@ import {getMsg} from '../../utils/messeageUtils';
 import { msgType} from '../../utils/messagesEnum.js';
 import {msgNumber} from '../../utils/msgNumbers.js';
 
+import { selectlanguage } from '../../redux-toolkit/languagesSlice';
 
 import {selectDarkMode} from '../../redux-toolkit/darkModeSlice';
 //--------------------------------------------This component show Create account Modal -------------------------------------------//
 export default function AccountModal(props) {
 
 //------------------------------------------------  States ----------------------------------------------------- //
+  const isHebrew = useSelector(selectlanguage);
   const accounts = useSelector(selectUserAccounts);
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
@@ -169,18 +171,19 @@ const handleCreateAccount = async () => {
       <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
           {edit === true ? (
             <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: 'left', marginTop: 0 }}>
-              Update Account
+             {isHebrew === false ? "Update Account" : "עדכון חשבון"}
             </Typography>
           ) : (
             <Typography id="modal-modal-title" variant="h4" component="h2" sx={{ textAlign: 'left', marginTop: 0 }}>
-              Create Account
+                {isHebrew === false ? "Create Account" : "יצירת חשבון"}
             </Typography>
           )}
         </Grid>
 
         <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2  }}>
           <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
-            Account Name
+          {isHebrew === false ? "Account Name" : "שם חשבון"}
+            
           </Typography>
           <TextField
           
@@ -195,7 +198,8 @@ const handleCreateAccount = async () => {
         {edit === false ? (
   <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
     <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
-      Broker
+    {isHebrew === false ? "Broker" : "ברוקר"}
+      
     </Typography>
     <Select
       sx={{ mt: 3, ml: 2 }}
@@ -251,7 +255,8 @@ const handleCreateAccount = async () => {
 
         <Grid  sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
         <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
-            Account Symbol
+        {isHebrew === false ? "Account Symbol" : "סמל חשבון"}
+           
           </Typography>
         <Select sx={{ mt: 3, ml: 2 }} size="small" value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
           <MenuItem value={red[500]}></MenuItem>
@@ -330,11 +335,13 @@ const handleCreateAccount = async () => {
           }}
         >
           <Button variant="outlined" size="medium" onClick={handleClose}  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
-            Cancel
+          {isHebrew === false ? "Cancel" : "ביטול"}
+            
           </Button>
 
           <Button onClick={edit === true ? handleEditAccount : handleCreateAccount} variant="contained" size="medium"  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
-            {edit === true ? 'Update' : 'Create'}
+            
+            {edit === true ?   isHebrew === false ? "Update" : "עדכן"  :   isHebrew === false ? "Create account" : "צור חשבון"}
           </Button>
         </Box>
       </Box>
