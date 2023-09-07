@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Switch from '@mui/material/Switch';
 import { selectDarkMode, toggleDarkMode } from '../../redux-toolkit/darkModeSlice';
 import {selectlanguage, togglelanguage} from '../../redux-toolkit/languagesSlice';
+
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -175,9 +176,19 @@ export default function DashboardLayout() {
         </div>
 
         <Stack direction="row" spacing={1} alignItems="center">
-        <Typography>English</Typography>
+        <img
+  alt="United States"
+  src="http://purecatamphetamine.github.io/country-flag-icons/1x1/US.svg"
+  style={{ width: '30px', height: '20px' }} />
         <AntSwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }}  checked={isHebrew} onClick={changeLanguage} />
-        <Typography>Hebrew</Typography>
+        <img
+  alt="Israel"
+  src="http://purecatamphetamine.github.io/country-flag-icons/1x1/IL.svg"
+  style={{ width: '30px', height: '20px' }}
+
+/>
+
+        
       </Stack>
 
 
