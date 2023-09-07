@@ -9,7 +9,7 @@ import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux';
 import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
-
+import { selectlanguage } from '../redux-toolkit/languagesSlice';
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -29,10 +29,9 @@ const TabPanel = (props) => {
 
 
 const MyTabs = () => {
-
+  const isHebrew = useSelector(selectlanguage);
 
   const darkMode = useSelector(selectDarkMode);
-  console.log(darkMode);
 
     const dataFromLocalStorage = localStorage.getItem('user');
     // Parse the JSON data to get the JavaScript object
@@ -61,12 +60,12 @@ const MyTabs = () => {
 
         
 
-      {parsedData.user.role == 1 ?   <Tab label="Users Management"style={{ color:selectedTab === 1 ? darkMode ? '#fff'  : '#326fd6': selectedTab === 0 ? darkMode ? '#fff': '#326fd6' : '#000',}} />  :   <Tab label="User Management" style={{ color:selectedTab === 1 ? darkMode ? '#fff'  : '#326fd6': selectedTab === 0 ? darkMode ? '#fff': '#326fd6' : '#000',}} />
+      {parsedData.user.role == 1 ?   <Tab label= {isHebrew === false ? "Users Management" : "ניהול משתמשים"} style={{ color:selectedTab === 1 ? darkMode ? '#fff'  : '#326fd6': selectedTab === 0 ? darkMode ? '#fff': '#326fd6' : '#000',}} />  :   <Tab label={isHebrew === false ? "User Management" : "ניהול משתמש"} style={{ color:selectedTab === 1 ? darkMode ? '#fff'  : '#326fd6': selectedTab === 0 ? darkMode ? '#fff': '#326fd6' : '#000',}} />
       }
        
        
        {/* This tabs need be for both types of user (admin and regular user.) */}
-       <Tab label="Accounts"  style={{ color:selectedTab === 1 ? darkMode ? '#fff'  : '#326fd6': selectedTab === 0 ? darkMode ? '#fff': '#326fd6' : '#000',}} /> 
+       <Tab label= {isHebrew === false ? "Accounts" : "חשבונות" } style={{ color:selectedTab === 1 ? darkMode ? '#fff'  : '#326fd6': selectedTab === 0 ? darkMode ? '#fff': '#326fd6' : '#000',}} /> 
  
       </Tabs>
 

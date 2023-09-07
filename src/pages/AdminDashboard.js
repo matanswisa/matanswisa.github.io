@@ -46,6 +46,7 @@ import { msgType} from '../utils/messagesEnum.js';
 import {msgNumber} from '../utils/msgNumbers.js';
 
 import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
+import { selectlanguage } from '../redux-toolkit/languagesSlice';
 
 const style = {
     position: 'absolute',
@@ -69,7 +70,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const UsersList = ({ users, onDelete, onUpdate }) => {
     const darkMode = useSelector(selectDarkMode);
-   
+    const isHebrew = useSelector(selectlanguage);
     const convertDate = (dateString) => {
         const date = new Date(dateString);
         const day = date.getDate();
@@ -98,22 +99,24 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
                     <TableRow>
                         <TableCell>
                             <Typography   style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                Username
+                              {isHebrew === false ? "Username" : "שם משתמש"}
                             </Typography>
 
                         </TableCell>
                         <TableCell>
                             <Typography  style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                Email
+                            {isHebrew === false ? "Email" : "אימייל"}
+                                
                             </Typography>
                         </TableCell>
                         <TableCell>
                             <Typography  style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                License
+                            {isHebrew === false ? "License" : "רישיון"}
+                                
                             </Typography></TableCell>
                         <TableCell>
                             <Typography  style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                Actions
+                            {isHebrew === false ? "Actions" : "פעולות"}
                             </Typography></TableCell>
                     </TableRow>
                 </TableHead>
@@ -146,20 +149,21 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
                                     onClose={handleDialogClose}
                                     aria-describedby="alert-dialog-slide-description"
                                 >
-                                    <DialogTitle>{"Confirm Deletion"}</DialogTitle>
+                                    <DialogTitle>{isHebrew === false ? "Confirm Deletion" : "אישור מחיקה"}</DialogTitle>
                                     <DialogContent>
                                         <DialogContentText id="alert-dialog-slide-description">
-                                            Are you sure you want to delete this user?
+                                        {isHebrew === false ? "  Are you sure you want to delete this user?" : "האם אתה בטוח שברצונך למחוק משתמש זה?"}   
+                                          
                                         </DialogContentText>
                                     </DialogContent>
                                     <DialogActions>
-                                        <Button onClick={handleDialogClose}>Cancel</Button>
+                                        <Button onClick={handleDialogClose}>  {isHebrew === false ? "Cancel" : "ביטול"}   </Button>
                                         <Button onClick={() => {
                                             onDelete(user._id);
 
                                             handleDialogClose(); // Close the dialog first
                                         }} color="primary">
-                                            Confirm
+                                          {isHebrew === false ? "Confirm" : "אישור"}
                                         </Button>
                                     </DialogActions>
                                 </Dialog>
@@ -174,6 +178,9 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
 
 // Main component for Users Management Page
 const UsersManagementPage = () => {
+
+    const isHebrew = useSelector(selectlanguage);
+
     const darkMode = useSelector(selectDarkMode);
     
     const messages = useSelector(selectMessages);
@@ -365,9 +372,10 @@ const UsersManagementPage = () => {
             <div style={containerStyle}>
 
                 <Typography   style={{color: darkMode ? '#fff' : '#000', }} id="modal-modal-title" variant="h6" component="h2">
-                    Users Management
+                {isHebrew === false ? " Users Management" : "ניהול משתמשים"} 
                 </Typography>
-                <Button onClick={handleOpenModal}  startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>Create User </Button>
+                <Button onClick={handleOpenModal}  startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>  {isHebrew === false ? "Create User" : "יצירת משתמש"} 
+                         </Button>
             </div>
 
 
@@ -391,12 +399,13 @@ const UsersManagementPage = () => {
             >
                 <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2" style={{ marginBottom: '20px' }}>
-                        Update User
+                    {isHebrew === false ? "Update User" : "עדכון משתמש"} 
+                        
                     </Typography>
                     <div>
 
                         <TextField
-                            label="Username"
+                            label={isHebrew === false? "Username": "שם משתמש"}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -410,7 +419,7 @@ const UsersManagementPage = () => {
                         />
 
                         <TextField
-                            label="Email"
+                               label={isHebrew === false? "Email": "אימייל"}
                             style={{ marginLeft: '15px' }}
                             // Update the state when the input changes
                             value={email}
@@ -419,8 +428,8 @@ const UsersManagementPage = () => {
 
                         <TextField
                             id="standard-basic"
-
-                            label="licenseTime"
+                            label={isHebrew === false? "licenseTime": "תוקף רישיון"}
+                          
                             variant="standard"
                             type="date"
                             // Update the state when the input changes
@@ -432,7 +441,8 @@ const UsersManagementPage = () => {
                         <Grid container justify="flex-end" style={{ marginRight: '15px' }}>
 
                             <Button onClick={handleUpdateUser} variant="contained" >
-                                Update
+                         {isHebrew === false? "Update": "עדכן"}
+                             
                             </Button>
                         </Grid>
 
