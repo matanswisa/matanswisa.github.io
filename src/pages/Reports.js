@@ -27,13 +27,10 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
-
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import DialogContentText from '@mui/material/DialogContentText';
 import Slide from '@mui/material/Slide';
-
-
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
@@ -41,29 +38,23 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead } from '../sections/@dashboard/user';
 // mock
-
 import api from '../api/api';
 import AddTrade from '../components/trades/addTrade/addTradeFormModal';
 import ImportTrade from '../components/trades/importTrade/importTrade'
 import AddFarshel from '../components/trades/importTrade/AddFarshel'
 import ImageModal from '../components/ImageModal/ImageModal';
 import { Grid } from 'rsuite';
-// ----------------------------------------------------------------------
 import { selectCurrentAccount, selectUser, setTradesList, selectUserAccounts } from '../redux-toolkit/userSlice';
-
-
 import { selectMessages } from '../redux-toolkit/messagesSlice';
-
 import { getMsg } from '../utils/messeageUtils';
 import { msgType } from '../utils/messagesEnum.js';
 import { msgNumber } from '../utils/msgNumbers.js';
-
-
 import { configAuth } from '../api/configAuth';
 import { brokers } from "../components/brokersNames/brokers.js";
 import { handleUploadTradeImage } from '../utils/uploadImage';
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
+
 const sumPnL = (trades) => {
   let sum = 0;
   trades.forEach((trade) => {
@@ -103,37 +94,24 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-// const fetchTrades = async () => {
-//   const result = await api.get('/api/fetchTrades', configAuth);
-//   return result;
-// }
-// export let globalAlert;
-
-
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-
-
 export default function UserPage() {
+
   //---------------------------------------------------------handle currentAccount selected ----------------------------------------------------- //
-
   const currentAccount = useSelector(selectCurrentAccount);
-
   //------------------------------------------------handle trade by current account selected ----------------------------------------------------- //
   let trades;
   if (currentAccount?.trades) {
-
     trades = currentAccount?.trades;
-
   }
   else {
     trades = [];
   }
   //------------------------------------------------   States ----------------------------------------------------- //
-
 
   const darkMode = useSelector(selectDarkMode);
   const isHebrew = useSelector(selectlanguage);
@@ -141,7 +119,6 @@ export default function UserPage() {
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
-
   const userAccounts = useSelector(selectUserAccounts);
   const totalTrades = Object.keys(trades).length;
   const [basicModal, setBasicModal] = useState(false);
@@ -154,12 +131,10 @@ export default function UserPage() {
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
 
-
   //search states
   const [filterName, setFilterName] = useState('');
   const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
   const [order, setOrder] = useState('asc');
-
 
   //table config states:
   const [page, setPage] = useState(0);
@@ -169,11 +144,9 @@ export default function UserPage() {
   const isNotFound = !filteredUsers.length && !!filterName;
   const [opendialog, setDialogOpen] = useState(false);
 
-
   //edit modal States
   const [editTradeId, setEditTradeId] = useState(null);
   const [editMode, setEditMode] = useState(false);
-
 
   //Image modal States
   const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -509,12 +482,9 @@ export default function UserPage() {
           <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
-            dateFormat="E, MMM d, yyyy"
-            
+            dateFormat="E, MMM d, yyyy"    
             placeholderText=    {isHebrew === false ?"Select a date" : "בחר תאריך"}
           />
-
-
           {isHebrew === false ?
             <Button
               variant="contained"
@@ -522,30 +492,21 @@ export default function UserPage() {
               style={{ fontSize: "12px", minWidth: "80px", backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
 
             >
-
               Clear
             </Button> : <Button
               variant="contained"
               onClick={handleClearDate}
               style={{ fontSize: "12px", minWidth: "80px", backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
-
             >
-
               נקה
             </Button>}
-
         </div>
-
         <ToastContainer />
-
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={6}>
-
-         
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={6}>  
             <Typography variant="h4" gutterBottom>
             {isHebrew === false ?
               "Trades" : "טריידים"}
             </Typography> 
-
           <div>
             <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />} sx={{ marginRight: 2 }}>
             {isHebrew === false ?
@@ -557,7 +518,6 @@ export default function UserPage() {
             {isHebrew === false ?   "Add New Trade" : "הוסף טרייד חדש"}
             </Button>
           </div>
-
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
           {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
             key={editTradeId._id}
@@ -569,9 +529,7 @@ export default function UserPage() {
             isEditMode={true}
             prevState={editTradeId.status}
           /> : null}
-
         </Stack>
-
         <Card>
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800, maxWidth: 2000, }}>
@@ -585,7 +543,6 @@ export default function UserPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-
                   {trades
                     .filter((trade) => {
                       // Check if there's a selected date and if it matches the trade's entry date
