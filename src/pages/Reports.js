@@ -793,10 +793,10 @@ export default function UserPage() {
         </Card>
         {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} tradeComments={editTradeId.comments} />}
         <Dialog open={openCommend} onClose={handleCloseCommend}>
-          <DialogTitle>Comment</DialogTitle>
+          <DialogTitle> {isHebrew === false? "Comment" : "הערות"}</DialogTitle>
           <DialogContent>{selectedComment}</DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseCommend} color="primary">Close</Button>
+            <Button onClick={handleCloseCommend} color="primary">{isHebrew === false? "Close" : "סגירה"}</Button>
           </DialogActions>
         </Dialog>
 

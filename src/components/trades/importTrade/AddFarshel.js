@@ -20,6 +20,7 @@ import {
     DialogActions,
 
 } from '@mui/material';
+import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
 
 
 const ProfitFactor = (trade) => {
@@ -68,6 +69,7 @@ let style = {
 export default function AddFarshel(props) {
 
     //------------------------------------------------  States ----------------------------------------------------- //
+    const isHebrew = useSelector(selectlanguage);
     const trade = props.trade;
     let rows;
     const totalPnL = props.trade.totalPnL;
@@ -79,18 +81,34 @@ export default function AddFarshel(props) {
     const [openCommend, setCommendOpen] = React.useState(false);
     const [trades, setTrades] = useState([]);
     const currentAccount = useSelector(selectCurrentAccount);
+    let columns;
+    if(isHebrew === false){
 
-    let columns = [
-        { field: 'time', headerName: 'Time', width: 100, editable: false, },
-        { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
-        { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
-        { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
-        { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
-        { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false, },
-        { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
-        { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
-        { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
-    ];
+         columns = [
+            { field: 'time', headerName: 'Time', width: 100, editable: false, },
+            { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
+            { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
+            { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
+            { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
+            { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false, },
+            { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
+            { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
+            { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
+        ];
+    }
+    else{
+        columns = [
+            { field: 'time', headerName: 'זמן', width: 100, editable: false },
+            { field: 'symbol', headerName: 'סמל', width: 100, editable: false },
+            { field: 'netROI', headerName: 'רוי נטו', width: 100, editable: false },
+            { field: 'contracts', headerName: 'חוזים', width: 100, editable: false },
+            { field: 'entryPrice', headerName: 'מחיר כניסה', width: 100, editable: false },
+            { field: 'exitPrice', headerName: 'מחיר יציאה', width: 100, editable: false },
+            { field: 'duration', headerName: 'זמן עסקה', width: 120, editable: false },
+            { field: 'commission', headerName: 'עמלה', width: 100, editable: false },
+            { field: 'netPnL', headerName: 'רווח / הפסד נטו', width: 100, editable: false },
+          ];
+    }
 
     if (currentAccount !== null) {
         if (currentAccount?.Broker == brokers.Tradovate) {
@@ -107,8 +125,9 @@ export default function AddFarshel(props) {
                 p: 4,
             };
 
+            if(isHebrew === false){
             columns = [
-                { field: 'time', headerName: 'Time', width: 120, editable: false, },
+                { field: 'time', headerName: 'Time', width: 130, editable: false, },
                 { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
                 { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
                 { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
@@ -118,6 +137,21 @@ export default function AddFarshel(props) {
                 { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
                 { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
             ];
+           }
+           else{
+            columns = [
+                { field: 'time', headerName: 'תאריך', width: 130, editable: false },
+                { field: 'symbol', headerName: 'סמל', width: 100, editable: false },
+                { field: 'netROI', headerName: 'רוי נטו', width: 100, editable: false },
+                { field: 'contracts', headerName: 'חוזים', width: 100, editable: false },
+                { field: 'entryPrice', headerName: 'מחיר כניסה', width: 100, editable: false },
+                { field: 'exitPrice', headerName: 'מחיר יציאה', width: 100, editable: false },
+                { field: 'duration', headerName: 'זמן עסקה', width: 120, editable: false },
+                { field: 'commission', headerName: 'עמלה', width: 100, editable: false },
+                { field: 'netPnL', headerName: 'רווח / הפסד נטו', width: 100, editable: false },
+              ];
+
+           }
         }
 
         else if (currentAccount?.Broker == brokers.Binance) {
@@ -134,6 +168,7 @@ export default function AddFarshel(props) {
                 p: 4,
             };
 
+            if(isHebrew === false){
             columns = [
                 { field: 'time', headerName: 'Time', width: 120, editable: false, },
                 { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
@@ -142,6 +177,17 @@ export default function AddFarshel(props) {
                 { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
                 { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
             ];
+            }
+            else{
+                columns = [
+                    { field: 'time', headerName: 'זמן', width: 120, editable: false },
+                    { field: 'symbol', headerName: 'סמל', width: 100, editable: false },
+                    { field: 'quantity', headerName: 'כמות', width: 100, editable: false },
+                    { field: 'entryPrice', headerName: 'מחיר כניסה', width: 100, editable: false },
+                    { field: 'commission', headerName: 'עמלה', width: 100, editable: false },
+                    { field: 'netPnL', headerName: 'רווח / הפסד נטו', width: 100, editable: false },
+                  ];  
+            }
         }
     }
 
@@ -296,10 +342,10 @@ export default function AddFarshel(props) {
 
                         />
                         <Dialog open={openCommend} onClose={handleCloseCommend}>
-                            <DialogTitle>Comment</DialogTitle>
+                            <DialogTitle>{isHebrew === false? "Comment" : "הערה"}</DialogTitle>
                             <DialogContent>{selectedComment}</DialogContent>
                             <DialogActions>
-                                <Button onClick={handleCloseCommend} color="primary">Close</Button>
+                                <Button onClick={handleCloseCommend} color="primary"> {isHebrew === false? "Close" : "סגירה"}</Button>
                             </DialogActions>
                         </Dialog>
                     </Box>
