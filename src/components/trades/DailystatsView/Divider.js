@@ -349,7 +349,7 @@ if (currentAccount !== null) {
           </Item>
           <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
             <Typography color="text.primary" variant="body1">
-            {isHebrew === false ?  " Gross P&L" : "רווח והפסד ברוטו"}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>${ props.trade.Commission < 0 ? totalPnL - props.trade.Commission : totalPnL}</b>
+            {isHebrew === false ?  " Gross P&L" : " רווח והפסד ברוטו"}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{ props.trade.Commission < 0 ? totalPnL - props.trade.Commission : totalPnL}$</b>
             </Typography>
           </Item>
         </Box>
