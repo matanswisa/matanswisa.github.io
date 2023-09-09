@@ -39,13 +39,13 @@ import { Grid } from 'rsuite';
 
 
 import { useDispatch, useSelector } from 'react-redux';
-import {selectMessages} from '../redux-toolkit/messagesSlice';
+import { selectMessages } from '../redux-toolkit/messagesSlice';
 
-import {getMsg} from '../utils/messeageUtils';
-import { msgType} from '../utils/messagesEnum.js';
-import {msgNumber} from '../utils/msgNumbers.js';
+import { getMsg } from '../utils/messeageUtils';
+import { msgType } from '../utils/messagesEnum.js';
+import { msgNumber } from '../utils/msgNumbers.js';
 
-import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
+import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
 
 const style = {
@@ -80,7 +80,7 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
         return `${day}/${month}/${year}`;
     };
 
-  
+
     const [opendialog, setDialogOpen] = useState(false);
 
     const handleClickDialogOpen = () => {
@@ -93,85 +93,166 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
     };
 
     return (
+
+
         <TableContainer component={Paper} sx={{ mt: 3 }}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>
-                            <Typography   style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                              {isHebrew === false ? "Username" : "שם משתמש"}
-                            </Typography>
-
-                        </TableCell>
-                        <TableCell>
-                            <Typography  style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                            {isHebrew === false ? "Email" : "אימייל"}
-                                
-                            </Typography>
-                        </TableCell>
-                        <TableCell>
-                            <Typography  style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                            {isHebrew === false ? "License" : "רישיון"}
-                                
-                            </Typography></TableCell>
-                        <TableCell>
-                            <Typography  style={{color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                            {isHebrew === false ? "Actions" : "פעולות"}
-                            </Typography></TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {users.map((user) => (
-                        <TableRow key={user.id}>
-
+            {isHebrew === false ?
+                <Table>
+                    <TableHead>
+                        <TableRow>
                             <TableCell>
-
-
-                                {user.username}
-
+                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
+                                    Username
+                                </Typography>
 
                             </TableCell>
-                            <TableCell>{user.email}</TableCell>
-                            <TableCell>{convertDate(user.license)}</TableCell>
                             <TableCell>
-                                <IconButton aria-label="Delete">
-                                    <DeleteIcon onClick={handleClickDialogOpen} />
-                                </IconButton>
-
-
-                                <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
-                                    <EditIcon />
-                                </IconButton>
-                                <Dialog
-                                    open={opendialog}
-                                    TransitionComponent={Transition}
-
-                                    onClose={handleDialogClose}
-                                    aria-describedby="alert-dialog-slide-description"
-                                >
-                                    <DialogTitle>{isHebrew === false ? "Confirm Deletion" : "אישור מחיקה"}</DialogTitle>
-                                    <DialogContent>
-                                        <DialogContentText id="alert-dialog-slide-description">
-                                        {isHebrew === false ? "  Are you sure you want to delete this user?" : "האם אתה בטוח שברצונך למחוק משתמש זה?"}   
-                                          
-                                        </DialogContentText>
-                                    </DialogContent>
-                                    <DialogActions>
-                                        <Button onClick={handleDialogClose}>  {isHebrew === false ? "Cancel" : "ביטול"}   </Button>
-                                        <Button onClick={() => {
-                                            onDelete(user._id);
-
-                                            handleDialogClose(); // Close the dialog first
-                                        }} color="primary">
-                                          {isHebrew === false ? "Confirm" : "אישור"}
-                                        </Button>
-                                    </DialogActions>
-                                </Dialog>
+                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
+                                    Email
+                                </Typography>
                             </TableCell>
+                            <TableCell>
+                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
+                                    License
+
+                                </Typography></TableCell>
+                            <TableCell>
+                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
+                                    Actions
+                                </Typography></TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHead>
+                    <TableBody>
+                        {users.map((user) => (
+                            <TableRow key={user.id}>
+
+                                <TableCell>
+
+
+                                    {user.username}
+
+
+                                </TableCell>
+                                <TableCell>{user.email}</TableCell>
+                                <TableCell>{convertDate(user.license)}</TableCell>
+                                <TableCell>
+                                    <IconButton aria-label="Delete">
+                                        <DeleteIcon onClick={handleClickDialogOpen} />
+                                    </IconButton>
+
+
+                                    <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
+                                        <EditIcon />
+                                    </IconButton>
+                                    <Dialog
+                                        open={opendialog}
+                                        TransitionComponent={Transition}
+
+                                        onClose={handleDialogClose}
+                                        aria-describedby="alert-dialog-slide-description"
+                                    >
+                                        <DialogTitle>{isHebrew === false ? "Confirm Deletion" : "אישור מחיקה"}</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText id="alert-dialog-slide-description">
+                                                {isHebrew === false ? "  Are you sure you want to delete this user?" : "האם אתה בטוח שברצונך למחוק משתמש זה?"}
+
+                                            </DialogContentText>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleDialogClose}>  {isHebrew === false ? "Cancel" : "ביטול"}   </Button>
+                                            <Button onClick={() => {
+                                                onDelete(user._id);
+
+                                                handleDialogClose(); // Close the dialog first
+                                            }} color="primary">
+                                                {isHebrew === false ? "Confirm" : "אישור"}
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table> :
+
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>
+                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
+                                פעולות  </Typography>
+
+                            </TableCell>
+                            <TableCell>
+                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
+                                רישיון
+
+                                </Typography>
+                            </TableCell>
+                            <TableCell>
+                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
+                             אימייל
+
+                                </Typography></TableCell>
+                            <TableCell>
+                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
+                                שם משתמש
+                                </Typography></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {users.map((user) => (
+                            <TableRow key={user.id}>
+
+                              
+                              
+                            
+                                <TableCell>
+                                    <IconButton aria-label="Delete">
+                                        <DeleteIcon onClick={handleClickDialogOpen} />
+                                    </IconButton>
+
+
+                                    <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
+                                        <EditIcon />
+                                    </IconButton>
+                                    <Dialog
+                                        open={opendialog}
+                                        TransitionComponent={Transition}
+
+                                        onClose={handleDialogClose}
+                                        aria-describedby="alert-dialog-slide-description"
+                                    >
+                                        <DialogTitle>{isHebrew === false ? "Confirm Deletion" : "אישור מחיקה"}</DialogTitle>
+                                        <DialogContent>
+                                            <DialogContentText id="alert-dialog-slide-description">
+                                                {isHebrew === false ? "  Are you sure you want to delete this user?" : "האם אתה בטוח שברצונך למחוק משתמש זה?"}
+
+                                            </DialogContentText>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleDialogClose}>  {isHebrew === false ? "Cancel" : "ביטול"}   </Button>
+                                            <Button onClick={() => {
+                                                onDelete(user._id);
+
+                                                handleDialogClose(); // Close the dialog first
+                                            }} color="primary">
+                                                {isHebrew === false ? "Confirm" : "אישור"}
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
+                                </TableCell>
+                                <TableCell>{convertDate(user.license)}</TableCell>
+                                <TableCell>{user.email}</TableCell>
+                                <TableCell>
+                                    {user.username}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>}
+
+
         </TableContainer>
     );
 };
@@ -182,7 +263,7 @@ const UsersManagementPage = () => {
     const isHebrew = useSelector(selectlanguage);
 
     const darkMode = useSelector(selectDarkMode);
-    
+
     const messages = useSelector(selectMessages);
 
     const [openmodal, setIsOpenmodal] = useState(false);
@@ -227,7 +308,7 @@ const UsersManagementPage = () => {
 
         const token = localStorage.getItem("token");
         try {
-           
+
             // Assuming the correct endpoint is '/api/auth/deleteUser'
             await api.delete('/api/auth/deleteUser', {
                 headers: {
@@ -236,7 +317,7 @@ const UsersManagementPage = () => {
                 data: { id }, // Make sure this is the correct format for the API
             });
             fetchUsers();
-            notifyToast(getMsg(messages,msgType.success,msgNumber[12]).msgText, getMsg(messages,msgType.success,msgNumber[12]).msgType);
+            notifyToast(getMsg(messages, msgType.success, msgNumber[12]).msgText, getMsg(messages, msgType.success, msgNumber[12]).msgType);
             // notifyToast("Delete user Successfully ", 'success');
 
             // Optionally, you can fetch the updated list of users after deletion
@@ -260,7 +341,7 @@ const UsersManagementPage = () => {
     const getUserById = (userId) => {
 
         const user = users.find((user) => user._id === userId);
-       
+
         setUsername(user.username);
         setEmail(user.email);
         setLicenseTime(user.license.split('T')[0]);
@@ -288,19 +369,19 @@ const UsersManagementPage = () => {
     const validateForm = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email !== '' && !emailRegex.test(email)) {
-            notifyToast(getMsg(messages,msgType.warnings,msgNumber[12]).msgText, getMsg(messages,msgType.warnings,msgNumber[12]).msgType);
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[12]).msgText, getMsg(messages, msgType.warnings, msgNumber[12]).msgType);
             // notifyToast("Invalid email format", "warning");
             return false;
         }
 
         if (username.length < 8) {
-            notifyToast(getMsg(messages,msgType.warnings,msgNumber[11]).msgText, getMsg(messages,msgType.warnings,msgNumber[11]).msgType);
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[11]).msgText, getMsg(messages, msgType.warnings, msgNumber[11]).msgType);
             // notifyToast("user name less than 8 characters", "warning");
             return false;
         }
 
         if (!checkLicenseTime(licenseTime)) {
-            notifyToast(getMsg(messages,msgType.warnings,msgNumber[10]).msgText, getMsg(messages,msgType.warnings,msgNumber[10]).msgType);
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[10]).msgText, getMsg(messages, msgType.warnings, msgNumber[10]).msgType);
             // notifyToast("Invalid date! Please choose a future date.", "warning");
             return false;
         }
@@ -331,7 +412,7 @@ const UsersManagementPage = () => {
                 });
                 fetchUsers();
                 handleClose();
-                notifyToast(getMsg(messages,msgType.success,msgNumber[13]).msgText, getMsg(messages,msgType.success,msgNumber[13]).msgType);
+                notifyToast(getMsg(messages, msgType.success, msgNumber[13]).msgText, getMsg(messages, msgType.success, msgNumber[13]).msgType);
                 // notifyToast("update account Successfully  ", 'success');
 
             } catch (error) {
@@ -352,9 +433,9 @@ const UsersManagementPage = () => {
                     Authorization: `Bearer ${token}`,
                 },
             }).then((res) => {
-              
+
                 setUsers([...res.data]);
-               
+
             })
     }
 
@@ -371,11 +452,11 @@ const UsersManagementPage = () => {
 
             <div style={containerStyle}>
 
-                <Typography   style={{color: darkMode ? '#fff' : '#000', }} id="modal-modal-title" variant="h6" component="h2">
-                {isHebrew === false ? " Users Management" : "ניהול משתמשים"} 
+                <Typography style={{ color: darkMode ? '#fff' : '#000', }} id="modal-modal-title" variant="h6" component="h2">
+                    {isHebrew === false ? " Users Management" : "ניהול משתמשים"}
                 </Typography>
-                <Button onClick={handleOpenModal}  startIcon={<Iconify icon="eva:plus-fill" />} variant='contained'  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>  {isHebrew === false ? "Create User" : "יצירת משתמש"} 
-                         </Button>
+                <Button onClick={handleOpenModal} startIcon={<Iconify icon="eva:plus-fill" />} variant='contained' style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}>  {isHebrew === false ? "Create User" : "יצירת משתמש"}
+                </Button>
             </div>
 
 
@@ -399,13 +480,13 @@ const UsersManagementPage = () => {
             >
                 <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2" style={{ marginBottom: '20px' }}>
-                    {isHebrew === false ? "Update User" : "עדכון משתמש"} 
-                        
+                        {isHebrew === false ? "Update User" : "עדכון משתמש"}
+
                     </Typography>
                     <div>
 
                         <TextField
-                            label={isHebrew === false? "Username": "שם משתמש"}
+                            label={isHebrew === false ? "Username" : "שם משתמש"}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -419,7 +500,7 @@ const UsersManagementPage = () => {
                         />
 
                         <TextField
-                               label={isHebrew === false? "Email": "אימייל"}
+                            label={isHebrew === false ? "Email" : "אימייל"}
                             style={{ marginLeft: '15px' }}
                             // Update the state when the input changes
                             value={email}
@@ -428,8 +509,8 @@ const UsersManagementPage = () => {
 
                         <TextField
                             id="standard-basic"
-                            label={isHebrew === false? "licenseTime": "תוקף רישיון"}
-                          
+                            label={isHebrew === false ? "licenseTime" : "תוקף רישיון"}
+
                             variant="standard"
                             type="date"
                             // Update the state when the input changes
@@ -441,8 +522,8 @@ const UsersManagementPage = () => {
                         <Grid container justify="flex-end" style={{ marginRight: '15px' }}>
 
                             <Button onClick={handleUpdateUser} variant="contained" >
-                         {isHebrew === false? "Update": "עדכן"}
-                             
+                                {isHebrew === false ? "Update" : "עדכן"}
+
                             </Button>
                         </Grid>
 
