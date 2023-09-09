@@ -41,8 +41,8 @@ import { getMsg } from '../../../utils/messeageUtils';
 import { msgType } from '../../../utils/messagesEnum.js';
 import { msgNumber } from '../../../utils/msgNumbers.js';
 import { handleUploadTradeImage } from '../../../utils/uploadImage';
-import {selectDarkMode} from '../../../redux-toolkit/darkModeSlice';
-
+import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
+import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
 
 
 const style = {
@@ -70,7 +70,9 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function TradeModal(props) {
 
 
-//------------------------------------------------  States ----------------------------------------------------- //
+  //------------------------------------------------  States ----------------------------------------------------- //
+
+  const isHebrew = useSelector(selectlanguage);
   const darkMode = useSelector(selectDarkMode);
   const messages = useSelector(selectMessages);
   const [value, setValue] = React.useState(0);
@@ -100,7 +102,7 @@ export default function TradeModal(props) {
     fontSize: '14px', // Adjust font size as needed
     padding: '6px 12px', // Adjust padding as needed
   };
-  
+
 
   const initialState = {
     positionType: tradeInfo?.longShort || '',
@@ -151,9 +153,9 @@ export default function TradeModal(props) {
     }
   };
 
-//------------------------------------------------ handle check broker before save  new trade -----------------------------------------------------//
+  //------------------------------------------------ handle check broker before save  new trade -----------------------------------------------------//
 
-// before add new trade this condition check which broker in selected account to Adjust the fields structs that come from the data 
+  // before add new trade this condition check which broker in selected account to Adjust the fields structs that come from the data 
   const handleSaveTrade = async () => {
     let data = {};
 
@@ -198,7 +200,7 @@ export default function TradeModal(props) {
       }
     }
 
-//-------------------------------------------------------------- handle new trade adding -------------------------------------------------------------//
+    //-------------------------------------------------------------- handle new trade adding -------------------------------------------------------------//
     if (validateForm()) {
       if (!editMode) {
         await api
@@ -219,33 +221,33 @@ export default function TradeModal(props) {
           })
       }
 
-//------------------------------------------------------- handle edit trade ----------------------------------------------------------------------------//
+      //------------------------------------------------------- handle edit trade ----------------------------------------------------------------------------//
       else if (editMode === true) {
-        if (validateForm()) {  
-        data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
-        await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth)
-          .then((res) => {
-            notifyToast(getMsg(messages, msgType.success, msgNumber[5]).msgText, getMsg(messages, msgType.success, msgNumber[5]).msgType);
-            //      notifyToast("Trade Edit succssfully", "success")
-            handleUploadTradeImage(tradeInfo?._id, user._id, currentAccount._id, selectedFile).then(response => response.json())
-              .then(data => {
-                notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
-                // notifyToast("Trade image uploaded successfully", "success");
-                dispatch(setTradesList(data));
-              })
-              .catch(error => {
-               // notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
-                // Handle any errors that occurred during the upload
-                // notifyToast("Error uploading trade image", "error");
-                console.error(error);
-              });
+        if (validateForm()) {
+          data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
+          await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth)
+            .then((res) => {
+              notifyToast(getMsg(messages, msgType.success, msgNumber[5]).msgText, getMsg(messages, msgType.success, msgNumber[5]).msgType);
+              //      notifyToast("Trade Edit succssfully", "success")
+              handleUploadTradeImage(tradeInfo?._id, user._id, currentAccount._id, selectedFile).then(response => response.json())
+                .then(data => {
+                  notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
+                  // notifyToast("Trade image uploaded successfully", "success");
+                  dispatch(setTradesList(data));
+                })
+                .catch(error => {
+                  // notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
+                  // Handle any errors that occurred during the upload
+                  // notifyToast("Error uploading trade image", "error");
+                  console.error(error);
+                });
 
-            reduxDispatch(setTradesList(res.data));
-            handleClose();
-          });
+              reduxDispatch(setTradesList(res.data));
+              handleClose();
+            });
+        }
+
       }
-
-    }
     }
   };
 
@@ -314,10 +316,10 @@ export default function TradeModal(props) {
   const handleUpload = (tradeId) => {
     console.log(editMode);
     if (!selectedFile && editMode == false) {
-      notifyToast(getMsg(messages,msgType.errors,msgNumber[5]).msgText, getMsg(messages,msgType.errors,msgNumber[5]).msgType);
-     // notifyToast("Don't have image file to upload", "error"); 
-      return; 
-    
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[5]).msgText, getMsg(messages, msgType.errors, msgNumber[5]).msgType);
+      // notifyToast("Don't have image file to upload", "error"); 
+      return;
+
     }
     // Create a new FormData object
     const formData = new FormData();
@@ -371,10 +373,13 @@ export default function TradeModal(props) {
 
 
               <Grid item xs={6} md={7}>
-                <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+                <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                   {' '}
                   <Typography id="modal-modal-title" variant="h6" component="h2" >
-                    Add New Trade
+                    {isHebrew === false ?
+
+                      "Add New Trade" :
+                      "הוספת טרייד"}
                   </Typography>
                 </Item>
               </Grid>
@@ -383,14 +388,16 @@ export default function TradeModal(props) {
                 <Grid item xs={6} md={4}>
                   <label htmlFor="file-input">
                     <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
-                    <Button style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}
+                    <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
                       size="small"
                       variant="outlined"
                       component="span"
                       startIcon={<Iconify icon={'eva:file-add-outline'} />}
                       onClick={handleButtonClick}
                     >
-                      Upload Image
+                      {isHebrew === false ?
+                        "Upload Image" :
+                        "העלאת תמונה"}
                     </Button>
                   </label>
 
@@ -401,9 +408,9 @@ export default function TradeModal(props) {
 
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
-                  <TextField 
+                  <TextField
                     id="outlined-multiline-flexible"
                     label="Comments"
                     value={comments}
@@ -415,7 +422,7 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }} >
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }} >
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <TextField id="standard-basic" required="true"
                     value={positionDate}
@@ -425,15 +432,16 @@ export default function TradeModal(props) {
               </Item >
             </Grid>
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                  <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
-                  <Select  
+                  <InputLabel id="demo-simple-select-standard-label">  {isHebrew === false ? "Type" : "סוג"}</InputLabel>
+                  <Select
                     labelId="demo-simple-select-standard-label"
                     id="demo-simple-select-standard"
                     value={positionType}
                     onChange={(e) => handlePositionFieldInput(e, 'positionType')}
                     label="Type"
+
                     required="true"
                   >
                     <MenuItem value="">
@@ -447,7 +455,7 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <Tabs value={value} onChange={handleChange} centered >
                     <Tab label="Futuers" style={labelStyle} />
@@ -462,17 +470,17 @@ export default function TradeModal(props) {
                     value={positionSymbol}
                     onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
                     sx={{ width: 600 }}
-                    renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol} variant="standard" />}
+                    renderInput={(params) => <TextField {...params} label={isHebrew === false ? "Symbol" : "סימן"} value={positionSymbol} variant="standard" />}
                   />
                 </Box>
               </Item >
             </Grid>
             <Grid item xs={6}>
 
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                  <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
+                  <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ? "Status" : "סטטוס"}</InputLabel>
                   <Select
                     labelId="demo-simple-select-standard-label"
                     id="demo-simple-select-standard"
@@ -496,22 +504,22 @@ export default function TradeModal(props) {
 
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <TextField
                     className="standard-basic"
                     value={positionDuration}
-              
+
                     onChange={(e) => handlePositionFieldInput(e, 'positionDuration')}
-                    label="Duration"
+                    label={isHebrew === false ? "Trade Duration" : "זמן עסקה"}
                     variant="standard"
                   />
                 </Box>
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}> 
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <TextField
@@ -520,8 +528,8 @@ export default function TradeModal(props) {
                     type="number"
                     value={positionCommision}
                     onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
-                  
-                    label="Commission"
+
+                    label={isHebrew === false ? "Commission" : "עמלה"}
                     InputLabelProps={{ shrink: true }}
                   />
                 </Box>
@@ -529,57 +537,57 @@ export default function TradeModal(props) {
             </Grid>
 
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
                 <TextField
                   className="outlined-number"
 
-                  label="Entry Price"
+                  label={isHebrew === false ? "Entry Price" : "מחיר כניסה"}
                   value={entryPrice}
                   type="number"
                   onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
-                 
+
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <TextField
                   className="outlined-number"
 
-                  label="Exit Price"
+                  label={isHebrew === false ? "Exit Price" : "מחיר יציאה"}
                   value={exitPrice}
                   onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
-                 
+
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <TextField
                   className="outlined-number"
                   required="true"
-                  label="Contracts"
+                  label={isHebrew === false ? "Contracts" : "חוזים"}
                   value={contractsCounts}
                   onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
-                
+
                   type="number"
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
                 <TextField
                   className="outlined-number"
                   required="true"
-                  label="Net P&L"
+                  label={isHebrew === false ? "Net P&L" : "רווח/הפסד נטו"}
                   value={netPnL}
                   onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
-                 
+
                   type="number"
                   InputLabelProps={{ shrink: true }}
                 />
@@ -587,34 +595,34 @@ export default function TradeModal(props) {
             </Grid>
 
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <TextField
                   className="outlined-number"
-                  label="Net ROI"
+                  label={isHebrew === false ? "Net ROI" : "החזר נטו"}
                   type="number"
                   value={netROI}
                   onChange={(e) => handlePositionFieldInput(e, 'netROI')}
-                 
+
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <TextField
                   className="outlined-number"
-                  label="Stop loss"
+                  label={isHebrew === false ? "Stop loss" : "עצירת הפסד"}
                   type="number"
                   value={stopPrice}
                   onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
-              
+
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
             </Grid>
-            <Item style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }}> 
+            <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
               <br />
-              <Button style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }} variant="contained" onClick={handleSaveTrade}>Save</Button>
+              <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} variant="contained" onClick={handleSaveTrade}>Save</Button>
             </Item >
           </Grid >
         </Box >
@@ -630,10 +638,13 @@ export default function TradeModal(props) {
 
 
               <Grid item xs={6} md={7}>
-                <Item>
+                <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                   {' '}
                   <Typography id="modal-modal-title" variant="h6" component="h2">
-                    Add New Trade
+                    {isHebrew === false ?
+
+                      "Add New Trade" :
+                      "הוספת טרייד"}
                   </Typography>
                 </Item>
               </Grid>
@@ -649,7 +660,10 @@ export default function TradeModal(props) {
                       startIcon={<Iconify icon={'eva:file-add-outline'} />}
                       onClick={handleButtonClick}
                     >
-                      Upload Image
+                      {isHebrew === false ?
+
+                        "Upload Image" :
+                        "העלת תמונה"}
                     </Button>
                   </label>
 
@@ -660,11 +674,11 @@ export default function TradeModal(props) {
 
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <TextField
                     id="outlined-multiline-flexible"
-                    label="Comments"
+                    label={isHebrew === false ?"Comments" : "הערה"}
                     value={comments}
                     multiline
                     maxRows={7}
@@ -674,25 +688,25 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <TextField id="standard-basic" required="true"
                     value={positionDate}
                     onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
-                    label="Open Date" variant="standard" type="date" />
+                    label={isHebrew === false ?"Entry Date" : "תאריך כניסה"}    variant="standard" type="date" />
                 </Box>{' '}
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                  <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
+                  <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ?"Type" : "סוג"}</InputLabel>
                   <Select
                     labelId="demo-simple-select-standard-label"
                     id="demo-simple-select-standard"
                     value={positionType}
                     onChange={(e) => handlePositionFieldInput(e, 'positionType')}
-                    label="Type"
+                    label= "Type"
                     required="true"
                   >
                     <MenuItem value="">
@@ -706,7 +720,7 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <Tabs value={value} onChange={handleChange} centered >
                     <Tab label="Futuers" style={labelStyle} />
@@ -721,23 +735,23 @@ export default function TradeModal(props) {
                     value={positionSymbol}
                     onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
                     sx={{ width: 600 }}
-                    renderInput={(params) => <TextField {...params} label="Symbol" value={positionSymbol} variant="standard" />}
+                    renderInput={(params) => <TextField {...params} label= {isHebrew === false ?"Symbol" : "סימן"} value={positionSymbol} variant="standard" />}
                   />
                 </Box>
               </Item>
             </Grid>
             <Grid item xs={6}>
 
-              <Item>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                  <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
+                  <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ?"Status" : "סטטוס"}</InputLabel>
                   <Select
                     labelId="demo-simple-select-standard-label"
                     id="demo-simple-select-standard"
                     value={positionStatus}
                     onChange={(e) => handlePositionFieldInput(e, 'positionStatus')}
-                    label="Status"
+                    label="Status" 
                     required="true"
                   >
                     <MenuItem value="">
@@ -756,7 +770,7 @@ export default function TradeModal(props) {
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 1, md: 1 }}>
 
             <Grid item xs={6}>
-              <Item>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <TextField
@@ -765,8 +779,8 @@ export default function TradeModal(props) {
                     type="number"
                     value={positionCommision}
                     onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
-               
-                    label="Commission"
+
+                    label={isHebrew === false ?"Commission"  : "עמלה"}
                     InputLabelProps={{ shrink: true }}
                   />
                 </Box>
@@ -774,45 +788,45 @@ export default function TradeModal(props) {
             </Grid>
 
             <Grid item xs={6}>
-              <Item>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
                 <TextField
                   className="outlined-number"
 
-                  label="Entry Price"
+                  label={isHebrew === false ?"Entry Price"  : "שער כניסה"}
                   value={entryPrice}
                   type="number"
                   onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
-                 
+
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
             </Grid>
 
             <Grid item xs={6}>
-              <Item>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <TextField
                   className="outlined-number"
                   required="true"
-                  label="Quantity"
+                  label= {isHebrew === false ?"Quantity"  : "כמות"}
                   value={contractsCounts}
                   onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
-                 
+
                   type="number"
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
                 <TextField
                   className="outlined-number"
                   required="true"
-                  label="Net P&L"
+                  label = {isHebrew === false ?"Net P&L"  : "רווח/הפסד נטו"}
                   value={netPnL}
                   onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
-                
+
                   type="number"
                   InputLabelProps={{ shrink: true }}
                 />
@@ -821,21 +835,21 @@ export default function TradeModal(props) {
 
 
             <Grid item xs={6}>
-              <Item>
+              <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <TextField
                   className="outlined-number"
-                  label="Stop loss"
+                  label=  {isHebrew === false ?"Stop loss" : "עצירת הפסד"}
                   type="number"
                   value={stopPrice}
                   onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
-               
+
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
             </Grid>
-            <Item >
+            <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
               <br />
-              <Button  variant="contained" onClick={handleSaveTrade} >Save</Button>
+              <Button variant="contained" onClick={handleSaveTrade} > {isHebrew === false ?"Save" : "שמירה"}</Button>
             </Item >
           </Grid >
         </Box >
