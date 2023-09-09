@@ -8,27 +8,25 @@ import api from '../../api/api';
 import userSlice, { selectCurrentAccount, selectUser } from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
 import { useDispatch, useSelector } from 'react-redux';
+import { selectlanguage } from '../../redux-toolkit/languagesSlice';
 
-
-function getTodoList(info, date) {
+function getTodoList(info, date, isHebrew) {
   const filteredInfo = info.filter((item) => {
     const itemDate = new Date(item._id); // Convert the _id to a Date object
     return itemDate.getDate() === date.getDate(); // Check if the item date matches the provided date
   });
 
-
   return filteredInfo.map((item) => ({
     numoftrades: item.trades,
-    title: item.trades > 1 ? 'trades' : 'trade',
+    title: item.trades > 1 ? (isHebrew ? 'עסקאות' : 'trades') : (isHebrew ? 'עסקה' : 'trade'),
     amount: item.totalPnL,
   }));
-
 }
 
 const CalendarComponent = () => {
   const [calendarTrades, setCalendarTrades] = useState([]);
   const currentAccount = useSelector(selectCurrentAccount);
-
+  const isHebrew = useSelector(selectlanguage);
 
   useEffect(() => {
     if (currentAccount?.trades && currentAccount.trades.length) {
@@ -41,7 +39,7 @@ const CalendarComponent = () => {
   }, []);
 
   function renderCell(date) {
-    const list = getTodoList(calendarTrades, date);
+    const list = getTodoList(calendarTrades, date,isHebrew);
     const displayList = list.filter((item, index) => index < 2);
 
     const desiredDays = calendarTrades
