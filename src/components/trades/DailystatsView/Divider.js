@@ -307,7 +307,9 @@ if (currentAccount !== null) {
   }, []);
 
   return (
+    
     <Box sx={{ width: '1400px', maxWidth: 1200, bgcolor: 'background.paper' }}>
+      
       <Box sx={{ my: 8, mx: 2 }}>
         <Grid container rowSpacing={3} alignItems="center">
           <Grid item xs={6}>
@@ -365,9 +367,9 @@ if (currentAccount !== null) {
         </Box>
       </Box>
 
-      <Divider variant="middle" style={{ background: 'grey' }} spacing={25} />
       <Box sx={{ mt: 3, ml: 1, mb: 1 }}>
         <Button style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }} onClick={handleOpen}>  {isHebrew === false ?  "Show Trades" : "הצגת עסקאות"}</Button>
+      <Divider variant="middle" style={{ background: 'grey' }} spacing={25} />
         <Modal
   open={open}
   onClose={handleClose}
