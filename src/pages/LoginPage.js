@@ -66,7 +66,7 @@ export default function LoginPage() {
 
         {mdUp && (
           <StyledSection>
-            <LogoImage w='500px' h='400px' />
+            <LogoImage loginpage = 'true' w='500px' h='400px' />
 
           </StyledSection>
         )}
