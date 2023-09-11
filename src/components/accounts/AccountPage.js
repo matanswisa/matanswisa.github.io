@@ -73,8 +73,6 @@ export default function BasicModal() {
     //--------------- handle Delete account after user press "confirm" button when want delete account----------------- //
 
     const handleCloseMenu = async (accountId) => {
-        const token = localStorage.getItem("token");
-
         try {
             // Prepare the request body data to be sent with the DELETE request
             const requestData = {
@@ -85,7 +83,7 @@ export default function BasicModal() {
             // Send the DELETE request with the data in the request body and authorization header
             const response = await api.delete('/api/deleteAccount', {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${user.accessToken}`,
                 },
                 data: requestData,
             });

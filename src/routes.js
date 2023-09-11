@@ -18,21 +18,29 @@ import useTokenValidation from './hooks/validateToken';
 import { useDispatch, useSelector } from 'react-redux';
 import { isUserAuthenticated, login, selectUserAdmin } from './redux-toolkit/userSlice';
 import Tabs from './pages/settings';
+import { axiosAuth } from './api/api';
+
+
 export default function Router() {
-  const [tokenIsValid] = useTokenValidation();
-  const isAdmin = useSelector(selectUserAdmin);
-  // const isAuthenticated = !!tokenIsValid; // Check if token exists
+
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(isUserAuthenticated);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && tokenIsValid) {
-      dispatch(login(user));
+    const checkIsUserLoggedInValid = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.accessToken && user.refreshToken) {
+        const result = await axiosAuth.get("/api/auth/validate-token", { headers: { Authorization: "Bearer " + user.accessToken } });
+        if (result.status == 200) {
+          dispatch(login({ user: user }));
+        }
+      }
     }
+    checkIsUserLoggedInValid().then(data => {
+      console.log("Successfully logged in");
+    })
+
   }, [])
-
-
 
   const routes = useRoutes([
     {
@@ -45,7 +53,7 @@ export default function Router() {
         { path: 'dailystatspage', element: isAuthenticated ? <DailyStatsPage /> : <Navigate to="/login" replace /> },
         { path: 'manage-users', element: isAuthenticated ? <Tabs /> : <Navigate to="/login" replace /> },
         { path: 'reports', element: isAuthenticated ? <Reports /> : <Navigate to="/login" replace /> },
-        
+
       ],
     },
     {

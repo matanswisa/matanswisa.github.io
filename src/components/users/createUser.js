@@ -11,12 +11,12 @@ import Select from '@mui/material/Select';
 import api from '../../api/api';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import {selectMessages} from '../../redux-toolkit/messagesSlice'
-import {getMsg} from '../../utils/messeageUtils';
-import { msgType} from '../../utils/messagesEnum.js';
-import {msgNumber} from '../../utils/msgNumbers.js';
+import { selectMessages } from '../../redux-toolkit/messagesSlice'
+import { getMsg } from '../../utils/messeageUtils';
+import { msgType } from '../../utils/messagesEnum.js';
+import { msgNumber } from '../../utils/msgNumbers.js';
 
-import {selectDarkMode} from '../../redux-toolkit/darkModeSlice';
+import { selectDarkMode } from '../../redux-toolkit/darkModeSlice';
 
 const style = {
   position: 'absolute',
@@ -51,7 +51,7 @@ const generatePassword = () => {
 function BasicModal(props) {
 
 
-//-------------------------------------------------------------- States --------------------------------------------------------------------- 
+  //-------------------------------------------------------------- States --------------------------------------------------------------------- 
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
   const [users, setUsers] = useState([]);
@@ -64,7 +64,7 @@ function BasicModal(props) {
   const darkMode = useSelector(selectDarkMode);
 
 
-// This function call when admin click "Generate" button in create user modal and create random security password && username.
+  // This function call when admin click "Generate" button in create user modal and create random security password && username.
   const handleGenerateUser = () => {
     const generatedUsername = generatePassword();
     const generatedPassword = generatePassword();
@@ -74,25 +74,22 @@ function BasicModal(props) {
   };
 
 
+  // function fetchUsers() {
+  //   api.get('/api/auth/users', {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   }).then((res) => {
+  //     setUsers(res.data);
+  //   }).catch((error) => {
+  //     // Handle error if necessary
+  //   });
+  // }
 
 
-  function fetchUsers() {
-    const token = localStorage.getItem("token");
-    api.get('/api/auth/users', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => {
-      setUsers(res.data);
-    }).catch((error) => {
-      // Handle error if necessary
-    });
-  }
-
-
-  useEffect(() => {
-    fetchUsers(); // Call the fetchUsers function to fetch data and update the users state
-  }, []);
+  // useEffect(() => {
+  //   fetchUsers(); // Call the fetchUsers function to fetch data and update the users state
+  // }, []);
 
 
   // before create user check if username not exist.
@@ -101,7 +98,7 @@ function BasicModal(props) {
   }
 
 
-// before create user check if email not exist.
+  // before create user check if email not exist.
   function checkEmailExist(email) {
     return users.some(user => user.email === email);
   }
@@ -112,14 +109,14 @@ function BasicModal(props) {
   //validation form before create user.
   const validateForm = () => {
     if (checkUsernameExist(username)) {
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[19]).msgText, getMsg(messages,msgType.warnings,msgNumber[19]).msgType);
-   // notifyToast("Username already exist", "warning");
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[19]).msgText, getMsg(messages, msgType.warnings, msgNumber[19]).msgType);
+      // notifyToast("Username already exist", "warning");
       return false;
     }
 
     if (checkEmailExist(email)) {
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[18]).msgText, getMsg(messages,msgType.warnings,msgNumber[18]).msgType);
-     // notifyToast("Email already exist", "warning");
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[18]).msgText, getMsg(messages, msgType.warnings, msgNumber[18]).msgType);
+      // notifyToast("Email already exist", "warning");
       return false;
     }
 
@@ -129,29 +126,29 @@ function BasicModal(props) {
 
     if (password === '' || email === '' || username === '') {
 
-      if (password === '') 
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[17]).msgText, getMsg(messages,msgType.warnings,msgNumber[17]).msgType);
+      if (password === '')
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[17]).msgText, getMsg(messages, msgType.warnings, msgNumber[17]).msgType);
       //notifyToast("Password is missing", "warning");
 
       if (email === '')
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[16]).msgText, getMsg(messages,msgType.warnings,msgNumber[16]).msgType);
-     //  notifyToast("Email is missing", "warning");
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[16]).msgText, getMsg(messages, msgType.warnings, msgNumber[16]).msgType);
+      //  notifyToast("Email is missing", "warning");
 
 
       if (username === '')
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[15]).msgText, getMsg(messages,msgType.warnings,msgNumber[15]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[15]).msgText, getMsg(messages, msgType.warnings, msgNumber[15]).msgType);
       // notifyToast("Username is missing", "warning");
       return false;
 
     }
 
     if (password.length < 6) {
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[8]).msgText, getMsg(messages,msgType.warnings,msgNumber[8]).msgType);
-     // notifyToast("Password less than 6 characters", "warning");
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[8]).msgText, getMsg(messages, msgType.warnings, msgNumber[8]).msgType);
+      // notifyToast("Password less than 6 characters", "warning");
       return false;
     } else if (!emailRegex.test(email)) {
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[13]).msgText, getMsg(messages,msgType.warnings,msgNumber[13]).msgType);
-     // notifyToast("Invalid email format", "warning");
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[13]).msgText, getMsg(messages, msgType.warnings, msgNumber[13]).msgType);
+      // notifyToast("Invalid email format", "warning");
       return false;
     } else {
       // Your code for successful form submission goes here
@@ -171,10 +168,10 @@ function BasicModal(props) {
       month: 'short',
       day: 'numeric',
     });
-      if(isTrial){
+    if (isTrial) {
 
-        const trialDays = 7; // Assuming the trial period is 7 days
-        welcomeMessage = `Welcome to TradeExalt!
+      const trialDays = 7; // Assuming the trial period is 7 days
+      welcomeMessage = `Welcome to TradeExalt!
           
           Your trial account has been created. This is a trial account, and you can enjoy all the premium features of TradeExalt for ${trialDays} days.
       
@@ -190,16 +187,15 @@ function BasicModal(props) {
               
           ,Best regards 
           TradeExalt Team`;
-      }
-      else
-      {
-        const formattedLicenseDate = licenseTime.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        });
-    
-       welcomeMessage = `:Your login credentials 
+    }
+    else {
+      const formattedLicenseDate = licenseTime.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+
+      welcomeMessage = `:Your login credentials 
         Username: ${username}
         Password: ${password}
     
@@ -218,22 +214,22 @@ function BasicModal(props) {
         ,Best regards 
         TradeExalt Team`;
 
-      }
+    }
 
     const data = {
       to: email,
       subject: 'Welcome to TradeExalt!',
       text: welcomeMessage,
-      isTrial:isTrial,
+      isTrial: isTrial,
 
     }
 
     await api.post('/api/sendEmail', data).then((res) => {
-      notifyToast(getMsg(messages,msgType.success,msgNumber[7]).msgText, getMsg(messages,msgType.success,msgNumber[7]).msgType);
-   //   notifyToast("mail Send successfully", "success");
+      notifyToast(getMsg(messages, msgType.success, msgNumber[7]).msgText, getMsg(messages, msgType.success, msgNumber[7]).msgType);
+      //   notifyToast("mail Send successfully", "success");
     }).catch((err) => {
-      notifyToast(getMsg(messages,msgType.errors,msgNumber[8]).msgText, getMsg(messages,msgType.errors,msgNumber[8]).msgType);
-     // notifyToast("Mail not send", "error");
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[8]).msgText, getMsg(messages, msgType.errors, msgNumber[8]).msgType);
+      // notifyToast("Mail not send", "error");
       console.log(err);
       return false;
     })
@@ -249,15 +245,15 @@ function BasicModal(props) {
           email: email,
           password: password,
           license: licenseTime,
-        
+
 
         })
         .then(async (response) => {
-           handleSendMail();
+          handleSendMail();
           await props.handleOpenModal(false);
-          await   notifyToast(getMsg(messages,msgType.success,msgNumber[8]).msgText, getMsg(messages,msgType.success,msgNumber[8]).msgType);
+          await notifyToast(getMsg(messages, msgType.success, msgNumber[8]).msgText, getMsg(messages, msgType.success, msgNumber[8]).msgType);
           // notifyToast("User added successfully", "success");
-            // Fetch list of users from "/api/users" route
+          // Fetch list of users from "/api/users" route
         })
         .catch((error) => {
           console.error('Failed to create user:', error);
@@ -280,7 +276,7 @@ function BasicModal(props) {
   const handleChange = (event) => {
     const selectedValue = event.target.value;
     const currentDate = new Date();
-  
+
     if (selectedValue === "Trial") {
       setisTrial(true);
       const endDate = new Date(currentDate);
@@ -324,27 +320,27 @@ function BasicModal(props) {
             <Typography id="modal-modal-title" variant="h6" component="h5" style={{ fontSize: "12px", color: 'grey', marginLeft: '14px' }}>
               License Time
             </Typography>
-          
-        <Select
-      labelId="demo-simple-select-label"
-      id="demo-simple-select"
-      value={licenseTime}
-      label="License time"
-      onChange={handleChange}
-    >
-      <MenuItem value="Trial">Trial</MenuItem>
-      {[...Array(12)].map((_, index) => (
-        <MenuItem key={index + 1} value={index + 1}>
-          {index + 1} month
-        </MenuItem>
-      ))}
-    </Select>
+
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={licenseTime}
+              label="License time"
+              onChange={handleChange}
+            >
+              <MenuItem value="Trial">Trial</MenuItem>
+              {[...Array(12)].map((_, index) => (
+                <MenuItem key={index + 1} value={index + 1}>
+                  {index + 1} month
+                </MenuItem>
+              ))}
+            </Select>
             <Grid container justify="flex-end" style={{ marginRight: '15px' }}>
-              <Button variant="contained" onClick={handleGenerateUser}  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
+              <Button variant="contained" onClick={handleGenerateUser} style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}>
                 Generate
               </Button>
 
-              <Button variant="contained" onClick={handleCreateUser}  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
+              <Button variant="contained" onClick={handleCreateUser} style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}>
                 Create
               </Button>
             </Grid>

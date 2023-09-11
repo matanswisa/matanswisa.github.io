@@ -15,7 +15,7 @@ import NavSection from '../../../components/nav-section';
 import navConfig from './config';
 import { useDispatch, useSelector } from 'react-redux';
 import SvgColor from '../../../components/svg-color';
-import { initializeUser, logout, selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
+import { initializeUser, isUserAuthenticated, logout, selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
 import useTokenValidation from '../../../hooks/validateToken';
 import LogoImage from '../../../components/logo/logoImage'
 
@@ -43,11 +43,12 @@ Nav.propTypes = {
 
 export default function Nav({ openNav, onCloseNav }) {
   // const dispatch = useDispatch();
-  const [tokenIsValid] = useTokenValidation();
+  // const [tokenIsValid] = useTokenValidation();
   const account = useSelector(selectUser)
   const isAdmin = useSelector(selectUserAdmin);
   const isHebrew = useSelector(selectlanguage);
 
+  const isAuthenticated = useSelector(isUserAuthenticated)
   const dispatch = useDispatch();
   const { pathname } = useLocation();
   const darkMode = useSelector(selectDarkMode);
@@ -61,10 +62,10 @@ export default function Nav({ openNav, onCloseNav }) {
   const ReportsTitle = isHebrew ? 'דוחות' : 'reports';
   const SettingsTitle = isHebrew ? 'הגדרות' : 'Settings';
   const logOutTitle = isHebrew ? 'התנתקות' : 'logout';
-  if (tokenIsValid && isAdmin) {
+  if (isAdmin) {
     navConfig = [
       {
-        title: DashboardTitle ,
+        title: DashboardTitle,
         path: '/dashboard/app',
         icon: icon('dashboard'),
       },
@@ -88,7 +89,7 @@ export default function Nav({ openNav, onCloseNav }) {
       },
     ]
   }
-  else if (!isAdmin && tokenIsValid) {
+  else if (!isAdmin && isAuthenticated) {
     navConfig = [{
       title: DashboardTitle,
       path: '/dashboard/app',
@@ -117,12 +118,12 @@ export default function Nav({ openNav, onCloseNav }) {
     // if(darkMode === true){
     //   dispatch(toggleDarkMode());
     // }
-  
-    
+
+
     e.preventDefault();
     console.log(e);
 
-    localStorage.removeItem('token');
+    // localStorage.removeItem('token');
     dispatch(logout());
   }
 
@@ -142,13 +143,13 @@ export default function Nav({ openNav, onCloseNav }) {
         '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
       }}
     >
-   <LogoImage w = '240px' h = '170px' />
-      
+      <LogoImage w='240px' h='170px' />
+
 
       <NavSection data={navConfig} />
 
-      <Button style={{  backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "",  }} icon={'eva:pie-chart-outline'} onClick={handleLogout}> {isHebrew === false?
-      "logout" : "התנתקות"}</Button>
+      <Button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }} icon={'eva:pie-chart-outline'} onClick={handleLogout}> {isHebrew === false ?
+        "logout" : "התנתקות"}</Button>
       <Box sx={{ flexGrow: 1 }} />
 
     </Scrollbar>

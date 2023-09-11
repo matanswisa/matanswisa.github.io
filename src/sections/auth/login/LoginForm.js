@@ -5,20 +5,27 @@ import { Stack, IconButton, InputAdornment, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
-import api from '../../../api/api';
+import api, { axiosAuth, axiosNoAuth } from '../../../api/api';
 import { login } from '../../../redux-toolkit/userSlice';
 import { useDispatch } from 'react-redux';
 import useToast from '../../../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
-import {selectMessages} from '../../../redux-toolkit/messagesSlice'
-import {getMsg} from '../../../utils/messeageUtils';
-import { msgType} from  '../../../utils/messagesEnum'
-import {msgNumber} from '../../../utils/msgNumbers.js';
+
+
+import { selectMessages } from '../../../redux-toolkit/messagesSlice'
+import { getMsg } from '../../../utils/messeageUtils';
+import { msgType } from '../../../utils/messagesEnum.js';
+import { msgNumber } from '../../../utils/msgNumbers.js';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
+
+
+  //jwt auth 
+
+
   const showToast = useToast();
   const notifyToast = (Msg, Type) => {
 
@@ -34,36 +41,36 @@ export default function LoginForm() {
   const messages = useSelector(selectMessages);
   console.log(messages);
   const handleLoginForm = () => {
-    if (!username || !password) return
-    api.post('/api/auth/login', { username, password }).then((res) => {
-      localStorage.setItem('token', res.data.token);
+    if (!username || !password) return;
 
-      localStorage.setItem("user", JSON.stringify(res.data));
-      navigate('/dashboard/app', { replace: true });
+    axiosAuth.post('/api/auth/login', { username, password }).then((res) => {
+
+      localStorage.setItem('user', JSON.stringify(res.data.user));
       dispatch(login(res.data));
+      navigate('/dashboard/app', { replace: true });
     }).catch((err) => {
-     
-    if (err.response && err.response.data && err.response.data.isLicenseExpried) {
-        notifyToast(getMsg(messages,msgType.warnings,msgNumber[30]).msgText, getMsg(messages,msgType.warnings,msgNumber[30]).msgType);
-       // notifyToast("Your license has expired. Please renew it to continue using the service.", "info");
-    } else {
-       notifyToast(getMsg(messages,msgType.warnings,msgNumber[32]).msgText, getMsg(messages,msgType.warnings,msgNumber[32]).msgType);
-      // notifyToast("Sorry, One or more login details are incorrect. Please try again.","error");
-    }
+      console.log(err);
+      // console.log(err.response.data.isLicenseExpired);
+      if (err.response && err.response.data && err.response.data.isLicenseExpried) {
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[30]).msgText, getMsg(messages, msgType.warnings, msgNumber[30]).msgType);
+        // notifyToast("Your license has expired. Please renew it to continue using the service.", "info");
+      } else {
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[14]).msgText, getMsg(messages, msgType.warnings, msgNumber[14]).msgType);
+        // Toast("Sorry, One or more login details are incorrect. Please try again.", "error");
+      }
+
     })
   };
 
   return (
     <>
       <Stack spacing={3}>
-      <ToastContainer />
-        <TextField   InputLabelProps={{
-    style: { color: 'black' }, // Set the label color to black
-  }} name="User Name" label="User Name" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <ToastContainer />
+        <TextField name="User Name" label="User Name" value={username} onChange={(e) => setUsername(e.target.value)} />
 
-        <TextField   InputLabelProps={{
-    style: { color: 'black' }, // Set the label color to black
-  }}
+        <TextField InputLabelProps={{
+          style: { color: 'black' }, // Set the label color to black
+        }}
           name="password"
           label="Password"
           type={showPassword ? 'text' : 'password'}

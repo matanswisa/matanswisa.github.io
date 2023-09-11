@@ -23,23 +23,13 @@ function getTodoList(info, date, isHebrew) {
   }));
 }
 
-const CalendarComponent = () => {
-  const [calendarTrades, setCalendarTrades] = useState([]);
-  const currentAccount = useSelector(selectCurrentAccount);
+const CalendarComponent = (props) => {
+
+  const { calendarTrades } = props;
   const isHebrew = useSelector(selectlanguage);
 
-  useEffect(() => {
-    if (currentAccount?.trades && currentAccount.trades.length) {
-      api.post('/api/ShowNumOfTradeTotalPnlInfoByDates', { trades: currentAccount.trades }, configAuth)
-        .then((res) => {
-          setCalendarTrades(res.data);
-        })
-        .catch();
-    }
-  }, []);
-
   function renderCell(date) {
-    const list = getTodoList(calendarTrades, date,isHebrew);
+    const list = getTodoList(calendarTrades, date, isHebrew);
     const displayList = list.filter((item, index) => index < 2);
 
     const desiredDays = calendarTrades

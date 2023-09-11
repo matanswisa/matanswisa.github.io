@@ -32,9 +32,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Iconify from '../components/iconify';
 import api from '../api/api';
-import userSlice, { selectCurrentAccount , selectUser} from '../redux-toolkit/userSlice';
+import userSlice, { selectCurrentAccount, selectUser } from '../redux-toolkit/userSlice';
 import { configAuth } from '../api/configAuth';
-import {selectDarkMode} from '../redux-toolkit/darkModeSlice';
+import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
 
 
@@ -42,29 +42,31 @@ import { selectlanguage } from '../redux-toolkit/languagesSlice';
 export default function DailyStatsPage() {
 
 
-//------------------------------------------------   States ----------------------------------------------------- //
+  //------------------------------------------------   States ----------------------------------------------------- //
   const [trades, setTrades] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
   const currentAccount = useSelector(selectCurrentAccount);
   const darkMode = useSelector(selectDarkMode);
   const isHebrew = useSelector(selectlanguage);
 
+  const user = useSelector(selectUser);
+
 
   useEffect(() => {
     if (currentAccount?.trades && currentAccount.trades.length) {
-    api.post('/api/DailyStatsInfo',{trades:currentAccount.trades},configAuth)
-      .then((res) => {
-        setTrades(res.data);
-      
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      api.post('/api/DailyStatsInfo', { trades: currentAccount.trades }, { headers: { Authorization: "Berear " + user.accessToken } })
+        .then((res) => {
+          setTrades(res.data);
+
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }, []);
 
 
-//handle filter reuslts by date
+  //handle filter reuslts by date
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
@@ -79,31 +81,31 @@ export default function DailyStatsPage() {
         <title>{isHebrew === false ? "Daily Stats" : "סטטיסטיקה יומית"}</title>
       </Helmet>
       <FormControl variant="outlined" style={{ minWidth: 120 }}>
-      <div style={{ display: "flex", alignItems: "center" }}>
-      <div style={{ marginRight: "10px" }}>
-        <DatePicker 
-          selected={selectedDate}
-          onChange={handleDateChange}
-          dateFormat="E, MMM d, yyyy"
-          placeholderText="Select a date"
-        />
-      </div>
-      <Button  style={{  fontSize: "12px", minWidth: "80px",  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",   }}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ marginRight: "10px" }}>
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              dateFormat="E, MMM d, yyyy"
+              placeholderText="Select a date"
+            />
+          </div>
+          <Button style={{ fontSize: "12px", minWidth: "80px", backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
 
-        variant="contained"
-        onClick={handleClearDate}
-       
-      >
-      {isHebrew === false ? "Clear" : "נקה"}
-      </Button>
-    </div>
-    
-      </FormControl>
+            variant="contained"
+            onClick={handleClearDate}
+
+          >
+            {isHebrew === false ? "Clear" : "נקה"}
+          </Button>
+        </div>
+
+      </FormControl >
       <Container>
         <div style={{ maxHeight: '850px', maxWidth: '1400px', overflowY: 'scroll' }}>
           <Typography variant="h4" gutterBottom>
-          {isHebrew === false ? "Daily Stats" : "סטטיסטיקה יומית"}
-       
+            {isHebrew === false ? "Daily Stats" : "סטטיסטיקה יומית"}
+
           </Typography>
           {trades
             .filter((trade) => {

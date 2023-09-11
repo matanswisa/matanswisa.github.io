@@ -2,6 +2,7 @@ import { roles } from '../utils/roles';
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+    accounts: [],
     user: null,
     currentAccount: null,
     role: 0,
@@ -16,6 +17,7 @@ const authSlice = createSlice({
         login(state, action) {
             state.user = action.payload.user;
             state.isAuthenticated = true;
+            state.accounts = action.payload.user.accounts
             state.isAdmin = action.payload.user.role === roles.admin;
         },
         logout(state) {
@@ -30,14 +32,6 @@ const authSlice = createSlice({
         selectIsAdmin(state) {
             return state.isAdmin;
         },
-        initializeUser(state) {
-            const persistedUser = JSON.parse(localStorage.getItem('user'));
-            if (persistedUser) {
-                state.user = persistedUser;
-                state.isAuthenticated = true;
-                state.isAdmin = persistedUser.role === roles.admin;
-            }
-        },
         setCurrentAccount(state, action) {
             state.currentAccount = action.payload;
         },
@@ -45,10 +39,10 @@ const authSlice = createSlice({
         addAccountToList(state, action) {
             // state.
             console.log(action.payload);
-            state.user.accounts.push(action.payload);
+            state.accounts.push(action.payload);
         },
         updateAccountList(state, action) {
-            state.user.accounts = action.payload;
+            state.accounts = action.payload;
         },
         updateAccount(state, action) {
             const currAccounts = state.user.accounts.filter(account => account._id !== action.payload._id);
@@ -65,16 +59,18 @@ const authSlice = createSlice({
     },
 });
 
-export const { login, logout, selectIsAdmin, initializeUser, setCurrentAccount, addAccountToList, removeAccount, setTradesList, updateAccountList } = authSlice.actions;
+export const { login, logout, selectIsAdmin, setCurrentAccount, addAccountToList, removeAccount, setTradesList, updateAccountList } = authSlice.actions;
 
 //Selectors
-export const selectUserAccounts = (state) => state.auth.user.accounts;
+export const selectUserAccounts = (state) => state.auth.accounts;
 export const selectCurrentAccount = (state) => state.auth.currentAccount;
 export const selectTradesOfCurrentAccount = (state) => state.auth.currentAccount.trades;
 export const selectUserName = (state) => state.auth.user?.username;
 export const selectUser = (state) => state.auth.user;
 export const selectUserAdmin = (state) => state.auth.isAdmin;
 export const isUserAuthenticated = (state) => state.auth.isAuthenticated;
+export const selectAccessToken = (state) => state.auth.user.accessToken;
+export const selectRefreshToken = (state) => state.auth.user.refreshToken;
 
 
 

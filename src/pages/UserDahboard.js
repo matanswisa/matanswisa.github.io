@@ -5,14 +5,14 @@ import Typography from '@mui/material/Typography';
 import { TextField } from '@mui/material';
 import api from '../api/api'
 import { useSelector } from 'react-redux';
-import { selectUserName } from '../redux-toolkit/userSlice';
+import { selectUser, selectUserName } from '../redux-toolkit/userSlice';
 
 
 
-import {selectMessages} from '../redux-toolkit/messagesSlice'
-import {getMsg} from '../utils/messeageUtils';
-import { msgType} from '../utils/messagesEnum.js';
-import {msgNumber} from '../utils/msgNumbers.js';
+import { selectMessages } from '../redux-toolkit/messagesSlice'
+import { getMsg } from '../utils/messeageUtils';
+import { msgType } from '../utils/messagesEnum.js';
+import { msgNumber } from '../utils/msgNumbers.js';
 
 
 export default function UserDahsboard(props) {
@@ -23,18 +23,19 @@ export default function UserDahsboard(props) {
   // const dispatch = useDispatch();
   const username = useSelector(selectUserName);
   const [password, setPassword] = useState('');
+  const user = useSelector(selectUser);
 
   const validateForm = () => {
 
     if (password === '') {
       if (password === '')
-        notifyToast(getMsg(messages,msgType.warnings,msgNumber[9]).msgText, getMsg(messages,msgType.warnings,msgNumber[9]).msgType);
-       //notifyToast("Password is missing", "warning");
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[9]).msgText, getMsg(messages, msgType.warnings, msgNumber[9]).msgType);
+      //notifyToast("Password is missing", "warning");
       return false;
     }
     if (password.length < 6) {
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[8]).msgText, getMsg(messages,msgType.warnings,msgNumber[8]).msgType);
-    //  notifyToast("Password less than 6 characters", "warning");
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[8]).msgText, getMsg(messages, msgType.warnings, msgNumber[8]).msgType);
+      //  notifyToast("Password less than 6 characters", "warning");
       return false;
 
     } else {
@@ -48,7 +49,6 @@ export default function UserDahsboard(props) {
 
 
   const handleUpdateUser = async () => {
-    const token = localStorage.getItem("token");
 
     if (validateForm()) {
       await api
@@ -57,24 +57,24 @@ export default function UserDahsboard(props) {
           password: password,
         }, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${user.accessToken}`,
           }
         })
         .then((response) => {
-          notifyToast(getMsg(messages,msgType.success,msgNumber[11]).msgText, getMsg(messages,msgType.success,msgNumber[11]).msgType);
-         // notifyToast("Password Updated successfully", "success");
+          notifyToast(getMsg(messages, msgType.success, msgNumber[11]).msgText, getMsg(messages, msgType.success, msgNumber[11]).msgType);
+          // notifyToast("Password Updated successfully", "success");
           props.handleOpenModal(false);
           // Fetch list of users from "/api/users" route
           api
             .get('/api/auth/users', {
               headers: {
-                Authorization: `Bearer ${token}`,
-              },
+                Authorization: `Bearer ${user.accessToken}`,
+              }
             })
             .then((response) => {
               if (props?.handleFetchUsers)
                 props.handleFetchUsers();
-          
+
               // Perform any further actions with the list of users
             })
             .catch((error) => {
@@ -83,8 +83,8 @@ export default function UserDahsboard(props) {
         })
         .catch((err) => {
           if (err.response && err.response.data && err.response.data.samePassword) {
-            notifyToast(getMsg(messages,msgType.warnings,msgNumber[29]).msgText, getMsg(messages,msgType.warnings,msgNumber[29]).msgType);
-          //  notifyToast("Please enter a different password.", "warning");
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[29]).msgText, getMsg(messages, msgType.warnings, msgNumber[29]).msgType);
+            //  notifyToast("Please enter a different password.", "warning");
             return;
           }
         });

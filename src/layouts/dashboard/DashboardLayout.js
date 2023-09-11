@@ -11,16 +11,17 @@ import Header from './header';
 import Nav from './nav';
 import AppBar from '../../components/appBar/appBar'
 import MultipleSelectPlaceholder from '../../components/accounts/selectAccount';
-import api from '../../api/api';
+import api, { axiosAuth } from '../../api/api';
 
 import { configAuth } from '../../api/configAuth';
-import { setCurrentAccount, selectUserAccounts } from '../../redux-toolkit/userSlice';
+import { setCurrentAccount, selectUserAccounts, selectUser, login } from '../../redux-toolkit/userSlice';
 
 import { useDispatch, useSelector } from 'react-redux';
 import Switch from '@mui/material/Switch';
 import { selectDarkMode, toggleDarkMode } from '../../redux-toolkit/darkModeSlice';
-import {selectlanguage, togglelanguage} from '../../redux-toolkit/languagesSlice';
-
+import { selectlanguage, togglelanguage } from '../../redux-toolkit/languagesSlice';
+import { setMessages } from '../../redux-toolkit/messagesSlice';
+import jwt_decode from 'jwt-decode';
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -97,7 +98,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 
 
- //// language switch
+//// language switch
 const AntSwitch = styled(Switch)(({ theme }) => ({
   width: 28,
   height: 16,
@@ -154,11 +155,61 @@ export default function DashboardLayout() {
 
   const changeLanguage = () => {
     dispatch(togglelanguage());
- 
+
   }
 
   const darkMode = useSelector(selectDarkMode);
   const isHebrew = useSelector(selectlanguage);
+
+  const user = useSelector(selectUser);
+
+  const refreshToken = async () => {
+    try {
+      console.log("calling to refresh token..", { token: user.refreshToken });
+      const res = await axiosAuth.post('/api/auth/refreshToken', { token: user.refreshToken })
+      console.log(res.data);
+      dispatch(login({ user, accessToken: res.data.accessToken, refreshToken: res.data.refreshToken }));
+      return res.data;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
+  useEffect(() => {
+    if (user != null) {
+      api.interceptors.request.use(async (config) => {
+        let currentDate = new Date();
+        console.log("user", user);
+        const decodedToken = jwt_decode(user.accessToken);
+
+        // Check if the request is for the '/refreshToken' endpoint
+        console.log("token exp-", decodedToken.exp, " current date - ", currentDate.getTime())
+        if (decodedToken.exp * 1000 < currentDate.getTime()) {
+          const data = await refreshToken();
+          config.headers["Authorization"] = "Bearer " + data.accessToken;
+        }
+
+        return config;
+      });
+    }
+  }, [user])
+  // //interceptors definition for jwt authentication
+
+
+
+
+
+
+  // const dispatch = useDispatch();
+  useEffect(() => {
+    api.get('/api/messages', { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
+      dispatch(setMessages(res.data));
+
+    })
+  }, [])
+
+
   return (
 
     <StyledRoot>
@@ -176,26 +227,26 @@ export default function DashboardLayout() {
         </div>
 
         <Stack direction="row" spacing={1} alignItems="center">
-        <img
-  alt="United States"
-  src="http://purecatamphetamine.github.io/country-flag-icons/1x1/US.svg"
-  style={{ width: '30px', height: '20px' }} />
-        <AntSwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }}  checked={isHebrew} onClick={changeLanguage} />
-        <img
-  alt="Israel"
-  src="http://purecatamphetamine.github.io/country-flag-icons/1x1/IL.svg"
-  style={{ width: '30px', height: '20px' }}
+          <img
+            alt="United States"
+            src="http://purecatamphetamine.github.io/country-flag-icons/1x1/US.svg"
+            style={{ width: '30px', height: '20px' }} />
+          <AntSwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} checked={isHebrew} onClick={changeLanguage} />
+          <img
+            alt="Israel"
+            src="http://purecatamphetamine.github.io/country-flag-icons/1x1/IL.svg"
+            style={{ width: '30px', height: '20px' }}
 
-/>
+          />
 
-        
-      </Stack>
+
+        </Stack>
 
 
         {/* <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
           <AntSwitch checked={isHebrew} onClick={changeLanguage} />
         </div> */}
-        
+
 
         <AppBar />
         <Outlet />

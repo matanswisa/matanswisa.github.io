@@ -47,6 +47,7 @@ import { msgNumber } from '../utils/msgNumbers.js';
 
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
+import { selectUser } from '../redux-toolkit/userSlice';
 
 const style = {
     position: 'absolute',
@@ -180,23 +181,23 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
                         <TableRow>
                             <TableCell>
                                 <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                פעולות  </Typography>
+                                    פעולות  </Typography>
 
                             </TableCell>
                             <TableCell>
                                 <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                רישיון
+                                    רישיון
 
                                 </Typography>
                             </TableCell>
                             <TableCell>
                                 <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                             אימייל
+                                    אימייל
 
                                 </Typography></TableCell>
                             <TableCell>
                                 <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                שם משתמש
+                                    שם משתמש
                                 </Typography></TableCell>
                         </TableRow>
                     </TableHead>
@@ -204,9 +205,9 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
                         {users.map((user) => (
                             <TableRow key={user.id}>
 
-                              
-                              
-                            
+
+
+
                                 <TableCell>
                                     <IconButton aria-label="Delete">
                                         <DeleteIcon onClick={handleClickDialogOpen} />
@@ -278,11 +279,11 @@ const UsersManagementPage = () => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-
+    const user = useSelector(selectUser);
 
 
     useEffect(() => {
-        fetchUsers();
+        fetchUsers(user);
     }, [openmodal])
 
 
@@ -298,21 +299,12 @@ const UsersManagementPage = () => {
         showToast(Msg, Type);
     }
 
-
-
-    useEffect(() => {
-
-    }, [fetchUsers])
-
     const handleDeleteUser = async (id) => {
-
-        const token = localStorage.getItem("token");
         try {
-
             // Assuming the correct endpoint is '/api/auth/deleteUser'
             await api.delete('/api/auth/deleteUser', {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${user.accessToken}`,
                 },
                 data: { id }, // Make sure this is the correct format for the API
             });
@@ -397,41 +389,28 @@ const UsersManagementPage = () => {
 
     const handleUpdateUser = async () => {
 
-        if (validateForm()) {
-            const token = localStorage.getItem("token");
-
-
-
-            try {
-                await api.put('/api/auth/updateUser', {
-                    data: { userId, username, email, licenseTime },
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                });
-                fetchUsers();
-                handleClose();
-                notifyToast(getMsg(messages, msgType.success, msgNumber[13]).msgText, getMsg(messages, msgType.success, msgNumber[13]).msgType);
-                // notifyToast("update account Successfully  ", 'success');
-
-            } catch (error) {
-                console.error('Failed to update user:', error);
+        await api.put('/api/auth/updateUser', {
+            data: { userId, username, email, licenseTime },
+        }, {
+            headers: {
+                Authorization: `Bearer ${user.accessToken}`,
             }
+        });
+        fetchUsers();
+        handleClose();
+        notifyToast(getMsg(messages, msgType.success, msgNumber[13]).msgText, getMsg(messages, msgType.success, msgNumber[13]).msgType);
+    }
 
-        }
-    };
 
 
 
 
-    function fetchUsers() {
-        const token = localStorage.getItem("token");
+    function fetchUsers(user) {
         api
             .get('/api/auth/users', {
                 headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                    Authorization: `Bearer ${user.accessToken}`,
+                }
             }).then((res) => {
 
                 setUsers([...res.data]);
@@ -457,16 +436,18 @@ const UsersManagementPage = () => {
                 </Typography>
                 <Button onClick={handleOpenModal} startIcon={<Iconify icon="eva:plus-fill" />} variant='contained' style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}>  {isHebrew === false ? "Create User" : "יצירת משתמש"}
                 </Button>
-            </div>
+            </div >
 
 
 
             {openmodal && <UsersManage openModal={openmodal} fetchUsers={fetchUsers} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
-            {(openmodal) === true ? <UsersManage
-                openModal={openmodal}
-                handleOpenModal={setIsOpenmodal}
-                notifyToast={notifyToast}
-            /> : null}
+            {
+                (openmodal) === true ? <UsersManage
+                    openModal={openmodal}
+                    handleOpenModal={setIsOpenmodal}
+                    notifyToast={notifyToast}
+                /> : null
+            }
 
             <Divider sx={{ my: 3, backgroundColor: 'grey' }} />
             <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
@@ -530,7 +511,7 @@ const UsersManagementPage = () => {
                     </div>
                 </Box>
             </Modal>
-        </Container>
+        </Container >
     );
 };
 

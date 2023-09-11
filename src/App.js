@@ -7,23 +7,28 @@ import ThemeProvider from './theme';
 // components
 import { StyledChart } from './components/chart';
 import ScrollToTop from './components/scroll-to-top';
-import { setMessages } from './redux-toolkit/messagesSlice';
 import { useEffect } from 'react';
-import api from './api/api';
-import { configAuth } from './api/configAuth';
-import { useDispatch } from 'react-redux';
+import { axiosAuth } from './api/api';
 
-// ----------------------------------------------------------------------
 
 
 export default function App() {
-  const dispatch = useDispatch();
-  useEffect(()=>{
-  api.get('/api/messages',configAuth,).then((res)=>{
-  dispatch(setMessages(res.data));
 
-  })
-  },[])
+
+
+  useEffect(() => {
+    const checkIsUserValid = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.accessToken && user.refreshToken) {
+        const result = await axiosAuth.get("validate-token", { headers: { Authorization: "Bearer " + user.accessToken } });
+        if(result.status == 200){
+          
+        }
+      }
+    }
+
+
+  }, [])
 
 
   return (

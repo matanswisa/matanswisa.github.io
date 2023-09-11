@@ -4,8 +4,9 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { Box, List, ListItemText } from '@mui/material';
 //
 import { StyledNavItem, StyledNavItemIcon } from './styles';
-import { useDispatch } from 'react-redux';
-import { logout, setCurrentAccount } from '../../redux-toolkit/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, selectUser, setCurrentAccount } from '../../redux-toolkit/userSlice';
+import api, { axiosAuth } from '../../api/api';
 
 // ----------------------------------------------------------------------
 
@@ -16,10 +17,10 @@ NavSection.propTypes = {
 
 export default function NavSection({ data = [], ...other }) {
   const dispatch = useDispatch();
-
+  const user = useSelector(selectUser);
   const handleSignout = () => {
+    axiosAuth.post('/logout', { token: user.refreshToken }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
     localStorage.removeItem("user");
-    localStorage.removeItem("token");
     dispatch(logout());
   }
 

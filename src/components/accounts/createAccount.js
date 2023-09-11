@@ -8,7 +8,7 @@ import { useState } from 'react';
 import api from '../../api/api';
 import { useEffect } from 'react';
 import { Select, MenuItem, ListItemIcon, Alert } from '@mui/material';
-import {red,blue,green,yellow,orange,purple,pink,cyan,brown,lightGreen,lime,blueGrey,} from '@mui/material/colors';
+import { red, blue, green, yellow, orange, purple, pink, cyan, brown, lightGreen, lime, blueGrey, } from '@mui/material/colors';
 import { Grid } from 'rsuite';
 import { selectUser, setCurrentAccount, updateAccountList, selectUserAccounts } from '../../redux-toolkit/userSlice';
 import { configAuth } from '../../api/configAuth';
@@ -16,18 +16,18 @@ import BinanceIcon from '../brokersIcons/binance.svg'
 import TradeovateIcon from '../brokersIcons/Tradovate.svg'
 import TradeovateWhiteIcon from '../brokersIcons/TradovateWhite.svg'
 import { useDispatch, useSelector } from 'react-redux';
-import {selectMessages} from '../../redux-toolkit/messagesSlice';
-import {getMsg} from '../../utils/messeageUtils';
-import { msgType} from '../../utils/messagesEnum.js';
-import {msgNumber} from '../../utils/msgNumbers.js';
+import { selectMessages } from '../../redux-toolkit/messagesSlice';
+import { getMsg } from '../../utils/messeageUtils';
+import { msgType } from '../../utils/messagesEnum.js';
+import { msgNumber } from '../../utils/msgNumbers.js';
 
 import { selectlanguage } from '../../redux-toolkit/languagesSlice';
 
-import {selectDarkMode} from '../../redux-toolkit/darkModeSlice';
+import { selectDarkMode } from '../../redux-toolkit/darkModeSlice';
 //--------------------------------------------This component show Create account Modal -------------------------------------------//
 export default function AccountModal(props) {
 
-//------------------------------------------------  States ----------------------------------------------------- //
+  //------------------------------------------------  States ----------------------------------------------------- //
   const isHebrew = useSelector(selectlanguage);
   const accounts = useSelector(selectUserAccounts);
   const handleOpen = () => props.handleOpenModal(true);
@@ -45,7 +45,7 @@ export default function AccountModal(props) {
 
   const darkMode = useSelector(selectDarkMode);
 
-//handle state of broker when change in select option
+  //handle state of broker when change in select option
   const handleChange = (event) => {
     setBroker(event.target.value);
   };
@@ -60,29 +60,28 @@ export default function AccountModal(props) {
   }, [accountInfo]);
 
 
-//this function check if account name already exist before created.
+  //this function check if account name already exist before created.
   const checkAccountExists = (accountList, accountName) => {
     const selectedAccount = accountList.find((account) => account.AccountName === accountName);
     return selectedAccount !== undefined;
   };
 
 
-//------------------------------------------------ handle create account -----------------------------------------------------//
-const handleCreateAccount = async () => {
-    if (validateForm())
-     {
-      const data = { AccountName: accountName, Broker: broker,Label: selectedColor,};
+  //------------------------------------------------ handle create account -----------------------------------------------------//
+  const handleCreateAccount = async () => {
+    if (validateForm()) {
+      const data = { AccountName: accountName, Broker: broker, Label: selectedColor, };
       await api
-        .post('/api/createAccount', { userId: user._id, data }, configAuth)
+        .post('/api/createAccount', { userId: user._id, data }, { headers: { Authorization: "Berear " + user.accessToken } })
         .then(async (res) => {
-          notifyToast(getMsg(messages,msgType.success,msgNumber[2]).msgText, getMsg(messages,msgType.success,msgNumber[2]).msgType);
+          notifyToast(getMsg(messages, msgType.success, msgNumber[2]).msgText, getMsg(messages, msgType.success, msgNumber[2]).msgType);
           // notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
           dispatch(updateAccountList(res.data))
           dispatch(setCurrentAccount(res.data[res.data.length - 1]));
         })
         .catch((err) => {
-          notifyToast(getMsg(messages,msgType.errors,msgNumber[1]).msgText, getMsg(messages,msgType.errors,msgNumber[1]).msgType);
+          notifyToast(getMsg(messages, msgType.errors, msgNumber[1]).msgText, getMsg(messages, msgType.errors, msgNumber[1]).msgType);
           // notifyToast("Couldn't add Account", 'error');
           return false;
         });
@@ -90,7 +89,7 @@ const handleCreateAccount = async () => {
   };
 
 
-//------------------------------------------------ handle edit account -----------------------------------------------------//
+  //------------------------------------------------ handle edit account -----------------------------------------------------//
   const handleEditAccount = async () => {
     if (validateFormEdit()) {
       const data = {
@@ -102,24 +101,24 @@ const handleCreateAccount = async () => {
       };
 
       await api
-        .put('/api/editAccount', data, configAuth) // Use api.put and pass the account id in the URL
+        .put('/api/editAccount', data, { headers: { Authorization: "Berear " + user.accessToken } }) // Use api.put and pass the account id in the URL
         .then((res) => {
           // notifyToast('Account updated successfully', 'success');
-          notifyToast(getMsg(messages,msgType.success,msgNumber[3]).msgText, getMsg(messages,msgType.success,msgNumber[3]).msgType);
+          notifyToast(getMsg(messages, msgType.success, msgNumber[3]).msgText, getMsg(messages, msgType.success, msgNumber[3]).msgType);
           props.handleOpenModal(false);
           // props.fetchAccounts();
           dispatch(updateAccountList(res.data))
 
         })
         .catch((err) => {
-          notifyToast(getMsg(messages,msgType.errors,msgNumber[3]).msgText, getMsg(messages,msgType.errors,msgNumber[3]).msgType);
+          notifyToast(getMsg(messages, msgType.errors, msgNumber[3]).msgText, getMsg(messages, msgType.errors, msgNumber[3]).msgType);
           // notifyToast("Couldn't update account", 'error');
         });
     }
   };
 
 
-//------------------------------------------------ handle style for create account modal -----------------------------------------------------//  
+  //------------------------------------------------ handle style for create account modal -----------------------------------------------------//  
   const style = {
     position: 'absolute',
     top: '50%',
@@ -137,26 +136,26 @@ const handleCreateAccount = async () => {
   };
 
 
-//------------------------------------------------ handle validateForm before create account -----------------------------------------------------//  
+  //------------------------------------------------ handle validateForm before create account -----------------------------------------------------//  
   const validateForm = () => {
     if (accountName === '') {
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[1]).msgText, getMsg(messages,msgType.warnings,msgNumber[1]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[1]).msgText, getMsg(messages, msgType.warnings, msgNumber[1]).msgType);
       // notifyToast('Account type is missing', 'warning');
       return false;
     }
 
     if (checkAccountExists(accounts, accountName)) {
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[2]).msgText, getMsg(messages,msgType.warnings,msgNumber[2]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[2]).msgText, getMsg(messages, msgType.warnings, msgNumber[2]).msgType);
       // notifyToast('Account already exist', 'warning');
       return false;
     }
     return true;
   };
 
-//------------------------------------------------ handle validateForm before edit account -----------------------------------------------------//  
+  //------------------------------------------------ handle validateForm before edit account -----------------------------------------------------//  
   const validateFormEdit = () => {
-    if (accountName === '' ) {
-      notifyToast(getMsg(messages,msgType.warnings,msgNumber[1]).msgText, getMsg(messages,msgType.warnings,msgNumber[1]).msgType);
+    if (accountName === '') {
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[1]).msgText, getMsg(messages, msgType.warnings, msgNumber[1]).msgType);
       // notifyToast('Account type is missing', 'warning');
       return false;
     }
@@ -168,25 +167,25 @@ const handleCreateAccount = async () => {
     <div>
       <Button onClick={handleOpen}>Open modal</Button>
       <Box sx={style}>
-      <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+        <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
           {edit === true ? (
             <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: 'left', marginTop: 0 }}>
-             {isHebrew === false ? "Update Account" : "עדכון חשבון"}
+              {isHebrew === false ? "Update Account" : "עדכון חשבון"}
             </Typography>
           ) : (
             <Typography id="modal-modal-title" variant="h4" component="h2" sx={{ textAlign: 'left', marginTop: 0 }}>
-                {isHebrew === false ? "Create Account" : "יצירת חשבון"}
+              {isHebrew === false ? "Create Account" : "יצירת חשבון"}
             </Typography>
           )}
         </Grid>
 
-        <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2  }}>
+        <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
           <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
-          {isHebrew === false ? "Account Name" : "שם חשבון"}
-            
+            {isHebrew === false ? "Account Name" : "שם חשבון"}
+
           </Typography>
           <TextField
-          
+
             required
             id="outlined-required"
             value={accountName}
@@ -196,134 +195,134 @@ const handleCreateAccount = async () => {
           />
         </Grid>
         {edit === false ? (
-  <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-    <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
-    {isHebrew === false ? "Broker" : "ברוקר"}
-      
-    </Typography>
-    <Select
-      sx={{ mt: 3, ml: 2 }}
-      name="broker"
-      labelId="demo-simple-select-label"
-      id="demo-simple-select"
-      value={broker}
-      label="broker"
-      defaultValue={broker}
-      onChange={handleChange}
-      inputProps={{
-        name: 'age',
-        id: 'uncontrolled-native',
-      }}
-    >
-      <MenuItem value={1}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          {darkMode === true ? (
-            <img
-              src={TradeovateWhiteIcon} // Use the imported SVG component here
-              alt="TradeOvate"
-              width={140}
-              height={30}
-              style={{ marginRight: '8px' }}
-            />
-          ) : (
-            <img
-              src={TradeovateIcon} // Use the imported SVG component here
-              alt="TradeOvate"
-              width={140}
-              height={30}
-              style={{ marginRight: '8px' }}
-            />
-          )}
-        </div>
-      </MenuItem>
-      <MenuItem value={2}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img
-            src={BinanceIcon} // Use the imported SVG component here
-            alt="Binance"
-            width={100}
-            height={30}
-            style={{ marginRight: '8px' }}
-          />
-        </div>
-      </MenuItem>
-      {/* Commented out option */}
-      {/* <MenuItem value={3}>Interactiv</MenuItem> */}
-    </Select>
-  </Grid>
-) : null}
+          <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+            <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
+              {isHebrew === false ? "Broker" : "ברוקר"}
 
-        <Grid  sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
-        <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
-        {isHebrew === false ? "Account Symbol" : "סמל חשבון"}
-           
-          </Typography>
-        <Select sx={{ mt: 3, ml: 2 }} size="small" value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
-          <MenuItem value={red[500]}></MenuItem>
-          <MenuItem value={red[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: red[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem value={blue[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: blue[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem value={green[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: green[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem value={brown[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: brown[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-
-          <MenuItem value={yellow[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: yellow[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem value={orange[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: orange[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem value={purple[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: purple[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem value={pink[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: pink[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem value={cyan[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: cyan[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem value={lightGreen[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: lightGreen[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem value={lime[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: lime[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-          <MenuItem value={blueGrey[500]}>
-            <ListItemIcon>
-              <div style={{ backgroundColor: blueGrey[500], width: '24px', height: '24px' }}></div>
-            </ListItemIcon>
-          </MenuItem>
-        </Select>
-
+            </Typography>
+            <Select
+              sx={{ mt: 3, ml: 2 }}
+              name="broker"
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={broker}
+              label="broker"
+              defaultValue={broker}
+              onChange={handleChange}
+              inputProps={{
+                name: 'age',
+                id: 'uncontrolled-native',
+              }}
+            >
+              <MenuItem value={1}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {darkMode === true ? (
+                    <img
+                      src={TradeovateWhiteIcon} // Use the imported SVG component here
+                      alt="TradeOvate"
+                      width={140}
+                      height={30}
+                      style={{ marginRight: '8px' }}
+                    />
+                  ) : (
+                    <img
+                      src={TradeovateIcon} // Use the imported SVG component here
+                      alt="TradeOvate"
+                      width={140}
+                      height={30}
+                      style={{ marginRight: '8px' }}
+                    />
+                  )}
+                </div>
+              </MenuItem>
+              <MenuItem value={2}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <img
+                    src={BinanceIcon} // Use the imported SVG component here
+                    alt="Binance"
+                    width={100}
+                    height={30}
+                    style={{ marginRight: '8px' }}
+                  />
+                </div>
+              </MenuItem>
+              {/* Commented out option */}
+              {/* <MenuItem value={3}>Interactiv</MenuItem> */}
+            </Select>
           </Grid>
+        ) : null}
+
+        <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
+          <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
+            {isHebrew === false ? "Account Symbol" : "סמל חשבון"}
+
+          </Typography>
+          <Select sx={{ mt: 3, ml: 2 }} size="small" value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
+            <MenuItem value={red[500]}></MenuItem>
+            <MenuItem value={red[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: red[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={blue[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: blue[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={green[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: green[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={brown[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: brown[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+
+            <MenuItem value={yellow[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: yellow[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={orange[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: orange[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={purple[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: purple[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={pink[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: pink[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={cyan[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: cyan[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={lightGreen[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: lightGreen[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={lime[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: lime[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+            <MenuItem value={blueGrey[500]}>
+              <ListItemIcon>
+                <div style={{ backgroundColor: blueGrey[500], width: '24px', height: '24px' }}></div>
+              </ListItemIcon>
+            </MenuItem>
+          </Select>
+
+        </Grid>
         <Box
           sx={{
             display: 'flex',
@@ -334,14 +333,14 @@ const handleCreateAccount = async () => {
             right: '16px',
           }}
         >
-          <Button variant="outlined" size="medium" onClick={handleClose}  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
-          {isHebrew === false ? "Cancel" : "ביטול"}
-            
+          <Button variant="outlined" size="medium" onClick={handleClose} style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}>
+            {isHebrew === false ? "Cancel" : "ביטול"}
+
           </Button>
 
-          <Button onClick={edit === true ? handleEditAccount : handleCreateAccount} variant="contained" size="medium"  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}>
-            
-            {edit === true ?   isHebrew === false ? "Update" : "עדכן"  :   isHebrew === false ? "Create account" : "צור חשבון"}
+          <Button onClick={edit === true ? handleEditAccount : handleCreateAccount} variant="contained" size="medium" style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}>
+
+            {edit === true ? isHebrew === false ? "Update" : "עדכן" : isHebrew === false ? "Create account" : "צור חשבון"}
           </Button>
         </Box>
       </Box>

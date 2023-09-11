@@ -26,7 +26,7 @@ import { configAuth } from '../api/configAuth';
 import { Colors } from '../components/color-utils/Colors';
 
 
-import { selectCurrentAccount } from '../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser } from '../redux-toolkit/userSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
 // ----------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ export default function DashboardAppPage() {
   const [dailyNetCumulative, setDailyNetCumulative] = useState([]);
   const currentAccount = useSelector(selectCurrentAccount)
 
-//------------------------------------------------handle trade by current account selected -----------------------------------------------------
+  //------------------------------------------------handle trade by current account selected -----------------------------------------------------
   let Alltrades;
   if (currentAccount?.trades) {
 
@@ -110,9 +110,9 @@ export default function DashboardAppPage() {
   }
   else {
     Alltrades = [];
-  }  
-  
-// ------------------------------------------handle "Daily Net "Daily Net Cumulative Profit"-----------------------------------------------------
+  }
+
+  // ------------------------------------------handle "Daily Net "Daily Net Cumulative Profit"-----------------------------------------------------
 
   /*This function save Date for each day with profit and show the dates on the graph -> "Daily Net Cumulative Profit" */
   const DailyNetCumulativeDateProfit = () => {
@@ -121,110 +121,137 @@ export default function DashboardAppPage() {
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL > 0) {
         WinTradesDates.push(trade._id);
-      }  
-    });  
+      }
+    });
     return WinTradesDates;
-  }  
+  }
 
   /*This function save Profit for each day with profit and show the Profits on the graph -> "Daily Net Cumulative Profit" */
   const DailyNetCumulativePnlProfit = () => {
     const WinTrades = [];
-  
+
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL > 0) {
         WinTrades.push(trade.totalPnL);
-      }  
-    });  
-  
+      }
+    });
+
     return WinTrades;
-  }  
+  }
 
-// -----------------------------------------------handle "Daily Net Cumulative Loss" -------------------------------------------------------------
+  // -----------------------------------------------handle "Daily Net Cumulative Loss" -------------------------------------------------------------
 
- /*This function save Date for each day with Losses and show the dates on the graph -> "Daily Net Cumulative Loss"*/
+  /*This function save Date for each day with Losses and show the dates on the graph -> "Daily Net Cumulative Loss"*/
   const DailyNetCumulativeDateLoss = () => {
     const LossTradesDates = [];
 
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL < 0) {
         LossTradesDates.push(trade._id);
-      }  
-    });  
+      }
+    });
     return LossTradesDates;
-  }  
+  }
 
- /*This function save Losses for each day with Loss and show the Losses on the graph ->  "Daily Net Cumulative Loss" */
+  /*This function save Losses for each day with Loss and show the Losses on the graph ->  "Daily Net Cumulative Loss" */
   const DailyNetCumulativePnlLoss = () => {
     const LossTrades = [];
 
     dailyNetCumulative.forEach((trade) => {
       if (trade.totalPnL < 0) {
         LossTrades.push(trade.totalPnL);
-      }  
-    });  
+      }
+    });
 
     return LossTrades;
-  }  
+  }
 
-//-----------------------------------------------handle "Winning % By Trades" cake. --------------------------------------------------------------
 
-  useEffect(() => {
-    api.post('/api/WinAndLossTotalTime', { trades: Alltrades }, configAuth).then(
-      (res) => {
-        setTrades(res.data)
 
-        for (const index in res.data) {
-          if (index === "lossCount") {
-            setLosingTrades(res.data["lossCount"]);
-          }
-          else if (index === "breakEvenCount") {
-
-            setbreakEvenTrades(res.data["breakEvenCount"]);
-          }
-          else {
-            setWinningTrades(res.data["winCount"]);
-          }
-
-        }
-
-      }
-
-    ).catch()
-  }, [])
-
-//-----------------------------------------------handle "Winning % By Days" cake.------------------------------------------------------------------
- 
-  useEffect(() => {
-    api.post('/api/ShowInfoByDates', { trades: Alltrades }, configAuth).then(
-      (res) => {
-
-        setDailyNetCumulative(res.data)
-   
-        for (const index in res.data) {
-
-          if (res.data[index]["totalPnL"] < 1) {  //when in some day we have a lose day(P&L < 0) inc variable  
-            setLosingTradesInDays(prevState => prevState + 1);
-          }
-
-          else { //when in some day we have a win day(P&L > 0) inc variable  
-            setWinningTradesInDays(prevState => prevState + 1);
-          }
-        }
-      }
-    ).catch()
-  }, [])
-
-//-----------------------------------------------handle calendar data.----------------------------------------------------------------------------
+  const user = useSelector(selectUser);
+  //-----------------------------------------------handle "Winning % By Trades" cake. --------------------------------------------------------------
 
   useEffect(() => {
-    if (trades.length) {
-      api.post("/api/ShowNumOfTradeTotalPnlInfoByDates", { trades: Alltrades }, configAuth).then(
-        (res) => {
-          setCalendarTrades(res.data)
+    const fetchDashboardData = async () => {
+      const configHeaders = { headers: { Authorization: "Berear " + user.accessToken } };
+
+
+      const winAndLossTotalTimePromise = new Promise(async (resolve, reject) => {
+
+        // this post handle "Winning % By Trades" cake.
+        const result = await api.post('/api/WinAndLossTotalTime', { trades: Alltrades }, configHeaders);
+        if (result.status == 200 || result.status == 201) {
+          for (const index in result.data) {
+            if (index === "lossCount") {
+              setLosingTrades(result.data["lossCount"]);
+            }
+            else if (index === "breakEvenCount") {
+
+              setbreakEvenTrades(result.data["breakEvenCount"]);
+            }
+            else {
+              setWinningTrades(result.data["winCount"]);
+            }
+
+          }
+          resolve(result.data);
+        } else {
+          reject(`Failed ${result.status} `);
         }
-      ).catch()
+
+      });
+
+      const ShowInfoByDatesPromise = new Promise(async (resolve, reject) => {
+        // this post handle  "Winning % By Days" cake. 
+        const result = await api.post('/api/ShowInfoByDates', { trades: Alltrades }, configHeaders);
+        if (result.status == 200 || result.status == 201) {
+          setDailyNetCumulative(result.data)
+
+          if (!result.data.length) {
+            setLosingTradesInDays(0);
+            setWinningTradesInDays(0)
+          }
+
+          for (const index in result.data) {
+
+            if (result.data[index]["totalPnL"] < 1) {  //when in some day we have a lose day(P&L < 0) inc variable  
+              setLosingTradesInDays(prevState => prevState + 1);
+            }
+
+            else { //when in some day we have a win day(P&L > 0) inc variable  
+              setWinningTradesInDays(prevState => prevState + 1);
+            }
+          }
+          resolve(result.data);
+        } else {
+          reject(`Failed ${result.status} when try to fetch info by dates`);
+        }
+
+      });
+
+      const updateCalenderDisplayPromiseObject = new Promise(async (resolve, reject) => {
+
+        //this post request responsible to update the calender display.
+        const result = await api.post("/api/ShowNumOfTradeTotalPnlInfoByDates", { trades: Alltrades }, configHeaders)
+        if (result.status == 200 || result.status == 201) {
+          setCalendarTrades(result.data)
+          resolve(result.data);
+        } else {
+          reject("Rejected with status , fetching calender trades data" + result.status);
+        }
+      });
+
+      return [winAndLossTotalTimePromise, ShowInfoByDatesPromise, updateCalenderDisplayPromiseObject];
     }
-  }, [trades])
+
+    fetchDashboardData().then(data => {
+      Promise.allSettled(data).then((results) => results.forEach((result) => console.log(result)))
+    })
+
+
+  }, [currentAccount])
+
+
 
 
 
@@ -240,23 +267,23 @@ export default function DashboardAppPage() {
 
 
         </div>
-       
+
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title={isHebrew === false ? "Total Net P&L": "רווח/הפסד טוטאל"} total={sumPnL(Alltrades)} icon={'eva:pie-chart-outline'} />
+            <AppWidgetSummary title={isHebrew === false ? "Total Net P&L" : "רווח/הפסד טוטאל"} total={sumPnL(Alltrades)} icon={'eva:pie-chart-outline'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title={isHebrew === false ? "Profit Factor": "פקטור רווח"}  total={ProfitFactor(Alltrades)} icon={'eva:grid-outline'} color="secondary" />
+            <AppWidgetSummary title={isHebrew === false ? "Profit Factor" : "פקטור רווח"} total={ProfitFactor(Alltrades)} icon={'eva:grid-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title= {isHebrew === false ? "Average Winning Trade": "ממוצע לטרייד מנצח"} total={avgWinningTrades(Alltrades)} icon={'eva:bar-chart-2-outline'} color="secondary" />
+            <AppWidgetSummary title={isHebrew === false ? "Average Winning Trade" : "ממוצע לטרייד מנצח"} total={avgWinningTrades(Alltrades)} icon={'eva:bar-chart-2-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title={isHebrew === false ?"Average Losing Trade" : "ממוצע לטרייד מפסיד"} total={avgLosingTrades(Alltrades)} icon={'eva:bar-chart-outline'} color="secondary" />
+            <AppWidgetSummary title={isHebrew === false ? "Average Losing Trade" : "ממוצע לטרייד מפסיד"} total={avgLosingTrades(Alltrades)} icon={'eva:bar-chart-outline'} color="secondary" />
           </Grid>
         </Grid>
 
@@ -265,7 +292,7 @@ export default function DashboardAppPage() {
             <Grid container spacing={6}>
               <Grid item xs={12}>
                 <AppWebsiteVisits
-                  title={isHebrew === false ?"Daily Net Cumulative Profit" : "רווח יומי נקי מצטבר"} 
+                  title={isHebrew === false ? "Daily Net Cumulative Profit" : "רווח יומי נקי מצטבר"}
                   subheader=""
                   chartLabels={DailyNetCumulativeDateProfit()}
                   chartData={[
@@ -279,7 +306,7 @@ export default function DashboardAppPage() {
                   ]}
                 />
                 <AppWebsiteVisits
-                  title={isHebrew === false ?"Daily Net Cumulative Loss" : "הפסד יומי נקי מצטבר"} 
+                  title={isHebrew === false ? "Daily Net Cumulative Loss" : "הפסד יומי נקי מצטבר"}
                   subheader=""
                   chartLabels={DailyNetCumulativeDateLoss()}
                   chartData={[
@@ -303,19 +330,19 @@ export default function DashboardAppPage() {
               <Grid item xs={12}>
 
                 <AppCurrentVisits
-                  title={isHebrew === false ?"Winning % By Trades" : "אחוזי ניצחון בעסקאות"} 
+                  title={isHebrew === false ? "Winning % By Trades" : "אחוזי ניצחון בעסקאות"}
                   chartData={[
-                    { label:  isHebrew === false ?'Winners'  : "נצחונות", value: winningTrades },
-                    { label:   isHebrew === false ?'Losers'  : "הפסדים", value: losingTrades },
-                    { label:  isHebrew === false ?'Break Even'  : "ברייק איוון", value: breakEvenTrades },
+                    { label: isHebrew === false ? 'Winners' : "נצחונות", value: winningTrades },
+                    { label: isHebrew === false ? 'Losers' : "הפסדים", value: losingTrades },
+                    { label: isHebrew === false ? 'Break Even' : "ברייק איוון", value: breakEvenTrades },
                   ]}
                   chartColors={[Colors.green, Colors.red]}
                 />
                 <AppCurrentVisits
-                  title={isHebrew === false ?"Winning % By Days"  : "אחוזי ניצחון בימים"} 
+                  title={isHebrew === false ? "Winning % By Days" : "אחוזי ניצחון בימים"}
                   chartData={[
-                    { label:  isHebrew === false ?'Winners'  : "נצחונות" , value: winningTradesInDays },
-                    { label: isHebrew === false ?'Losers'  : "הפסדים", value: losingTradesInDays },
+                    { label: isHebrew === false ? 'Winners' : "נצחונות", value: winningTradesInDays },
+                    { label: isHebrew === false ? 'Losers' : "הפסדים", value: losingTradesInDays },
                   ]}
                   chartColors={[Colors.green, Colors.red]}
                 />
@@ -330,7 +357,7 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={4}>
           <Grid item xs={12}>
-            <Calendar />
+            <Calendar calendarTrades={calendarTrades} />
           </Grid>
         </Grid>
       </Container >

@@ -34,34 +34,27 @@ export default function MultipleSelectPlaceholder(props) {
 
   //Responsible to intialize current account for user.
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    api.post('/api/getSelectedAccount', { userId: user._id }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    }).then((res) => {
+    // const token = localStorage.getItem('token');
+    api.post('/api/getSelectedAccount', { userId: user._id }, { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
       dispatch(setCurrentAccount(res.data));
       setSelectedAccountColor(res.data.Label);
       setSelectedAccount(res.data.AccountName);
     }).catch((err) => {
       console.log(err);
-      alert(err);
+      // alert(err);
     });
   }, [])
 
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    api.post('/api/getSelectedAccount', { userId: user._id }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    }).then((res) => {
+    api.post('/api/getSelectedAccount', { userId: user._id }, { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
+      console.log(res.data);
+      // dispatch(setCurrentAccount(res.data));
       setSelectedAccountColor(res.data.Label);
       setSelectedAccount(res.data.AccountName);
     }).catch((err) => {
       console.log(err);
-      alert(err);
+      // alert(err);
     });
   }, [currentAccount]);
 
@@ -71,14 +64,14 @@ export default function MultipleSelectPlaceholder(props) {
   //------------------------------------------------ handle update the new account choosen -----------------------------------------------------//
   const handleChange = (event) => {
     const accountId = event.target.value
-    api.post('/api/setSelectedAccount', { userId: user._id, accountId }, configAuth).then((res) => {
+    api.post('/api/setSelectedAccount', { userId: user._id, accountId }, { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
 
       setSelectedAccount(res.data.AccountName)
       setSelectedAccountColor(res.data.Label);
       dispatch(setCurrentAccount(res.data));
     }).catch((err) => {
       console.error(err);
-      alert('Error: ' + err);
+      // alert('Error: ' + err);
     });
 
   };
@@ -98,7 +91,7 @@ export default function MultipleSelectPlaceholder(props) {
   return (
     <Box>
       <FormControl>
-        <InputLabel id="demo-simple-select-label"> {isHebrew === false ?"Account":"חשבון"}</InputLabel>
+        <InputLabel id="demo-simple-select-label"> {isHebrew === false ? "Account" : "חשבון"}</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"

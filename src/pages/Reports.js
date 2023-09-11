@@ -93,6 +93,8 @@ function applySortFilter(array, comparator, query) {
   }
   return stabilizedThis.map((el) => el[0]);
 }
+// export let globalAlert;
+
 
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -154,27 +156,27 @@ export default function UserPage() {
   const [imageId, setimageId] = useState('');
 
   let TABLE_HEAD;
-    //------------------------- Handle table Cols Struct for each broker  ------------------------------------------- //
+  //------------------------- Handle table Cols Struct for each broker  ------------------------------------------- //
   // default struct
   if (isHebrew === false) {
-   TABLE_HEAD = [
-    { id: 'entryDate', label: 'Open Date', alignRight: false },
-    { id: 'symbol', label: 'Symbol', alignRight: false },
-    { id: 'status', label: 'Status', alignRight: false },
-    { id: 'netROI', label: 'Net ROI', alignRight: false },
-    { id: 'longShort', label: 'Long / Short', alignRight: false },
-    { id: 'contracts', label: 'Contracts', alignRight: false },
-    { id: 'duration', label: 'Duration', alignRight: false },
-    { id: 'commission', label: 'Commission', alignRight: false },
-    { id: 'netPnL', label: 'Net P&L', alignRight: false },
-    { id: 'image', label: 'Image', alignRight: false },
-    { id: 'edit', label: 'Edit', alignRight: false },
-    { id: 'delete', label: 'Delete', alignRight: false },
-    { id: 'comments', label: 'comments', alignRight: false }
-  ];;
+    TABLE_HEAD = [
+      { id: 'entryDate', label: 'Open Date', alignRight: false },
+      { id: 'symbol', label: 'Symbol', alignRight: false },
+      { id: 'status', label: 'Status', alignRight: false },
+      { id: 'netROI', label: 'Net ROI', alignRight: false },
+      { id: 'longShort', label: 'Long / Short', alignRight: false },
+      { id: 'contracts', label: 'Contracts', alignRight: false },
+      { id: 'duration', label: 'Duration', alignRight: false },
+      { id: 'commission', label: 'Commission', alignRight: false },
+      { id: 'netPnL', label: 'Net P&L', alignRight: false },
+      { id: 'image', label: 'Image', alignRight: false },
+      { id: 'edit', label: 'Edit', alignRight: false },
+      { id: 'delete', label: 'Delete', alignRight: false },
+      { id: 'comments', label: 'comments', alignRight: false }
+    ];;
 
   }
-  else{
+  else {
     TABLE_HEAD = [
       { id: 'הערות', label: 'הערות', alignRight: false },
       { id: 'מחק', label: 'מחק', alignRight: false },
@@ -193,8 +195,7 @@ export default function UserPage() {
 
   }
 
-  if (currentAccount !== null) 
-  {
+  if (currentAccount !== null) {
     // Check if the current account's broker is Tradovate
     if (currentAccount?.Broker == brokers.Tradovate) {
 
@@ -239,37 +240,37 @@ export default function UserPage() {
     else if (currentAccount?.Broker == brokers.Binance) {
 
       if (isHebrew === false) {
-      // Define table columns for Binance broker
-      TABLE_HEAD = [
-        { id: 'entryDate', label: 'Open Date', alignRight: false },
-        { id: 'symbol', label: 'Symbol', alignRight: false },
-        { id: 'status', label: 'Status', alignRight: false },
-        { id: 'longShort', label: 'Long / Short', alignRight: false },
-        { id: 'Quantity', label: 'Quantity', alignRight: false },
-        { id: 'commission', label: 'Commission', alignRight: false },
-        { id: 'netPnL', label: 'Net P&L', alignRight: false },
-        { id: 'image', label: 'Image', alignRight: false },
-        { id: 'edit', label: 'Edit', alignRight: false },
-        { id: 'delete', label: 'Delete', alignRight: false },
-        { id: 'comments', label: 'comments', alignRight: false }
-      ];
+        // Define table columns for Binance broker
+        TABLE_HEAD = [
+          { id: 'entryDate', label: 'Open Date', alignRight: false },
+          { id: 'symbol', label: 'Symbol', alignRight: false },
+          { id: 'status', label: 'Status', alignRight: false },
+          { id: 'longShort', label: 'Long / Short', alignRight: false },
+          { id: 'Quantity', label: 'Quantity', alignRight: false },
+          { id: 'commission', label: 'Commission', alignRight: false },
+          { id: 'netPnL', label: 'Net P&L', alignRight: false },
+          { id: 'image', label: 'Image', alignRight: false },
+          { id: 'edit', label: 'Edit', alignRight: false },
+          { id: 'delete', label: 'Delete', alignRight: false },
+          { id: 'comments', label: 'comments', alignRight: false }
+        ];
 
-    }
-    else{
-      TABLE_HEAD = [
-        { id: 'comments', label: 'הערות', alignRight: false },
-        { id: 'delete', label: 'מחק', alignRight: false },
-        { id: 'edit', label: 'עריכה', alignRight: false },
-        { id: 'image', label: 'תמונה', alignRight: false },
-        { id: 'commission', label: 'עמלה', alignRight: false },
-        { id: 'netPnL', label: 'רווח נטו', alignRight: false },
-        { id: 'Quantity', label: 'כמות', alignRight: false },
-        { id: 'longShort', label: 'לונג/שורט', alignRight: false },
-        { id: 'status', label: 'סטטוס', alignRight: false },
-        { id: 'symbol', label: 'סמל', alignRight: false },
-        { id: 'entryDate', label: 'תאריך פתיחה', alignRight: false },
-    ];
-    }
+      }
+      else {
+        TABLE_HEAD = [
+          { id: 'comments', label: 'הערות', alignRight: false },
+          { id: 'delete', label: 'מחק', alignRight: false },
+          { id: 'edit', label: 'עריכה', alignRight: false },
+          { id: 'image', label: 'תמונה', alignRight: false },
+          { id: 'commission', label: 'עמלה', alignRight: false },
+          { id: 'netPnL', label: 'רווח נטו', alignRight: false },
+          { id: 'Quantity', label: 'כמות', alignRight: false },
+          { id: 'longShort', label: 'לונג/שורט', alignRight: false },
+          { id: 'status', label: 'סטטוס', alignRight: false },
+          { id: 'symbol', label: 'סמל', alignRight: false },
+          { id: 'entryDate', label: 'תאריך פתיחה', alignRight: false },
+        ];
+      }
     }
   }
 
@@ -296,38 +297,36 @@ export default function UserPage() {
       setSelectedFile(event.target.files[0]);
   };
 
-  // const handleUpload = (tradeId) => {
-  //   console.log("Inside upload new image but adding trade!", tradeId)
+  const handleUpload = (tradeId) => {
+    console.log("Inside upload new image but adding trade!", tradeId)
 
-  //   if (!selectedFile && !tradeId) {
-  //     notifyToast(getMsg(messages, msgType.errors, msgNumber[9]).msgText, getMsg(messages, msgType.errors, msgNumber[9]).msgType);
+    if (!selectedFile && !tradeId) {
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[9]).msgText, getMsg(messages, msgType.errors, msgNumber[9]).msgType);
 
-  //     // notifyToast("Couldn't upload the image", "error"); return; }
-  //   }
-  //   console.log(user);
-  //   // Create a new FormData object
-  //   const formData = new FormData();
-  //   // Append the selected file to the FormData object
-  //   formData.append('file', selectedFile);
-  //   formData.append('tradeId', tradeId);
-  //   formData.append('userId', user._id)
-  //   formData.append('accountId', currentAccount._id)
-  //   console.log("formData", formData);
-  //   // Make a POST request to the server with the file data
-  //   api.post('http://localhost:8000/api/uploadTradeImage', formData, { headers: { ...configAuth['headers'], 'Content-Type': 'multipart/form-data' } })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
-  //       // notifyToast("Trade image uploaded successfully", "success");
-  //       dispatch(setTradesList(data));
-  //     })
-  //     .catch(error => {
-  //      // notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
-  //       // Handle any errors that occurred during the upload
-  //       // notifyToast("Error uploading trade image", "error");
-  //       console.error(error);
-  //     });
-  // };
+      // notifyToast("Couldn't upload the image", "error"); return; }
+    }
+    // Create a new FormData object
+    const formData = new FormData();
+    // Append the selected file to the FormData object
+    formData.append('file', selectedFile);
+    formData.append('tradeId', tradeId);
+    formData.append('userId', user._id)
+    formData.append('accountId', currentAccount._id)
+    // Make a POST request to the server with the file data
+    api.post('http://localhost:8000/api/uploadTradeImage', formData, { headers: { Authorization: "Berear " + user.accessToken, 'Content-Type': 'multipart/form-data' } })
+      .then(response => response.json())
+      .then(data => {
+        notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
+        // notifyToast("Trade image uploaded successfully", "success");
+        dispatch(setTradesList(data));
+      })
+      .catch(error => {
+        notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
+        // Handle any errors that occurred during the upload
+        // notifyToast("Error uploading trade image", "error");
+        console.error(error);
+      });
+  };
 
   const fileInputRef = React.useRef(null);
 
@@ -437,6 +436,17 @@ export default function UserPage() {
     setDialogOpen(false);
   };
 
+  const deleteTrade = async (tradeId) => {
+    console.log(editTradeId);
+    const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
+    dispatch(setTradesList(res.data))
+    notifyToast(getMsg(messages, msgType.success, msgNumber[14]).msgText, getMsg(messages, msgType.success, msgNumber[14]).msgType);
+    // notifyToast("Delete trade Successfully", 'success');
+    toggleShow();
+  }
+
+
+
   // Function to handle opening the dialog and setting the image data
   const handleOpenDialog = (imageData) => {
     setImageModalOpen(true);
@@ -448,20 +458,6 @@ export default function UserPage() {
     setImageModalOpen(false);
     setImageData('');
   };
-
-
-  //--------------------------------------- handle delete trade ------------------------------------------- //
-  const deleteTrade = async (tradeId) => {
-    console.log(editTradeId);
-    const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, configAuth);
-    dispatch(setTradesList(res.data))
-    notifyToast(getMsg(messages, msgType.success, msgNumber[14]).msgText, getMsg(messages, msgType.success, msgNumber[14]).msgType);
-    // notifyToast("Delete trade Successfully", 'success');
-    toggleShow();
-  }
-
-
-
 
 
   return (
@@ -482,8 +478,8 @@ export default function UserPage() {
           <DatePicker
             selected={selectedDate}
             onChange={handleDateChange}
-            dateFormat="E, MMM d, yyyy"    
-            placeholderText=    {isHebrew === false ?"Select a date" : "בחר תאריך"}
+            dateFormat="E, MMM d, yyyy"
+            placeholderText={isHebrew === false ? "Select a date" : "בחר תאריך"}
           />
           {isHebrew === false ?
             <Button
@@ -502,20 +498,20 @@ export default function UserPage() {
             </Button>}
         </div>
         <ToastContainer />
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={6}>  
-            <Typography variant="h4" gutterBottom>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={6}>
+          <Typography variant="h4" gutterBottom>
             {isHebrew === false ?
               "Trades" : "טריידים"}
-            </Typography> 
+          </Typography>
           <div>
             <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />} sx={{ marginRight: 2 }}>
-            {isHebrew === false ?
-              "Import Trades" :  "ייבוא טרידיים"}
+              {isHebrew === false ?
+                "Import Trades" : "ייבוא טרידיים"}
             </Button>
             {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} />}
 
             <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            {isHebrew === false ?   "Add New Trade" : "הוסף טרייד חדש"}
+              {isHebrew === false ? "Add New Trade" : "הוסף טרייד חדש"}
             </Button>
           </div>
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
@@ -573,65 +569,65 @@ export default function UserPage() {
                           </TableCell>
 
 
-                          {isHebrew === false?
-                          <TableCell component="th" scope="row" padding="none">
-                            <Stack direction="row" alignItems="center" spacing={2}>
-                              {formatDate(trade.entryDate)}
-                            </Stack>
-                          </TableCell>:
-                           <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>}
+                          {isHebrew === false ?
+                            <TableCell component="th" scope="row" padding="none">
+                              <Stack direction="row" alignItems="center" spacing={2}>
+                                {formatDate(trade.entryDate)}
+                              </Stack>
+                            </TableCell> :
+                            <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>}
 
-                          {isHebrew === false?
-                          <TableCell align="center">{trade.symbol}</TableCell>:
-                          <TableCell align="right">
-                          <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }} onClick={() => {
-                            handleClickDialogOpen();
-                          }}>
-                            מחק
-                          </button>
-                          <Dialog
-                            open={opendialog}
-                            TransitionComponent={Transition}
+                          {isHebrew === false ?
+                            <TableCell align="center">{trade.symbol}</TableCell> :
+                            <TableCell align="right">
+                              <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }} onClick={() => {
+                                handleClickDialogOpen();
+                              }}>
+                                מחק
+                              </button>
+                              <DialogTitle
+                                open={opendialog}
+                                TransitionComponent={Transition}
 
-                            onClose={handleDialogClose}
-                            aria-describedby="alert-dialog-slide-description"
-                          >
-                            <DialogTitle>{"אישור מחיקה"}</DialogTitle>
-                            <DialogContent>
-                              <DialogContentText id="alert-dialog-slide-description">
-                               האם אתה בטוח שברצונך למחוק את הטרייד?
-                              </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                              <Button onClick={handleDialogClose}>ביטול</Button>
-                              <Button onClick={() => {
-                                deleteTrade(editTradeId._id); // Now proceed with the deletion
-                                handleDialogClose(); // Close the dialog first
-                              }} color="primary">
-                                אישור
-                              </Button>
-                            </DialogActions>
-                          </Dialog>
-                        </TableCell>}
+                                onClose={handleDialogClose}
+                                aria-describedby="alert-dialog-slide-description"
+                              >
+                                <DialogTitle>{"אישור מחיקה"}</DialogTitle>
+                                <DialogContent>
+                                  <DialogContentText id="alert-dialog-slide-description">
+                                    האם אתה בטוח שברצונך למחוק את הטרייד?
+                                  </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                  <Button onClick={handleDialogClose}>ביטול</Button>
+                                  <Button onClick={() => {
+                                    deleteTrade(editTradeId._id); // Now proceed with the deletion
+                                    handleDialogClose(); // Close the dialog first
+                                  }} color="primary">
+                                    אישור
+                                  </Button>
+                                </DialogActions>
+                              </DialogTitle>
+                            </TableCell>}
 
-                          {isHebrew  === false ?
-                          <TableCell align="center">
-                            <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
-                              {sentenceCase(trade.status)}
-                            </Label>
-                          </TableCell> :
-                           <TableCell align="right">
-                           <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
-                             onClick={() => {
-                               setEditMode(true);
-                               setIsOpenmodal(true);
-                               setEditTradeId(trade);
-                             }}
-                           >
-                             ערוך
-                           </button>
-                         </TableCell>}
-                          
+                          {isHebrew === false ?
+                            <TableCell align="center">
+                              <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
+                                {sentenceCase(trade.status)}
+                              </Label>
+                            </TableCell> :
+                            <TableCell align="right">
+                              <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
+                                onClick={() => {
+                                  setEditMode(true);
+                                  setIsOpenmodal(true);
+                                  setEditTradeId(trade);
+                                }}
+                              >
+                                ערוך
+                              </button>
+                            </TableCell>}
+
 
 
                           {currentAccount.Broker == 1 ?
@@ -639,15 +635,15 @@ export default function UserPage() {
                             : ''}
 
                           {isHebrew === false ?
-                          <TableCell align="center">{trade.longShort}</TableCell> : 
-                          <TableCell align="center">{trade.netPnL}$</TableCell>}
+                            <TableCell align="center">{trade.longShort}</TableCell> :
+                            <TableCell align="center">{trade.netPnL}$</TableCell>}
 
-                          {isHebrew === false ? 
-                          <TableCell align="center">{trade.contracts}</TableCell> :
-                          <TableCell align="center">
-                          {trade.commission ? trade.commission + "$" : "N/A"}
-                        </TableCell>}
-                          
+                          {isHebrew === false ?
+                            <TableCell align="center">{trade.contracts}</TableCell> :
+                            <TableCell align="center">
+                              {trade.commission ? trade.commission + "$" : "N/A"}
+                            </TableCell>}
+
                           {currentAccount.Broker == 1 ?
                             <TableCell align="center">
                               {trade.duration !== undefined && trade.duration > 0 ? (
@@ -662,91 +658,91 @@ export default function UserPage() {
                             </TableCell>
                             : ""}
 
-                          {isHebrew === false?
-                          <TableCell align="center">
-                            {trade.commission ? trade.commission + "$" : "N/A"}
-                          </TableCell>:
-                               <TableCell align="center">{trade.contracts}</TableCell> }
+                          {isHebrew === false ?
+                            <TableCell align="center">
+                              {trade.commission ? trade.commission + "$" : "N/A"}
+                            </TableCell> :
+                            <TableCell align="center">{trade.contracts}</TableCell>}
 
-                          {isHebrew === false?
-                          <TableCell align="center">{trade.netPnL}$</TableCell>:
-                          <TableCell align="center">{trade.longShort}</TableCell>}
+                          {isHebrew === false ?
+                            <TableCell align="center">{trade.netPnL}$</TableCell> :
+                            <TableCell align="center">{trade.longShort}</TableCell>}
 
-                            
-                            {isHebrew === false?
-                          <TableCell align="center">
-                            <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
-                            {trade.image ? (
-                              <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true); setimageId(trade._id); }}>
-                                <Iconify icon={'eva:image-outline'} />
-                              </IconButton>
-                            ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
-                          </TableCell>:
+
+                          {isHebrew === false ?
+                            <TableCell align="center">
+                              <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                              {trade.image ? (
+                                <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true); setimageId(trade._id); }}>
+                                  <Iconify icon={'eva:image-outline'} />
+                                </IconButton>
+                              ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
+                            </TableCell> :
                             currentAccount.Broker == 1 ?
                               <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
-                              : '' }
+                              : ''}
 
 
 
 
                           {isHebrew === false ?
-                          <TableCell align="right">
-                            <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
-                              onClick={() => {
-                                setEditMode(true);
-                                setIsOpenmodal(true);
-                                setEditTradeId(trade);
-                              }}
-                            >
-                              Edit
-                            </button>
-                          </TableCell>:
+                            <TableCell align="right">
+                              <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
+                                onClick={() => {
+                                  setEditMode(true);
+                                  setIsOpenmodal(true);
+                                  setEditTradeId(trade);
+                                }}
+                              >
+                                Edit
+                              </button>
+                            </TableCell> :
                             <TableCell align="center">
-                            <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
-                              {sentenceCase(trade.status)}
-                            </Label>
-                          </TableCell>}
+                              <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
+                                {sentenceCase(trade.status)}
+                              </Label>
+                            </TableCell>}
 
-                          {isHebrew  ===  false  ? 
-                          <TableCell align="right">
-                            <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }} onClick={() => {
-                              handleClickDialogOpen();
-                            }}>
-                              Delete
-                            </button>
-                            <Dialog
-                              open={opendialog}
-                              TransitionComponent={Transition}
+                          {isHebrew === false ?
+                            <TableCell align="right">
+                              <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }} onClick={() => {
+                                handleClickDialogOpen();
+                              }}>
+                                Delete
+                              </button>
+                              <Dialog
+                                open={opendialog}
+                                TransitionComponent={Transition}
 
-                              onClose={handleDialogClose}
-                              aria-describedby="alert-dialog-slide-description"
-                            >
-                              <DialogTitle>{"Confirm Deletion"}</DialogTitle>
-                              <DialogContent>
-                                <DialogContentText id="alert-dialog-slide-description">
-                                  Are you sure you want to delete this trade?
-                                </DialogContentText>
-                              </DialogContent>
-                              <DialogActions>
-                                <Button onClick={handleDialogClose}>Cancel</Button>
-                                <Button onClick={() => {
-                                  deleteTrade(editTradeId._id); // Now proceed with the deletion
-                                  handleDialogClose(); // Close the dialog first
-                                }} color="primary">
-                                  Confirm
-                                </Button>
-                              </DialogActions>
-                            </Dialog>
-                          </TableCell> :
-                              <TableCell align="center">{trade.symbol}</TableCell>}
+                                onClose={handleDialogClose}
+                                aria-describedby="alert-dialog-slide-description"
+                              >
+                                <DialogTitle>{"Confirm Deletion"}</DialogTitle>
+                                <DialogContent>
+                                  <DialogContentText id="alert-dialog-slide-description">
+                                    Are you sure you want to delete this trade?
+                                  </DialogContentText>
+                                </DialogContent>
+                                <DialogActions>
+                                  <Button onClick={handleDialogClose}>Cancel</Button>
+                                  <Button onClick={() => {
+                                    deleteTrade(editTradeId._id); // Now proceed with the deletion
+                                    handleDialogClose(); // Close the dialog first
+                                  }} color="primary">
+                                    Confirm
+                                  </Button>
+                                </DialogActions>
+                              </Dialog>
+                            </TableCell> :
+                            <TableCell align="center">{trade.symbol}</TableCell>}
 
-                            {isHebrew === false ? 
-                          <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>
-                                :     <TableCell component="th" scope="row" padding="none">
-                                <Stack direction="row" alignItems="center" spacing={2}>
-                                  {formatDate(trade.entryDate)}
-                                </Stack>
-                              </TableCell>}
+                          {isHebrew === false ?
+                            <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>
+                            : <TableCell component="th" scope="row" padding="none">
+                              <Stack direction="row" alignItems="center" spacing={2}>
+                                {formatDate(trade.entryDate)}
+                              </Stack>
+                            </TableCell>}
                         </TableRow>
                       );
                     })}
@@ -793,17 +789,17 @@ export default function UserPage() {
         </Card>
         {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} tradeComments={editTradeId.comments} />}
         <Dialog open={openCommend} onClose={handleCloseCommend}>
-          <DialogTitle> {isHebrew === false? "Comment" : "הערות"}</DialogTitle>
+          <DialogTitle> {isHebrew === false ? "Comment" : "הערות"}</DialogTitle>
           <DialogContent>{selectedComment}</DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseCommend} color="primary">{isHebrew === false? "Close" : "סגירה"}</Button>
+            <Button onClick={handleCloseCommend} color="primary">{isHebrew === false ? "Close" : "סגירה"}</Button>
           </DialogActions>
         </Dialog>
 
       </Container >
 
       <Typography variant="h4" >
-      {isHebrew === false ?  "Total PnL": "רווח/הפסד כולל"} : {sumPnL(trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(trades)}$</span> : <span style={totalPlColor}>{sumPnL(trades)}$</span>}
+        {isHebrew === false ? "Total PnL" : "רווח/הפסד כולל"} : {sumPnL(trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(trades)}$</span> : <span style={totalPlColor}>{sumPnL(trades)}$</span>}
       </Typography>
     </>
   );
