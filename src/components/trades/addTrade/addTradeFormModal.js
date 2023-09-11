@@ -43,6 +43,7 @@ import { msgNumber } from '../../../utils/msgNumbers.js';
 import { handleUploadTradeImage } from '../../../utils/uploadImage';
 import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
 import { selectlanguage ,selectidx } from '../../../redux-toolkit/languagesSlice';
+import LogoImage from '../../../components/logo/logoImage'
 
 
 const style = {
@@ -50,7 +51,8 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 550,
+  width: 540,
+   height:900,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 34,
@@ -372,18 +374,6 @@ export default function TradeModal(props) {
             <Grid container spacing={28}>
 
 
-              <Grid item xs={6} md={7}>
-                <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
-                  {' '}
-                  <Typography id="modal-modal-title" variant="h6" component="h2" >
-                    {isHebrew === false ?
-
-                      "Add New Trade" :
-                      "הוספת טרייד"}
-                  </Typography>
-                </Item>
-              </Grid>
-
               <Grid item xs={6} md={4}>
                 <Grid item xs={6} md={4}>
                   <label htmlFor="file-input">
@@ -402,6 +392,17 @@ export default function TradeModal(props) {
                   </label>
 
                 </Grid>
+              </Grid>
+
+              <Grid  md={1}>
+              </Grid>
+              
+
+              <Grid item xs={4} md={7}>
+                 <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
+          <LogoImage w='200px' h='120' />
+               
+                </Item> 
               </Grid>
             </Grid >
           </Box >
@@ -624,7 +625,7 @@ export default function TradeModal(props) {
             </Grid>
             <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
               <br />
-              <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} variant="contained" onClick={handleSaveTrade}>Save</Button>
+              <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} variant="contained" onClick={handleSaveTrade}> {isHebrew === false ? "Add" : "הוסף"}</Button>
             </Item >
           </Grid >
         </Box >
@@ -852,7 +853,7 @@ export default function TradeModal(props) {
             </Grid>
             <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
               <br />
-              <Button variant="contained" onClick={handleSaveTrade} > {isHebrew === false ? "Save" : "שמירה"}</Button>
+              <Button variant="contained" onClick={handleSaveTrade} > {isHebrew === false ? "Add" : "הוסף"}</Button>
             </Item >
           </Grid >
         </Box >
