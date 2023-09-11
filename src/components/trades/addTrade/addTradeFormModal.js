@@ -412,10 +412,11 @@ export default function TradeModal(props) {
                 <Box component="form" sx={{ '& > :not(style)': { m: 1, width: '25ch' } }} noValidateautoComplete="off">
                   <TextField
                     id="outlined-multiline-flexible"
-                    label="Comments"
+                    label= {isHebrew === false ? "Comments" :"הערה"}
                     value={comments}
                     multiline
                     maxRows={7}
+                    InputLabelProps={{ shrink: true }}
                     onChange={(e) => handlePositionFieldInput(e, 'comments')}
                   />
                 </Box>{' '}
@@ -479,7 +480,7 @@ export default function TradeModal(props) {
 
               <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
-                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                <FormControl  sx={{ m: 1, minWidth: 120 }}>
                   <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ? "Status" : "סטטוס"}</InputLabel>
                   <Select
                     labelId="demo-simple-select-standard-label"
@@ -488,6 +489,7 @@ export default function TradeModal(props) {
                     onChange={(e) => handlePositionFieldInput(e, 'positionStatus')}
                     label="Status"
                     required="true"
+                      InputLabelProps={{ shrink: true }}
                   >
                     <MenuItem value="">
                       <em>None</em>
@@ -513,7 +515,7 @@ export default function TradeModal(props) {
 
                     onChange={(e) => handlePositionFieldInput(e, 'positionDuration')}
                     label={isHebrew === false ? "Trade Duration" : "זמן עסקה"}
-                    variant="standard"
+                    InputLabelProps={{ shrink: true }}
                   />
                 </Box>
               </Item>
@@ -708,6 +710,7 @@ export default function TradeModal(props) {
                     onChange={(e) => handlePositionFieldInput(e, 'positionType')}
                     label="Type"
                     required="true"
+                    InputLabelProps={{ shrink: true }}
                   >
                     <MenuItem value="">
                       <em>None</em>
