@@ -21,6 +21,7 @@ export default function NavSection({ data = [], ...other }) {
   const handleSignout = () => {
     axiosAuth.post('/logout', { token: user.refreshToken }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
     localStorage.removeItem("user");
+    dispatch(setCurrentAccount({}));
     dispatch(logout());
   }
 
