@@ -47,11 +47,11 @@ const authSlice = createSlice({
         updateAccount(state, action) {
             const currAccounts = state.user.accounts.filter(account => account._id !== action.payload._id);
             currAccounts.push(action.payload);
-            state.user.accounts = currAccounts;
+            state.accounts = currAccounts;
         },
         removeAccount(state, action) {
             const currAccounts = state.user.accounts.filter(account => account._id !== action.payload.accountId);
-            state.user.accounts = currAccounts;
+            state.accounts = currAccounts;
         },
         setTradesList(state, action) {
             state.currentAccount.trades = action.payload;
