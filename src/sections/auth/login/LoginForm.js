@@ -20,11 +20,7 @@ import { msgType } from '../../../utils/messagesEnum.js';
 import { msgNumber } from '../../../utils/msgNumbers.js';
 // ----------------------------------------------------------------------
 
-export default function LoginForm() {
-
-
-  //jwt auth 
-
+export default function LoginForm(props) {
 
   const showToast = useToast();
   const notifyToast = (Msg, Type) => {
@@ -34,7 +30,6 @@ export default function LoginForm() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -66,7 +61,7 @@ export default function LoginForm() {
     <>
       <Stack spacing={3}>
         <ToastContainer />
-        <TextField name="User Name" label="User Name" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <TextField     inputProps={{ style: { color: 'black' } }} name="User Name"   value={username} onChange={(e) => setUsername(e.target.value)} />
 
         <TextField InputLabelProps={{
           style: { color: 'black' }, // Set the label color to black
@@ -76,6 +71,7 @@ export default function LoginForm() {
           type={showPassword ? 'text' : 'password'}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          inputProps={{ style: { color: 'black' } }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
