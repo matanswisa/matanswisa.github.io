@@ -105,7 +105,8 @@ export default function BasicModal() {
 
 
             // Notify and fetch accounts
-            notifyToast(getMsg(messages, msgType.success, msgNumber[1]).msgText, getMsg(messages, msgType.success, msgNumber[1]).msgType);
+            console.log( getMsg(messages, msgType.success, msgNumber[1],1).msgType);
+            notifyToast(getMsg(messages, msgType.success, msgNumber[1],1).msgText, getMsg(messages, msgType.success, msgNumber[1],1).msgType);
             setAnchorEl(null);
         } catch (error) {
             // Handle errors if any
