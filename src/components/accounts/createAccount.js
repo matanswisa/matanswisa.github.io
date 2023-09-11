@@ -21,7 +21,7 @@ import { getMsg } from '../../utils/messeageUtils';
 import { msgType } from '../../utils/messagesEnum.js';
 import { msgNumber } from '../../utils/msgNumbers.js';
 
-import { selectlanguage } from '../../redux-toolkit/languagesSlice';
+import { selectlanguage,selectidx } from '../../redux-toolkit/languagesSlice';
 
 import { selectDarkMode } from '../../redux-toolkit/darkModeSlice';
 //--------------------------------------------This component show Create account Modal -------------------------------------------//
@@ -29,6 +29,7 @@ export default function AccountModal(props) {
 
   //------------------------------------------------  States ----------------------------------------------------- //
   const isHebrew = useSelector(selectlanguage);
+  const languageidx = useSelector(selectidx);
   const accounts = useSelector(selectUserAccounts);
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
@@ -74,14 +75,14 @@ export default function AccountModal(props) {
       await api
         .post('/api/createAccount', { userId: user._id, data }, { headers: { Authorization: "Berear " + user.accessToken } })
         .then(async (res) => {
-          notifyToast(getMsg(messages, msgType.success, msgNumber[2]).msgText, getMsg(messages, msgType.success, msgNumber[2]).msgType);
+          notifyToast(getMsg(messages, msgType.success, msgNumber[2],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[2],languageidx).msgType);
           // notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
           dispatch(updateAccountList(res.data))
           dispatch(setCurrentAccount(res.data[res.data.length - 1]));
         })
         .catch((err) => {
-          notifyToast(getMsg(messages, msgType.errors, msgNumber[1]).msgText, getMsg(messages, msgType.errors, msgNumber[1]).msgType);
+          notifyToast(getMsg(messages, msgType.errors, msgNumber[1],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[1],languageidx).msgType);
           // notifyToast("Couldn't add Account", 'error');
           return false;
         });
@@ -104,14 +105,14 @@ export default function AccountModal(props) {
         .put('/api/editAccount', data, { headers: { Authorization: "Berear " + user.accessToken } }) // Use api.put and pass the account id in the URL
         .then((res) => {
           // notifyToast('Account updated successfully', 'success');
-          notifyToast(getMsg(messages, msgType.success, msgNumber[3]).msgText, getMsg(messages, msgType.success, msgNumber[3]).msgType);
+          notifyToast(getMsg(messages, msgType.success, msgNumber[3],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[3],languageidx).msgType);
           props.handleOpenModal(false);
           // props.fetchAccounts();
           dispatch(updateAccountList(res.data))
 
         })
         .catch((err) => {
-          notifyToast(getMsg(messages, msgType.errors, msgNumber[3]).msgText, getMsg(messages, msgType.errors, msgNumber[3]).msgType);
+          notifyToast(getMsg(messages, msgType.errors, msgNumber[3],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[3],languageidx).msgType);
           // notifyToast("Couldn't update account", 'error');
         });
     }
@@ -139,13 +140,13 @@ export default function AccountModal(props) {
   //------------------------------------------------ handle validateForm before create account -----------------------------------------------------//  
   const validateForm = () => {
     if (accountName === '') {
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[1]).msgText, getMsg(messages, msgType.warnings, msgNumber[1]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[1],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[1],languageidx).msgType);
       // notifyToast('Account type is missing', 'warning');
       return false;
     }
 
     if (checkAccountExists(accounts, accountName)) {
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[2]).msgText, getMsg(messages, msgType.warnings, msgNumber[2]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[2],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[2],languageidx).msgType);
       // notifyToast('Account already exist', 'warning');
       return false;
     }
@@ -155,7 +156,7 @@ export default function AccountModal(props) {
   //------------------------------------------------ handle validateForm before edit account -----------------------------------------------------//  
   const validateFormEdit = () => {
     if (accountName === '') {
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[1]).msgText, getMsg(messages, msgType.warnings, msgNumber[1]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[1],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[1],languageidx).msgType);
       // notifyToast('Account type is missing', 'warning');
       return false;
     }

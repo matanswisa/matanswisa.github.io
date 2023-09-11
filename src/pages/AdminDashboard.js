@@ -46,7 +46,7 @@ import { msgType } from '../utils/messagesEnum.js';
 import { msgNumber } from '../utils/msgNumbers.js';
 
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
-import { selectlanguage } from '../redux-toolkit/languagesSlice';
+import { selectlanguage,selectidx } from '../redux-toolkit/languagesSlice';
 import { selectUser } from '../redux-toolkit/userSlice';
 
 const style = {
@@ -262,7 +262,7 @@ const UsersList = ({ users, onDelete, onUpdate }) => {
 const UsersManagementPage = () => {
 
     const isHebrew = useSelector(selectlanguage);
-
+    const languageidx = useSelector(selectidx);
     const darkMode = useSelector(selectDarkMode);
 
     const messages = useSelector(selectMessages);
@@ -309,7 +309,7 @@ const UsersManagementPage = () => {
                 data: { id }, // Make sure this is the correct format for the API
             });
             fetchUsers();
-            notifyToast(getMsg(messages, msgType.success, msgNumber[12]).msgText, getMsg(messages, msgType.success, msgNumber[12]).msgType);
+            notifyToast(getMsg(messages, msgType.success, msgNumber[12],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[12],languageidx).msgType);
             // notifyToast("Delete user Successfully ", 'success');
 
             // Optionally, you can fetch the updated list of users after deletion
@@ -361,19 +361,19 @@ const UsersManagementPage = () => {
     const validateForm = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email !== '' && !emailRegex.test(email)) {
-            notifyToast(getMsg(messages, msgType.warnings, msgNumber[12]).msgText, getMsg(messages, msgType.warnings, msgNumber[12]).msgType);
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[12],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[12],languageidx).msgType);
             // notifyToast("Invalid email format", "warning");
             return false;
         }
 
         if (username.length < 8) {
-            notifyToast(getMsg(messages, msgType.warnings, msgNumber[11]).msgText, getMsg(messages, msgType.warnings, msgNumber[11]).msgType);
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[11],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[11],languageidx).msgType);
             // notifyToast("user name less than 8 characters", "warning");
             return false;
         }
 
         if (!checkLicenseTime(licenseTime)) {
-            notifyToast(getMsg(messages, msgType.warnings, msgNumber[10]).msgText, getMsg(messages, msgType.warnings, msgNumber[10]).msgType);
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[10],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[10],languageidx).msgType);
             // notifyToast("Invalid date! Please choose a future date.", "warning");
             return false;
         }
@@ -398,7 +398,7 @@ const UsersManagementPage = () => {
         });
         fetchUsers();
         handleClose();
-        notifyToast(getMsg(messages, msgType.success, msgNumber[13]).msgText, getMsg(messages, msgType.success, msgNumber[13]).msgType);
+        notifyToast(getMsg(messages, msgType.success, msgNumber[13],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[13],languageidx).msgType);
     }
 
 

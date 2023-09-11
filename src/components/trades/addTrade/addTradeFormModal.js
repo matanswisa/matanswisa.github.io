@@ -42,7 +42,7 @@ import { msgType } from '../../../utils/messagesEnum.js';
 import { msgNumber } from '../../../utils/msgNumbers.js';
 import { handleUploadTradeImage } from '../../../utils/uploadImage';
 import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
-import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
+import { selectlanguage ,selectidx } from '../../../redux-toolkit/languagesSlice';
 
 
 const style = {
@@ -71,7 +71,7 @@ export default function TradeModal(props) {
 
 
   //------------------------------------------------  States ----------------------------------------------------- //
-
+  const languageidx = useSelector(selectidx);
   const isHebrew = useSelector(selectlanguage);
   const darkMode = useSelector(selectDarkMode);
   const messages = useSelector(selectMessages);
@@ -210,12 +210,12 @@ export default function TradeModal(props) {
             }
             // props.updateTradeLists()
             reduxDispatch(setTradesList(res.data));
-            notifyToast(getMsg(messages, msgType.success, msgNumber[4]).msgText, getMsg(messages, msgType.success, msgNumber[4]).msgType);
+            notifyToast(getMsg(messages, msgType.success, msgNumber[4],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[4],languageidx).msgType);
             //  notifyToast("Trade added successfully", "success");
             handleClose();
 
           }).catch((err) => {
-            notifyToast(getMsg(messages, msgType.errors, msgNumber[4]).msgText, getMsg(messages, msgType.errors, msgNumber[4]).msgType);
+            notifyToast(getMsg(messages, msgType.errors, msgNumber[4],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[4],languageidx).msgType);
             //  notifyToast("Couldn't add trade", "error");
             handleClose();
           })
@@ -227,11 +227,11 @@ export default function TradeModal(props) {
           data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
           await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, configAuth)
             .then((res) => {
-              notifyToast(getMsg(messages, msgType.success, msgNumber[5]).msgText, getMsg(messages, msgType.success, msgNumber[5]).msgType);
+              notifyToast(getMsg(messages, msgType.success, msgNumber[5],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[5],languageidx).msgType);
               //      notifyToast("Trade Edit succssfully", "success")
               handleUploadTradeImage(tradeInfo?._id, user._id, currentAccount._id, selectedFile).then(response => response.json())
                 .then(data => {
-                  notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
+                  notifyToast(getMsg(messages, msgType.success, msgNumber[6],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6],languageidx).msgType);
                   // notifyToast("Trade image uploaded successfully", "success");
                   dispatch(setTradesList(data));
                 })
@@ -259,7 +259,7 @@ export default function TradeModal(props) {
 
     if (positionDate > currentDate) {
 
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[28]).msgText, getMsg(messages, msgType.warnings, msgNumber[28]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[28],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[28],languageidx).msgType);
       // notifyToast(errorMessage, "warning");
 
       return false;
@@ -270,35 +270,35 @@ export default function TradeModal(props) {
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
       if (positionType === '')
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[27]).msgText, getMsg(messages, msgType.warnings, msgNumber[27]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[27],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[27],languageidx).msgType);
       //  notifyToast("Position type is missing", "warning");
 
       else if (positionStatus === '')
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[26]).msgText, getMsg(messages, msgType.warnings, msgNumber[26]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[26],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[26],languageidx).msgType);
       //notifyToast("Position status is missing", "warning");
 
       else if (!netPnL)
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[25]).msgText, getMsg(messages, msgType.warnings, msgNumber[25]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[25],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[25],languageidx).msgType);
       // notifyToast("Net PnL is missing", "warning");
 
       else if (!contractsCounts)
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[24]).msgText, getMsg(messages, msgType.warnings, msgNumber[24]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[24],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[24],languageidx).msgType);
       //  notifyToast("Number of contracts field is missing", "warning");
 
       else if (positionSymbol === "")
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[23]).msgText, getMsg(messages, msgType.warnings, msgNumber[23]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[23],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[23],languageidx).msgType);
       //  notifyToast("Position symbol is missing", "warning");
 
       else if (!positionDate)
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[22]).msgText, getMsg(messages, msgType.warnings, msgNumber[22]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[22],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[22],languageidx).msgType);
       // notifyToast("Date field is missing", "warning");
 
       else if (entryPrice < 1)
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[21]).msgText, getMsg(messages, msgType.warnings, msgNumber[21]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[21],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[21],languageidx).msgType);
       // notifyToast(" entry Price is missing", "warning");
 
       else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate)
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[20]).msgText, getMsg(messages, msgType.warnings, msgNumber[20]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[20],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[20],languageidx).msgType);
       //notifyToast("exit Price  is missing", "warning");
 
       return false;
@@ -316,7 +316,7 @@ export default function TradeModal(props) {
   const handleUpload = (tradeId) => {
     console.log(editMode);
     if (!selectedFile && editMode == false) {
-      notifyToast(getMsg(messages, msgType.errors, msgNumber[5]).msgText, getMsg(messages, msgType.errors, msgNumber[5]).msgType);
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[5],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[5],languageidx).msgType);
       // notifyToast("Don't have image file to upload", "error"); 
       return;
 
@@ -353,7 +353,7 @@ export default function TradeModal(props) {
 
   useEffect(() => {
     if (selectedFile) {
-      notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
+      notifyToast(getMsg(messages, msgType.success, msgNumber[6],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6],languageidx).msgType);
       //   notifyToast("Image successfully uploaded", "success");
     }
   }, [selectedFile])

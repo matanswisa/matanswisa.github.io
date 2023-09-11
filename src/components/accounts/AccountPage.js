@@ -36,7 +36,7 @@ import { getMsg } from '../../utils/messeageUtils';
 import { msgType } from '../../utils/messagesEnum.js';
 import { msgNumber } from '../../utils/msgNumbers.js';
 
-import { selectlanguage } from '../../redux-toolkit/languagesSlice';
+import { selectlanguage , selectidx} from '../../redux-toolkit/languagesSlice';
 import { selectDarkMode } from '../../redux-toolkit/darkModeSlice';
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -51,6 +51,8 @@ export default function BasicModal() {
 
     //------------------------------------------------   States ----------------------------------------------------- //
     const isHebrew = useSelector(selectlanguage);
+    const languageidx = useSelector(selectidx);
+   
     const darkMode = useSelector(selectDarkMode);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
@@ -106,7 +108,7 @@ export default function BasicModal() {
 
             // Notify and fetch accounts
             console.log( getMsg(messages, msgType.success, msgNumber[1],1).msgType);
-            notifyToast(getMsg(messages, msgType.success, msgNumber[1],1).msgText, getMsg(messages, msgType.success, msgNumber[1],1).msgType);
+            notifyToast(getMsg(messages, msgType.success, msgNumber[1],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[1],languageidx).msgType);
             setAnchorEl(null);
         } catch (error) {
             // Handle errors if any

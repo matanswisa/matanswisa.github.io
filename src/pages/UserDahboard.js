@@ -13,9 +13,12 @@ import { selectMessages } from '../redux-toolkit/messagesSlice'
 import { getMsg } from '../utils/messeageUtils';
 import { msgType } from '../utils/messagesEnum.js';
 import { msgNumber } from '../utils/msgNumbers.js';
-
+import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
 
 export default function UserDahsboard(props) {
+
+  const languageidx = useSelector(selectidx);
+  const isHebrew = useSelector(selectlanguage);
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const { notifyToast } = props;
@@ -29,12 +32,12 @@ export default function UserDahsboard(props) {
 
     if (password === '') {
       if (password === '')
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[9]).msgText, getMsg(messages, msgType.warnings, msgNumber[9]).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[9], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[9], languageidx).msgType);
       //notifyToast("Password is missing", "warning");
       return false;
     }
     if (password.length < 6) {
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[8]).msgText, getMsg(messages, msgType.warnings, msgNumber[8]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[8], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[8], languageidx).msgType);
       //  notifyToast("Password less than 6 characters", "warning");
       return false;
 
@@ -61,7 +64,7 @@ export default function UserDahsboard(props) {
           }
         })
         .then((response) => {
-          notifyToast(getMsg(messages, msgType.success, msgNumber[11]).msgText, getMsg(messages, msgType.success, msgNumber[11]).msgType);
+          notifyToast(getMsg(messages, msgType.success, msgNumber[11], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[11], languageidx).msgType);
           // notifyToast("Password Updated successfully", "success");
           props.handleOpenModal(false);
           // Fetch list of users from "/api/users" route
@@ -83,7 +86,7 @@ export default function UserDahsboard(props) {
         })
         .catch((err) => {
           if (err.response && err.response.data && err.response.data.samePassword) {
-            notifyToast(getMsg(messages, msgType.warnings, msgNumber[29]).msgText, getMsg(messages, msgType.warnings, msgNumber[29]).msgType);
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[29], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[29], languageidx).msgType);
             //  notifyToast("Please enter a different password.", "warning");
             return;
           }
@@ -114,7 +117,10 @@ export default function UserDahsboard(props) {
         }}
       >
         <Typography id="modal-modal-title" variant="h6" component="h2" style={{ marginBottom: '4px' }}>
-          Change Password
+          {isHebrew === false ?
+
+            "Change Password" :
+            "שינוי סיסמה"}
         </Typography>
         <div>
 
@@ -138,7 +144,12 @@ export default function UserDahsboard(props) {
             style={{ marginLeft: '4px', width: '100%' }}
           />
           <Button variant="contained" onClick={handleUpdateUser} style={{ marginLeft: '15px' }}>
-            Update
+
+
+            {isHebrew === false ?
+
+              "Update" :
+              "עדכן"}
           </Button>
         </div>
       </Box >
