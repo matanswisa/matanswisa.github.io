@@ -549,7 +549,7 @@ export default function TradeModal(props) {
                   value={entryPrice}
                   type="number"
                   onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
-
+                  required="true"
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
@@ -562,7 +562,7 @@ export default function TradeModal(props) {
                   label={isHebrew === false ? "Exit Price" : "מחיר יציאה"}
                   value={exitPrice}
                   onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
-
+                  required="true"
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
@@ -597,7 +597,7 @@ export default function TradeModal(props) {
               </Item>
             </Grid>
 
-            <Grid item xs={6}>
+            {/* <Grid item xs={6}>
               <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <TextField
                   className="outlined-number"
@@ -609,7 +609,7 @@ export default function TradeModal(props) {
                   InputLabelProps={{ shrink: true }}
                 />
               </Item>
-            </Grid>
+            </Grid> */}
             <Grid item xs={6}>
               <Item style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 <TextField
