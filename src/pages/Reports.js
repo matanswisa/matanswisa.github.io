@@ -221,7 +221,7 @@ export default function UserPage() {
       else {
         TABLE_HEAD = [
           { id: 'הערות', label: 'הערות', alignRight: false },
-          { id: 'מחק', label: 'מחק', alignRight: false },
+          { id: 'מחק', label: 'מחיקה', alignRight: false },
           { id: 'עריכה', label: 'עריכה', alignRight: false },
           { id: 'תמונה', label: 'תמונה', alignRight: false },
           { id: 'רווח/הפסד נקי', label: 'רווח/הפסד נקי', alignRight: false },
@@ -259,7 +259,7 @@ export default function UserPage() {
       else {
         TABLE_HEAD = [
           { id: 'comments', label: 'הערות', alignRight: false },
-          { id: 'delete', label: 'מחק', alignRight: false },
+          { id: 'delete', label: 'מחיקה', alignRight: false },
           { id: 'edit', label: 'עריכה', alignRight: false },
           { id: 'image', label: 'תמונה', alignRight: false },
           { id: 'commission', label: 'עמלה', alignRight: false },
@@ -585,17 +585,17 @@ export default function UserPage() {
                               }}>
                                 מחק
                               </button>
-                              <DialogTitle
+                              <Dialog
                                 open={opendialog}
                                 TransitionComponent={Transition}
 
                                 onClose={handleDialogClose}
                                 aria-describedby="alert-dialog-slide-description"
                               >
-                                <DialogTitle>{"אישור מחיקה"}</DialogTitle>
+                                <DialogTitle>{"Confirm Deletion"}</DialogTitle>
                                 <DialogContent>
                                   <DialogContentText id="alert-dialog-slide-description">
-                                    האם אתה בטוח שברצונך למחוק את הטרייד?
+                                  האם אתה בטוח ברצונך למחוק את הטרייד ?
                                   </DialogContentText>
                                 </DialogContent>
                                 <DialogActions>
@@ -607,8 +607,8 @@ export default function UserPage() {
                                     אישור
                                   </Button>
                                 </DialogActions>
-                              </DialogTitle>
-                            </TableCell>}
+                              </Dialog>
+                            </TableCell> }
 
                           {isHebrew === false ?
                             <TableCell align="center">

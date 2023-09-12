@@ -383,7 +383,7 @@ export default function TradeModal(props) {
 
           <Box >
 
-            <Typography style={{ fontFamily: 'sans-serif', fontWeight: 'bolder', fontSize: '20px'  }}>New Trade</Typography>
+            <Typography style={{ fontFamily: 'sans-serif', fontWeight: 'bolder', fontSize: '20px'  }}> {isHebrew === false ?  "New Trade" : "הוספת טרייד"}</Typography>
             </Box>
             {/* <LogoImage w = '350px' h= '280px'/> */}
             <Box style={{marginLeft : "678px"}}>
