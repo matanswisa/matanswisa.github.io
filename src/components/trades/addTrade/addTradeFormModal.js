@@ -642,7 +642,6 @@ export default function TradeModal(props) {
                   {' '}
                   <Typography id="modal-modal-title" variant="h6" component="h2">
                     {isHebrew === false ?
-
                       "Add New Trade" :
                       "הוספת טרייד"}
                   </Typography>

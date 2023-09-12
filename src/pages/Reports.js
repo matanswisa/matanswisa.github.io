@@ -54,6 +54,7 @@ import { brokers } from "../components/brokersNames/brokers.js";
 import { handleUploadTradeImage } from '../utils/uploadImage';
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
+import { selectTrade, setTrade } from '../redux-toolkit/tradeSlice';
 
 const sumPnL = (trades) => {
   let sum = 0;
@@ -118,6 +119,9 @@ export default function UserPage() {
   const darkMode = useSelector(selectDarkMode);
   const isHebrew = useSelector(selectlanguage);
   const messages = useSelector(selectMessages);
+  const currentTrade = useSelector(selectTrade);
+
+
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
@@ -147,7 +151,7 @@ export default function UserPage() {
   const [opendialog, setDialogOpen] = useState(false);
 
   //edit modal States
-  const [editTradeId, setEditTradeId] = useState(null);
+  // const [editTradeId, setEditTradeId] = useState(null);
   const [editMode, setEditMode] = useState(false);
 
   //Image modal States
@@ -437,8 +441,7 @@ export default function UserPage() {
   };
 
   const deleteTrade = async (tradeId) => {
-    console.log(editTradeId);
-    const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
+    const res = await api.post('/api/deleteTrade', { tradeId: tradeId, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
     dispatch(setTradesList(res.data))
     notifyToast(getMsg(messages, msgType.success, msgNumber[14]).msgText, getMsg(messages, msgType.success, msgNumber[14]).msgType);
     // notifyToast("Delete trade Successfully", 'success');
@@ -510,20 +513,19 @@ export default function UserPage() {
             </Button>
             {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} />}
 
-            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={() => { handleOpenModal() }} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
               {isHebrew === false ? "Add New Trade" : "הוסף טרייד חדש"}
             </Button>
           </div>
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
-          {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
-            key={editTradeId._id}
+          {(openmodal && editMode && currentTrade !== null) === true ? <AddTrade
+            key={currentTrade._id}
             openModal={openmodal}
             handleOpenModal={setIsOpenmodal}
-            handleEditTradeLeavePanel={setEditTradeId}
-            tradeInfo={editTradeId}
+            tradeInfo={currentTrade}
             notifyToast={notifyToast}
             isEditMode={true}
-            prevState={editTradeId.status}
+            prevState={currentTrade.status}
           /> : null}
         </Stack>
         <Card>
@@ -553,7 +555,7 @@ export default function UserPage() {
 
                       return (
                         <TableRow
-                          onMouseEnter={() => { setEditTradeId(trade) }}
+                          onMouseEnter={() => { dispatch(setTrade(trade)) }}
                           hover
                           key={trade._id}
                           tabIndex={-1}
@@ -601,7 +603,8 @@ export default function UserPage() {
                                 <DialogActions>
                                   <Button onClick={handleDialogClose}>ביטול</Button>
                                   <Button onClick={() => {
-                                    deleteTrade(editTradeId._id); // Now proceed with the deletion
+                                    currentTrade &&
+                                      deleteTrade(currentTrade._id); // Now proceed with the deletion
                                     handleDialogClose(); // Close the dialog first
                                   }} color="primary">
                                     אישור
@@ -621,7 +624,7 @@ export default function UserPage() {
                                 onClick={() => {
                                   setEditMode(true);
                                   setIsOpenmodal(true);
-                                  setEditTradeId(trade);
+                                  dispatch(setTrade(trade));
                                 }}
                               >
                                 ערוך
@@ -691,7 +694,7 @@ export default function UserPage() {
                                 onClick={() => {
                                   setEditMode(true);
                                   setIsOpenmodal(true);
-                                  setEditTradeId(trade);
+                                  dispatch(setTrade(trade));
                                 }}
                               >
                                 Edit
@@ -726,7 +729,8 @@ export default function UserPage() {
                                 <DialogActions>
                                   <Button onClick={handleDialogClose}>Cancel</Button>
                                   <Button onClick={() => {
-                                    deleteTrade(editTradeId._id); // Now proceed with the deletion
+                                    currentTrade &&
+                                      deleteTrade(currentTrade._id); // Now proceed with the deletion
                                     handleDialogClose(); // Close the dialog first
                                   }} color="primary">
                                     Confirm
@@ -787,7 +791,7 @@ export default function UserPage() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-        {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} tradeComments={editTradeId.comments} />}
+        {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} tradeComments={currentTrade.comments} />}
         <Dialog open={openCommend} onClose={handleCloseCommend}>
           <DialogTitle> {isHebrew === false ? "Comment" : "הערות"}</DialogTitle>
           <DialogContent>{selectedComment}</DialogContent>
@@ -803,9 +807,6 @@ export default function UserPage() {
       </Typography>
     </>
   );
-
-
-
 }
 
 const totalPlRedColor = {
