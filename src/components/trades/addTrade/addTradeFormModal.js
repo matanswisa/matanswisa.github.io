@@ -379,7 +379,7 @@ export default function TradeModal(props) {
         <Box sx={style} >
 
 
-          <Stack direction="row" spacing={2} sx={{ border: '1px solid white', marginBottom: '60px' }}>
+          <Stack direction="row" spacing={2} sx={{  marginBottom: '60px' }}>
 
           <Box >
 
@@ -408,10 +408,10 @@ export default function TradeModal(props) {
 
 
 
-          <Stack direction="row" spacing={2} sx={{ border: '1px solid white' }}>
+          <Stack direction="row" spacing={2} >
             <Box sx={{ width: "300px"  ,marginBottom:'20px'}}>
 
-              <Stack spacing={2} sx={{ border: '1px solid white' }}>
+              <Stack spacing={2} >
                 <Box sx={{ marginBottom: '5px' }} >
                   <TextField required="true"
                     sx={{ width: "280px" }}
@@ -502,7 +502,7 @@ export default function TradeModal(props) {
 
             <Box sx={{ width: "300px" }}>
 
-              <Stack spacing={2} sx={{ border: '1px solid white' }}>
+              <Stack spacing={2} >
 
                 <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                   {' '}
@@ -518,7 +518,7 @@ export default function TradeModal(props) {
                 </Box>
 
 
-                <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
+                <Box >
                   <TextField
                     className="outlined-number"
                     sx={{ width: "280px" }}
@@ -532,7 +532,7 @@ export default function TradeModal(props) {
                   />
                 </Box>
 
-                <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
+                <Box >
                   <TextField
                     sx={{ width: "280px" }}
                     className="outlined-number"
@@ -564,7 +564,7 @@ export default function TradeModal(props) {
             </Box>
 
 
-            <Box sx={{ width: "300px" }}>
+            <Box sx={{ width: "300px"    , border: darkMode === true ? '1px solid #121212' : '', }}>
               <Stack spacing={2} >
 
                 <Box >
@@ -616,9 +616,11 @@ export default function TradeModal(props) {
 
 
             <TextField
+
               id="filled-multiline-static"
               sx={{
                 width: '930px', // Change the width as needed
+                border: darkMode === true ? '1px solid white' : '', // Add a white border
               }}
               multiline
               rows={7}
@@ -632,9 +634,9 @@ export default function TradeModal(props) {
 
        
           <Box   style= {{marginLeft : "780px" }} >     
-            <Button   variant="contained"  onClick={handleSaveTrade} > {isHebrew === false ? "Save" : "שמור"}</Button>
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}   variant="contained"  onClick={handleSaveTrade} > {isHebrew === false ? "Save" : "שמור"}</Button>
              
-            <Button  style= {{marginLeft : "7px" }}  variant="outlined" onClick={handleSaveTrade} > {isHebrew === false ? "Cancel" : "ביטול"}</Button>
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", marginLeft : "7px" }}    variant="outlined" onClick={handleSaveTrade} > {isHebrew === false ? "Cancel" : "ביטול"}</Button>
           </Box>
 
         </Box>
