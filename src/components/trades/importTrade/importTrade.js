@@ -33,7 +33,7 @@ import { getMsg } from '../../../utils/messeageUtils';
 import { msgType } from '../../../utils/messagesEnum.js';
 import { msgNumber } from '../../../utils/msgNumbers.js';
 import {selectDarkMode} from '../../../redux-toolkit/darkModeSlice';
-import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
+import { selectlanguage ,selectidx} from '../../../redux-toolkit/languagesSlice';
 
 
 
@@ -54,7 +54,7 @@ const style = {
 
 export default function BasicModal(props) {
   const isHebrew = useSelector(selectlanguage);
-
+  const languageidx = useSelector(selectidx);
   const [showStepper, setShowStepper] = useState(false);
 
   const [isUploading, setIsUploading] = useState(false);
@@ -124,7 +124,7 @@ export default function BasicModal(props) {
 
     if (!file.name.endsWith('.csv')) {
       validationPassed = false;
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[3]).msgText, getMsg(messages, msgType.warnings, msgNumber[3]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[3],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[3],languageidx).msgType);
 
       //     notifyToast('Please select a CSV  file.', 'warning');
       return false; // Validation failed
@@ -138,7 +138,7 @@ export default function BasicModal(props) {
         // Check if all required columns are present
         const missingColumns = requiredColumnsTradeOvate.filter(column => !headers.includes(column));
         if (missingColumns.length > 0) {
-          notifyToast(getMsg(messages, msgType.errors, msgNumber[6]).msgText, getMsg(messages, msgType.errors, msgNumber[6]).msgType);
+          notifyToast(getMsg(messages, msgType.errors, msgNumber[6],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[6],languageidx).msgType);
 
           //     notifyToast('Please select the correct file.', 'error');
           validationPassed = false; // Validation failed
@@ -161,14 +161,14 @@ export default function BasicModal(props) {
 
     if (!file.name.endsWith('.xlsx')) {
       validationPassed = false;
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[4]).msgText, getMsg(messages, msgType.warnings, msgNumber[4]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[4],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[4],languageidx).msgType);
       notifyToast('Please select a  Excel file.', 'warning');
       return false; // Validation failed
     }
 
     if (!file.name.includes('Export Trade History')) {
       validationPassed = false;
-      notifyToast(getMsg(messages, msgType.errors, msgNumber[2]).msgText, getMsg(messages, msgType.errors, msgNumber[2]).msgType);
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[2],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[2],languageidx).msgType);
       //   notifyToast('File name should  be "Export Trade History".', 'error');
       return false; // Validation failed
     }
@@ -187,11 +187,11 @@ export default function BasicModal(props) {
 
       if (currentAccount?.Broker === brokers.Tradovate) {
 
-        isValidFile = validationBeforeImportCsvFileFromTradeovate(file);
+        isValidFile = validationBeforeImportCsvFileFromTradeovate(file,languageidx);
       }
 
       else if (currentAccount?.Broker === brokers.Binance) {
-        isValidFile = validationBeforeImportCsvFileFromBinance(file);
+        isValidFile = validationBeforeImportCsvFileFromBinance(file,languageidx);
       }
 
       if (!isValidFile) {
@@ -239,7 +239,7 @@ export default function BasicModal(props) {
       } catch (error) {
         setIsUploading(false);
         console.error('Error uploading file:', error);
-        notifyToast(getMsg(messages, msgType.errors, msgNumber[13]).msgText, getMsg(messages, msgType.errors, msgNumber[13]).msgType);
+        notifyToast(getMsg(messages, msgType.errors, msgNumber[13],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[13],languageidx).msgType);
         //  notifyToast('Error uploading file' + error.message, 'warning');
         // Handle error or show an error message to the user
       } finally {

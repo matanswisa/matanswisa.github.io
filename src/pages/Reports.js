@@ -53,8 +53,8 @@ import { configAuth } from '../api/configAuth';
 import { brokers } from "../components/brokersNames/brokers.js";
 import { handleUploadTradeImage } from '../utils/uploadImage';
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
-import { selectlanguage } from '../redux-toolkit/languagesSlice';
 import { selectTrade, setTrade } from '../redux-toolkit/tradeSlice';
+import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
 
 const sumPnL = (trades) => {
   let sum = 0;
@@ -115,7 +115,7 @@ export default function UserPage() {
     trades = [];
   }
   //------------------------------------------------   States ----------------------------------------------------- //
-
+  const languageidx = useSelector(selectidx);
   const darkMode = useSelector(selectDarkMode);
   const isHebrew = useSelector(selectlanguage);
   const messages = useSelector(selectMessages);
@@ -225,7 +225,7 @@ export default function UserPage() {
       else {
         TABLE_HEAD = [
           { id: 'הערות', label: 'הערות', alignRight: false },
-          { id: 'מחק', label: 'מחק', alignRight: false },
+          { id: 'מחק', label: 'מחיקה', alignRight: false },
           { id: 'עריכה', label: 'עריכה', alignRight: false },
           { id: 'תמונה', label: 'תמונה', alignRight: false },
           { id: 'רווח/הפסד נקי', label: 'רווח/הפסד נקי', alignRight: false },
@@ -263,7 +263,7 @@ export default function UserPage() {
       else {
         TABLE_HEAD = [
           { id: 'comments', label: 'הערות', alignRight: false },
-          { id: 'delete', label: 'מחק', alignRight: false },
+          { id: 'delete', label: 'מחיקה', alignRight: false },
           { id: 'edit', label: 'עריכה', alignRight: false },
           { id: 'image', label: 'תמונה', alignRight: false },
           { id: 'commission', label: 'עמלה', alignRight: false },
@@ -305,7 +305,7 @@ export default function UserPage() {
     console.log("Inside upload new image but adding trade!", tradeId)
 
     if (!selectedFile && !tradeId) {
-      notifyToast(getMsg(messages, msgType.errors, msgNumber[9]).msgText, getMsg(messages, msgType.errors, msgNumber[9]).msgType);
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[9], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[9], languageidx).msgType);
 
       // notifyToast("Couldn't upload the image", "error"); return; }
     }
@@ -320,12 +320,12 @@ export default function UserPage() {
     api.post('http://localhost:8000/api/uploadTradeImage', formData, { headers: { Authorization: "Berear " + user.accessToken, 'Content-Type': 'multipart/form-data' } })
       .then(response => response.json())
       .then(data => {
-        notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
+        notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
         // notifyToast("Trade image uploaded successfully", "success");
         dispatch(setTradesList(data));
       })
       .catch(error => {
-        notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
+        notifyToast(getMsg(messages, msgType.errors, msgNumber[10], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[10], languageidx).msgType);
         // Handle any errors that occurred during the upload
         // notifyToast("Error uploading trade image", "error");
         console.error(error);
@@ -355,7 +355,7 @@ export default function UserPage() {
   const handleOpenModal = (tradeId) => {
 
     if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[6]).msgText, getMsg(messages, msgType.warnings, msgNumber[6]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[6], languageidx).msgType);
       //  notifyToast("before add trades you need create account", 'warning');
     }
     else {
@@ -374,7 +374,7 @@ export default function UserPage() {
   const handleOpenModalImportTrades = (tradeId) => {
 
     if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[7]).msgText, getMsg(messages, msgType.warnings, msgNumber[7]).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[7], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[7], languageidx).msgType);
       // notifyToast("before import trades you need create account", 'warning');
     }
     else {
@@ -443,7 +443,7 @@ export default function UserPage() {
   const deleteTrade = async (tradeId) => {
     const res = await api.post('/api/deleteTrade', { tradeId: tradeId, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
     dispatch(setTradesList(res.data))
-    notifyToast(getMsg(messages, msgType.success, msgNumber[14]).msgText, getMsg(messages, msgType.success, msgNumber[14]).msgType);
+    notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
     // notifyToast("Delete trade Successfully", 'success');
     toggleShow();
   }
@@ -587,17 +587,17 @@ export default function UserPage() {
                               }}>
                                 מחק
                               </button>
-                              <DialogTitle
+                              <Dialog
                                 open={opendialog}
                                 TransitionComponent={Transition}
 
                                 onClose={handleDialogClose}
                                 aria-describedby="alert-dialog-slide-description"
                               >
-                                <DialogTitle>{"אישור מחיקה"}</DialogTitle>
+                                <DialogTitle>{"Confirm Deletion"}</DialogTitle>
                                 <DialogContent>
                                   <DialogContentText id="alert-dialog-slide-description">
-                                    האם אתה בטוח שברצונך למחוק את הטרייד?
+                                    האם אתה בטוח ברצונך למחוק את הטרייד ?
                                   </DialogContentText>
                                 </DialogContent>
                                 <DialogActions>
@@ -610,7 +610,7 @@ export default function UserPage() {
                                     אישור
                                   </Button>
                                 </DialogActions>
-                              </DialogTitle>
+                              </Dialog>
                             </TableCell>}
 
                           {isHebrew === false ?
