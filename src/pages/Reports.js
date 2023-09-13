@@ -53,7 +53,8 @@ import { configAuth } from '../api/configAuth';
 import { brokers } from "../components/brokersNames/brokers.js";
 import { handleUploadTradeImage } from '../utils/uploadImage';
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
-import { selectlanguage ,selectidx} from '../redux-toolkit/languagesSlice';
+import { selectTrade, setTrade } from '../redux-toolkit/tradeSlice';
+import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
 
 const sumPnL = (trades) => {
   let sum = 0;
@@ -118,6 +119,9 @@ export default function UserPage() {
   const darkMode = useSelector(selectDarkMode);
   const isHebrew = useSelector(selectlanguage);
   const messages = useSelector(selectMessages);
+  const currentTrade = useSelector(selectTrade);
+
+
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
@@ -147,7 +151,7 @@ export default function UserPage() {
   const [opendialog, setDialogOpen] = useState(false);
 
   //edit modal States
-  const [editTradeId, setEditTradeId] = useState(null);
+  // const [editTradeId, setEditTradeId] = useState(null);
   const [editMode, setEditMode] = useState(false);
 
   //Image modal States
@@ -221,7 +225,7 @@ export default function UserPage() {
       else {
         TABLE_HEAD = [
           { id: 'הערות', label: 'הערות', alignRight: false },
-          { id: 'מחק', label: 'מחק', alignRight: false },
+          { id: 'מחק', label: 'מחיקה', alignRight: false },
           { id: 'עריכה', label: 'עריכה', alignRight: false },
           { id: 'תמונה', label: 'תמונה', alignRight: false },
           { id: 'רווח/הפסד נקי', label: 'רווח/הפסד נקי', alignRight: false },
@@ -259,7 +263,7 @@ export default function UserPage() {
       else {
         TABLE_HEAD = [
           { id: 'comments', label: 'הערות', alignRight: false },
-          { id: 'delete', label: 'מחק', alignRight: false },
+          { id: 'delete', label: 'מחיקה', alignRight: false },
           { id: 'edit', label: 'עריכה', alignRight: false },
           { id: 'image', label: 'תמונה', alignRight: false },
           { id: 'commission', label: 'עמלה', alignRight: false },
@@ -301,7 +305,7 @@ export default function UserPage() {
     console.log("Inside upload new image but adding trade!", tradeId)
 
     if (!selectedFile && !tradeId) {
-      notifyToast(getMsg(messages, msgType.errors, msgNumber[9],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[9],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[9], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[9], languageidx).msgType);
 
       // notifyToast("Couldn't upload the image", "error"); return; }
     }
@@ -316,12 +320,12 @@ export default function UserPage() {
     api.post('http://localhost:8000/api/uploadTradeImage', formData, { headers: { Authorization: "Berear " + user.accessToken, 'Content-Type': 'multipart/form-data' } })
       .then(response => response.json())
       .then(data => {
-        notifyToast(getMsg(messages, msgType.success, msgNumber[6],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6],languageidx).msgType);
+        notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
         // notifyToast("Trade image uploaded successfully", "success");
         dispatch(setTradesList(data));
       })
       .catch(error => {
-        notifyToast(getMsg(messages, msgType.errors, msgNumber[10],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[10],languageidx).msgType);
+        notifyToast(getMsg(messages, msgType.errors, msgNumber[10], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[10], languageidx).msgType);
         // Handle any errors that occurred during the upload
         // notifyToast("Error uploading trade image", "error");
         console.error(error);
@@ -351,7 +355,7 @@ export default function UserPage() {
   const handleOpenModal = (tradeId) => {
 
     if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[6],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[6],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[6], languageidx).msgType);
       //  notifyToast("before add trades you need create account", 'warning');
     }
     else {
@@ -370,7 +374,7 @@ export default function UserPage() {
   const handleOpenModalImportTrades = (tradeId) => {
 
     if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[7],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[7],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[7], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[7], languageidx).msgType);
       // notifyToast("before import trades you need create account", 'warning');
     }
     else {
@@ -437,10 +441,9 @@ export default function UserPage() {
   };
 
   const deleteTrade = async (tradeId) => {
-    console.log(editTradeId);
-    const res = await api.post('/api/deleteTrade', { tradeId: editTradeId._id, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
+    const res = await api.post('/api/deleteTrade', { tradeId: tradeId, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
     dispatch(setTradesList(res.data))
-    notifyToast(getMsg(messages, msgType.success, msgNumber[14],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14],languageidx).msgType);
+    notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
     // notifyToast("Delete trade Successfully", 'success');
     toggleShow();
   }
@@ -510,20 +513,19 @@ export default function UserPage() {
             </Button>
             {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} />}
 
-            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={() => { handleOpenModal() }} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
               {isHebrew === false ? "Add New Trade" : "הוסף טרייד חדש"}
             </Button>
           </div>
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
-          {(openmodal && editMode && editTradeId !== null) === true ? <AddTrade
-            key={editTradeId._id}
+          {(openmodal && editMode && currentTrade !== null) === true ? <AddTrade
+            key={currentTrade._id}
             openModal={openmodal}
             handleOpenModal={setIsOpenmodal}
-            handleEditTradeLeavePanel={setEditTradeId}
-            tradeInfo={editTradeId}
+            tradeInfo={currentTrade}
             notifyToast={notifyToast}
             isEditMode={true}
-            prevState={editTradeId.status}
+            prevState={currentTrade.status}
           /> : null}
         </Stack>
         <Card>
@@ -553,7 +555,7 @@ export default function UserPage() {
 
                       return (
                         <TableRow
-                          onMouseEnter={() => { setEditTradeId(trade) }}
+                          onMouseEnter={() => { dispatch(setTrade(trade)) }}
                           hover
                           key={trade._id}
                           tabIndex={-1}
@@ -575,7 +577,7 @@ export default function UserPage() {
                                 {formatDate(trade.entryDate)}
                               </Stack>
                             </TableCell> :
-                            <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>}
+                             <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments.length !== 0 ? trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments : "לא זמין" }</TableCell>}
 
                           {isHebrew === false ?
                             <TableCell align="center">{trade.symbol}</TableCell> :
@@ -585,29 +587,30 @@ export default function UserPage() {
                               }}>
                                 מחק
                               </button>
-                              <DialogTitle
+                              <Dialog
                                 open={opendialog}
                                 TransitionComponent={Transition}
 
                                 onClose={handleDialogClose}
                                 aria-describedby="alert-dialog-slide-description"
                               >
-                                <DialogTitle>{"אישור מחיקה"}</DialogTitle>
+                                <DialogTitle>{"Confirm Deletion"}</DialogTitle>
                                 <DialogContent>
                                   <DialogContentText id="alert-dialog-slide-description">
-                                    האם אתה בטוח שברצונך למחוק את הטרייד?
+                                    האם אתה בטוח ברצונך למחוק את הטרייד ?
                                   </DialogContentText>
                                 </DialogContent>
                                 <DialogActions>
                                   <Button onClick={handleDialogClose}>ביטול</Button>
                                   <Button onClick={() => {
-                                    deleteTrade(editTradeId._id); // Now proceed with the deletion
+                                    currentTrade &&
+                                      deleteTrade(currentTrade._id); // Now proceed with the deletion
                                     handleDialogClose(); // Close the dialog first
                                   }} color="primary">
                                     אישור
                                   </Button>
                                 </DialogActions>
-                              </DialogTitle>
+                              </Dialog>
                             </TableCell>}
 
                           {isHebrew === false ?
@@ -621,7 +624,7 @@ export default function UserPage() {
                                 onClick={() => {
                                   setEditMode(true);
                                   setIsOpenmodal(true);
-                                  setEditTradeId(trade);
+                                  dispatch(setTrade(trade));
                                 }}
                               >
                                 ערוך
@@ -691,7 +694,7 @@ export default function UserPage() {
                                 onClick={() => {
                                   setEditMode(true);
                                   setIsOpenmodal(true);
-                                  setEditTradeId(trade);
+                                  dispatch(setTrade(trade));
                                 }}
                               >
                                 Edit
@@ -726,7 +729,8 @@ export default function UserPage() {
                                 <DialogActions>
                                   <Button onClick={handleDialogClose}>Cancel</Button>
                                   <Button onClick={() => {
-                                    deleteTrade(editTradeId._id); // Now proceed with the deletion
+                                    currentTrade &&
+                                      deleteTrade(currentTrade._id); // Now proceed with the deletion
                                     handleDialogClose(); // Close the dialog first
                                   }} color="primary">
                                     Confirm
@@ -737,7 +741,8 @@ export default function UserPage() {
                             <TableCell align="center">{trade.symbol}</TableCell>}
 
                           {isHebrew === false ?
-                            <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>
+                            
+                            <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments.length !== 0 ? trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments : "N/A" }</TableCell>
                             : <TableCell component="th" scope="row" padding="none">
                               <Stack direction="row" alignItems="center" spacing={2}>
                                 {formatDate(trade.entryDate)}
@@ -787,7 +792,7 @@ export default function UserPage() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-        {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} tradeComments={editTradeId.comments} />}
+        {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} tradeComments={currentTrade.comments} />}
         <Dialog open={openCommend} onClose={handleCloseCommend}>
           <DialogTitle> {isHebrew === false ? "Comment" : "הערות"}</DialogTitle>
           <DialogContent>{selectedComment}</DialogContent>
@@ -803,9 +808,6 @@ export default function UserPage() {
       </Typography>
     </>
   );
-
-
-
 }
 
 const totalPlRedColor = {

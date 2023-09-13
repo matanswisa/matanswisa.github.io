@@ -12,17 +12,13 @@ export const tickerArrays = [
     { label: 'British Pound Futures', year: '6B' },
     { label: 'Japanese Yen Futures', year: '6J' },
     { label: 'Eurodollar Futures', year: 'GE' },
-    { label: 'Treasury Bond Futures', year: 'ZB' },
-    { label: '10-Year Treasury Note Futures', year: 'ZN' },
-    { label: '5-Year Treasury Note Futures', year: 'ZF' },
-    { label: 'S&P 500 E-Mini Futures', year: 'SP' },
     { label: 'Russell 2000 E-Mini Futures', year: 'RTY' },
     { label: 'Australian Dollar Futures', year: '6A' },
     { label: 'Canadian Dollar Futures', year: '6C' },
     { label: 'Cocoa Futures', year: 'CC' },
-    { label: 'Coffee Futures', year: 'KC' }
-  ],
-  [
+    { label: 'Coffee Futures', year: 'KC' },
+  
+  
     { label: 'Apple Inc.', year: 'AAPL' },
     { label: 'Microsoft Corporation', year: 'MSFT' },
     { label: 'Amazon.com Inc.', year: 'AMZN' },
@@ -49,15 +45,12 @@ export const tickerArrays = [
     { label: 'McDonald\'s Corporation', year: 'MCD' },
     { label: 'General Electric Company', year: 'GE' },
     { label: 'IBM', year: 'IBM' },
-    // Add more stock tickers below
     { label: 'Visa Inc.', year: 'V' },
     { label: 'Johnson & Johnson', year: 'JNJ' },
     { label: 'Walmart Inc.', year: 'WMT' },
     { label: 'The Home Depot Inc.', year: 'HD' },
     { label: 'Intel Corporation', year: 'INTC' },
-    // ... continue adding more stock tickers as needed
-  ],
-  [
+  
     { label: 'Bitcoin', year: 'BTC' },
     { label: 'Ethereum', year: 'ETH' },
     { label: 'Binance Coin', year: 'BNB' },
