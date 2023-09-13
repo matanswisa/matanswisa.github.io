@@ -577,7 +577,7 @@ export default function UserPage() {
                                 {formatDate(trade.entryDate)}
                               </Stack>
                             </TableCell> :
-                            <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>}
+                             <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments.length !== 0 ? trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments : "לא זמין" }</TableCell>}
 
                           {isHebrew === false ?
                             <TableCell align="center">{trade.symbol}</TableCell> :
@@ -741,7 +741,8 @@ export default function UserPage() {
                             <TableCell align="center">{trade.symbol}</TableCell>}
 
                           {isHebrew === false ?
-                            <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments}</TableCell>
+                            
+                            <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments.length !== 0 ? trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments : "N/A" }</TableCell>
                             : <TableCell component="th" scope="row" padding="none">
                               <Stack direction="row" alignItems="center" spacing={2}>
                                 {formatDate(trade.entryDate)}

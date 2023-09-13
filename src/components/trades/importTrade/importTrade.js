@@ -193,7 +193,7 @@ export default function BasicModal(props) {
       else if (currentAccount?.Broker === brokers.Binance) {
         isValidFile = validationBeforeImportCsvFileFromBinance(file,languageidx);
       }
-
+    
       if (!isValidFile) {
         return; // Stop further execution
       }
@@ -206,7 +206,7 @@ export default function BasicModal(props) {
         formData.append('file', file);
         formData.append('userId', user._id);
         formData.append('accountId', currentAccount._id);
-
+        console.log(formData);
         const token = localStorage.getItem('token');
         const headersForImportTrades = {
           headers: {
@@ -226,8 +226,8 @@ export default function BasicModal(props) {
         setProcessDuration(3000); // Reset process duration
         dispatch(setTradesList(response.data.trades));
         if (response.data.isAllUploaded) {
-          //   notifyToast(getMsg(messages,msgType.success,msgNumber[6]).msgText, getMsg(messages,msgType.success,msgNumber[6]).msgType);
-          notifyToast(response.data.message, 'success');
+           notifyToast(getMsg(messages,msgType.success,msgNumber[6]).msgText, getMsg(messages,msgType.success,msgNumber[6]).msgType);
+       
         } else {
           notifyToast(response.data.message, 'warning');
 
@@ -239,7 +239,7 @@ export default function BasicModal(props) {
       } catch (error) {
         setIsUploading(false);
         console.error('Error uploading file:', error);
-        notifyToast(getMsg(messages, msgType.errors, msgNumber[13],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[13],languageidx).msgType);
+        notifyToast(getMsg(messages, msgType.errors, msgNumber[14],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[14],languageidx).msgType);
         //  notifyToast('Error uploading file' + error.message, 'warning');
         // Handle error or show an error message to the user
       } finally {
