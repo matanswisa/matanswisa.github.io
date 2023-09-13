@@ -165,10 +165,9 @@ export default function DashboardLayout() {
 
   const refreshToken = async () => {
     try {
-      console.log("calling to refresh token..", { token: user.refreshToken });
       const res = await axiosAuth.post('/api/auth/refreshToken', { token: user.refreshToken })
       console.log(res.data);
-      dispatch(login({ user, accessToken: res.data.accessToken, refreshToken: res.data.refreshToken }));
+      dispatch(login({ user, accessToken: res.data.accessToken }));
       return res.data;
     } catch (err) {
       console.error(err);
