@@ -680,7 +680,7 @@ export default function UserPage() {
                           {isHebrew === false ?
                             <TableCell align="center">{trade.contracts}</TableCell> :
                             <TableCell align="center">
-                              {trade.commission ? trade.commission + "$" : "N/A"}
+                              {trade.commission ? trade.commission + "$" : "לא זמין"}
                             </TableCell>}
 
                           {currentAccount.Broker == 1 ?
