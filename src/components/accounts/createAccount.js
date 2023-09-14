@@ -106,10 +106,10 @@ export default function AccountModal(props) {
         .then((res) => {
           // notifyToast('Account updated successfully', 'success');
           notifyToast(getMsg(messages, msgType.success, msgNumber[3],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[3],languageidx).msgType);
-          props.handleOpenModal(false);
-          // props.fetchAccounts();
           dispatch(updateAccountList(res.data))
-
+          dispatch(setCurrentAccount(res.data[res.data.length - 1]));
+          props.handleOpenModal(false);
+      
         })
         .catch((err) => {
           notifyToast(getMsg(messages, msgType.errors, msgNumber[3],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[3],languageidx).msgType);
