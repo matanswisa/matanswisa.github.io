@@ -153,12 +153,12 @@ export default function Nav({ openNav, onCloseNav }) {
       {/* balance display */}
       {currentAccount !== null ? 
       <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-amount">Account Balance</InputLabel>
+          <InputLabel htmlFor="outlined-adornment-amount">{isHebrew === false ? "Account Balance" : "מאזן חשבון"}</InputLabel>
           <FilledInput
             id="outlined-adornment-amount"
             disabled={true}
             style={{backgroundColor: darkMode === false ? "#0000" : "#121212"}}
-            startAdornment={<InputAdornment position="start"     style={{ color: '#54a38d',fontWeight:'bold',fontFamily:'inherit' }} > {currentAccount["InitialBalance"]}$</InputAdornment>}
+            startAdornment={<InputAdornment position="start"     style={{ color: '#54a38d',fontWeight:'bold',fontFamily:'inherit',fontSize:'15px' }} > {currentAccount["InitialBalance"]}$</InputAdornment>}
           />
         </FormControl> : ""}
 
