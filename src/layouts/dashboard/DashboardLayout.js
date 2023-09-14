@@ -192,7 +192,7 @@ export default function DashboardLayout() {
         return config;
       });
     }
-  }, [user])
+  }, [])
   // //interceptors definition for jwt authentication
 
 
