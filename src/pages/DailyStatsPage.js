@@ -103,11 +103,14 @@ export default function DailyStatsPage() {
       </FormControl >
       <Container>
         <div style={{ maxHeight: '850px', maxWidth: '1400px', overflowY: 'scroll' }}>
-          <Typography variant="h4" gutterBottom>
-            {isHebrew === false ? "Daily Stats" : "סטטיסטיקה יומית"}
-
-          </Typography>
-          {trades
+       
+          {trades.length === 0 ?
+            <Typography variant="h6" gutterBottom style={{ marginLeft : "30%"}}>
+              {isHebrew === false ? "Add Trades in Reports to view data." : ".אנא הוסף טריידים בדוחות על מנת לראות נתונים"}
+            </Typography>
+            : ""
+          }
+          {trades 
             .filter((trade) => {
               // Filter trades based on the selected date
               if (!selectedDate) {
