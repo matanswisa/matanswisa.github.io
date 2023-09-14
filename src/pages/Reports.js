@@ -122,6 +122,13 @@ export default function UserPage() {
   const currentTrade = useSelector(selectTrade);
 
 
+
+  const [orderByCols, setOrderByCols] = useState('entryDate'); // Default sorting column
+  const [orderCols, setOrderCols] = useState('asc'); // Default sorting order
+ 
+
+
+
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
   const user = useSelector(selectUser);
@@ -278,6 +285,24 @@ export default function UserPage() {
     }
   }
 
+
+
+  
+  const handleRequestSortCols = (property) => {
+    if (orderByCols === property) {
+      // If the same column is clicked again, toggle the order
+      setOrderCols((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    } else {
+      // If a different column is clicked, set it as the new sorting column in ascending order
+      setOrderByCols(property);
+      setOrderCols('asc');
+    }
+  };
+  
+  
+  
+
+  
 
   function handleCellClick(parameter, info) {
     return function () {
@@ -533,11 +558,11 @@ export default function UserPage() {
             <TableContainer sx={{ minWidth: 800, maxWidth: 2000, }}>
               <Table>
                 <UserListHead
-                  order={order}
-                  orderBy={orderBy}
+                  order={orderCols}
+                  orderBy={orderByCols}
                   headLabel={TABLE_HEAD}
                   rowCount={trades.length}
-                  onRequestSort={handleRequestSort}
+                  onRequestSort={handleRequestSortCols}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
@@ -549,6 +574,17 @@ export default function UserPage() {
                         new Date(trade.entryDate).toLocaleDateString('en-GB') ===
                         selectedDate.toLocaleDateString('en-GB')
                       );
+                    })
+                    .sort((a, b) => {
+                      // Compare the rows based on the selected sorting column and order
+                      const aValue = a[orderByCols] || ''; // Use an empty string if aValue is undefined
+                      const bValue = b[orderByCols] || '';
+                  
+                      if (orderCols === 'asc') {
+                        return aValue.localeCompare(bValue);
+                      } else {
+                        return bValue.localeCompare(aValue);
+                      }
                     })
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((trade, indx) => {
