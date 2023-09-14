@@ -188,13 +188,13 @@ export default function TradeModal(props) {
     }
 
     else if (currentAccount?.Broker === brokers.Binance) {
-
+   
       data = {
         entryDate: positionDate,
         symbol: positionSymbol,
         status: positionStatus,
-        netROI,
-        stopPrice,
+        netROI  : 0.0,
+        stopPrice : 0,
         longShort: positionType,
         contracts: contractsCounts,
         entryPrice: entryPrice,
@@ -210,6 +210,7 @@ export default function TradeModal(props) {
 
     //-------------------------------------------------------------- handle new trade adding -------------------------------------------------------------//
     if (validateForm()) {
+   
       if (!editMode) {
         await api
           .post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: "Berear " + user.accessToken } }).then((res) => {
@@ -262,7 +263,7 @@ export default function TradeModal(props) {
 
   //------------------------------------------------ handle validation before add new trade -----------------------------------------------------//
   const validateForm = () => {
-
+    
     const currentDate = new Date().toISOString().slice(0, 10); // Get today's date in the format "YYYY-MM-DD"
 
     if (positionDate > currentDate) {
@@ -277,39 +278,48 @@ export default function TradeModal(props) {
     if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
-      if (positionType === '')
+      if (positionType === ''){
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[27], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[27], languageidx).msgType);
       //  notifyToast("Position type is missing", "warning");
-
-      else if (positionStatus === '')
+      return false;
+    }
+      else if (positionStatus === ''){
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[26], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[26], languageidx).msgType);
       //notifyToast("Position status is missing", "warning");
-
-      else if (!netPnL)
+      return false;
+    }
+      else if (!netPnL){
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[25], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[25], languageidx).msgType);
       // notifyToast("Net PnL is missing", "warning");
-
-      else if (!contractsCounts)
+      return false;
+    }
+      else if (!contractsCounts){
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[24], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[24], languageidx).msgType);
       //  notifyToast("Number of contracts field is missing", "warning");
-
-      else if (positionSymbol === "")
+      return false;
+    }
+      else if (positionSymbol === ""){
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[23], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[23], languageidx).msgType);
       //  notifyToast("Position symbol is missing", "warning");
-
-      else if (!positionDate)
+      return false;
+    }
+      else if (!positionDate){
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[22], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[22], languageidx).msgType);
       // notifyToast("Date field is missing", "warning");
-
-      else if (entryPrice < 1)
+      return false;
+    }
+      else if (entryPrice < 1){
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[21], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[21], languageidx).msgType);
       // notifyToast(" entry Price is missing", "warning");
-
-      else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate)
+      return false;
+    }
+      else if (exitPrice < 1 && currentAccount?.Broker === brokers.Tradovate){
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[20], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[20], languageidx).msgType);
       //notifyToast("exit Price  is missing", "warning");
-
       return false;
+    }
+    
+     
     }
     return true;
   };
