@@ -196,10 +196,6 @@ export default function DashboardLayout() {
   // //interceptors definition for jwt authentication
 
 
-
-
-
-
   // const dispatch = useDispatch();
   useEffect(() => {
     api.get('/api/messages', { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
