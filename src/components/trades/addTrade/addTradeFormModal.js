@@ -642,7 +642,235 @@ export default function TradeModal(props) {
         </Box>
 
 
-      </Modal > : ""
+      </Modal > :
+
+
+      // binance modal
+      <Modal
+        open={props.openModal}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style} >
+
+
+          <Stack direction="row" spacing={2} sx={{ marginBottom: '60px' }}>
+
+            <Box >
+
+              <Typography style={{ fontFamily: 'sans-serif', fontWeight: 'bolder', fontSize: '20px' }}> {isHebrew === false ? "New Trade" : "הוספת טרייד"}</Typography>
+            </Box>
+            {/* <LogoImage w = '350px' h= '280px'/> */}
+            <Box style={{ marginLeft: "678px" }}>
+
+              <label htmlFor="file-input">
+                <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
+                  size="small"
+                  variant="outlined"
+                  component="span"
+                  startIcon={<Iconify icon={'eva:file-add-outline'} />}
+                  onClick={handleButtonClick}
+                >
+                  {isHebrew === false ?
+                    "Upload Image" :
+                    "העלאת תמונה"}
+                </Button>
+              </label>
+
+            </Box>
+          </Stack>
+
+
+
+          <Stack direction="row" spacing={2} >
+            <Box sx={{ width: "300px", marginBottom: '20px' }}>
+
+              <Stack spacing={2} >
+                <Box sx={{ marginBottom: '5px' }} >
+                  <TextField required="true"
+                    sx={{ width: "280px" }}
+                    value={positionDate}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
+                    label="Open Date" variant="standard" type="date" />
+                </Box >
+
+
+
+                <Box>
+
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    required="true"
+                    options={activeTickers}
+                    value={positionSymbol}
+                    onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
+                    sx={{ width: "280px", marginBottom: '13px' }}
+                    renderInput={(params) => <TextField {...params} label={isHebrew === false ? "Symbol" : "סימן"} value={positionSymbol} variant="standard" />}
+                  />
+                </Box>
+
+
+                <Box>
+
+                  <FormControl variant="standard" >
+                    <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ? "Status" : "סטטוס"}</InputLabel>
+                    <Select
+                      sx={{ width: "280px", marginBottom: '13px' }}
+                      disablePortal
+                      id="combo-box-demo"
+                      value={positionStatus}
+                      onChange={(e) => handlePositionFieldInput(e, 'positionStatus')}
+                      label="Status"
+                      required="true"
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      <MenuItem value={'Win'}>Win</MenuItem>
+                      <MenuItem value={'Loss'}>Loss</MenuItem>
+                      <MenuItem value={'BreakEven'}>Break Even</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+
+              </Stack>
+            </Box>
+
+
+            <Box sx={{ width: "300px" }}>
+
+              <Stack spacing={2} >
+
+                <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
+                  {' '}
+                  <TextField
+                    sx={{ width: "280px" }}
+                    className="outlined-number"
+                    label={isHebrew === false ? "Entry Price" : "שער כניסה"}
+                    value={entryPrice}
+                    type="number"
+                    onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Box>
+
+
+                <Box >
+                  <TextField
+                    className="outlined-number"
+                    sx={{ width: "280px" }}
+                    required="true"
+                    label={isHebrew === false ? "Quantity" : "כמות"}
+                    value={contractsCounts}
+                    onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
+
+                    type="number"
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Box>
+
+                <Box sx={{ marginBottom: '30px' }}>
+                </Box>
+
+
+                <Box sx={{ marginBottom: '13px' }}>
+
+                  <FormControl variant="standard" >
+                    <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ? "Type" : "סוג"}</InputLabel>
+                    <Select
+                      sx={{ width: "280px" }}
+                      className="outlined-number"
+                      labelId="demo-simple-select-standard-label"
+                      id="demo-simple-select-standard"
+                      value={positionType}
+                      onChange={(e) => handlePositionFieldInput(e, 'positionType')}
+                      label="Type"
+                      required="true"
+                      InputLabelProps={{ shrink: true }}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      <MenuItem value={'Short'}>Short</MenuItem>
+                      <MenuItem value={'Long'}>Long</MenuItem>
+
+                    </Select>
+                  </FormControl>
+
+                </Box>
+
+              </Stack>
+            </Box>
+
+
+            <Box sx={{ width: "300px", border: darkMode === true ? '1px solid #121212' : '', }}>
+              <Stack spacing={2} >
+
+                <Box >
+                  <TextField
+                    className="outlined-number"
+                    sx={{ width: "280px" }}
+                    type="number"
+                    value={positionCommision}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
+                    label={isHebrew === false ? "Commission" : "עמלה"}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Box>
+
+                <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
+                  {' '}
+                  <TextField
+                    className="outlined-number"
+                    required="true"
+                    sx={{ width: "280px" }}
+                    label={isHebrew === false ? "Net P&L" : "רווח/הפסד נטו"}
+                    value={netPnL}
+                    onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
+
+                    type="number"
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Box>
+              </Stack>
+            </Box>
+          </Stack>
+
+          <Box style={{ marginBottom: "30px" }} >
+            <Typography>Notes<EditNoteIcon fontSize="large" /></Typography>
+
+
+            <TextField
+
+              id="filled-multiline-static"
+              sx={{
+                width: '930px', // Change the width as needed
+                border: darkMode === true ? '1px solid white' : '', // Add a white border
+              }}
+              multiline
+              rows={7}
+              value={comments}
+
+              variant="outlined"
+
+              onChange={(e) => handlePositionFieldInput(e, 'comments')}
+            />
+          </Box>
+
+
+          <Box style={{ marginLeft: "780px" }} >
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} variant="contained" onClick={handleSaveTrade} > {isHebrew === false ? "Save" : "שמור"}</Button>
+
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", marginLeft: "7px" }} variant="outlined" onClick={handleSaveTrade} > {isHebrew === false ? "Cancel" : "ביטול"}</Button>
+          </Box>
+
+        </Box>
+
+
+      </Modal >
   );
 
 }
