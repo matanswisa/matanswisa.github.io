@@ -250,6 +250,7 @@ export default function TradeModal(props) {
                 .then(data => {
                   notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
                   // notifyToast("Trade image uploaded successfully", "success");
+
                   dispatch(setTradesList(data));
                 })
                 .catch(error => {
@@ -258,8 +259,9 @@ export default function TradeModal(props) {
                   // notifyToast("Error uploading trade image", "error");
                   console.error(error);
                 });
-
-              reduxDispatch(setTradesList(res.data));
+               
+              reduxDispatch(setCurrentAccount(res.data.account));  //update balance
+              reduxDispatch(setTradesList(res.data.tradesWithImage));
               handleClose();
             });
         }
