@@ -30,7 +30,10 @@ import api from '../../../api/api';
 import Iconify from '../../iconify/Iconify';
 import './addTrade.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentAccount, selectUser, setTradesList } from '../../../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, setTradesList, setCurrentAccount } from '../../../redux-toolkit/userSlice';
+
+
+
 import { configAuth } from '../../../api/configAuth';
 import { brokers } from '../../brokersNames/brokers.js'
 
@@ -217,8 +220,13 @@ export default function TradeModal(props) {
             if (selectedFile !== null) {
               handleUpload(res.data.tradeId);
             }
-            // props.updateTradeLists()
-            reduxDispatch(setTradesList(res.data));
+          
+
+            reduxDispatch(setCurrentAccount(res.data.account));  //update balance
+            reduxDispatch(setTradesList(res.data.tradesWithImage));
+
+
+            api.
             notifyToast(getMsg(messages, msgType.success, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[4], languageidx).msgType);
             //  notifyToast("Trade added successfully", "success");
             handleClose();

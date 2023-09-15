@@ -11,14 +11,17 @@ import useResponsive from '../../../hooks/useResponsive';
 import Logo from '../../../components/logo';
 import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
-
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import FilledInput from '@mui/material/FilledInput';
+import InputAdornment from '@mui/material/InputAdornment';
 import navConfig from './config';
 import { useDispatch, useSelector } from 'react-redux';
 import SvgColor from '../../../components/svg-color';
 import { initializeUser, isUserAuthenticated, logout, selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
 import useTokenValidation from '../../../hooks/validateToken';
 import LogoImage from '../../../components/logo/logoImage'
-
+import { selectCurrentAccount,  } from '../../../redux-toolkit/userSlice';
 import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
 import { selectDarkMode, toggleDarkMode } from '../../../redux-toolkit/darkModeSlice';
 // ----------------------------------------------------------------------
@@ -47,7 +50,8 @@ export default function Nav({ openNav, onCloseNav }) {
   const account = useSelector(selectUser)
   const isAdmin = useSelector(selectUserAdmin);
   const isHebrew = useSelector(selectlanguage);
-
+  const currentAccount = useSelector(selectCurrentAccount);
+  
   const isAuthenticated = useSelector(isUserAuthenticated)
   const dispatch = useDispatch();
   const { pathname } = useLocation();
@@ -145,6 +149,20 @@ export default function Nav({ openNav, onCloseNav }) {
     >
       <LogoImage w='240px' h='170px' />
 
+
+      {/* balance display */}
+      {currentAccount !== null ? 
+      <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
+          <InputLabel htmlFor="outlined-adornment-amount">{isHebrew === false ? "Account Balance" : "מאזן חשבון"}</InputLabel>
+          <FilledInput
+            id="outlined-adornment-amount"
+            disabled={true}
+            style={{backgroundColor: darkMode === false ? "#0000" : "#121212"}}
+            startAdornment={<InputAdornment position="start"     style={{ color: '#54a38d',fontWeight:'bold',fontFamily:'inherit',fontSize:'15px' }} > {currentAccount["InitialBalance"]}$</InputAdornment>}
+          />
+        </FormControl> : ""}
+
+        
 
       <NavSection data={navConfig} />
 
