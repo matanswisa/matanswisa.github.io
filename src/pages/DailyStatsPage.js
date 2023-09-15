@@ -53,17 +53,16 @@ export default function DailyStatsPage() {
 
 
   useEffect(() => {
-    if (currentAccount?.trades && currentAccount.trades.length) {
-      api.post('/api/DailyStatsInfo', { trades: currentAccount.trades }, { headers: { Authorization: "Berear " + user.accessToken } })
-        .then((res) => {
-          setTrades(res.data);
+    console.log("Current account has changed!!!")
+    api.post('/api/DailyStatsInfo', { trades: currentAccount.trades }, { headers: { Authorization: "Berear " + user.accessToken } })
+      .then((res) => {
+        setTrades(res.data);
 
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  }, []);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [currentAccount?.trades]);
 
 
   //handle filter reuslts by date
@@ -103,14 +102,14 @@ export default function DailyStatsPage() {
       </FormControl >
       <Container>
         <div style={{ maxHeight: '850px', maxWidth: '1400px', overflowY: 'scroll' }}>
-       
+
           {trades.length === 0 ?
-            <Typography variant="h6" gutterBottom style={{ marginLeft : "30%"}}>
+            <Typography variant="h6" gutterBottom style={{ marginLeft: "30%" }}>
               {isHebrew === false ? "Add Trades in Reports to view data." : ".אנא הוסף טריידים בדוחות על מנת לראות נתונים"}
             </Typography>
             : ""
           }
-          {trades 
+          {trades
             .filter((trade) => {
               // Filter trades based on the selected date
               if (!selectedDate) {
