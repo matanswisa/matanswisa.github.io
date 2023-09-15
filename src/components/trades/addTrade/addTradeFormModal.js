@@ -220,9 +220,9 @@ export default function TradeModal(props) {
             if (selectedFile !== null) {
               handleUpload(res.data.tradeId);
             }
-            // props.updateTradeLists()
-            
-            reduxDispatch(setCurrentAccount(res.data.account));
+          
+
+            reduxDispatch(setCurrentAccount(res.data.account));  //update balance
             reduxDispatch(setTradesList(res.data.tradesWithImage));
 
 
