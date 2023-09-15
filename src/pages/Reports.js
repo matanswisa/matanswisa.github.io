@@ -778,7 +778,7 @@ export default function UserPage() {
 
                           {isHebrew === false ?
                             
-                            <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments.length !== 0 ? trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments : "N/A" }</TableCell>
+                            <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length !== 0 ? trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments : "N/A" }</TableCell>
                             : <TableCell component="th" scope="row" padding="none">
                               <Stack direction="row" alignItems="center" spacing={2}>
                                 {formatDate(trade.entryDate)}

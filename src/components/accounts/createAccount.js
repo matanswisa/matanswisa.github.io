@@ -73,7 +73,7 @@ export default function AccountModal(props) {
     if (validateForm()) {
       const data = { AccountName: accountName, Broker: broker, Label: selectedColor, };
       await api
-        .post('/api/createAccount', { userId: user._id, data }, { headers: { Authorization: "Berear " + user.accessToken } })
+        .post('/api/createAccount', { userId: user._id, data }, { headers: { Authorization: "Berear " + JSON.parse(localStorage.getItem('user')).accessToken } })
         .then(async (res) => {
           notifyToast(getMsg(messages, msgType.success, msgNumber[2],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[2],languageidx).msgType);
           // notifyToast('Account added successfully', 'success');

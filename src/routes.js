@@ -29,7 +29,7 @@ export default function Router() {
   useEffect(() => {
     const checkIsUserLoggedInValid = async () => {
       const user = JSON.parse(localStorage.getItem("user"));
-      if (user && user.accessToken && user.refreshToken) {
+      if (user && user.accessToken) {
         const result = await axiosAuth.get("/api/auth/validate-token", { headers: { Authorization: "Bearer " + user.accessToken } });
         if (result.status == 200) {
           dispatch(login({ user: user }));

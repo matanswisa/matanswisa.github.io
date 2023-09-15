@@ -32,8 +32,8 @@ import { selectMessages } from '../../../redux-toolkit/messagesSlice';
 import { getMsg } from '../../../utils/messeageUtils';
 import { msgType } from '../../../utils/messagesEnum.js';
 import { msgNumber } from '../../../utils/msgNumbers.js';
-import {selectDarkMode} from '../../../redux-toolkit/darkModeSlice';
-import { selectlanguage ,selectidx} from '../../../redux-toolkit/languagesSlice';
+import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
+import { selectlanguage, selectidx } from '../../../redux-toolkit/languagesSlice';
 
 
 
@@ -124,7 +124,7 @@ export default function BasicModal(props) {
 
     if (!file.name.endsWith('.csv')) {
       validationPassed = false;
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[3],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[3],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[3], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[3], languageidx).msgType);
 
       //     notifyToast('Please select a CSV  file.', 'warning');
       return false; // Validation failed
@@ -138,7 +138,7 @@ export default function BasicModal(props) {
         // Check if all required columns are present
         const missingColumns = requiredColumnsTradeOvate.filter(column => !headers.includes(column));
         if (missingColumns.length > 0) {
-          notifyToast(getMsg(messages, msgType.errors, msgNumber[6],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[6],languageidx).msgType);
+          notifyToast(getMsg(messages, msgType.errors, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[6], languageidx).msgType);
 
           //     notifyToast('Please select the correct file.', 'error');
           validationPassed = false; // Validation failed
@@ -161,14 +161,14 @@ export default function BasicModal(props) {
 
     if (!file.name.endsWith('.xlsx')) {
       validationPassed = false;
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[4],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[4],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[4], languageidx).msgType);
       notifyToast('Please select a  Excel file.', 'warning');
       return false; // Validation failed
     }
 
     if (!file.name.includes('Export Trade History')) {
       validationPassed = false;
-      notifyToast(getMsg(messages, msgType.errors, msgNumber[2],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[2],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[2], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[2], languageidx).msgType);
       //   notifyToast('File name should  be "Export Trade History".', 'error');
       return false; // Validation failed
     }
@@ -187,13 +187,13 @@ export default function BasicModal(props) {
 
       if (currentAccount?.Broker === brokers.Tradovate) {
 
-        isValidFile = validationBeforeImportCsvFileFromTradeovate(file,languageidx);
+        isValidFile = validationBeforeImportCsvFileFromTradeovate(file, languageidx);
       }
 
       else if (currentAccount?.Broker === brokers.Binance) {
-        isValidFile = validationBeforeImportCsvFileFromBinance(file,languageidx);
+        isValidFile = validationBeforeImportCsvFileFromBinance(file, languageidx);
       }
-    
+
       if (!isValidFile) {
         return; // Stop further execution
       }
@@ -207,11 +207,11 @@ export default function BasicModal(props) {
         formData.append('userId', user._id);
         formData.append('accountId', currentAccount._id);
         console.log(formData);
-        const token = localStorage.getItem('token');
+        // const token = localStorage.getItem('token');
         const headersForImportTrades = {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${user.accessToken}`,
           },
         }
 
@@ -226,8 +226,8 @@ export default function BasicModal(props) {
         setProcessDuration(3000); // Reset process duration
         dispatch(setTradesList(response.data.trades));
         if (response.data.isAllUploaded) {
-           notifyToast(getMsg(messages,msgType.success,msgNumber[6]).msgText, getMsg(messages,msgType.success,msgNumber[6]).msgType);
-       
+          notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
+
         } else {
           notifyToast(response.data.message, 'warning');
 
@@ -239,7 +239,7 @@ export default function BasicModal(props) {
       } catch (error) {
         setIsUploading(false);
         console.error('Error uploading file:', error);
-        notifyToast(getMsg(messages, msgType.errors, msgNumber[14],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[14],languageidx).msgType);
+        notifyToast(getMsg(messages, msgType.errors, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[14], languageidx).msgType);
         //  notifyToast('Error uploading file' + error.message, 'warning');
         // Handle error or show an error message to the user
       } finally {
@@ -289,7 +289,7 @@ export default function BasicModal(props) {
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h5" component="h2">
             {isHebrew === false ? "import Trades" : "ייבוא עסקאות"}
-            
+
           </Typography>
 
           <TextField
@@ -314,7 +314,7 @@ export default function BasicModal(props) {
             <Process duration={processDuration} />
           ) : (
             <>
-              <Button  style={{  backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "",  }}
+              <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
                 sx={{ mt: 5 }}
                 size="medium"
                 variant="contained"
@@ -322,8 +322,8 @@ export default function BasicModal(props) {
                 startIcon={<Iconify icon={'eva:file-add-outline'} />}
                 onClick={handleImportTrade}
               >
-                  {isHebrew === false ? "Import" : "ייבא"}
-                
+                {isHebrew === false ? "Import" : "ייבא"}
+
               </Button>
 
               <input

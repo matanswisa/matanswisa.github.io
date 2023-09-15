@@ -14,7 +14,7 @@ import MultipleSelectPlaceholder from '../../components/accounts/selectAccount';
 import api, { axiosAuth } from '../../api/api';
 
 import { configAuth } from '../../api/configAuth';
-import { setCurrentAccount, selectUserAccounts, selectUser, login } from '../../redux-toolkit/userSlice';
+import { setCurrentAccount, selectUserAccounts, selectUser, login, logout } from '../../redux-toolkit/userSlice';
 
 import { useDispatch, useSelector } from 'react-redux';
 import Switch from '@mui/material/Switch';
@@ -163,12 +163,37 @@ export default function DashboardLayout() {
 
   const user = useSelector(selectUser);
 
+  const createAxiosResponseInterceptor = () => {
+    api.interceptors.request.use((config) => {
+      let originalRequest = config
+
+      const decodedToken = jwt_decode(JSON.parse(localStorage.getItem('user')).accessToken);
+
+      // Check if the request is for the '/refreshToken' endpoint
+
+      let currentDate = new Date();
+      //check if accessToken is invalid.
+      if (decodedToken.exp * 1000 < currentDate.getTime()) {
+        console.log("token exp-", decodedToken.exp, " current date - ", currentDate.getTime())
+        return refreshToken().then((response) => {
+          // localStorage.setItem('token', response.data.token)
+          console.log(response.data);
+          originalRequest.headers.Authorization = "Berear " + response.data.accessToken;
+          return Promise.resolve(originalRequest)
+        })
+      }
+      return config
+    }, (err) => {
+      return Promise.reject(err)
+    })
+  }
+
   const refreshToken = async () => {
     try {
       const res = await axiosAuth.post('/api/auth/refreshToken', { token: user.refreshToken })
       console.log(res.data);
       dispatch(login({ user, accessToken: res.data.accessToken }));
-      return res.data;
+      return res;
     } catch (err) {
       console.error(err);
     }
@@ -177,20 +202,7 @@ export default function DashboardLayout() {
 
   useEffect(() => {
     if (user != null) {
-      api.interceptors.request.use(async (config) => {
-        let currentDate = new Date();
-        console.log("user", user);
-        const decodedToken = jwt_decode(user.accessToken);
-
-        // Check if the request is for the '/refreshToken' endpoint
-        console.log("token exp-", decodedToken.exp, " current date - ", currentDate.getTime())
-        if (decodedToken.exp * 1000 < currentDate.getTime()) {
-          const data = await refreshToken();
-          config.headers["Authorization"] = "Bearer " + data.accessToken;
-        }
-
-        return config;
-      });
+      createAxiosResponseInterceptor();
     }
   }, [])
   // //interceptors definition for jwt authentication
@@ -198,7 +210,7 @@ export default function DashboardLayout() {
 
   // const dispatch = useDispatch();
   useEffect(() => {
-    api.get('/api/messages', { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
+    api.get('/api/messages', { headers: { Authorization: `Berear ${JSON.parse(localStorage.getItem('user')).accessToken}` } }).then((res) => {
       dispatch(setMessages(res.data));
 
     })
