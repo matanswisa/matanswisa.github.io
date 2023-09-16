@@ -179,6 +179,7 @@ export default function DashboardLayout() {
           // localStorage.setItem('token', response.data.token)
           console.log(response.data);
           originalRequest.headers.Authorization = "Berear " + response.data.accessToken;
+          dispatch(login({ user, accessToken: response.data.accessToken }));
           return Promise.resolve(originalRequest)
         })
       }

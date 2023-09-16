@@ -613,7 +613,7 @@ export default function UserPage() {
                                 {formatDate(trade.entryDate)}
                               </Stack>
                             </TableCell> :
-                             <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments.length !== 0 ? trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments : "לא זמין" }</TableCell>}
+                             <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length !== 0 ? trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments : "לא זמין" }</TableCell>}
 
                           {isHebrew === false ?
                             <TableCell align="center">{trade.symbol}</TableCell> :

@@ -14,6 +14,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         login(state, action) {
+            localStorage.setItem(`user`, JSON.stringify(action.payload.user));
             state.user = action.payload.user;
             state.isAuthenticated = true;
             state.isAdmin = action.payload.user.role === roles.admin;
