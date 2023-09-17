@@ -130,6 +130,7 @@ export default function MultipleSelectPlaceholder(props) {
                 alignItems: 'center',
                 justifyContent: 'space-between',
               }}
+              disabled={selectedAccountName === account.AccountName} // Disable the selected account
             >
               <div
                 style={{
