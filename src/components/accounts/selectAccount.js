@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react';
 import { selectCurrentAccount, selectUser, selectUserAccounts } from '../../redux-toolkit/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentAccount } from '../../redux-toolkit/userSlice';
-import { configAuth } from '../../api/configAuth';
 import { selectlanguage } from '../../redux-toolkit/languagesSlice';
 
 //--------------------------------------------This component show Selected Account options on top left-------------------------------------------//

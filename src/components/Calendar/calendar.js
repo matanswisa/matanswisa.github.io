@@ -1,13 +1,9 @@
 
 
 import { Calendar } from 'rsuite';
-import { useState, useEffect } from 'react';
 import './styles.css';
 import './calendar.css';
-import api from '../../api/api';
-import userSlice, { selectCurrentAccount, selectUser } from '../../redux-toolkit/userSlice';
-import { configAuth } from '../../api/configAuth';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectlanguage } from '../../redux-toolkit/languagesSlice';
 
 function getTodoList(info, date, isHebrew) {

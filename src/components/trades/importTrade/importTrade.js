@@ -12,7 +12,6 @@ import { useEffect, useState, useRef } from 'react';
 import api from '../../../api/api'
 import Papa from 'papaparse';
 
-import { configAuth } from '../../../api/configAuth';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentAccount, selectUser, setTradesList } from '../../../redux-toolkit/userSlice';
 import StepperModal from '../ExplanationOfImportTrades/StepperModal';

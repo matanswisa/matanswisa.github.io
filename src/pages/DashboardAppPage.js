@@ -21,7 +21,6 @@ import {
 } from '../sections/@dashboard/app';
 
 import api from '../api/api';
-import { configAuth } from '../api/configAuth';
 
 import { Colors } from '../components/color-utils/Colors';
 

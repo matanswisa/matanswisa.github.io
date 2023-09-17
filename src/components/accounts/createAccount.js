@@ -11,7 +11,6 @@ import { Select, MenuItem, ListItemIcon, Alert } from '@mui/material';
 import { red, blue, green, yellow, orange, purple, pink, cyan, brown, lightGreen, lime, blueGrey, } from '@mui/material/colors';
 import { Grid } from 'rsuite';
 import { selectUser, setCurrentAccount, updateAccountList, selectUserAccounts } from '../../redux-toolkit/userSlice';
-import { configAuth } from '../../api/configAuth';
 import BinanceIcon from '../brokersIcons/binance.svg'
 import TradeovateIcon from '../brokersIcons/Tradovate.svg'
 import TradeovateWhiteIcon from '../brokersIcons/TradovateWhite.svg'
