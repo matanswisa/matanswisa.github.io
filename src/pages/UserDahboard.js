@@ -14,9 +14,10 @@ import { getMsg } from '../utils/messeageUtils';
 import { msgType } from '../utils/messagesEnum.js';
 import { msgNumber } from '../utils/msgNumbers.js';
 import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
+import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 
 export default function UserDahsboard(props) {
-
+  const darkMode = useSelector(selectDarkMode);
   const languageidx = useSelector(selectidx);
   const isHebrew = useSelector(selectlanguage);
   const handleOpen = () => props.handleOpenModal(true);
@@ -108,12 +109,13 @@ export default function UserDahsboard(props) {
           width: '600px',
           height: '220px',
           padding: '20px',
-          background: '#fff',
+          background:   darkMode === false ? '#fff': "#121212",
           borderRadius: '8px',
           boxShadow: '0px 3px 10px rgba(0, 0, 0, 0.2)',
           display: 'flex', // Add display:flex to the box to enable flex layout
           flexDirection: 'column', // Set flexDirection to column to stack elements vertically
           justifyContent: 'space-between', // Align elements vertically with space in between
+          
         }}
       >
         <Typography id="modal-modal-title" variant="h6" component="h2" style={{ marginBottom: '4px' }}>
@@ -129,7 +131,7 @@ export default function UserDahsboard(props) {
         <TextField
           disabled
           id="outlined-disabled"
-          label="User Name"
+          label= {isHebrew === false ? "User Name" : "שם משתמש"}
           value={username}
           style={{ marginLeft: '4px', width: '40%', marginBottom: '15px' }}
         />
@@ -138,7 +140,7 @@ export default function UserDahsboard(props) {
           <TextField
             fullWidth
             type='password'
-            label="Password"
+            label= {isHebrew === false ? "Password" : "סיסמה"}
             value={password}
             onChange={handlePasswordChange}
             style={{ marginLeft: '4px', width: '100%' }}
