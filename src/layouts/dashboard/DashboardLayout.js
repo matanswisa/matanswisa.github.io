@@ -174,10 +174,10 @@ export default function DashboardLayout() {
       let currentDate = new Date();
       //check if accessToken is invalid.
       if (decodedToken.exp * 1000 < currentDate.getTime()) {
-        console.log("token exp-", decodedToken.exp, " current date - ", currentDate.getTime())
+      
         return refreshToken().then((response) => {
           // localStorage.setItem('token', response.data.token)
-          console.log(response.data);
+       
           originalRequest.headers.Authorization = "Berear " + response.data.accessToken;
           dispatch(login({ user, accessToken: response.data.accessToken }));
           return Promise.resolve(originalRequest)
@@ -192,7 +192,7 @@ export default function DashboardLayout() {
   const refreshToken = async () => {
     try {
       const res = await axiosAuth.post('/api/auth/refreshToken', { token: user.refreshToken })
-      console.log(res.data);
+    
       dispatch(login({ user, accessToken: res.data.accessToken }));
       return res;
     } catch (err) {

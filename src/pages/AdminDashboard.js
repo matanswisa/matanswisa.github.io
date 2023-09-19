@@ -324,22 +324,17 @@ const UsersManagementPage = () => {
     
   // this function create a msg of 2 types : "Trial" and "Regular"  , after create the msg struct , send email with this info of user properties to user created. 
   const handleSendMailAfterEdit = async () => {
+ 
     let welcomeMessage;
     let Editmsg = false;
-   
-      const formattedLicenseDate = licenseTime.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      });
-
+       
       welcomeMessage = `Welcome to TradeExalt!
           
       Your account has been created,Your login credentials:  
 
         Username: ${username}
         Password: ${"getpasswrod from db"}
-        License Expiration Date: ${formattedLicenseDate}
+        License Expiration Date: ${licenseTime}
         
         For security purposes, we recommend changing your password after your first login. To get started, simply visit www.TradeExalt.co.il and sign in using your credentials.  As a user of our TradeExalt app, 
 
