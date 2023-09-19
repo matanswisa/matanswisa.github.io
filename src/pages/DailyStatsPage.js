@@ -31,17 +31,19 @@ export default function DailyStatsPage() {
 
   const user = useSelector(selectUser);
 
-
   useEffect(() => {
     console.log("Current account has changed!!!")
-    api.post('/api/DailyStatsInfo', { trades: currentAccount.trades }, { headers: { Authorization: "Berear " + user.accessToken } })
-      .then((res) => {
-        setTrades(res.data);
-
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    
+    // Check if currentAccount and currentAccount.trades are not null/undefined
+    if (currentAccount?.trades) {
+      api.post('/api/DailyStatsInfo', { trades: currentAccount.trades }, { headers: { Authorization: "Bearer " + user.accessToken } })
+        .then((res) => {
+          setTrades(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }, [currentAccount?.trades]);
 
 

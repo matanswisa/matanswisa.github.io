@@ -282,6 +282,7 @@ const UsersManagementPage = () => {
     const user = useSelector(selectUser);
 
 
+    
     useEffect(() => {
         fetchUsers(user);
     }, [openmodal])
@@ -319,6 +320,50 @@ const UsersManagementPage = () => {
         }
     };
 
+
+    
+  // this function create a msg of 2 types : "Trial" and "Regular"  , after create the msg struct , send email with this info of user properties to user created. 
+  const handleSendMailAfterEdit = async () => {
+ 
+    let welcomeMessage;
+    let Editmsg = false;
+       
+      welcomeMessage = `Welcome to TradeExalt!
+        Your account membership has renewd, with the same login credentials.
+       
+        License Expiration Date: ${licenseTime}
+        
+        For security purposes, we recommend changing your password after your first login. To get started, simply visit www.TradeExalt.co.il and sign in using your credentials.  As a user of our TradeExalt app, 
+
+        it's essential that you carefully read and understand our Terms of Service and Privacy Policy. By accepting these terms and conditions, you also agree to be bound by the terms of the TradeExalt website.
+    
+        Please take the time to review the complete Terms of Service and Privacy Policy provided with this email. 
+        
+        !Happy trading 
+        
+        ,Best regards 
+        TradeExalt Team`;
+    
+    
+    const data = {
+      to: email,
+      subject: 'Welcome to TradeExalt!',
+      text: welcomeMessage,
+      isTrial: Editmsg,
+
+    }
+
+    await api.post('/api/sendEmail', data).then((res) => {
+      notifyToast(getMsg(messages, msgType.success, msgNumber[7],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[7],languageidx).msgType);
+      //   notifyToast("mail Send successfully", "success");
+    }).catch((err) => {
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[8],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[8],languageidx).msgType);
+      // notifyToast("Mail not send", "error");
+      console.log(err);
+      return false;
+    })
+
+  }
 
 
 
@@ -383,29 +428,40 @@ const UsersManagementPage = () => {
     }
 
 
-
-
-
-
     const handleUpdateUser = async () => {
 
-        await api.put('/api/auth/updateUser', {
-            data: { userId, username, email, licenseTime },
-        }, {
-            headers: {
-                Authorization: `Bearer ${user.accessToken}`,
+        let res = checkLicenseTime(licenseTime);
+      
+        if (!res) {
+          
+            notifyToast(getMsg(messages, msgType.errors, msgNumber[9], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[13], languageidx).msgType);
+            return; // Don't proceed with the update
+        } else {
+            try {
+                await api.put('/api/auth/updateUser', {
+                    data: { userId, username, email, licenseTime },
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${user.accessToken}`,
+                    }
+                });
+                fetchUsers();
+                handleSendMailAfterEdit();
+                handleClose();
+                notifyToast(getMsg(messages, msgType.success, msgNumber[13], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[13], languageidx).msgType);
+            } catch (error) {
+                console.error(error);
+                // Handle the error from the API request and show an error message if needed
             }
-        });
-        fetchUsers();
-        handleClose();
-        notifyToast(getMsg(messages, msgType.success, msgNumber[13],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[13],languageidx).msgType);
+        }
     }
+    
 
 
 
 
 
-    function fetchUsers(user) {
+    function fetchUsers() {
         api
             .get('/api/auth/users', {
                 headers: {
