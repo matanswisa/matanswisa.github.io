@@ -103,7 +103,7 @@ export default function UserDahsboard(props) {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
       <Box
         sx={{
           width: '600px',
