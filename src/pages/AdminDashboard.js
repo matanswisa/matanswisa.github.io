@@ -321,6 +321,58 @@ const UsersManagementPage = () => {
     };
 
 
+    
+  // this function create a msg of 2 types : "Trial" and "Regular"  , after create the msg struct , send email with this info of user properties to user created. 
+  const handleSendMailAfterEdit = async () => {
+    let welcomeMessage;
+    let Editmsg = false;
+   
+      const formattedLicenseDate = licenseTime.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+
+      welcomeMessage = `Welcome to TradeExalt!
+          
+      Your account has been created,Your login credentials:  
+
+        Username: ${username}
+        Password: ${"getpasswrod from db"}
+        License Expiration Date: ${formattedLicenseDate}
+        
+        For security purposes, we recommend changing your password after your first login. To get started, simply visit www.TradeExalt.co.il and sign in using your credentials.  As a user of our TradeExalt app, 
+
+        it's essential that you carefully read and understand our Terms of Service and Privacy Policy. By accepting these terms and conditions, you also agree to be bound by the terms of the TradeExalt website.
+    
+        Please take the time to review the complete Terms of Service and Privacy Policy provided with this email. 
+        
+        !Happy trading 
+        
+        ,Best regards 
+        TradeExalt Team`;
+    
+    
+    const data = {
+      to: email,
+      subject: 'Welcome to TradeExalt!',
+      text: welcomeMessage,
+      isTrial: Editmsg,
+
+    }
+
+    await api.post('/api/sendEmail', data).then((res) => {
+      notifyToast(getMsg(messages, msgType.success, msgNumber[7],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[7],languageidx).msgType);
+      //   notifyToast("mail Send successfully", "success");
+    }).catch((err) => {
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[8],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[8],languageidx).msgType);
+      // notifyToast("Mail not send", "error");
+      console.log(err);
+      return false;
+    })
+
+  }
+
 
 
 
@@ -402,6 +454,7 @@ const UsersManagementPage = () => {
                     }
                 });
                 fetchUsers();
+                handleSendMailAfterEdit();
                 handleClose();
                 notifyToast(getMsg(messages, msgType.success, msgNumber[13], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[13], languageidx).msgType);
             } catch (error) {
