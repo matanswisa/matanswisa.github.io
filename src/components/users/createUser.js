@@ -175,21 +175,26 @@ function BasicModal(props) {
 
       const trialDays = 7; // Assuming the trial period is 7 days
       welcomeMessage = `Welcome to TradeExalt!
-          
-          Your trial account has been created. This is a trial account, and you can enjoy all the premium features of TradeExalt for ${trialDays} days.
-      
-          To get started, simply visit www.TradeExalt.co.il and sign in using your credentials. 
+
+           
+       Your trial account has been created, login credentials:  
+
+        Username: ${username}
+        Password: ${password}
+        License Expiration Date: ${formattedLicenseDate}
+
+       This is a trial account, and you can enjoy all the premium features of TradeExalt for ${trialDays} days, To get started, simply visit www.TradeExalt.co.il and sign in using your credentials. 
                   
-          As a user of our TradeExalt app, it's essential that you carefully read and understand our Terms of Service and Privacy Policy. By accepting these terms and conditions, you also agree to be bound by the terms of the TradeExalt website.
+        As a user of our TradeExalt app, it's essential that you carefully read and understand our Terms of Service and Privacy Policy. By accepting these terms and conditions,
+
+        you also agree to be bound by the terms of the TradeExalt website. Please take the time to review the complete Terms of Service and Privacy Policy provided with this email.
           
-          Please take the time to review the complete Terms of Service and Privacy Policy provided with this email.
-          
-          License Expiration Date: ${formattedLicenseDate}
+        License Expiration Date: ${formattedLicenseDate}
         
-          !Happy trading 
+        !Happy trading 
               
-          ,Best regards 
-          TradeExalt Team`;
+        ,Best regards 
+        TradeExalt Team`;
     }
     else {
       const formattedLicenseDate = licenseTime.toLocaleDateString('en-US', {
@@ -198,19 +203,19 @@ function BasicModal(props) {
         day: 'numeric',
       });
 
-      welcomeMessage = `:Your login credentials 
+      welcomeMessage = `Welcome to TradeExalt!
+          
+      Your account has been created,Your login credentials:  
+
         Username: ${username}
         Password: ${password}
-    
         License Expiration Date: ${formattedLicenseDate}
         
-        For security purposes, we recommend changing your password after your first login. 
-        
-        To get started, simply visit www.TradeExalt.co.il and sign in using your credentials. 
-            
-        As a user of our TradeExalt app, it's essential that you carefully read and understand our Terms of Service and Privacy Policy. By accepting these terms and conditions, you also agree to be bound by the terms of the TradeExalt website.
+        For security purposes, we recommend changing your password after your first login. To get started, simply visit www.TradeExalt.co.il and sign in using your credentials.  As a user of our TradeExalt app, 
+
+        it's essential that you carefully read and understand our Terms of Service and Privacy Policy. By accepting these terms and conditions, you also agree to be bound by the terms of the TradeExalt website.
     
-        Please take the time to review the complete Terms of Service and Privacy Policy provided with this email.
+        Please take the time to review the complete Terms of Service and Privacy Policy provided with this email. 
         
         !Happy trading 
         
