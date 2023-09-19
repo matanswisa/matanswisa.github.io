@@ -282,6 +282,7 @@ const UsersManagementPage = () => {
     const user = useSelector(selectUser);
 
 
+    
     useEffect(() => {
         fetchUsers(user);
     }, [openmodal])
@@ -400,7 +401,7 @@ const UsersManagementPage = () => {
                         Authorization: `Bearer ${user.accessToken}`,
                     }
                 });
-                fetchUsers(username);
+                fetchUsers();
                 handleClose();
                 notifyToast(getMsg(messages, msgType.success, msgNumber[13], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[13], languageidx).msgType);
             } catch (error) {
@@ -415,7 +416,7 @@ const UsersManagementPage = () => {
 
 
 
-    function fetchUsers(user) {
+    function fetchUsers() {
         api
             .get('/api/auth/users', {
                 headers: {
