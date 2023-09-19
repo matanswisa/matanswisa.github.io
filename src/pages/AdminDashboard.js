@@ -384,13 +384,10 @@ const UsersManagementPage = () => {
 
 
     const handleUpdateUser = async () => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Set time to midnight
-        
-        // Parse the licenseTime string into a Date object
-        const licenseDate = new Date(licenseTime);
-    
-        if (licenseDate < today) {
+
+        let res = checkLicenseTime(licenseTime);
+      
+        if (!res) {
           
             notifyToast(getMsg(messages, msgType.errors, msgNumber[9], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[13], languageidx).msgType);
             return; // Don't proceed with the update
