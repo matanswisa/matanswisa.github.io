@@ -329,11 +329,8 @@ const UsersManagementPage = () => {
     let Editmsg = false;
        
       welcomeMessage = `Welcome to TradeExalt!
-          
-      Your account has been created,Your login credentials:  
-
-        Username: ${username}
-        Password: ${"getpasswrod from db"}
+        Your account membership has renewd, with the same login credentials.
+       
         License Expiration Date: ${licenseTime}
         
         For security purposes, we recommend changing your password after your first login. To get started, simply visit www.TradeExalt.co.il and sign in using your credentials.  As a user of our TradeExalt app, 
