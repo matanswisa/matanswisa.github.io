@@ -383,23 +383,36 @@ const UsersManagementPage = () => {
     }
 
 
-
-
-
-
     const handleUpdateUser = async () => {
-
-        await api.put('/api/auth/updateUser', {
-            data: { userId, username, email, licenseTime },
-        }, {
-            headers: {
-                Authorization: `Bearer ${user.accessToken}`,
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set time to midnight
+        
+        // Parse the licenseTime string into a Date object
+        const licenseDate = new Date(licenseTime);
+    
+        if (licenseDate < today) {
+          
+            notifyToast(getMsg(messages, msgType.errors, msgNumber[9], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[13], languageidx).msgType);
+            return; // Don't proceed with the update
+        } else {
+            try {
+                await api.put('/api/auth/updateUser', {
+                    data: { userId, username, email, licenseTime },
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${user.accessToken}`,
+                    }
+                });
+                fetchUsers(username);
+                handleClose();
+                notifyToast(getMsg(messages, msgType.success, msgNumber[13], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[13], languageidx).msgType);
+            } catch (error) {
+                console.error(error);
+                // Handle the error from the API request and show an error message if needed
             }
-        });
-        fetchUsers();
-        handleClose();
-        notifyToast(getMsg(messages, msgType.success, msgNumber[13],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[13],languageidx).msgType);
+        }
     }
+    
 
 
 
