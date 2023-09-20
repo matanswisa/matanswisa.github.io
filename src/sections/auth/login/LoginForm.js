@@ -85,29 +85,28 @@ export default function LoginForm(props) {
   }
 
   //function check if the 1time password input fro, user eql to genreated 1 time password when its eql need show "change new password form".
-  const validate1TimePassword = () =>
-  {
+  const validate1TimePassword = () => {
     const onetimepassword = document.getElementById('input-with-icon-textfield-change-password-1timepassword').value;
-   
+
     api
-    .post('/api/auth/validate1timepass', {
-      password: onetimepassword,
+      .post('/api/auth/validate1timepass', {
+        password: onetimepassword,
 
-    })
-    .then(async (response) => {
+      })
+      .then(async (response) => {
 
-      
-      if (response.status === 200) {
-      
-      }
-    
 
-    })
-    .catch((error) => {
-      console.error('user not exist:', error);
-      setErrorMessage("1 time password not correct");
+        if (response.status === 200) {
 
-    });
+        }
+
+
+      })
+      .catch((error) => {
+        console.error('user not exist:', error);
+        setErrorMessage("1 time password not correct");
+
+      });
   }
 
 
@@ -126,7 +125,7 @@ export default function LoginForm(props) {
 
 
 
-    api
+    axiosAuth
       .post('/api/auth/checkUserExist', {
         info: usernameOrEmail,
 
@@ -168,7 +167,7 @@ export default function LoginForm(props) {
           <Box sx={{ width: 600, height: 500, backgroundColor: '#fff', border: '1px solid lightgrey' }}>
 
             <Box>
-              <Typography variant="h6" component="h3" style={{marginLeft: '18px', marginTop: '10px', marginBottom: '30px', color: 'black', fontWeight: 'inherit', fontSize: '15px' }}>
+              <Typography variant="h6" component="h3" style={{ marginLeft: '18px', marginTop: '10px', marginBottom: '30px', color: 'black', fontWeight: 'inherit', fontSize: '15px' }}>
                 To complete your action, please enter the one-time password that has been sent to your email address.
               </Typography>
 
