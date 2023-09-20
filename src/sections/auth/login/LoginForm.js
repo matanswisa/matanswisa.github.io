@@ -84,7 +84,7 @@ export default function LoginForm(props) {
 
   }
 
-
+  //function check if the 1time password input fro, user eql to genreated 1 time password when its eql need show "change new password form".
   const validate1TimePassword = () =>
   {
     const onetimepassword = document.getElementById('input-with-icon-textfield-change-password-1timepassword').value;
@@ -112,7 +112,7 @@ export default function LoginForm(props) {
 
 
 
-  //this function check if user name or email exist in db
+  //this function check if user name or email exist in db before send 1time password to email.
   const validateForgotPaswordForm = () => {
 
     const usernameOrEmail = document.getElementById('input-with-icon-textfield').value;
@@ -123,6 +123,8 @@ export default function LoginForm(props) {
       setErrorMessage('Please enter your username or email.');
       return; // Prevent further processing if the field is empty
     }
+
+
 
     api
       .post('/api/auth/checkUserExist', {
