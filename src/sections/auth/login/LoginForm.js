@@ -63,9 +63,35 @@ export default function LoginForm(props) {
   };
 
 
+  const send1timepasswordtomail = () => {
 
-  const handleForgotPasswordForm = () => {
-    navigate('/dashboard/test', { replace: true });
+  }
+
+  const validateForgotPaswordForm = () => {
+
+    const usernameOrEmail = document.getElementById('input-with-icon-textfield').value;
+
+  // Check if the input field is empty
+  if (!usernameOrEmail) {
+    // The field is empty, you can display an error message or take appropriate action
+    alert('Please enter your username or email.');
+    return; // Prevent further processing if the field is empty
+  }
+  
+
+  api
+  .post('/api/auth/checkUserExist', {
+   info: usernameOrEmail,
+   
+  })
+  .then(async (response) => {
+   // handleSendMail();
+  })
+  .catch((error) => {
+    console.error('user not exist:', error);
+  });
+
+
   };
 
   return (
@@ -103,7 +129,7 @@ export default function LoginForm(props) {
 
 
           <Box>
-            <Button variant="contained" href="#contained-buttons" style={{ marginBottom: '235px', marginLeft: '18px', fontSize: '20px', color: 'black' }}>
+            <Button variant="contained" href="#contained-buttons" style={{ marginBottom: '235px', marginLeft: '18px', fontSize: '20px', color: 'black' }} onClick={validateForgotPaswordForm}>
               Reset Password
             </Button>
           </Box>
