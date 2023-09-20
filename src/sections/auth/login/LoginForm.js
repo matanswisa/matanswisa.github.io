@@ -43,6 +43,7 @@ export default function LoginForm(props) {
   const [errorMessage, setErrorMessage] = useState(null);
   const [showResetPasswordForm, setShowResetPasswordForm] = useState(false);
   const [show1TimePasswordForm, setShow1TimePasswordForm] = useState(false);
+  const [forgotpasswordTemp,setforgotpasswordTemp] = useState("");
   const messages = useSelector(selectMessages);
   console.log(messages);
   const handleLoginForm = () => {
@@ -91,13 +92,16 @@ export default function LoginForm(props) {
     api
       .post('/api/auth/validate1timepass', {
         password: onetimepassword,
+        user: forgotpasswordTemp,
 
       })
       .then(async (response) => {
 
 
         if (response.status === 200) {
-
+            console.log("ok");
+            setShowResetPasswordForm(true);
+            setShow1TimePasswordForm(false); // go to next page.
         }
 
 
@@ -115,7 +119,7 @@ export default function LoginForm(props) {
   const validateForgotPaswordForm = () => {
 
     const usernameOrEmail = document.getElementById('input-with-icon-textfield').value;
-
+    setforgotpasswordTemp(usernameOrEmail);
     // Check if the input field is empty
     if (!usernameOrEmail) {
       // The field is empty, you can display an error message or take appropriate action
@@ -136,7 +140,8 @@ export default function LoginForm(props) {
         if (response.status === 200) {
           // alert("please open the link in your mail");
           setShow1TimePasswordForm(true);
-          // setShowResetPasswordForm(true);
+        
+          
         }
 
       })
@@ -153,9 +158,57 @@ export default function LoginForm(props) {
     <>
       {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
 
+      {showResetPasswordForm === true ? (
+          <div>    
+        <Typography variant="h4" component="h3" style={{ color: 'black',fontWeight: 'inherit' ,cursor:'pointer'}}>
+          Change password
+        </Typography>
+  
+        <Box sx={{ width: 600, height: 500, backgroundColor: '#fff', border: '1px solid lightgrey' }}>
+          <Box  >
+            <TextField
+              id="input-with-icon-textfield-change-password-1"
+              label="New Password"
+              type='password'
+              style={{marginTop:'30px', marginBottom: '30px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+  
+                  </InputAdornment>
+                ),
+              }}
+              variant="standard"
+            />
+          </Box>
+          <Box>
+            <TextField
+              id="input-with-icon-textfield-change-password-2"
+              label="Repeat New Password"
+              type='password'
+              style={{marginTop:'30px', marginBottom: '250px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+  
+                  </InputAdornment>
+                ),
+              }}
+              variant="standard"
+            />
+          </Box>
+  
+          <Box>
+            <Button variant="contained" href="#contained-buttons" style={{ marginLeft: '18px', fontSize: '20px', color: 'black' }} onClick={validateChangePasswordForm}>
+              Change Password
+            </Button>
+          </Box>
+        </Box>
 
+      </div>
+      ):
 
-      {show1TimePasswordForm === true  /// this form show after user click "forgot password and after insert valid username or email exist in db"
+      show1TimePasswordForm === true  /// this form show after user click "forgot password and after insert valid username or email exist in db"
 
 
         ? (<div>
