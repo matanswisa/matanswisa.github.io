@@ -450,9 +450,17 @@ const UsersManagementPage = () => {
                 handleClose();
                 notifyToast(getMsg(messages, msgType.success, msgNumber[13], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[13], languageidx).msgType);
             } catch (error) {
-                console.error(error);
-                // Handle the error from the API request and show an error message if needed
+
+                if (error.response && error.response.status === 400) {
+                notifyToast(getMsg(messages, msgType.errors, msgNumber[10], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[10], languageidx).msgType);
+                  } 
+            //    if (error.response && error.response.status === 400) {
+            //     const errorMessage = error.response.data; // This should contain the error message
+            //     console.log("Backend Error Message:", errorMessage);
+            //     // You can use this errorMessage as needed in your frontend
+            // }
             }
+
         }
     }
     
