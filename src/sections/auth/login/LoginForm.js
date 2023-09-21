@@ -80,6 +80,11 @@ export default function LoginForm(props) {
     const password2 = document.getElementById('input-with-icon-textfield-change-password-2').value;
 
 
+    if(password1.length == 0 || password2.length == 0){
+      setErrorMessage("Please enter both password fields.");
+      return;
+    }
+
     if(password1.length < 8 || password2.length < 8){
       setErrorMessage("password must be above 8 characters");
       return;
