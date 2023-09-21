@@ -100,6 +100,7 @@ export default function LoginForm(props) {
                   setShow1TimePasswordForm(false); // go to next page.
                   setShowForgotPassword(false);
                   setSuccessMessage("Password update successfuly!");
+                  setErrorMessage("");
               }
 
 
