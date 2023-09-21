@@ -77,8 +77,9 @@ export default function LoginForm(props) {
     const password2 = document.getElementById('input-with-icon-textfield-change-password-2').value;
 
 
-    if(password1.length < 8 || password2 < 8){
+    if(password1.length < 8 || password2.length < 8){
       setErrorMessage("password must be above 8 characters");
+      return;
     }
 
     if (password1 === password2)      //Update password and go to login page.
@@ -112,7 +113,7 @@ export default function LoginForm(props) {
     }
     else {
      setErrorMessage("passwords must be same");
-
+      return;
     }
 
   }
