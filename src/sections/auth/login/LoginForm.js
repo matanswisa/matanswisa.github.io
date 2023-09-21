@@ -41,6 +41,7 @@ export default function LoginForm(props) {
   const [password, setPassword] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [showResetPasswordForm, setShowResetPasswordForm] = useState(false);
   const [show1TimePasswordForm, setShow1TimePasswordForm] = useState(false);
   const [forgotpasswordTemp,setforgotpasswordTemp] = useState("");
@@ -69,17 +70,48 @@ export default function LoginForm(props) {
   };
 
 
-  const validateChangePasswordForm = () => {
+  const validateChangePasswordForm = () => 
+  {
 
     const password1 = document.getElementById('input-with-icon-textfield-change-password-1').value;
     const password2 = document.getElementById('input-with-icon-textfield-change-password-2').value;
 
-    if (password1 === password2) {
 
-      alert("password  same");
+    if(password1.length < 8 || password2 < 8){
+      setErrorMessage("password must be above 8 characters");
+    }
+
+    if (password1 === password2)      //Update password and go to login page.
+    {
+        
+            api
+            .post('/api/auth/updatepasswordaftervalidateotp', {
+              password: password1,
+              user: forgotpasswordTemp,
+
+            })
+            .then(async (response) => {
+
+
+              if (response.status === 200) {
+                  console.log("ok");
+                  setShowResetPasswordForm(false);
+                  setShow1TimePasswordForm(false); // go to next page.
+                  setShowForgotPassword(false);
+                  setSuccessMessage("Password update successfuly!");
+              }
+
+
+            })
+            .catch((error) => {
+              console.error('user not exist:', error);
+              setErrorMessage("error with change password , please contact with service.");
+
+            });
+
     }
     else {
-      setErrorMessage("passwords must be same");
+     setErrorMessage("passwords must be same");
 
     }
 
@@ -156,6 +188,7 @@ export default function LoginForm(props) {
 
   return (
     <>
+     {successMessage && <Alert severity="success">{successMessage}</Alert>}
       {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
 
       {showResetPasswordForm === true ? (
@@ -200,7 +233,7 @@ export default function LoginForm(props) {
   
           <Box>
             <Button variant="contained" href="#contained-buttons" style={{ marginLeft: '18px', fontSize: '20px', color: 'black' }} onClick={validateChangePasswordForm}>
-              Change Password
+              Change
             </Button>
           </Box>
         </Box>
