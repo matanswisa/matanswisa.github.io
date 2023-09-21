@@ -37,6 +37,8 @@ export default function LoginForm(props) {
   const dispatch = useDispatch();
   const languageidx = useSelector(selectidx);
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordAuth, setShowPasswordAuth] = useState(false);
+  const [showPasswordChangepassword, setShowPasswordChangepassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -46,6 +48,7 @@ export default function LoginForm(props) {
   const [show1TimePasswordForm, setShow1TimePasswordForm] = useState(false);
   const [forgotpasswordTemp,setforgotpasswordTemp] = useState("");
   const messages = useSelector(selectMessages);
+  
   console.log(messages);
   const handleLoginForm = () => {
     if (!username || !password) return;
@@ -198,18 +201,20 @@ export default function LoginForm(props) {
         <Typography variant="h4" component="h3" style={{ color: 'black',fontWeight: 'inherit' ,cursor:'pointer'}}>
           Change password
         </Typography>
-  
+        
         <Box sx={{ width: 600, height: 500, backgroundColor: '#fff', border: '1px solid lightgrey' }}>
           <Box  >
             <TextField
               id="input-with-icon-textfield-change-password-1"
               label="New Password"
-              type='password'
+              type={showPasswordChangepassword ? 'text' : 'password'}
               style={{marginTop:'30px', marginBottom: '30px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-  
+                       <IconButton onClick={() => setShowPasswordChangepassword(!showPasswordChangepassword)} edge="end">
+                        <Iconify icon={showPasswordChangepassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      </IconButton>
                   </InputAdornment>
                 ),
               }}
@@ -220,12 +225,14 @@ export default function LoginForm(props) {
             <TextField
               id="input-with-icon-textfield-change-password-2"
               label="Repeat New Password"
-              type='password'
+              type={showPasswordChangepassword ? 'text' : 'password'}
               style={{marginTop:'30px', marginBottom: '250px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-  
+   <IconButton onClick={() => setShowPasswordChangepassword(!showPasswordChangepassword)} edge="end">
+                        <Iconify icon={showPasswordChangepassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      </IconButton>
                   </InputAdornment>
                 ),
               }}
@@ -262,15 +269,22 @@ export default function LoginForm(props) {
             </Box>
 
             <Box  >
+
+
+
+
+
               <TextField
                 id="input-with-icon-textfield-change-password-1timepassword"
                 label="Password"
-                type='password'
+                type={showPasswordAuth ? 'text' : 'password'}
                 style={{ marginTop: '30px', marginBottom: '270px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-
+          <IconButton onClick={() => setShowPasswordAuth(!showPasswordAuth)} edge="end">
+                        <Iconify icon={showPasswordAuth ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      </IconButton>
                     </InputAdornment>
                   ),
                 }}
