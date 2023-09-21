@@ -105,8 +105,8 @@ export default function LoginForm(props) {
 
             })
             .catch((error) => {
-              console.error('user not exist:', error);
-              setErrorMessage("error with change password , please contact with service.");
+          
+              setErrorMessage(error.response.data);
 
             });
 
