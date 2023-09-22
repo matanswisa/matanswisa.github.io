@@ -261,13 +261,10 @@ function BasicModal(props) {
           await props.handleOpenModal(false);
           await notifyToast(getMsg(messages, msgType.success, msgNumber[8],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[8],languageidx).msgType);
           // notifyToast("User added successfully", "success");
-          // Fetch list of users from "/api/users" route
+        
         })
         .catch((error) => {
             notifyToast(error.response.data ,'error');
-            
-         
-
         });
     }
   };
