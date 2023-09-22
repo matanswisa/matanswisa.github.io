@@ -264,7 +264,10 @@ function BasicModal(props) {
           // Fetch list of users from "/api/users" route
         })
         .catch((error) => {
-          console.error('Failed to create user:', error);
+            notifyToast(error.response.data ,'error');
+            
+         
+
         });
     }
   };
