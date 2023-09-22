@@ -59,13 +59,12 @@ export default function LoginForm(props) {
       dispatch(login(res.data));
       navigate('/dashboard/app', { replace: true });
     }).catch((err) => {
-      console.log(err);
-      // console.log(err.response.data.isLicenseExpired);
       if (err.response && err.response.data && err.response.data.isLicenseExpried) {
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[30], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[30], languageidx).msgType);
         // notifyToast("Your license has expired. Please renew it to continue using the service.", "info");
       } else {
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[14], languageidx).msgType);
+        notifyToast(err.response.data.message ,'error');
+      //  notifyToast(getMsg(messages, msgType.warnings, msgNumber[10], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[10], languageidx).msgType);
         // Toast("Sorry, One or more login details are incorrect. Please try again.", "error");
       }
 
