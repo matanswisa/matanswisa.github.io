@@ -215,7 +215,7 @@ export default function LoginForm(props) {
               type={showPasswordChangepassword ? 'text' : 'password'}
               style={{marginTop:'30px', marginBottom: '30px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
               InputProps={{
-                startAdornment: (
+                endAdornment: (
                   <InputAdornment position="start">
                        <IconButton onClick={() => setShowPasswordChangepassword(!showPasswordChangepassword)} edge="end">
                         <Iconify icon={showPasswordChangepassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
@@ -233,7 +233,7 @@ export default function LoginForm(props) {
               type={showPasswordChangepassword ? 'text' : 'password'}
               style={{marginTop:'30px', marginBottom: '250px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
               InputProps={{
-                startAdornment: (
+                endAdornment: (
                   <InputAdornment position="start">
    <IconButton onClick={() => setShowPasswordChangepassword(!showPasswordChangepassword)} edge="end">
                         <Iconify icon={showPasswordChangepassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
@@ -285,7 +285,7 @@ export default function LoginForm(props) {
                 type={showPasswordAuth ? 'text' : 'password'}
                 style={{ marginTop: '30px', marginBottom: '270px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
                 InputProps={{
-                  startAdornment: (
+                  endAdornment: (
                     <InputAdornment position="start">
           <IconButton onClick={() => setShowPasswordAuth(!showPasswordAuth)} edge="end">
                         <Iconify icon={showPasswordAuth ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
