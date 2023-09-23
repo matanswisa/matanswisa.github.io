@@ -46,9 +46,9 @@ export default function LoginForm(props) {
   const [successMessage, setSuccessMessage] = useState(null);
   const [showResetPasswordForm, setShowResetPasswordForm] = useState(false);
   const [show1TimePasswordForm, setShow1TimePasswordForm] = useState(false);
-  const [forgotpasswordTemp,setforgotpasswordTemp] = useState("");
+  const [forgotpasswordTemp, setforgotpasswordTemp] = useState("");
   const messages = useSelector(selectMessages);
-  
+
   console.log(messages);
   const handleLoginForm = () => {
     if (!username || !password) return;
@@ -63,8 +63,8 @@ export default function LoginForm(props) {
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[30], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[30], languageidx).msgType);
         // notifyToast("Your license has expired. Please renew it to continue using the service.", "info");
       } else {
-        notifyToast(err.response.data.message ,'error');
-      //  notifyToast(getMsg(messages, msgType.warnings, msgNumber[10], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[10], languageidx).msgType);
+        notifyToast(err.response.data.message, 'error');
+        //  notifyToast(getMsg(messages, msgType.warnings, msgNumber[10], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[10], languageidx).msgType);
         // Toast("Sorry, One or more login details are incorrect. Please try again.", "error");
       }
 
@@ -72,55 +72,54 @@ export default function LoginForm(props) {
   };
 
 
-  const validateChangePasswordForm = () => 
-  {
+  const validateChangePasswordForm = () => {
 
     const password1 = document.getElementById('input-with-icon-textfield-change-password-1').value;
     const password2 = document.getElementById('input-with-icon-textfield-change-password-2').value;
 
 
-    if(password1.length == 0 || password2.length == 0){
+    if (password1.length == 0 || password2.length == 0) {
       setErrorMessage("Please enter both password fields.");
       return;
     }
 
-    if(password1.length < 8 || password2.length < 8){
+    if (password1.length < 8 || password2.length < 8) {
       setErrorMessage("password must be above 8 characters");
       return;
     }
 
     if (password1 === password2)      //Update password and go to login page.
     {
-        
-            api
-            .post('/api/auth/updatepasswordaftervalidateotp', {
-              password: password1,
-              user: forgotpasswordTemp,
 
-            })
-            .then(async (response) => {
+      api
+        .post('/api/auth/updatepasswordaftervalidateotp', {
+          password: password1,
+          user: forgotpasswordTemp,
 
-
-              if (response.status === 200) {
-                  console.log("ok");
-                  setShowResetPasswordForm(false);
-                  setShow1TimePasswordForm(false); // go to next page.
-                  setShowForgotPassword(false);
-                  setSuccessMessage("Password update successfuly!");
-                  setErrorMessage("");
-              }
+        })
+        .then(async (response) => {
 
 
-            })
-            .catch((error) => {
-          
-              setErrorMessage(error.response.data);
+          if (response.status === 200) {
+            console.log("ok");
+            setShowResetPasswordForm(false);
+            setShow1TimePasswordForm(false); // go to next page.
+            setShowForgotPassword(false);
+            setSuccessMessage("Password update successfuly!");
+            setErrorMessage("");
+          }
 
-            });
+
+        })
+        .catch((error) => {
+
+          setErrorMessage(error.response.data);
+
+        });
 
     }
     else {
-     setErrorMessage("passwords must be same");
+      setErrorMessage("passwords must be same");
       return;
     }
 
@@ -129,20 +128,19 @@ export default function LoginForm(props) {
   //function check if the 1time password input fro, user eql to genreated 1 time password when its eql need show "change new password form".
   const validate1TimePassword = () => {
     const onetimepassword = document.getElementById('input-with-icon-textfield-change-password-1timepassword').value;
+    console.log(onetimepassword);
 
     api
-      .post('/api/auth/validate1timepass', {
-        password: onetimepassword,
-        user: forgotpasswordTemp,
-
+      .post('/api/auth/validate-otp', {
+        otp: onetimepassword,
       })
       .then(async (response) => {
 
 
         if (response.status === 200) {
-            console.log("ok");
-            setShowResetPasswordForm(true);
-            setShow1TimePasswordForm(false); // go to next page.
+          console.log("ok");
+          setShowResetPasswordForm(true);
+          setShow1TimePasswordForm(false); // go to next page.
         }
 
 
@@ -181,8 +179,8 @@ export default function LoginForm(props) {
         if (response.status === 200) {
           // alert("please open the link in your mail");
           setShow1TimePasswordForm(true);
-        
-          
+
+
         }
 
       })
@@ -197,97 +195,45 @@ export default function LoginForm(props) {
 
   return (
     <>
-     {successMessage && <Alert severity="success">{successMessage}</Alert>}
+      {successMessage && <Alert severity="success">{successMessage}</Alert>}
       {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
 
       {showResetPasswordForm === true ? (
-          <div>    
-        <Typography variant="h4" component="h3" style={{ color: 'black',fontWeight: 'inherit' ,cursor:'pointer'}}>
-          Change password
-        </Typography>
-        
-        <Box sx={{ width: 600, height: 500, backgroundColor: '#fff', border: '1px solid lightgrey' }}>
-          <Box  >
-            <TextField
-              id="input-with-icon-textfield-change-password-1"
-              label="New Password"
-              type={showPasswordChangepassword ? 'text' : 'password'}
-              style={{marginTop:'30px', marginBottom: '30px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-                       <IconButton onClick={() => setShowPasswordChangepassword(!showPasswordChangepassword)} edge="end">
-                        <Iconify icon={showPasswordChangepassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                      </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              variant="standard"
-            />
-          </Box>
-          <Box>
-            <TextField
-              id="input-with-icon-textfield-change-password-2"
-              label="Repeat New Password"
-              type={showPasswordChangepassword ? 'text' : 'password'}
-              style={{marginTop:'30px', marginBottom: '250px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="start">
-   <IconButton onClick={() => setShowPasswordChangepassword(!showPasswordChangepassword)} edge="end">
-                        <Iconify icon={showPasswordChangepassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                      </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              variant="standard"
-            />
-          </Box>
-  
-          <Box>
-            <Button variant="contained" href="#contained-buttons" style={{ marginLeft: '18px', fontSize: '20px', color: 'black' }} onClick={validateChangePasswordForm}>
-              Change
-            </Button>
-          </Box>
-        </Box>
-
-      </div>
-      ):
-
-      show1TimePasswordForm === true  /// this form show after user click "forgot password and after insert valid username or email exist in db"
-
-
-        ? (<div>
-
+        <div>
           <Typography variant="h4" component="h3" style={{ color: 'black', fontWeight: 'inherit', cursor: 'pointer' }}>
-            Auth Password
+            Change password
           </Typography>
 
           <Box sx={{ width: 600, height: 500, backgroundColor: '#fff', border: '1px solid lightgrey' }}>
-
-            <Box>
-              <Typography variant="h6" component="h3" style={{ marginLeft: '18px', marginTop: '10px', marginBottom: '30px', color: 'black', fontWeight: 'inherit', fontSize: '15px' }}>
-                To complete your action, please enter the one-time password that has been sent to your email address.
-              </Typography>
-
-            </Box>
-
             <Box  >
-
-
-
-
-
               <TextField
-                id="input-with-icon-textfield-change-password-1timepassword"
-                label="Password"
-                type={showPasswordAuth ? 'text' : 'password'}
-                style={{ marginTop: '30px', marginBottom: '270px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
+                id="input-with-icon-textfield-change-password-1"
+                label="New Password"
+                type={showPasswordChangepassword ? 'text' : 'password'}
+                style={{ marginTop: '30px', marginBottom: '30px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="start">
-          <IconButton onClick={() => setShowPasswordAuth(!showPasswordAuth)} edge="end">
-                        <Iconify icon={showPasswordAuth ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      <IconButton onClick={() => setShowPasswordChangepassword(!showPasswordChangepassword)} edge="end">
+                        <Iconify icon={showPasswordChangepassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                variant="standard"
+              />
+            </Box>
+            <Box>
+              <TextField
+                id="input-with-icon-textfield-change-password-2"
+                label="Repeat New Password"
+                type={showPasswordChangepassword ? 'text' : 'password'}
+                style={{ marginTop: '30px', marginBottom: '250px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton onClick={() => setShowPasswordChangepassword(!showPasswordChangepassword)} edge="end">
+                        <Iconify icon={showPasswordChangepassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -297,110 +243,162 @@ export default function LoginForm(props) {
             </Box>
 
             <Box>
-              <Button variant="contained" href="#contained-buttons" style={{ marginLeft: '18px', fontSize: '20px', color: 'black' }} onClick={validate1TimePassword}>
-                Sumbit
+              <Button variant="contained" href="#contained-buttons" style={{ marginLeft: '18px', fontSize: '20px', color: 'black' }} onClick={validateChangePasswordForm}>
+                Change
               </Button>
             </Box>
           </Box>
 
+        </div>
+      ) :
+
+        show1TimePasswordForm === true  /// this form show after user click "forgot password and after insert valid username or email exist in db"
+
+
+          ? (<div>
+
+            <Typography variant="h4" component="h3" style={{ color: 'black', fontWeight: 'inherit', cursor: 'pointer' }}>
+              Auth Password
+            </Typography>
+
+            <Box sx={{ width: 600, height: 500, backgroundColor: '#fff', border: '1px solid lightgrey' }}>
+
+              <Box>
+                <Typography variant="h6" component="h3" style={{ marginLeft: '18px', marginTop: '10px', marginBottom: '30px', color: 'black', fontWeight: 'inherit', fontSize: '15px' }}>
+                  To complete your action, please enter the one-time password that has been sent to your email address.
+                </Typography>
+
+              </Box>
+
+              <Box  >
 
 
 
 
-        </div>) : // this form show after user click "forgot password" 
-        (showForgotPassword === true ? <div>
 
+                <TextField
+                  id="input-with-icon-textfield-change-password-1timepassword"
+                  label="Password"
+                  type={showPasswordAuth ? 'text' : 'password'}
+                  style={{ marginTop: '30px', marginBottom: '270px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="start">
+                        <IconButton onClick={() => setShowPasswordAuth(!showPasswordAuth)} edge="end">
+                          <Iconify icon={showPasswordAuth ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  variant="standard"
+                />
+              </Box>
 
-          <Typography variant="h4" component="h3" style={{ color: 'black', fontWeight: 'inherit', cursor: 'pointer' }}>
-            Forgot password
-          </Typography>
-
-          <Box sx={{ width: 600, height: 500, backgroundColor: '#fff', border: '1px solid lightgrey' }}>
-
-            <Box>
-              <Typography variant="h6" component="h3" style={{ color: 'black', fontWeight: 'inherit', fontSize: '16px', marginLeft: '18px', marginBottom: '30px', marginTop: '20px' }}>
-                Lost your password? Please enter your username or email address. You will receive a link to create a new password via email.
-              </Typography>
+              <Box>
+                <Button variant="contained" href="#contained-buttons" style={{ marginLeft: '18px', fontSize: '20px', color: 'black' }} onClick={validate1TimePassword}>
+                  Sumbit
+                </Button>
+              </Box>
             </Box>
 
-            <Box  >
-              <TextField
-                id="input-with-icon-textfield"
-                label="Username or email"
-                style={{ marginBottom: '30px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
 
-                    </InputAdornment>
-                  ),
+
+
+
+          </div>) : // this form show after user click "forgot password" 
+          (showForgotPassword === true ? <div>
+
+
+            <Typography variant="h4" component="h3" style={{ color: 'black', fontWeight: 'inherit', cursor: 'pointer' }}>
+              Forgot password
+            </Typography>
+
+            <Box sx={{ width: 600, height: 500, backgroundColor: '#fff', border: '1px solid lightgrey' }}>
+
+              <Box>
+                <Typography variant="h6" component="h3" style={{ color: 'black', fontWeight: 'inherit', fontSize: '16px', marginLeft: '18px', marginBottom: '30px', marginTop: '20px' }}>
+                  Lost your password? Please enter your username or email address. You will receive a link to create a new password via email.
+                </Typography>
+              </Box>
+
+              <Box  >
+                <TextField
+                  id="input-with-icon-textfield"
+                  label="Username or email"
+                  style={{ marginBottom: '30px', marginLeft: '18px', width: '90%', fontSize: '15px' }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+
+                      </InputAdornment>
+                    ),
+                  }}
+                  variant="standard"
+                />
+              </Box>
+
+
+              <Box>
+                <Button variant="contained" href="#contained-buttons" style={{ marginBottom: '235px', marginLeft: '18px', fontSize: '20px', color: 'black' }} onClick={validateForgotPaswordForm}>
+                  Reset Password
+                </Button>
+              </Box>
+
+              <Box>
+                <Link variant="body1" onClick={() => setShowForgotPassword(!showForgotPassword)} style={{ fontWeight: 'inherit', fontSize: '18px', marginLeft: '18px', cursor: 'pointer' }}   >
+                  Remember your password?
+                </Link>
+              </Box>
+
+            </Box>
+
+
+
+
+
+          </div> :
+            //this form is login page 
+            <div>
+              <Stack spacing={3}>
+
+                <ToastContainer />
+                <TextField inputProps={{ style: { color: 'black' } }} name="User Name" value={username} onChange={(e) => setUsername(e.target.value)} />
+
+                <TextField InputLabelProps={{
+                  style: { color: 'black' }, // Set the label color to black
                 }}
-                variant="standard"
-              />
-            </Box>
+                  name="password"
+                  label="Password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  inputProps={{ style: { color: 'black' } }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                          <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
+
+              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 3 }}>
 
 
-            <Box>
-              <Button variant="contained" href="#contained-buttons" style={{ marginBottom: '235px', marginLeft: '18px', fontSize: '20px', color: 'black' }} onClick={validateForgotPaswordForm}>
-                Reset Password
-              </Button>
-            </Box>
+              </Stack>
+              <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleLoginForm} style={{ marginBottom: '22px' }}>
+                Login
+              </LoadingButton>
 
-            <Box>
-              <Link variant="body1" onClick={() => setShowForgotPassword(!showForgotPassword)} style={{ fontWeight: 'inherit', fontSize: '18px', marginLeft: '18px', cursor: 'pointer' }}   >
-                Remember your password?
-              </Link>
-            </Box>
-
-          </Box>
-
-
-
-
-
-        </div> :
-          //this form is login page 
-          <div>
-            <Stack spacing={3}>
-
-              <ToastContainer />
-              <TextField inputProps={{ style: { color: 'black' } }} name="User Name" value={username} onChange={(e) => setUsername(e.target.value)} />
-
-              <TextField InputLabelProps={{
-                style: { color: 'black' }, // Set the label color to black
-              }}
-                name="password"
-                label="Password"
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                inputProps={{ style: { color: 'black' } }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Stack>
-
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 3 }}>
-
-
-            </Stack>
-            <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleLoginForm} style={{ marginBottom: '22px' }}>
-              Login
-            </LoadingButton>
-
-            <Grid >
-              <Link variant="body2" onClick={() => setShowForgotPassword(!showForgotPassword)} style={{ cursor: 'pointer' }}  >
-                Forgot password?
-              </Link>
-            </Grid>
-          </div>)
+              <Grid >
+                <Link variant="body2" onClick={() => setShowForgotPassword(!showForgotPassword)} style={{ cursor: 'pointer' }}  >
+                  Forgot password?
+                </Link>
+              </Grid>
+            </div>)
       }
     </>
 

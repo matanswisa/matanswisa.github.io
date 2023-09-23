@@ -1,7 +1,7 @@
 import api from "../api/api";
-import { configAuth } from "../api/configAuth";
-import { getMsg } from "./messeageUtils";
 
+
+//TODO: This code not finished yet need to match it by the new messages object.
 export const handleUploadTradeImage = async (tradeId, reduxUser, userId, accountId, selectedFile) => {
 
     const formData = new FormData();
@@ -21,7 +21,7 @@ export const handleUploadTradeImage = async (tradeId, reduxUser, userId, account
     // .catch(error => {
     //     notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
     //     // Handle any errors that occurred during the upload
-   
+
     //     console.error(error);
     // });
     return response;
