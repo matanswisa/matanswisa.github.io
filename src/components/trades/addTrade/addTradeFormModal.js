@@ -33,6 +33,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentAccount, selectUser, setTradesList, setCurrentAccount } from '../../../redux-toolkit/userSlice';
 
 
+import Alert from '@mui/material/Alert';
 
 import { brokers } from '../../brokersNames/brokers.js'
 
@@ -81,6 +82,7 @@ export default function TradeModal(props) {
 
 
   //------------------------------------------------  States ----------------------------------------------------- //
+  const [errorMessage, setErrorMessage] = useState(null);
   const languageidx = useSelector(selectidx);
   const isHebrew = useSelector(selectlanguage);
   const darkMode = useSelector(selectDarkMode);
@@ -156,7 +158,10 @@ export default function TradeModal(props) {
 
       if (WinOrLoss == "Win") {
 
-        if (parseFloat(TakeProfit) >= parseFloat(EntryPrice) || Qty === 0) { /// not valid option. tp must be below from entry when is short     
+        if (parseFloat(TakeProfit) >= parseFloat(EntryPrice) || Qty === 0) { /// not valid option. tp must be below from entry when is short 
+          notifyToast(getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgType);
+    
+          // setErrorMessage("Take profit must be below Entry Price");
           return "";
         }
         else {
@@ -168,7 +173,9 @@ export default function TradeModal(props) {
       }
       else if (WinOrLoss == "Loss") {
 
-        if (parseFloat(StopLoss) <= parseFloat(EntryPrice) ||  parseFloat(Qty) === 0 || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. tp must be below from entry when is short     
+        if (parseFloat(StopLoss) <= parseFloat(EntryPrice) ||  parseFloat(Qty) === 0 || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. 
+          notifyToast(getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgType);
+    
           return "";
         }
         else {
@@ -176,14 +183,13 @@ export default function TradeModal(props) {
           return lossAmount;
         }
       }
-
-
     }
-
 
     else if (Type === "Long") {
       if (WinOrLoss == "Win") {
-        if (parseFloat(TakeProfit) <= parseFloat(EntryPrice) || parseFloat(Qty) === 0 || parseFloat(EntryPrice) === 0 || parseFloat(TakeProfit) === 0) { /// not valid option. tp must be below from entry when is short     
+        if (parseFloat(TakeProfit) <= parseFloat(EntryPrice) || parseFloat(Qty) === 0 || parseFloat(EntryPrice) === 0 || parseFloat(TakeProfit) === 0) { /// not valid option. 
+          notifyToast(getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgType);
+   
           return "";
         }
         else {
@@ -193,11 +199,12 @@ export default function TradeModal(props) {
       }
 
       else if (WinOrLoss == "Loss") {
-        if (parseFloat(StopLoss) >= parseFloat(EntryPrice) || parseFloat(Qty) === 0 || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. tp must be below from entry when is short     
+        if (parseFloat(StopLoss) >= parseFloat(EntryPrice) || parseFloat(Qty) === 0 || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. 
+          notifyToast(getMsg(messages, msgType.warnings, msgNumber[36], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[36], languageidx).msgType);
           return "";
         }
         else {
-          console.log("Dsad");
+         
           const lossAmount = Qty * (StopLoss - EntryPrice );
           return lossAmount;
         }
@@ -516,12 +523,17 @@ export default function TradeModal(props) {
 
   return (
     // currentAccount?.Broker === brokers.Tradovate ?
+   <>
+   {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
+   
     <Modal
       open={props.openModal}
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
+ 
+
       <Box sx={style} >
 
 
@@ -759,7 +771,7 @@ export default function TradeModal(props) {
       </Box>
 
     </Modal >
-
+    </>
   );
 
 }
