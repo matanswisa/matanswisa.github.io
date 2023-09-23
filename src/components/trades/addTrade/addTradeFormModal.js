@@ -31,6 +31,7 @@ import Iconify from '../../iconify/Iconify';
 import './addTrade.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentAccount, selectUser, setTradesList, setCurrentAccount } from '../../../redux-toolkit/userSlice';
+import InputAdornment from '@mui/material/InputAdornment';
 
 
 import Alert from '@mui/material/Alert';
@@ -154,11 +155,18 @@ export default function TradeModal(props) {
 
 
   function calculateNetPNLBinance(Type, Qty, EntryPrice, TakeProfit, StopLoss, WinOrLoss) {
+    if(parseFloat(Qty === 0)){
+
+      notifyToast("Qty must be above Zero.","warning");
+      return "";
+    }
     if (Type === "Short") {
+
+      
 
       if (WinOrLoss == "Win") {
 
-        if (parseFloat(TakeProfit) >= parseFloat(EntryPrice) || Qty === 0) { /// not valid option. tp must be below from entry when is short 
+        if (parseFloat(TakeProfit) >= parseFloat(EntryPrice) ) { /// not valid option. tp must be below from entry when is short 
           notifyToast(getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgType);
     
           // setErrorMessage("Take profit must be below Entry Price");
@@ -173,7 +181,7 @@ export default function TradeModal(props) {
       }
       else if (WinOrLoss == "Loss") {
 
-        if (parseFloat(StopLoss) <= parseFloat(EntryPrice) ||  parseFloat(Qty) === 0 || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. 
+        if (parseFloat(StopLoss) <= parseFloat(EntryPrice) || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. 
           notifyToast(getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgType);
     
           return "";
@@ -187,7 +195,7 @@ export default function TradeModal(props) {
 
     else if (Type === "Long") {
       if (WinOrLoss == "Win") {
-        if (parseFloat(TakeProfit) <= parseFloat(EntryPrice) || parseFloat(Qty) === 0 || parseFloat(EntryPrice) === 0 || parseFloat(TakeProfit) === 0) { /// not valid option. 
+        if (parseFloat(TakeProfit) <= parseFloat(EntryPrice) ||parseFloat(EntryPrice) === 0 || parseFloat(TakeProfit) === 0) { /// not valid option. 
           notifyToast(getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgType);
    
           return "";
@@ -199,7 +207,7 @@ export default function TradeModal(props) {
       }
 
       else if (WinOrLoss == "Loss") {
-        if (parseFloat(StopLoss) >= parseFloat(EntryPrice) || parseFloat(Qty) === 0 || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. 
+        if (parseFloat(StopLoss) >= parseFloat(EntryPrice) || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. 
           notifyToast(getMsg(messages, msgType.warnings, msgNumber[36], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[36], languageidx).msgType);
           return "";
         }
@@ -735,7 +743,13 @@ export default function TradeModal(props) {
                   label={isHebrew === false ? "Net P&L" : "רווח/הפסד נטו"}
                   value={netPnL}
                   onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
-
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        $
+                      </InputAdornment>
+                    ),
+                  }}
                   type="number"
                   InputLabelProps={{ shrink: true }}
                 />
