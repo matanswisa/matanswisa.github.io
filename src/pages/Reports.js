@@ -208,8 +208,7 @@ export default function UserPage() {
 
   if (currentAccount !== null) {
     // Check if the current account's broker is Tradovate
-    if (currentAccount?.Broker == brokers.Tradovate) {
-
+    // if (currentAccount?.Broker == brokers.Tradovate) {
       if (isHebrew === false) {
         // Define table columns for Tradovate broker
         TABLE_HEAD = [
@@ -218,7 +217,7 @@ export default function UserPage() {
           { id: 'status', label: 'Status', alignRight: false },
           { id: 'netROI', label: 'Net ROI', alignRight: false },
           { id: 'longShort', label: 'Long / Short', alignRight: false },
-          { id: 'contracts', label: 'Contracts', alignRight: false },
+          { id:  currentAccount?.Broker == brokers.Binance ?"Quantity " :'Contracts', label: currentAccount?.Broker == brokers.Binance ?"Quantity " :'Contracts', alignRight: false },
           { id: 'duration', label: 'Duration', alignRight: false },
           { id: 'commission', label: 'Commission', alignRight: false },
           { id: 'netPnL', label: 'Net P&L', alignRight: false },
@@ -248,50 +247,8 @@ export default function UserPage() {
 
       }
     }
-    else if (currentAccount?.Broker == brokers.Binance) {
-      if (isHebrew === false) {
-        // Define table columns for Tradovate broker
-        TABLE_HEAD = [
-          { id: 'entryDate', label: 'Open Date', alignRight: false },
-          { id: 'symbol', label: 'Symbol', alignRight: false },
-          { id: 'status', label: 'Status', alignRight: false },
-          { id: 'netROI', label: 'Net ROI', alignRight: false },
-          { id: 'longShort', label: 'Long / Short', alignRight: false },
-          { id: 'Quantity', label: 'Quantity', alignRight: false },
-          { id: 'duration', label: 'Duration', alignRight: false },
-          { id: 'commission', label: 'Commission', alignRight: false },
-          { id: 'netPnL', label: 'Net P&L', alignRight: false },
-          { id: 'image', label: 'Image', alignRight: false },
-          { id: 'edit', label: 'Edit', alignRight: false },
-          { id: 'delete', label: 'Delete', alignRight: false },
-          { id: 'comments', label: 'comments', alignRight: false }
-        ];
-        // Check if the current account's broker is Binance
-      }
-      else {
-        TABLE_HEAD = [
-          { id: 'הערות', label: 'הערות', alignRight: false },
-          { id: 'מחק', label: 'מחיקה', alignRight: false },
-          { id: 'עריכה', label: 'עריכה', alignRight: false },
-          { id: 'תמונה', label: 'תמונה', alignRight: false },
-          { id: 'רווח/הפסד נקי', label: 'רווח/הפסד נקי', alignRight: false },
-          { id: 'עמלה', label: 'עמלה', alignRight: false },
-          { id: 'זמן עסקה', label: 'זמן עסקה', alignRight: false },
-          { id: 'כמות', label: 'כמות', alignRight: false },
-          { id: 'לונג / שורט', label: 'לונג / שורט', alignRight: false },
-          { id: 'רוי נקי', label: 'רוי נקי', alignRight: false },
-          { id: 'סטטוס', label: 'סטטוס', alignRight: false },
-          { id: 'סימן', label: 'סימן', alignRight: false },
-          { id: 'תאריך כניסה', label: 'תאריך כניסה', alignRight: false },
-        ];
+ 
 
-      }
-    }
-  }
-
-
-
-  
   const handleRequestSortCols = (property) => {
     if (orderByCols === property) {
       // If the same column is clicked again, toggle the order
@@ -302,10 +259,6 @@ export default function UserPage() {
       setOrderCols('asc');
     }
   };
-  
-  
-  
-
   
 
   function handleCellClick(parameter, info) {
