@@ -138,7 +138,7 @@ export default function LoginForm(props) {
 
 
         if (response.status === 200) {
-          console.log("ok");
+          setErrorMessage("");
           setShowResetPasswordForm(true);
           setShow1TimePasswordForm(false); // go to next page.
         }
