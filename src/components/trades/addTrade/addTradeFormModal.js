@@ -244,7 +244,7 @@ export default function TradeModal(props) {
 
 
     }
-  }, [positionType]); // Listen for changes in positionType
+  }, [positionType,contractsCounts,entryPrice,exitPrice,stopPrice,positionStatus]); // Listen for changes in positionType
 
   // ...
 
