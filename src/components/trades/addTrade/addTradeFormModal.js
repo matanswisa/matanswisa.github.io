@@ -226,7 +226,6 @@ export default function TradeModal(props) {
             reduxDispatch(setTradesList(res.data.tradesWithImage));
 
 
-            api.
             notifyToast(getMsg(messages, msgType.success, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[4], languageidx).msgType);
             //  notifyToast("Trade added successfully", "success");
             handleClose();
@@ -280,10 +279,24 @@ export default function TradeModal(props) {
 
       notifyToast(getMsg(messages, msgType.warnings, msgNumber[28], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[28], languageidx).msgType);
       // notifyToast(errorMessage, "warning");
-
       return false;
-
     }
+
+    if (positionType === "Short"){
+          if(exitPrice >= entryPrice){
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgType);
+            return false;
+          }
+    }
+
+    if (positionType === "Long"){
+      if(exitPrice <= entryPrice){
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgType);
+        return false;
+      }
+}
+
+    
 
     if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||
       contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
@@ -656,7 +669,7 @@ export default function TradeModal(props) {
           <Box style={{ marginLeft: "780px" }} >
             <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} variant="contained" onClick={handleSaveTrade} > {isHebrew === false ? "Save" : "שמור"}</Button>
 
-            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", marginLeft: "7px" }} variant="outlined" onClick={handleSaveTrade} > {isHebrew === false ? "Cancel" : "ביטול"}</Button>
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", marginLeft: "7px" }} variant="outlined" onClick={handleClose} > {isHebrew === false ? "Cancel" : "ביטול"}</Button>
           </Box>
 
         </Box>
@@ -884,7 +897,7 @@ export default function TradeModal(props) {
           <Box style={{ marginLeft: "780px" }} >
             <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} variant="contained" onClick={handleSaveTrade} > {isHebrew === false ? "Save" : "שמור"}</Button>
 
-            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", marginLeft: "7px" }} variant="outlined" onClick={handleSaveTrade} > {isHebrew === false ? "Cancel" : "ביטול"}</Button>
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", marginLeft: "7px" }} variant="outlined" onClick={  handleClose} > {isHebrew === false ? "Cancel" : "ביטול"}</Button>
           </Box>
 
         </Box>
