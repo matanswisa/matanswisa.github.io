@@ -719,6 +719,13 @@ export default function TradeModal(props) {
                   onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
                   label={isHebrew === false ? "Commission" : "עמלה"}
                   InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        $      -
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Box>
               {' '}

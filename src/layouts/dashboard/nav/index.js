@@ -158,7 +158,7 @@ export default function Nav({ openNav, onCloseNav }) {
             id="outlined-adornment-amount"
             disabled={true}
             style={{ backgroundColor: darkMode === false ? "#0000" : "#121212" }}
-            startAdornment={<InputAdornment position="start" style={{ color: '#54a38d', fontWeight: 'bold', fontFamily: 'inherit', fontSize: '15px' }} > {currentAccount?.InitialBalance}$</InputAdornment>}
+            startAdornment={<InputAdornment position="start" style={{ color: '#54a38d', fontWeight: 'bold', fontFamily: 'inherit', fontSize: '15px' }} > ${currentAccount?.InitialBalance}</InputAdornment>}
           />
         </FormControl> : ""}
 
