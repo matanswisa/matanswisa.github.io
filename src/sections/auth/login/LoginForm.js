@@ -22,6 +22,8 @@ import { msgNumber } from '../../../utils/msgNumbers.js';
 import { Button } from 'rsuite';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
 
 // ----------------------------------------------------------------------
 
@@ -364,7 +366,16 @@ export default function LoginForm(props) {
               <Stack spacing={3}>
 
                 <ToastContainer />
-                <TextField inputProps={{ style: { color: 'black' } }} name="User Name" value={username} onChange={(e) => setUsername(e.target.value)} />
+                <TextField inputProps={{ style: { color: 'black' } }} name="User Name" value={username} onChange={(e) => setUsername(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <AccountCircleIcon />
+                    </InputAdornment>
+                  ),
+                  style: { color: 'black' },
+                }}
+                />
 
                 <TextField InputLabelProps={{
                   style: { color: 'black' }, // Set the label color to black
