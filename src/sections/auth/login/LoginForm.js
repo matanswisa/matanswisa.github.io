@@ -102,6 +102,7 @@ export default function LoginForm(props) {
 
           if (response.status === 200) {
             console.log("ok");
+            
             setShowResetPasswordForm(false);
             setShow1TimePasswordForm(false); // go to next page.
             setShowForgotPassword(false);
@@ -177,6 +178,7 @@ export default function LoginForm(props) {
 
         //after username or email exist id db we send email and change page 
         if (response.status === 200) {
+          setErrorMessage("");
           // alert("please open the link in your mail");
           setShow1TimePasswordForm(true);
 

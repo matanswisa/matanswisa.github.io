@@ -249,15 +249,16 @@ export default function UserPage() {
       }
     }
     else if (currentAccount?.Broker == brokers.Binance) {
-
       if (isHebrew === false) {
-        // Define table columns for Binance broker
+        // Define table columns for Tradovate broker
         TABLE_HEAD = [
           { id: 'entryDate', label: 'Open Date', alignRight: false },
           { id: 'symbol', label: 'Symbol', alignRight: false },
           { id: 'status', label: 'Status', alignRight: false },
+          { id: 'netROI', label: 'Net ROI', alignRight: false },
           { id: 'longShort', label: 'Long / Short', alignRight: false },
           { id: 'Quantity', label: 'Quantity', alignRight: false },
+          { id: 'duration', label: 'Duration', alignRight: false },
           { id: 'commission', label: 'Commission', alignRight: false },
           { id: 'netPnL', label: 'Net P&L', alignRight: false },
           { id: 'image', label: 'Image', alignRight: false },
@@ -265,22 +266,25 @@ export default function UserPage() {
           { id: 'delete', label: 'Delete', alignRight: false },
           { id: 'comments', label: 'comments', alignRight: false }
         ];
-
+        // Check if the current account's broker is Binance
       }
       else {
         TABLE_HEAD = [
-          { id: 'comments', label: 'הערות', alignRight: false },
-          { id: 'delete', label: 'מחיקה', alignRight: false },
-          { id: 'edit', label: 'עריכה', alignRight: false },
-          { id: 'image', label: 'תמונה', alignRight: false },
-          { id: 'commission', label: 'עמלה', alignRight: false },
-          { id: 'netPnL', label: 'רווח נטו', alignRight: false },
-          { id: 'Quantity', label: 'כמות', alignRight: false },
-          { id: 'longShort', label: 'לונג/שורט', alignRight: false },
-          { id: 'status', label: 'סטטוס', alignRight: false },
-          { id: 'symbol', label: 'סמל', alignRight: false },
-          { id: 'entryDate', label: 'תאריך פתיחה', alignRight: false },
+          { id: 'הערות', label: 'הערות', alignRight: false },
+          { id: 'מחק', label: 'מחיקה', alignRight: false },
+          { id: 'עריכה', label: 'עריכה', alignRight: false },
+          { id: 'תמונה', label: 'תמונה', alignRight: false },
+          { id: 'רווח/הפסד נקי', label: 'רווח/הפסד נקי', alignRight: false },
+          { id: 'עמלה', label: 'עמלה', alignRight: false },
+          { id: 'זמן עסקה', label: 'זמן עסקה', alignRight: false },
+          { id: 'כמות', label: 'כמות', alignRight: false },
+          { id: 'לונג / שורט', label: 'לונג / שורט', alignRight: false },
+          { id: 'רוי נקי', label: 'רוי נקי', alignRight: false },
+          { id: 'סטטוס', label: 'סטטוס', alignRight: false },
+          { id: 'סימן', label: 'סימן', alignRight: false },
+          { id: 'תאריך כניסה', label: 'תאריך כניסה', alignRight: false },
         ];
+
       }
     }
   }
@@ -669,9 +673,9 @@ export default function UserPage() {
 
 
 
-                          {currentAccount.Broker == 1 ?
+                          
                             <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
-                            : ''}
+                         
 
                           {isHebrew === false ?
                             <TableCell align="center">{trade.longShort}</TableCell> :
@@ -683,7 +687,7 @@ export default function UserPage() {
                               {trade.commission ? trade.commission + "$" : "לא זמין"}
                             </TableCell>}
 
-                          {currentAccount.Broker == 1 ?
+                       
                             <TableCell align="center">
                               {trade.duration !== undefined && trade.duration > 0 ? (
                                 <React.Fragment>
@@ -695,7 +699,7 @@ export default function UserPage() {
                                 "N/A"
                               )}
                             </TableCell>
-                            : ""}
+                          
 
                           {isHebrew === false ?
                             <TableCell align="center">
