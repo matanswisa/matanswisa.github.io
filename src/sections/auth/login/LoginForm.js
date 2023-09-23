@@ -102,7 +102,7 @@ export default function LoginForm(props) {
 
           if (response.status === 200) {
             console.log("ok");
-            
+
             setShowResetPasswordForm(false);
             setShow1TimePasswordForm(false); // go to next page.
             setShowForgotPassword(false);
@@ -131,7 +131,7 @@ export default function LoginForm(props) {
     const onetimepassword = document.getElementById('input-with-icon-textfield-change-password-1timepassword').value;
     console.log(onetimepassword);
 
-    api
+    axiosAuth
       .post('/api/auth/validate-otp', {
         otp: onetimepassword,
       })
