@@ -111,7 +111,7 @@ export default function AddFarshel(props) {
     }
 
     if (currentAccount !== null) {
-        if (currentAccount?.Broker == brokers.Tradovate) {
+       
             style = {
                 position: 'absolute',
                 top: '50%',
@@ -130,7 +130,7 @@ export default function AddFarshel(props) {
                 { field: 'time', headerName: 'Time', width: 130, editable: false, },
                 { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
                 { field: 'netROI', headerName: 'Net ROI', width: 100, editable: false, },
-                { field: 'contracts', headerName: 'Contracts', width: 100, editable: false, },
+                { field: currentAccount?.Broker == brokers.Tradovate? 'contracts' : "quantity", headerName: currentAccount?.Broker == brokers.Tradovate? 'Contracts' : "Quantity", width: 100, editable: false, },
                 { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
                 { field: 'exitPrice', headerName: 'Exit Price', width: 100, editable: false, },
                 { field: 'duration', headerName: 'Duration', width: 120, editable: false, },
@@ -143,7 +143,7 @@ export default function AddFarshel(props) {
                 { field: 'time', headerName: 'תאריך', width: 130, editable: false },
                 { field: 'symbol', headerName: 'סמל', width: 100, editable: false },
                 { field: 'netROI', headerName: 'רוי נטו', width: 100, editable: false },
-                { field: 'contracts', headerName: 'חוזים', width: 100, editable: false },
+                { field: currentAccount?.Broker == brokers.Tradovate? 'contracts' : "quantity", headerName: currentAccount?.Broker == brokers.Tradovate? 'חוזים' : "כמות", width: 100, editable: false, },
                 { field: 'entryPrice', headerName: 'מחיר כניסה', width: 100, editable: false },
                 { field: 'exitPrice', headerName: 'מחיר יציאה', width: 100, editable: false },
                 { field: 'duration', headerName: 'זמן עסקה', width: 120, editable: false },
@@ -154,42 +154,8 @@ export default function AddFarshel(props) {
            }
         }
 
-        else if (currentAccount?.Broker == brokers.Binance) {
-            style = {
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 750,
-                height: 480,
-                bgcolor: 'background.paper',
-                border: '2px solid #000',
-                boxShadow: 24,
-                p: 4,
-            };
+        
 
-            if(isHebrew === false){
-            columns = [
-                { field: 'time', headerName: 'Time', width: 120, editable: false, },
-                { field: 'symbol', headerName: 'Symbol', width: 100, editable: false, },
-                { field: 'quantity', headerName: 'Quantity', width: 100, editable: false, },
-                { field: 'entryPrice', headerName: 'Entry Price', width: 100, editable: false, },
-                { field: 'commission', headerName: 'Commission', width: 100, editable: false, },
-                { field: 'netPnL', headerName: 'Net P&L', width: 100, editable: false, },
-            ];
-            }
-            else{
-                columns = [
-                    { field: 'time', headerName: 'זמן', width: 120, editable: false },
-                    { field: 'symbol', headerName: 'סמל', width: 100, editable: false },
-                    { field: 'quantity', headerName: 'כמות', width: 100, editable: false },
-                    { field: 'entryPrice', headerName: 'מחיר כניסה', width: 100, editable: false },
-                    { field: 'commission', headerName: 'עמלה', width: 100, editable: false },
-                    { field: 'netPnL', headerName: 'רווח / הפסד נטו', width: 100, editable: false },
-                  ];  
-            }
-        }
-    }
 
     const handleCellClick = (params) => {
         if (params.field === 'comments') {
@@ -227,7 +193,7 @@ export default function AddFarshel(props) {
             formattedDuration = "N/A";
         }
 
-        if (currentAccount?.Broker === brokers.Tradovate) {
+   
             return {
                 id: trade._id,
                 time: trade.entryDate.split('T')[0],
@@ -240,17 +206,7 @@ export default function AddFarshel(props) {
                 commission: trade.commission ? "$" + trade.commission : "N/A",
                 netPnL: "$" + trade.netPnL,
             };
-        } else if (currentAccount?.Broker === brokers.Binance) {
-            return {
-                id: trade._id,
-                time: trade.entryDate.split('T')[0],
-                symbol: trade.symbol,
-                entryPrice: trade.entryPrice,
-                quantity: trade.contracts,
-                commission: trade.commission ? "$" + trade.commission : "N/A",
-                netPnL: "$" + trade.netPnL,
-            };
-        }
+       
     }
 
     console.log(trade);
@@ -261,7 +217,7 @@ export default function AddFarshel(props) {
     else {
         rows = trade.tradesHistory.map((trade, indx) => {
 
-            console.log(trade.duration);
+      
             // Calculate the duration in hours, minutes, and seconds format
             const durationInMinutes = trade.duration || 0;
             const absoluteDurationInMinutes = Math.abs(durationInMinutes);
@@ -286,7 +242,8 @@ export default function AddFarshel(props) {
                 formattedDuration = "N/A";
             }
 
-            if (currentAccount?.Broker === brokers.Tradovate) {
+          //  if (currentAccount?.Broker === brokers.Tradovate) {
+            console.log(trade.contracts);
                 return {
                     id: indx,
                     time: trade.entryDate.split('T')[0],
@@ -299,17 +256,7 @@ export default function AddFarshel(props) {
                     commission: trade.commission ? "$" + trade.commission : "N/A",
                     netPnL: "$" + trade.netPnL,
                 };
-            } else if (currentAccount?.Broker === brokers.Binance) {
-                return {
-                    id: indx,
-                    time: trade.entryDate.split('T')[0],
-                    symbol: trade.symbol,
-                    entryPrice: trade.entryPrice,
-                    quantity: trade.contracts,
-                    commission: trade.commission ? "$" + trade.commission : "N/A",
-                    netPnL: "$" + trade.netPnL,
-                };
-            }
+          
 
         });
 
