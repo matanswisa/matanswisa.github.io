@@ -155,11 +155,7 @@ export default function TradeModal(props) {
 
 
   function calculateNetPNLBinance(Type, Qty, EntryPrice, TakeProfit, StopLoss, WinOrLoss) {
-    if(parseFloat(Qty === 0)){
-
-      notifyToast("Qty must be above Zero.","warning");
-      return "";
-    }
+ 
     if (Type === "Short") {
 
       
@@ -167,7 +163,7 @@ export default function TradeModal(props) {
       if (WinOrLoss == "Win") {
 
         if (parseFloat(TakeProfit) >= parseFloat(EntryPrice) ) { /// not valid option. tp must be below from entry when is short 
-          notifyToast(getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgType);
+          // notifyToast(getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgType);
     
           // setErrorMessage("Take profit must be below Entry Price");
           return "";
@@ -182,7 +178,7 @@ export default function TradeModal(props) {
       else if (WinOrLoss == "Loss") {
 
         if (parseFloat(StopLoss) <= parseFloat(EntryPrice) || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. 
-          notifyToast(getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgType);
+          // notifyToast(getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgType);
     
           return "";
         }
@@ -196,7 +192,7 @@ export default function TradeModal(props) {
     else if (Type === "Long") {
       if (WinOrLoss == "Win") {
         if (parseFloat(TakeProfit) <= parseFloat(EntryPrice) ||parseFloat(EntryPrice) === 0 || parseFloat(TakeProfit) === 0) { /// not valid option. 
-          notifyToast(getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgType);
+          // notifyToast(getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgType);
    
           return "";
         }
@@ -208,7 +204,7 @@ export default function TradeModal(props) {
 
       else if (WinOrLoss == "Loss") {
         if (parseFloat(StopLoss) >= parseFloat(EntryPrice) || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. 
-          notifyToast(getMsg(messages, msgType.warnings, msgNumber[36], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[36], languageidx).msgType);
+          // notifyToast(getMsg(messages, msgType.warnings, msgNumber[36], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[36], languageidx).msgType);
           return "";
         }
         else {
@@ -386,6 +382,8 @@ export default function TradeModal(props) {
       return false;
     }
 
+  
+
     if (positionType === "Short") {
 
       if (positionStatus === "Win") {
@@ -422,22 +420,33 @@ export default function TradeModal(props) {
 
 
 
-    if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||
-      contractsCounts <= 0 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
+    if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||stopPrice < 1 ||
+    contractsCounts < 1|| Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
       if (positionType === '') {
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[27], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[27], languageidx).msgType);
         //  notifyToast("Position type is missing", "warning");
         return false;
       }
-      else if (positionStatus === '') {
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[26], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[26], languageidx).msgType);
-        //notifyToast("Position status is missing", "warning");
+
+      else if(contractsCounts < 1){
+        if(currentAccount?.Broker === brokers.Tradovate){
+          notifyToast(getMsg(messages, msgType.warnings, msgNumber[38], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[38], languageidx).msgType);
+
+         // notifyToast("Number of contracts must be above Zero.","warning");
+
+        }
+        else{
+          notifyToast(getMsg(messages, msgType.warnings, msgNumber[39], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[39], languageidx).msgType);
+
+        //  notifyToast("Quantity must be above Zero.","warning");
+        }
         return false;
       }
-      else if (!netPnL) {
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[25], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[25], languageidx).msgType);
-        // notifyToast("Net PnL is missing", "warning");
+
+      else if (!positionStatus) {
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[26], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[26], languageidx).msgType);
+        //notifyToast("Position status is missing", "warning");
         return false;
       }
       else if (!contractsCounts) {
@@ -467,7 +476,7 @@ export default function TradeModal(props) {
       }
 
       else if (stopPrice < 1) {
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[20], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[20], languageidx).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[40], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[40], languageidx).msgType);
         //notifyToast("exit Price  is missing", "warning");
         return false;
       }
