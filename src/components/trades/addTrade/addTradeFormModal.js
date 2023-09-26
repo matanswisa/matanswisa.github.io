@@ -603,8 +603,10 @@ export default function TradeModal(props) {
                   value={positionSymbol}
                   onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
                   sx={{ width: "280px", marginBottom: '13px' }}
-                  renderInput={(params) => <TextField {...params} label={isHebrew === false ? "Symbol" : "סימן"} value={positionSymbol} variant="standard" />}
+                  renderInput={(params) => <TextField {...params} label={isHebrew === false ? "Symbol" : "סימן"}  value={positionSymbol} variant="standard" />}
+                  
                 />
+                 
               </Box>
 
               <Box>
@@ -669,6 +671,14 @@ export default function TradeModal(props) {
                   type="number"
                   onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
                   InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Iconify icon={'eva:corner-up-right-outline'} />
+                      </InputAdornment>
+                    ),
+                  }}
+
                 />
               </Box>
               <Box >
@@ -676,7 +686,13 @@ export default function TradeModal(props) {
                   className="outlined-number"
                   sx={{ width: "280px" }}
                   required="true"
-
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Iconify icon={'eva:layers-outline'} />
+                      </InputAdornment>
+                    ),
+                  }}
                   label={currentAccount?.Broker === brokers.Tradovate ? (isHebrew === false ? "Contracts" : "חוזים") : (isHebrew === false ? "Quantity" : "כמות")}
 
                   value={contractsCounts}
@@ -695,7 +711,13 @@ export default function TradeModal(props) {
                   value={stopPrice}
                   required="true"
                   onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
-
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Iconify icon={'eva:close-square-outline'} />
+                      </InputAdornment>
+                    ),
+                  }}
                   InputLabelProps={{ shrink: true }}
                 />
               </Box>
@@ -709,7 +731,17 @@ export default function TradeModal(props) {
                   onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
                   required="true"
                   InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        {positionType === "Long"? 
+                        <Iconify icon={'eva:trending-up-outline'} />:
+                        <Iconify icon={'eva:trending-down-outline'}  /> }
+                      </InputAdornment>
+                    ),
+                  }}
                 />
+                
               </Box>
               <Box sx={{ marginBottom: '30px' }}>
               </Box>
@@ -746,9 +778,16 @@ export default function TradeModal(props) {
                   onChange={(e) => handlePositionFieldInput(e, 'positionDuration')}
                   label={isHebrew === false ? "Trade Duration" : "זמן עסקה"}
                   InputLabelProps={{ shrink: true }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Iconify icon={'eva:clock-outline'} />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </Box>
-
+           
 
               <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
                 {' '}
