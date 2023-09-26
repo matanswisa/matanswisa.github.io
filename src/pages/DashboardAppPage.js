@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography } from '@mui/material';
+import { Grid, Container, Typography, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import Calendar from '../components/Calendar/calendar';
 // components
@@ -327,16 +327,25 @@ export default function DashboardAppPage() {
             <Grid container spacing={3}>
 
               <Grid item xs={12}>
+                <div style={{ display: 'grid', gridTemplateColumns: ' auto'  ,}}>
+                 
+                  <AppCurrentVisits
+                    title={isHebrew === false ? "Winning % By Trades" : "אחוזי ניצחון בעסקאות"}
+                    chartData={[
+                      { label: isHebrew === false ? 'Winners' : "נצחונות", value: winningTrades },
+                      { label: isHebrew === false ? 'Losers' : "הפסדים", value: losingTrades },
+                      { label: isHebrew === false ? 'Break Even' : "ברייק איוון", value: breakEvenTrades },
+                    ]}
+                    chartColors={[Colors.green, Colors.red]}
+                  />
 
-                <AppCurrentVisits
-                  title={isHebrew === false ? "Winning % By Trades" : "אחוזי ניצחון בעסקאות"}
-                  chartData={[
-                    { label: isHebrew === false ? 'Winners' : "נצחונות", value: winningTrades },
-                    { label: isHebrew === false ? 'Losers' : "הפסדים", value: losingTrades },
-                    { label: isHebrew === false ? 'Break Even' : "ברייק איוון", value: breakEvenTrades },
-                  ]}
-                  chartColors={[Colors.green, Colors.red]}
-                />
+                  {/* for version 2 or 1 ?? */}
+ {/* <Button variant="contained" color="primary" style={buttonStyle}>
+                  Winning % By Trades History
+                  </Button> */}
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: ' auto'  ,}}>
                 <AppCurrentVisits
                   title={isHebrew === false ? "Winning % By Days" : "אחוזי ניצחון בימים"}
                   chartData={[
@@ -345,6 +354,12 @@ export default function DashboardAppPage() {
                   ]}
                   chartColors={[Colors.green, Colors.red]}
                 />
+
+                        {/* for version 2 or 1 ?? */}
+ {/* <Button variant="contained" color="primary" style={buttonStyle}>
+                 Winning % By Days History
+                  </Button> */}
+  </div>
 
               </Grid>
 
@@ -366,3 +381,15 @@ export default function DashboardAppPage() {
 }
 
 
+const buttonStyle = {
+  fontSize: '12px', // Adjust the font size to make the button smaller
+  padding: '1px 3px', // Adjust padding to control the button's size
+  color:'black',
+  backgroundColor: 'white', // Set the background color to white
+};
+
+const containerStyle = {
+  display: 'flex',
+  flexDirection: 'column', // Arrange items vertically
+  alignItems: 'flex-start', // Align items to the start (top)
+};
