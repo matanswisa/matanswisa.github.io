@@ -23,10 +23,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import Iconify from '../../iconify';
 import AddFarshel from '../../trades/importTrade/AddFarshel';
 import React, { useState } from 'react';
-import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
+import { selectidx, selectlanguage } from '../../../redux-toolkit/languagesSlice';
 import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
+import { selectCurrentAccount, selectUser, selectUserAccounts, setTradesList } from '../../../redux-toolkit/userSlice';
+import { selectMessages } from '../../../redux-toolkit/messagesSlice';
+import { selectTrade, setTrade } from '../../../redux-toolkit/tradeSlice';
+import api from '../../../api/api';
+import { msgType } from '../../../utils/messagesEnum';
+import { msgNumber } from '../../../utils/msgNumbers';
+import { getMsg } from '../../../utils/messeageUtils';
+import { Label } from '@mui/icons-material';
+import { sentenceCase } from 'sentence-case';
+import { useToast } from 'react-toastify';
 
-
+const formatDate = (dateString) => {
+    const options = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+    };
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", options);
+}
 
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -39,17 +60,100 @@ export default function TradeTableRow(props) {
     const { trade, } = props;
 
     const [openmodalfarshel, setIsOpenFarshelmodal] = useState(false);
-    //selectors
-    const isHebrew = useSelector(selectlanguage);
-    const darkMode = useSelector(selectDarkMode);
 
+    //selectors
+    const languageidx = useSelector(selectidx);
+    const darkMode = useSelector(selectDarkMode);
+    const isHebrew = useSelector(selectlanguage);
+    const messages = useSelector(selectMessages);
+    const currentTrade = useSelector(selectTrade);
+    const userAccounts = useSelector(selectUserAccounts);
+    const currentAccount = useSelector(selectCurrentAccount);
+
+    const trades = currentAccount?.trades;
+    //states
+    const [orderByCols, setOrderByCols] = useState('entryDate'); // Default sorting column
+    const [orderCols, setOrderCols] = useState('asc'); // Default sorting order
+    const [openCommend, setCommendOpen] = useState(false);
+    const [selectedComment, setSelectedComment] = useState('');
+    const user = useSelector(selectUser);
+    const totalTrades = Object.keys(trades).length;
+    const [basicModal, setBasicModal] = useState(false);
+    const toggleShow = () => setBasicModal(!basicModal);
+    const [openmodal, setIsOpenmodal] = useState(false);
+    const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);
+    const [open, setOpen] = useState(null);
+    const [selected, setSelected] = useState([]);
+    const [orderBy, setOrderBy] = useState('name');
+
+    //search states
+    const [filterName, setFilterName] = useState('');
+    const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
+    const [order, setOrder] = useState('asc');
+
+    //table config states:
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - trades.length) : 0;
+    const [opendialog, setDialogOpen] = useState(false);
+    const [accountIdToDelete, setAccountIdToDelete] = useState('');
+
+
+
+
+
+    const [selectedFile, setSelectedFile] = useState(null);
+
+
+
+    const handleFileChange = (event) => {
+        if (event.target.files.length > 0)
+            setSelectedFile(event.target.files[0]);
+    };
 
 
     const handleOpenFarshelModal = (trade) => {
         setIsOpenFarshelmodal(true);
     };
+    const fileInputRef = React.useRef(null);
+
+    const handleButtonClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleClickDialogOpen = (accountId) => {
+        setAccountIdToDelete(accountId);
+        setDialogOpen(true);
+    };
+
 
     const dispatch = useDispatch();
+
+    const handleCellClick = (params) => {
+        if (params.field === 'comments') {
+            setSelectedComment(params.value);
+            setCommendOpen(true);
+        }
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
+
+    const showToast = useToast();
+    const notifyToast = (Msg, Type) => {
+
+        showToast(Msg, Type);
+    }
+
+
+    const deleteTrade = async (tradeId) => {
+        const res = await api.post('/api/deleteTrade', { tradeId: tradeId, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
+        dispatch(setTradesList(res.data))
+        notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
+        // notifyToast("Delete trade Successfully", 'success');
+        toggleShow();
+    }
 
     return (
         <TableRow
@@ -119,7 +223,6 @@ export default function TradeTableRow(props) {
                 <TableCell align="right">
                     <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
                         onClick={() => {
-                            setEditMode(true);
                             setIsOpenmodal(true);
                             dispatch(setTrade(trade));
                         }}
@@ -173,7 +276,7 @@ export default function TradeTableRow(props) {
                 <TableCell align="center">
                     <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
                     {trade.image ? (
-                        <IconButton size="large" color="inherit" onClick={() => { setImageData(trade.image); setImageModalOpen(true); setimageId(trade._id); }}>
+                        <IconButton size="large" color="inherit" >
                             <Iconify icon={'eva:image-outline'} />
                         </IconButton>
                     ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
@@ -189,7 +292,6 @@ export default function TradeTableRow(props) {
                 <TableCell align="right">
                     <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
                         onClick={() => {
-                            setEditMode(true);
                             setIsOpenmodal(true);
                             dispatch(setTrade(trade));
                         }}
