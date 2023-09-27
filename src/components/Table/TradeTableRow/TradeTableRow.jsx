@@ -120,7 +120,7 @@ export default function TradeTableRow(props) {
 
 
     const deleteTrade = async () => {
-        const res = await api.post('/api/deleteTrade', { tradeId: trade._id, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
+        const res = await api.post('/api/deleteTrade', { tradeId: trade.tradeId, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
         dispatch(setTradesList(res.data))
         // notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
         // notifyToast("Delete trade Successfully", 'success');
@@ -130,17 +130,24 @@ export default function TradeTableRow(props) {
     return (
         <TableRow
             hover
-            key={trade._id}
+            key={trade.tradeId}
             tabIndex={-1}
             role="checkbox"
             selected={trade}
         >
 
             <TableCell>
-                <IconButton size="large" color="inherit" onClick={() => handleOpenFarshelModal(trade)}>
-                    <Iconify icon={'eva:info-outline'} />
-                </IconButton>
-                {openmodalfarshel && <AddFarshel trade={trade} openModal={openmodalfarshel} handleOpenModal={setIsOpenFarshelmodal} />}
+                {   //Display info button only for trades with tradeHistory.
+                    (trade?.tradeHistory?.length) &&
+                    <>
+                        <IconButton size="large" color="inherit" onClick={() => handleOpenFarshelModal(trade)}>
+                            <Iconify icon={'eva:info-outline'} />
+                        </IconButton>
+                        <>
+                            {openmodalfarshel && <AddFarshel trade={trade} openModal={openmodalfarshel} handleOpenModal={setIsOpenFarshelmodal} />}
+                        </>
+                    </>
+                }
             </TableCell>
 
 
@@ -176,8 +183,7 @@ export default function TradeTableRow(props) {
                         <DialogActions>
                             <Button onClick={handleDialogClose}>ביטול</Button>
                             <Button onClick={() => {
-                                currentTrade &&
-                                    deleteTrade(currentTrade._id); // Now proceed with the deletion
+                                deleteTrade(); // Now proceed with the deletion
                                 handleDialogClose(); // Close the dialog first
                             }} color="primary">
                                 אישור
@@ -300,8 +306,7 @@ export default function TradeTableRow(props) {
                         <DialogActions>
                             <Button onClick={handleDialogClose}>Cancel</Button>
                             <Button onClick={() => {
-                                currentTrade &&
-                                    deleteTrade(currentTrade._id); // Now proceed with the deletion
+                                deleteTrade(); // Now proceed with the deletion
                                 handleDialogClose(); // Close the dialog first
                             }} color="primary">
                                 Confirm

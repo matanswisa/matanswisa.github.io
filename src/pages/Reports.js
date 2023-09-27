@@ -57,11 +57,6 @@ const sumPnL = (trades) => {
 // export let globalAlert;
 
 
-//Related to dialog error - has to be outside of the component
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
 export default function UserPage() {
 
   //---------------------------------------------------------handle currentAccount selected ----------------------------------------------------- //
@@ -74,6 +69,8 @@ export default function UserPage() {
   else {
     trades = [];
   }
+
+  console.log("trades", trades);
   //------------------------------------------------   States ----------------------------------------------------- //
   const languageidx = useSelector(selectidx);
   const darkMode = useSelector(selectDarkMode);
