@@ -65,43 +65,21 @@ export default function TradeTableRow(props) {
     const languageidx = useSelector(selectidx);
     const darkMode = useSelector(selectDarkMode);
     const isHebrew = useSelector(selectlanguage);
-    const messages = useSelector(selectMessages);
     const currentTrade = useSelector(selectTrade);
-    const userAccounts = useSelector(selectUserAccounts);
     const currentAccount = useSelector(selectCurrentAccount);
 
     const trades = currentAccount?.trades;
     //states
-    const [orderByCols, setOrderByCols] = useState('entryDate'); // Default sorting column
-    const [orderCols, setOrderCols] = useState('asc'); // Default sorting order
     const [openCommend, setCommendOpen] = useState(false);
     const [selectedComment, setSelectedComment] = useState('');
     const user = useSelector(selectUser);
-    const totalTrades = Object.keys(trades).length;
     const [basicModal, setBasicModal] = useState(false);
     const toggleShow = () => setBasicModal(!basicModal);
     const [openmodal, setIsOpenmodal] = useState(false);
-    const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);
-    const [open, setOpen] = useState(null);
-    const [selected, setSelected] = useState([]);
-    const [orderBy, setOrderBy] = useState('name');
-
-    //search states
-    const [filterName, setFilterName] = useState('');
-    const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
-    const [order, setOrder] = useState('asc');
 
     //table config states:
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - trades.length) : 0;
     const [opendialog, setDialogOpen] = useState(false);
     const [accountIdToDelete, setAccountIdToDelete] = useState('');
-
-
-
-
-
     const [selectedFile, setSelectedFile] = useState(null);
 
 
@@ -140,17 +118,11 @@ export default function TradeTableRow(props) {
         setDialogOpen(false);
     };
 
-    const showToast = useToast();
-    const notifyToast = (Msg, Type) => {
 
-        showToast(Msg, Type);
-    }
-
-
-    const deleteTrade = async (tradeId) => {
-        const res = await api.post('/api/deleteTrade', { tradeId: tradeId, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
+    const deleteTrade = async () => {
+        const res = await api.post('/api/deleteTrade', { tradeId: trade._id, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
         dispatch(setTradesList(res.data))
-        notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
+        // notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
         // notifyToast("Delete trade Successfully", 'success');
         toggleShow();
     }

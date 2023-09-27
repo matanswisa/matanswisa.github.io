@@ -32,11 +32,6 @@ import { msgNumber } from '../../utils/msgNumbers';
 import { useToast } from 'react-toastify';
 import React, { useState } from 'react';
 import { filter } from 'lodash';
-import api from '../../api/api';
-import Iconify from '../iconify';
-import AddFarshel from '../trades/importTrade/AddFarshel';
-import Label from '../label';
-import { sentenceCase } from 'change-case';
 import { brokers } from '../brokersNames/brokers';
 import TradeTableRow from './TradeTableRow/TradeTableRow';
 
@@ -53,7 +48,6 @@ export default function TradesTable(props) {
     const darkMode = useSelector(selectDarkMode);
     const isHebrew = useSelector(selectlanguage);
     const messages = useSelector(selectMessages);
-    const currentTrade = useSelector(selectTrade);
     const userAccounts = useSelector(selectUserAccounts);
     const currentAccount = useSelector(selectCurrentAccount);
 
@@ -61,17 +55,10 @@ export default function TradesTable(props) {
     //states
     const [orderByCols, setOrderByCols] = useState('entryDate'); // Default sorting column
     const [orderCols, setOrderCols] = useState('asc'); // Default sorting order
-    const [openCommend, setCommendOpen] = useState(false);
-    const [selectedComment, setSelectedComment] = useState('');
     const user = useSelector(selectUser);
-    const totalTrades = Object.keys(trades).length;
     const [basicModal, setBasicModal] = useState(false);
     const toggleShow = () => setBasicModal(!basicModal);
-    const [openmodal, setIsOpenmodal] = useState(false);
     const [openmodalfarshel, setIsOpenFarshelmodal] = useState(false);
-    const [selectedTrade, setSelectedTrade] = useState(null);
-    const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);
-    const [open, setOpen] = useState(null);
     const [selected, setSelected] = useState([]);
     const [orderBy, setOrderBy] = useState('name');
 
@@ -86,20 +73,11 @@ export default function TradesTable(props) {
     const filteredUsers = applySortFilter(trades, getComparator(order, orderBy), filterName);
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - trades.length) : 0;
     const isNotFound = !filteredUsers.length && !!filterName;
-    const [opendialog, setDialogOpen] = useState(false);
 
 
     //dispatch
-    const dispatch = useDispatch();
 
     //helpers:
-
-    const fileInputRef = React.useRef(null);
-
-    const handleButtonClick = () => {
-        fileInputRef.current.click();
-    };
-
     const sumPnL = (trades) => {
         let sum = 0;
         trades.forEach((trade) => {
@@ -139,28 +117,6 @@ export default function TradesTable(props) {
         return stabilizedThis.map((el) => el[0]);
     }
 
-    //edit modal States
-    // const [editTradeId, setEditTradeId] = useState(null);
-    const [editMode, setEditMode] = useState(false);
-
-    //Image modal States
-    const [imageModalOpen, setImageModalOpen] = useState(false);
-    const [imageData, setImageData] = useState('');
-    const [imageId, setimageId] = useState('');
-
-
-    const handleOpenModal = (tradeId) => {
-
-        if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
-            notifyToast(getMsg(messages, msgType.warnings, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[6], languageidx).msgType);
-            notifyToast("before add trades you need create account", 'warning');
-        }
-        else {
-            setIsOpenmodal(true);
-        }
-
-
-    };
 
     const handleOpenFarshelModal = (trade) => {
         setIsOpenFarshelmodal(true);
@@ -176,17 +132,6 @@ export default function TradesTable(props) {
     }
 
 
-    const handleOpenModalImportTrades = (tradeId) => {
-
-        if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
-            notifyToast(getMsg(messages, msgType.warnings, msgNumber[7], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[7], languageidx).msgType);
-            // notifyToast("before import trades you need create account", 'warning');
-        }
-        else {
-            setIsOpenmodalImportTrades(true);
-        }
-
-    };
 
     //------------------------------------------------handle Serach by date ----------------------------------------------------- //
     const formatDate = (dateString) => {
@@ -202,19 +147,6 @@ export default function TradesTable(props) {
         return date.toLocaleDateString("en-GB", options);
     }
 
-    const handleRequestSort = (event, property) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
-
-    const handleClearDate = () => {
-        setSelectedDate(null);
-    };
-
-    const handleDateChange = (date) => {
-        setSelectedDate(date);
-    };
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
@@ -223,48 +155,6 @@ export default function TradesTable(props) {
             return;
         }
         setSelected([]);
-    };
-
-    //------------------------- handle table pages view ------------------------------------------- //
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setPage(0);
-        setRowsPerPage(parseInt(event.target.value, 10));
-    };
-
-
-    //------------------------------------- handle dialogs  ------------------------------------------- //
-    const handleClickDialogOpen = () => {
-        setDialogOpen(true);
-    };
-
-    const handleDialogClose = () => {
-        setDialogOpen(false);
-    };
-
-    const deleteTrade = async (tradeId) => {
-        const res = await api.post('/api/deleteTrade', { tradeId: tradeId, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
-        dispatch(setTradesList(res.data))
-        notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
-        // notifyToast("Delete trade Successfully", 'success');
-        toggleShow();
-    }
-
-
-
-    // Function to handle opening the dialog and setting the image data
-    const handleOpenDialog = (imageData) => {
-        setImageModalOpen(true);
-        setImageData(imageData);
-    };
-
-    // Function to handle closing the dialog
-    const handleCloseDialog = () => {
-        setImageModalOpen(false);
-        setImageData('');
     };
 
 
@@ -280,27 +170,6 @@ export default function TradesTable(props) {
     };
 
 
-    function handleCellClick(parameter, info) {
-        return function () {
-            if (parameter === 'comments') {
-
-                setSelectedComment(info);
-                setCommendOpen(true);
-            }
-        };
-    }
-
-    const handleCloseCommend = () => {
-        setCommendOpen(false);
-    };
-
-    //------------------------------------------------handle Upload image ----------------------------------------------------- //
-    const [selectedFile, setSelectedFile] = useState(null);
-
-    const handleFileChange = (event) => {
-        if (event.target.files.length > 0)
-            setSelectedFile(event.target.files[0]);
-    };
 
     let TABLE_HEAD;
     //------------------------- Handle table Cols Struct for each broker  ------------------------------------------- //
