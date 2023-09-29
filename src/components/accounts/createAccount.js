@@ -72,13 +72,14 @@ export default function AccountModal(props) {
   //------------------------------------------------ handle create account -----------------------------------------------------//
   const handleCreateAccount = async () => {
     if (validateForm()) {
-      const data = { AccountName: accountName, Broker: broker, Label: selectedColor,   InitialBalance : balance };
+      const data = { AccountName: accountName, Broker: broker, Label: selectedColor, InitialBalance: balance };
       await api
         .post('/api/createAccount', { userId: user._id, data }, { headers: { Authorization: "Berear " + JSON.parse(localStorage.getItem('user')).accessToken } })
         .then(async (res) => {
           notifyToast(getMsg(messages, msgType.success, msgNumber[2], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[2], languageidx).msgType);
           // notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
+          console.log("create account", res.data);
           dispatch(updateAccountList(res.data))
           dispatch(setCurrentAccount(res.data[res.data.length - 1]));
         })
@@ -99,7 +100,7 @@ export default function AccountModal(props) {
         AccountName: accountName,
         Broker: broker,
         Label: selectedColor,
-        
+
         userId: user._id,
       };
 
@@ -141,7 +142,7 @@ export default function AccountModal(props) {
 
   //------------------------------------------------ handle validateForm before create account -----------------------------------------------------//  
   const validateForm = () => {
-    if(balance <= 0){
+    if (balance <= 0) {
       notifyToast(getMsg(messages, msgType.warnings, msgNumber[33], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[1], languageidx).msgType);
       return false;
     }
@@ -284,11 +285,11 @@ export default function AccountModal(props) {
         ) : null}
 
         <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
-          <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 , }}>
+          <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2, }}>
             {isHebrew === false ? "Account Symbol" : "סמל חשבון"}
 
           </Typography>
-          <Select sx={{ mt: 3, ml: 2  ,marginBottom:'20px'}} size="small" value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
+          <Select sx={{ mt: 3, ml: 2, marginBottom: '20px' }} size="small" value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
             <MenuItem value={red[500]}></MenuItem>
             <MenuItem value={red[500]}>
               <ListItemIcon>
