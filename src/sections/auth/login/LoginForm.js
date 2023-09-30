@@ -23,6 +23,7 @@ import { Button } from 'rsuite';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import {toggleLoading} from '../../../redux-toolkit/loadingSlice'
 
 
 // ----------------------------------------------------------------------
@@ -51,6 +52,15 @@ export default function LoginForm(props) {
   const [forgotpasswordTemp, setforgotpasswordTemp] = useState("");
   const messages = useSelector(selectMessages);
 
+
+  
+  const changeLoading = () => {
+    dispatch(toggleLoading());
+  }
+
+
+
+
   console.log(messages);
   const handleLoginForm = () => {
     if (!username || !password) return;
@@ -60,6 +70,7 @@ export default function LoginForm(props) {
       localStorage.setItem('user', JSON.stringify(res.data.user));
       dispatch(login(res.data));
       navigate('/dashboard/app', { replace: true });
+      changeLoading();
     }).catch((err) => {
       if (err.response && err.response.data && err.response.data.isLicenseExpried) {
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[30], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[30], languageidx).msgType);

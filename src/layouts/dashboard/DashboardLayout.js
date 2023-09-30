@@ -22,6 +22,8 @@ import { selectDarkMode, toggleDarkMode } from '../../redux-toolkit/darkModeSlic
 import { selectlanguage, togglelanguage } from '../../redux-toolkit/languagesSlice';
 import { setMessages } from '../../redux-toolkit/messagesSlice';
 import jwt_decode from 'jwt-decode';
+import {toggleLoading} from '../../redux-toolkit/loadingSlice'
+
 // ----------------------------------------------------------------------
 
 const APP_BAR_MOBILE = 64;
@@ -149,11 +151,18 @@ export default function DashboardLayout() {
   const dispatch = useDispatch();
 
   const changeDarkMode = () => {
+    
     dispatch(toggleDarkMode());
+   
+  }
+
+  const changeLoading = () => {
+    dispatch(toggleLoading());
   }
 
 
   const changeLanguage = () => {
+    changeLoading();
     dispatch(togglelanguage());
 
   }
