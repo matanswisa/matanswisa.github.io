@@ -11,7 +11,7 @@ import { selectCurrentAccount, selectUser, selectUserAccounts } from '../../redu
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentAccount } from '../../redux-toolkit/userSlice';
 import { selectlanguage } from '../../redux-toolkit/languagesSlice';
-
+import {toggleLoading} from '../../redux-toolkit/loadingSlice'
 //--------------------------------------------This component show Selected Account options on top left-------------------------------------------//
 export default function MultipleSelectPlaceholder(props) {
 
@@ -27,6 +27,10 @@ export default function MultipleSelectPlaceholder(props) {
   const isHebrew = useSelector(selectlanguage);
 
 
+
+  const changeLoading = () => {
+    dispatch(toggleLoading());
+  }
 
 
 
@@ -68,6 +72,7 @@ export default function MultipleSelectPlaceholder(props) {
       setSelectedAccount(res.data.AccountName)
       setSelectedAccountColor(res.data.Label);
       dispatch(setCurrentAccount(res.data));
+      changeLoading();
     }).catch((err) => {
       console.error(err);
       // alert('Error: ' + err);

@@ -5,14 +5,16 @@ import messagesSlice from '../redux-toolkit/messagesSlice';
 import darkModeReducer from '../redux-toolkit/darkModeSlice';
 import languagesReducer from '../redux-toolkit/languagesSlice';
 import tradeReducer from '../redux-toolkit/tradeSlice';
-
+import loadingReducer from '../redux-toolkit/loadingSlice';
+ 
 const store = configureStore({
     reducer: {
         auth: authReducer,
         messages: messagesSlice,
         darkMode: darkModeReducer,
         languages: languagesReducer,
-        currentTrade: tradeReducer
+        currentTrade: tradeReducer,
+        loading:loadingReducer
     },
 });
 
