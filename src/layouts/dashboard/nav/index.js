@@ -173,7 +173,7 @@ export default function Nav({ openNav, onCloseNav }) {
       {currentAccount !== null ?
         <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
 
-          <InputLabel htmlFor="outlined-adornment-amount">{isHebrew === false ? "Account Balance" : "מאזן חשבון"}   </InputLabel>
+          <InputLabel htmlFor="outlined-adornment-amount">{isHebrew === false ? " Balance" : "מאזן "}   </InputLabel>
 
           <FilledInput
             id="outlined-adornment-amount"
