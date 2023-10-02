@@ -13,6 +13,9 @@ import './pages/blur.css';
 import { useState } from 'react';
 import { selectLoading } from './redux-toolkit/loadingSlice';
 import { useSelector } from 'react-redux';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+
 export default function App() {
   
   const loading = useSelector(selectLoading);
@@ -44,22 +47,30 @@ export default function App() {
 
 
   }, [])
-
-
   return (
-    <div className={isBlurActive ? 'blur-overlay' : ''}>
-
-    <HelmetProvider>
-      <BrowserRouter>
-        <ThemeProvider>
-          <ScrollToTop />
-          <StyledChart />
-          <Router />
-        </ThemeProvider>
-      </BrowserRouter>
-    </HelmetProvider>
+ 
+    <div className={isBlurActive ? 'reload' : ''}>
+      {isBlurActive ? (
+        <Box sx={{ display: 'flex' }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <HelmetProvider>
+            <BrowserRouter>
+              <ThemeProvider>
+                <ScrollToTop />
+                <StyledChart />
+                <Router />
+              </ThemeProvider>
+            </BrowserRouter>
+          </HelmetProvider>
+        </>
+      )}
     </div>
   );
+  
+  
 }
 
 
