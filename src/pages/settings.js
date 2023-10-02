@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs, Tab, Box, Button } from '@mui/material';
 import AdminManagementPage from './AdminDashboard'; // Import the UsersManagementPage component
 import AccountPage from '../components/accounts/AccountPage';
+import Alerts from './Alerts'
 import { useNavigate } from 'react-router-dom';
 import useToast from '../hooks/alert'
 import { ToastContainer, } from 'react-toastify';
@@ -59,11 +60,14 @@ const MyTabs = () => {
       <Tabs value={selectedTab} onChange={handleTabChange} centered>
 
 
-
         {user.role === 1 ? (<Tab label={isHebrew === false ? 'Users Management' : 'ניהול משתמשים'} style={{ color: selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} />) : null}
 
         {/* This tabs need be for both types of user (admin and regular user.) */}
         <Tab label={isHebrew === false ? "Accounts" : "חשבונות"} style={{ color: selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} />
+
+
+
+        <Tab label={isHebrew === false ? "Alerts" : "התראות"} style={{ color: selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} />
 
       </Tabs >
 
@@ -90,15 +94,22 @@ const MyTabs = () => {
         <TabPanel value={selectedTab} index={0}>
           <AccountPage />
         </TabPanel>
-      ) : 
+      ) :
 
 
-      <TabPanel value={selectedTab} index={1}>
+        <TabPanel value={selectedTab} index={1}>
 
-        <AccountPage />                                           { /* Tab for regular user to manage accounts*/}
+          <AccountPage />                                           { /* Tab for regular user to manage accounts*/}
+
+        </TabPanel >
+      }
+
+      <TabPanel value={selectedTab} index={2}>
+
+      <Alerts/>
 
       </TabPanel >
-}
+
 
     </div >
   );
