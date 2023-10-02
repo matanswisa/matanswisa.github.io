@@ -77,12 +77,12 @@ const Alerts = () => {
     };
 
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 200 }} aria-label="simple table" >
+        <TableContainer component={Paper} style={{width:'85%' , marginLeft:'7%' , marginTop:'5%'}}>
+            <Table sx={{ minWidth: 200 }} aria-label="simple table"  >
                 <TableHead>
                     <TableRow>
                         <TableCell> {isHebrew  === true ? "התראות":"Alerts"}</TableCell>
-                        <TableCell>{isHebrew  === true ? "קלט":"Input"}</TableCell>
+                        <TableCell>{isHebrew  === true ? "תנאי":"Condtion"}</TableCell>
                         <TableCell>{isHebrew  === true ? "סטטוס":"Status"}</TableCell>
                         <TableCell>{isHebrew  === true ? "פעולה":"Action"}</TableCell>
                     </TableRow>

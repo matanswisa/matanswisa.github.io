@@ -152,11 +152,7 @@ export default function Nav({ openNav, onCloseNav }) {
     >
       <LogoImage w='240px' h='170px' />
 
-      {/* <div style={{ marginBottom: '40px', marginLeft: '30px', width: '100%' }}>
-        {userAccounts.length > 0 && <MultipleSelectPlaceholder />}
 
-
-      </div> */}
 
 
       <div style={{ marginBottom: '40px', marginLeft: '45px' }}>

@@ -258,17 +258,17 @@ export default function DashboardLayout() {
           </Badge>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end',marginTop:'50px' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', }}>
+            <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
+          </div>
 
 
-      
-<div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start'  ,}}>
-  <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
-</div>
+
 
         </div>
 
-      
+
         {/* {userAccounts.length > 0 && <MultipleSelectPlaceholder />} */}
 
 
