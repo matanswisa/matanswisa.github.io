@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tabs, Tab, Box, Button } from '@mui/material';
 import AdminManagementPage from './AdminDashboard'; // Import the UsersManagementPage component
-import UsersManagementPage from './UserDahboard'
 import AccountPage from '../components/accounts/AccountPage';
 import { useNavigate } from 'react-router-dom';
 import useToast from '../hooks/alert'
@@ -61,10 +60,7 @@ const MyTabs = () => {
 
 
 
-        {
-          user.role == 1 ? <Tab label={isHebrew === false ? "Users Management" : "ניהול משתמשים"} style={{ color: selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} /> : <Tab label={isHebrew === false ? "User Management" : "ניהול משתמש"} style={{ color: selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} />
-        }
-
+        {user.role === 1 ? (<Tab label={isHebrew === false ? 'Users Management' : 'ניהול משתמשים'} style={{ color: selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} />) : null}
 
         {/* This tabs need be for both types of user (admin and regular user.) */}
         <Tab label={isHebrew === false ? "Accounts" : "חשבונות"} style={{ color: selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} />
@@ -77,21 +73,24 @@ const MyTabs = () => {
 
       {/* Add more tabs here if needed */}
       {/* Tabs for Admin only */}
-      {
-        user.role == 1 ?
-          <TabPanel value={selectedTab} index={0}>
+      {user.role === 1 ? (
+        <TabPanel value={selectedTab} index={0}>
+          <AdminManagementPage />
+        </TabPanel>
+      ) : (
+        <TabPanel value={selectedTab} index={0}>
+          {/* Content for regular users */}
+          {/* Add any content or components you want to display for regular users */}
+        </TabPanel>
+      )}
 
-            <AdminManagementPage />
 
 
-          </TabPanel>
-
-          /* Tabs for Regular user only */
-          : <TabPanel value={selectedTab} index={0}>
-
-            <UsersManagementPage notifyToast={notifyToast} />     { /* Tab for regular user to manage password*/}
-
-          </TabPanel >}
+      {user.role === 0 ? (
+        <TabPanel value={selectedTab} index={0}>
+          <AccountPage />
+        </TabPanel>
+      ) : 
 
 
       <TabPanel value={selectedTab} index={1}>
@@ -99,6 +98,7 @@ const MyTabs = () => {
         <AccountPage />                                           { /* Tab for regular user to manage accounts*/}
 
       </TabPanel >
+}
 
     </div >
   );
