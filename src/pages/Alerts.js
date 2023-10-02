@@ -12,28 +12,41 @@ import TextField from '@mui/material/TextField';
 import Label from '../components/label/Label';
 import Switch from '@mui/material/Switch';
 import { useState } from 'react';
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
+import { useDispatch, useSelector } from 'react-redux';
 
+import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
+import { selectlanguage } from '../redux-toolkit/languagesSlice';
 
 function createData(name) {
     return { name };
 }
 
 
-const alertTitle = [
-    createData('Alert me when I exceed a certain limit trades per day.'),
-    createData('Alert me when I lose a certain number of times in a row.'),
-    createData('Alert before news.'),
-];
-
-
-const inputsTitle = [
-    ["Number of trades"],
-    ["Number of losing"],
-    ["Time in minutes"],
-]
-
 const Alerts = () => {
+    const isHebrew = useSelector(selectlanguage);
+
+    const darkMode = useSelector(selectDarkMode);
+
+
+    let alertTitle = [
+        createData( isHebrew  === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי":'Alert me when I exceed a certain limit trades per day.'),
+        createData(isHebrew  === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.'),
+        createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),
+    ];
+
+    let inputsTitle = [
+        [isHebrew  === true ? "מספר טריידים":"Number of trades"],
+        [isHebrew  === true ? "מספר הפסדים":"Number of losing"],
+        [isHebrew  === true ?"זמן בדקות":"Time in minutes"],
+    ]
+
+
+
+
+
+
     // Initialize an array to track the visibility of input fields for each row
     const [inputFieldVisibility, setInputFieldVisibility] = useState(
         Array(alertTitle.length).fill(false)
@@ -68,10 +81,10 @@ const Alerts = () => {
             <Table sx={{ minWidth: 200 }} aria-label="simple table" >
                 <TableHead>
                     <TableRow>
-                        <TableCell>Alerts</TableCell>
-                        <TableCell>Input</TableCell>
-                        <TableCell>Status</TableCell>
-                        <TableCell>Action</TableCell>
+                        <TableCell> {isHebrew  === true ? "התראות":"Alerts"}</TableCell>
+                        <TableCell>{isHebrew  === true ? "קלט":"Input"}</TableCell>
+                        <TableCell>{isHebrew  === true ? "סטטוס":"Status"}</TableCell>
+                        <TableCell>{isHebrew  === true ? "פעולה":"Action"}</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -102,10 +115,9 @@ const Alerts = () => {
                                 </Label>
                             </TableCell>
                             <TableCell>
-                                <Button
-                                    onClick={() => handleButtonClick(index)}
-                                >
-                                    {labelState[index].text === 'On' ? 'Change' : 'Save'}
+                                <Button onClick={() => handleButtonClick(index)}>{labelState[index].text === 'On' ? <IconButton aria-label="Edit">
+                                    <EditIcon />
+                                </IconButton> : isHebrew  === true ?"שמור" : 'Save'}
                                 </Button>
                             </TableCell>
                         </TableRow>

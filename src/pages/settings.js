@@ -60,14 +60,14 @@ const MyTabs = () => {
       <Tabs value={selectedTab} onChange={handleTabChange} centered>
 
 
-        {user.role === 1 ? (<Tab label={isHebrew === false ? 'Users Management' : 'ניהול משתמשים'} style={{ color: selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} />) : null}
+        {user.role === 1 ? (<Tab label={isHebrew === false ? 'Users Management' : 'ניהול משתמשים'} style={{ color:  selectedTab === 2 ?  darkMode ? '#fff' : '#326fd6' : selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} />) : null}
 
         {/* This tabs need be for both types of user (admin and regular user.) */}
-        <Tab label={isHebrew === false ? "Accounts" : "חשבונות"} style={{ color: selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} />
+        <Tab label={isHebrew === false ? "Accounts" : "חשבונות"} style={{ color: selectedTab === 2 ?  darkMode ? '#fff' : '#326fd6' :   selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }}  />
 
 
 
-        <Tab label={isHebrew === false ? "Alerts" : "התראות"} style={{ color: selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }} />
+        <Tab label={isHebrew === false ? "Alerts" : "התראות"} style={{ color: selectedTab === 2 ?  darkMode ? '#fff' : '#326fd6' :selectedTab === 1 ? darkMode ? '#fff' : '#326fd6' : selectedTab === 0 ? darkMode ? '#fff' : '#326fd6' : '#000', }}  />
 
       </Tabs >
 

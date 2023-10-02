@@ -28,7 +28,7 @@ export default function App() {
 
     setTimeout(() => {
       setIsBlurActive(false);
-    }, 1000);
+    }, 800);
 
 
   }, [loading]);
