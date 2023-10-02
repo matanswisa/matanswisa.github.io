@@ -120,7 +120,7 @@ export default function TradeTableRow(props) {
 
 
     const deleteTrade = async () => {
-        const res = await api.post('/api/deleteTrade', { tradeId: trade.tradeId, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
+        const res = await api.post('/api/deleteTrade', { tradeId: trade._id, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
         dispatch(setTradesList(res.data))
         // notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
         // notifyToast("Delete trade Successfully", 'success');
