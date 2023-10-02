@@ -24,6 +24,9 @@ import LogoImage from '../../../components/logo/logoImage'
 import { selectCurrentAccount, } from '../../../redux-toolkit/userSlice';
 import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
 import { selectDarkMode, toggleDarkMode } from '../../../redux-toolkit/darkModeSlice';
+import MultipleSelectPlaceholder from '../../../components/accounts/selectAccount';
+import { selectUserAccounts } from '../../../redux-toolkit/userSlice';
+
 // ----------------------------------------------------------------------
 
 const NAV_WIDTH = 280;
@@ -51,7 +54,7 @@ export default function Nav({ openNav, onCloseNav }) {
   const isAdmin = useSelector(selectUserAdmin);
   const isHebrew = useSelector(selectlanguage);
   const currentAccount = useSelector(selectCurrentAccount);
-
+  const userAccounts = useSelector(selectUserAccounts);
   const isAuthenticated = useSelector(isUserAuthenticated)
   const dispatch = useDispatch();
   const { pathname } = useLocation();
@@ -149,11 +152,29 @@ export default function Nav({ openNav, onCloseNav }) {
     >
       <LogoImage w='240px' h='170px' />
 
+      {/* <div style={{ marginBottom: '40px', marginLeft: '30px', width: '100%' }}>
+        {userAccounts.length > 0 && <MultipleSelectPlaceholder />}
+
+
+      </div> */}
+
+
+      <div style={{ marginBottom: '40px', marginLeft: '45px' }}>
+        {userAccounts.length > 0 && (
+          <div style={{ width: '100%' }}>
+            <MultipleSelectPlaceholder />
+          </div>
+        )}
+      </div>
+
+
 
       {/* balance display */}
       {currentAccount !== null ?
         <FormControl fullWidth sx={{ m: 1 }} variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-amount">{isHebrew === false ? "Account Balance" : "מאזן חשבון"}</InputLabel>
+
+          <InputLabel htmlFor="outlined-adornment-amount">{isHebrew === false ? "Account Balance" : "מאזן חשבון"}   </InputLabel>
+
           <FilledInput
             id="outlined-adornment-amount"
             disabled={true}

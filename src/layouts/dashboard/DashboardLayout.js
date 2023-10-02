@@ -12,7 +12,8 @@ import Nav from './nav';
 import AppBar from '../../components/appBar/appBar'
 import MultipleSelectPlaceholder from '../../components/accounts/selectAccount';
 import api, { axiosAuth } from '../../api/api';
-
+import Badge from '@mui/material/Badge';
+import MailIcon from '@mui/icons-material/Mail';
 import { configAuth } from '../../api/configAuth';
 import { setCurrentAccount, selectUserAccounts, selectUser, login, logout } from '../../redux-toolkit/userSlice';
 
@@ -22,7 +23,7 @@ import { selectDarkMode, toggleDarkMode } from '../../redux-toolkit/darkModeSlic
 import { selectlanguage, togglelanguage } from '../../redux-toolkit/languagesSlice';
 import { setMessages } from '../../redux-toolkit/messagesSlice';
 import jwt_decode from 'jwt-decode';
-import {toggleLoading} from '../../redux-toolkit/loadingSlice'
+import { toggleLoading } from '../../redux-toolkit/loadingSlice'
 
 // ----------------------------------------------------------------------
 
@@ -151,9 +152,9 @@ export default function DashboardLayout() {
   const dispatch = useDispatch();
 
   const changeDarkMode = () => {
-    
+
     dispatch(toggleDarkMode());
-   
+
   }
 
   const changeLoading = () => {
@@ -183,10 +184,10 @@ export default function DashboardLayout() {
       let currentDate = new Date();
       //check if accessToken is invalid.
       if (decodedToken.exp * 1000 < currentDate.getTime()) {
-      
+
         return refreshToken().then((response) => {
           // localStorage.setItem('token', response.data.token)
-       
+
           originalRequest.headers.Authorization = "Berear " + response.data.accessToken;
           dispatch(login({ user, accessToken: response.data.accessToken }));
           return Promise.resolve(originalRequest)
@@ -201,7 +202,7 @@ export default function DashboardLayout() {
   const refreshToken = async () => {
     try {
       const res = await axiosAuth.post('/api/auth/refreshToken', { token: user.refreshToken })
-    
+
       dispatch(login({ user, accessToken: res.data.accessToken }));
       return res;
     } catch (err) {
@@ -236,28 +237,39 @@ export default function DashboardLayout() {
 
       <Nav openNav={open} onCloseNav={() => setOpen(false)} />
 
-      <Main>
 
-        {userAccounts.length > 0 && <MultipleSelectPlaceholder />}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
-          <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
+      <Main>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <img
+              alt="United States"
+              src="http://purecatamphetamine.github.io/country-flag-icons/1x1/US.svg"
+              style={{ width: '30px', height: '20px' }} />
+            <AntSwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} checked={isHebrew} onClick={changeLanguage} />
+            <img
+              alt="Israel"
+              src="http://purecatamphetamine.github.io/country-flag-icons/1x1/IL.svg"
+              style={{ width: '30px', height: '20px' }}
+
+            />
+          </Stack>
+          <Badge color="secondary" badgeContent={2} style={{ marginLeft: '92%' }}>
+            <MailIcon />
+          </Badge>
         </div>
 
-        <Stack direction="row" spacing={1} alignItems="center">
-          <img
-            alt="United States"
-            src="http://purecatamphetamine.github.io/country-flag-icons/1x1/US.svg"
-            style={{ width: '30px', height: '20px' }} />
-          <AntSwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} checked={isHebrew} onClick={changeLanguage} />
-          <img
-            alt="Israel"
-            src="http://purecatamphetamine.github.io/country-flag-icons/1x1/IL.svg"
-            style={{ width: '30px', height: '20px' }}
-
-          />
+        <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
 
 
-        </Stack>
+      
+<div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start'  ,}}>
+  <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
+</div>
+
+        </div>
+
+      
+        {/* {userAccounts.length > 0 && <MultipleSelectPlaceholder />} */}
 
 
         {/* <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
