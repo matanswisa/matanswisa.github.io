@@ -253,9 +253,9 @@ export default function DashboardLayout() {
 
             />
           </Stack>
-          <Badge color="secondary" badgeContent={2} style={{ marginLeft: '92%' }}>
-            <MailIcon />
-          </Badge>
+          {/* <Badge color="secondary" badgeContent={2} style={{ marginLeft: '92%' }} invisible>
+            <MailIcon  />
+          </Badge> */}
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end',marginTop:'50px' }}>
