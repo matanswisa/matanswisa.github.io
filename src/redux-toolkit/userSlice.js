@@ -7,6 +7,7 @@ const initialState = {
     role: 0,
     isAuthenticated: false,
     isAdmin: false,
+    alerts: [],
 };
 
 const authSlice = createSlice({
@@ -18,6 +19,7 @@ const authSlice = createSlice({
             state.user = action.payload.user;
             state.isAuthenticated = true;
             state.isAdmin = action.payload.user.role === roles.admin;
+            
         },
         logout(state) {
             state.user = null;
