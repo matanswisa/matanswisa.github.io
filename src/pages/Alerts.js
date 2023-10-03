@@ -34,87 +34,113 @@ const Alerts = () => {
     const isHebrew = useSelector(selectlanguage);
     const alerts = useSelector(selectUser);
 
-    
-    
-    
-    
+
+
+
+
     // default values : 
     let initialAlertTitle = [
-        createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.', 2),
+        createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.', 0),
         createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.', 0),
         // createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),
     ];
-    
+
+
+
+
+
     let inputsTitle = [
         [isHebrew === true ? "מספר טריידים" : "Number of trades"],
         [isHebrew === true ? "מספר הפסדים" : "Number of losing"],
         // [isHebrew  === true ?"זמן בדקות":"Time in minutes"],
     ]
-    
-    let condition = 3;
-    
-    
-    
-    
+
+
+
+
     // read alerts from db. if is enable show 0 in inputs.
-    if (condition != 0) {
+    if (alerts.alert != 0) {
         initialAlertTitle = [
-            createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.', condition),
-            createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.', condition),
-            // createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),
+            createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.', alerts.alert[0].condition),
+            createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.', alerts.alert[1].condition),
+            // createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),0
         ];
     }
-    
+
     const [alertTitle, setAlertTitle] = useState([...initialAlertTitle]);
 
-    
+
 
 
     const [inputFieldValues, setInputFieldValues] = useState(Array(alertTitle.length).fill(''));
 
 
     const validateForm = (index) => {
-
         if (inputFieldValues[index].trim() === '') {
             alert('Input field cannot be empty'); // You can replace this with your preferred validation feedback
             return;
         }
-
         if (isNaN(inputFieldValues[index])) {
             alert('Input must be a valid number'); // You can customize this message
             return;
         }
-
         if (isNaN(inputFieldValues[index]) || parseFloat(inputFieldValues[index]) < 1) {
             alert('Input must be a valid positive number'); // You can customize this message
             return;
         }
-
         return true;
-
     }
 
 
-       const [inputFieldVisibility, setInputFieldVisibility] = useState(
-        alertTitle.map((row) => row.condition === 0)
-    );
 
 
-    // Initialize label state for each row
-    const [labelState, setLabelState] = useState(
-        Array(alertTitle.length).fill({ color: 'error', text: 'Off' })
-    );
+
+
+    //------------------------------------------------ handle reset condtion -----------------------------------------------------//
+    const handleResetCondition = async (index) => {
+        const data = {
+            userId: alerts._id,
+            indexofAlert : index,
+        };
+
+        try {
+            const response = await api.put('/api/auth/resetAlert', data, {
+              headers: { Authorization: "Bearer " + alerts._id.accessToken }
+            });
+        
+            if (response.status === 200) {
+              // Request was successful, you can take action here
+              console.log("Request was successful");
+              // You can also do other actions here if needed
+            } else {
+              // Handle other status codes, e.g., 400, 500, etc.
+              console.log("Request failed with status code:", response.status);
+            }
+          } catch (err) {
+            // Handle any exceptions that occurred during the request
+            console.error(err);
+            // Handle the error as needed
+          }
+
+          
+    };
+
+
 
 
     const handleEditClick = (index) => {
         const updatedAlertTitle = [...alertTitle];
-    updatedAlertTitle[index].condition = 0;
-    setAlertTitle(updatedAlertTitle);
-    ///update alert to 0 in db.
-    }; 
-    
+        updatedAlertTitle[index].condition = 0;
+        setAlertTitle(updatedAlertTitle);
+        handleResetCondition(index);
 
-    // after click save alert condtion in db. 
+
+        ///update alert to 0 in db.
+
+    };
+
+
+    // after click save new alert condtions in db.   and fetch to redux.
     const handleButtonClick = (index) => {
         if (validateForm(index)) {
 
@@ -183,7 +209,6 @@ const Alerts = () => {
                             </TableCell>
 
 
-
                             <TableCell>
                                 {row.condition !== 0 ? (
                                     <Label color="success">On</Label>
@@ -193,17 +218,13 @@ const Alerts = () => {
                             </TableCell>
 
 
-
-
                             <TableCell>
                                 {row.condition !== 0 ? (
 
-                                    
                                     <IconButton aria-label="Edit" onClick={() => handleEditClick(index)}>
                                         <EditIcon />
                                     </IconButton>
                                 ) : (
-
 
                                     <Button onClick={() => handleButtonClick(index)}>
                                         {isHebrew === true ? "שמור" : 'Save'}
