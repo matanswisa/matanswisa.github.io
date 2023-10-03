@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { Button, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser ,selectAlerts} from '../redux-toolkit/userSlice';
+import { selectUser ,selectAlerts , setAlerts} from '../redux-toolkit/userSlice';
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
 import { number } from 'prop-types';
@@ -34,8 +34,10 @@ const Alerts = () => {
     const isHebrew = useSelector(selectlanguage);
     const user = useSelector(selectUser);
     const alerts = useSelector(selectAlerts);
+    const dispatch = useDispatch();
+    const [AlertState,setAlertsState] = useState(alerts)
+    
 
-  
 
 
     // default values : 
@@ -59,10 +61,10 @@ const Alerts = () => {
 
 
     // read alerts from db. if is enable show 0 in inputs.
-    if (alerts) {
+    if (AlertState) {
         initialAlertTitle = [
-            createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.',alerts[0].condition),
-            createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.',alerts[1].condition),
+            createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.',AlertState[0].condition),
+            createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.',AlertState[1].condition),
             // createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),0
         ];
     }
@@ -138,8 +140,11 @@ const Alerts = () => {
             });
         
             if (response.status === 200) {
-              // Request was successful, you can take action here
-              console.log("Request was successful");
+
+                dispatch(setAlerts(response.data));
+
+                setAlertsState(response.data);
+              
               // You can also do other actions here if needed
             } else {
               // Handle other status codes, e.g., 400, 500, etc.
