@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { Button, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from '../redux-toolkit/userSlice';
+import { selectUser ,selectAlerts} from '../redux-toolkit/userSlice';
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
 import { number } from 'prop-types';
@@ -32,10 +32,10 @@ function createData(name, condition) {
 const Alerts = () => {
     const darkMode = useSelector(selectDarkMode);
     const isHebrew = useSelector(selectlanguage);
-    const alerts = useSelector(selectUser);
+    const user = useSelector(selectUser);
+    const alerts = useSelector(selectAlerts);
 
-
-
+  
 
 
     // default values : 
@@ -59,10 +59,10 @@ const Alerts = () => {
 
 
     // read alerts from db. if is enable show 0 in inputs.
-    if (alerts.alert != 0) {
+    if (alerts) {
         initialAlertTitle = [
-            createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.', alerts.alert[0].condition),
-            createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.', alerts.alert[1].condition),
+            createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.',alerts[0].condition),
+            createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.',alerts[1].condition),
             // createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),0
         ];
     }
@@ -99,13 +99,13 @@ const Alerts = () => {
     //------------------------------------------------ handle reset condtion -----------------------------------------------------//
     const handleResetCondition = async (index) => {
         const data = {
-            userId: alerts._id,
+            userId: user._id,
             indexofAlert : index,
         };
 
         try {
             const response = await api.put('/api/auth/resetAlert', data, {
-              headers: { Authorization: "Bearer " + alerts._id.accessToken }
+              headers: { Authorization: "Bearer " + user.accessToken }
             });
         
             if (response.status === 200) {
@@ -121,24 +121,20 @@ const Alerts = () => {
             console.error(err);
             // Handle the error as needed
           }
-
-
     };
 
 
-
-    
     //------------------------------------------------ handle reset condtion -----------------------------------------------------//
     const handleSetAlert = async (index,value) => {
         const data = {
-            userId: alerts._id,
+            userId: user._id,
             indexofAlert : index,
             condition: value,
         };
         console.log(data);
         try {
             const response = await api.put('/api/auth/setAlert', data, {
-              headers: { Authorization: "Bearer " + alerts._id.accessToken }
+              headers: { Authorization: "Bearer " + user.accessToken }
             });
         
             if (response.status === 200) {
