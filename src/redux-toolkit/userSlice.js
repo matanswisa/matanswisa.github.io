@@ -19,14 +19,19 @@ const authSlice = createSlice({
             state.user = action.payload.user;
             state.isAuthenticated = true;
             state.isAdmin = action.payload.user.role === roles.admin;
-            
+            state.alerts = action.payload.user.alert;
+   
         },
         logout(state) {
             state.user = null;
             state.isAuthenticated = false;
             state.isAdmin = false;
             state.currentAccount = null;
+            state.alerts = [];
         },
+        setAlerts(state,action){
+            state.alerts = action.payload;
+        },  
         selectIsAuthenticated(state) {
             return state.isAuthenticated;
         },
@@ -60,7 +65,7 @@ const authSlice = createSlice({
     },
 });
 
-export const { login, logout, selectIsAdmin, setCurrentAccount, addAccountToList, removeAccount, setTradesList, updateAccountList } = authSlice.actions;
+export const { login, logout, selectIsAdmin, setCurrentAccount, addAccountToList, removeAccount, setTradesList, updateAccountList , setAlerts } = authSlice.actions;
 
 //Selectors
 export const selectUserAccounts = (state) => state.auth.user.accounts;
@@ -68,6 +73,7 @@ export const selectCurrentAccount = (state) => state.auth.currentAccount;
 export const selectTradesOfCurrentAccount = (state) => state.auth.currentAccount.trades;
 export const selectUserName = (state) => state.auth.user?.username;
 export const selectUser = (state) => state.auth.user;
+export const selectAlerts = (state) => state.auth.alerts;
 export const selectUserAdmin = (state) => state.auth.isAdmin;
 export const isUserAuthenticated = (state) => state.auth.isAuthenticated;
 
