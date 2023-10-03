@@ -5,6 +5,8 @@ import messagesSlice from '../redux-toolkit/messagesSlice';
 import darkModeReducer from '../redux-toolkit/darkModeSlice';
 import languagesReducer from '../redux-toolkit/languagesSlice';
 import tradeReducer from '../redux-toolkit/tradeSlice';
+import editTradeFormReducer from "../redux-toolkit/editTradeFormSlice";
+
 
 const store = configureStore({
     reducer: {
@@ -12,7 +14,8 @@ const store = configureStore({
         messages: messagesSlice,
         darkMode: darkModeReducer,
         languages: languagesReducer,
-        currentTrade: tradeReducer
+        currentTrade: tradeReducer,
+        editMode: editTradeFormReducer
     },
 });
 

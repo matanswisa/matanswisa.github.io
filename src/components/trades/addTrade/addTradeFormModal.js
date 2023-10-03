@@ -73,13 +73,8 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 
-
-
-
-
-
 //--------------------------------------------This component show Addtrade Modal -------------------------------------------//
-export default function TradeModal(props) {
+export default function TradeFormModal(props) {
 
 
   //------------------------------------------------  States ----------------------------------------------------- //
@@ -155,16 +150,13 @@ export default function TradeModal(props) {
 
 
   function calculateNetPNLBinance(Type, Qty, EntryPrice, TakeProfit, StopLoss, WinOrLoss) {
- 
+
     if (Type === "Short") {
-
-      
-
       if (WinOrLoss == "Win") {
 
-        if (parseFloat(TakeProfit) >= parseFloat(EntryPrice) ) { /// not valid option. tp must be below from entry when is short 
+        if (parseFloat(TakeProfit) >= parseFloat(EntryPrice)) { /// not valid option. tp must be below from entry when is short 
           // notifyToast(getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgType);
-    
+
           // setErrorMessage("Take profit must be below Entry Price");
           return "";
         }
@@ -179,7 +171,7 @@ export default function TradeModal(props) {
 
         if (parseFloat(StopLoss) <= parseFloat(EntryPrice) || parseFloat(EntryPrice) === 0 || parseFloat(StopLoss) === 0) { /// not valid option. 
           // notifyToast(getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgType);
-    
+
           return "";
         }
         else {
@@ -191,9 +183,9 @@ export default function TradeModal(props) {
 
     else if (Type === "Long") {
       if (WinOrLoss == "Win") {
-        if (parseFloat(TakeProfit) <= parseFloat(EntryPrice) ||parseFloat(EntryPrice) === 0 || parseFloat(TakeProfit) === 0) { /// not valid option. 
+        if (parseFloat(TakeProfit) <= parseFloat(EntryPrice) || parseFloat(EntryPrice) === 0 || parseFloat(TakeProfit) === 0) { /// not valid option. 
           // notifyToast(getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[34], languageidx).msgType);
-   
+
           return "";
         }
         else {
@@ -208,8 +200,8 @@ export default function TradeModal(props) {
           return "";
         }
         else {
-         
-          const lossAmount = Qty * (StopLoss - EntryPrice );
+
+          const lossAmount = Qty * (StopLoss - EntryPrice);
           return lossAmount;
         }
       }
@@ -248,7 +240,7 @@ export default function TradeModal(props) {
 
 
     }
-  }, [positionType,contractsCounts,entryPrice,exitPrice,stopPrice,positionStatus]); // Listen for changes in positionType
+  }, [positionType, contractsCounts, entryPrice, exitPrice, stopPrice, positionStatus]); // Listen for changes in positionType
 
   // ...
 
@@ -382,7 +374,7 @@ export default function TradeModal(props) {
       return false;
     }
 
-  
+
 
     if (positionType === "Short") {
 
@@ -420,8 +412,8 @@ export default function TradeModal(props) {
 
 
 
-    if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 ||stopPrice < 1 ||
-    contractsCounts < 1|| Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
+    if (positionType === '' || positionStatus === '' || entryPrice < 1 || exitPrice < 1 || stopPrice < 1 ||
+      contractsCounts < 1 || Number.isNaN(netPnL) || positionSymbol === "" || selectedFile === "" || !positionDate) {
 
       if (positionType === '') {
         notifyToast(getMsg(messages, msgType.warnings, msgNumber[27], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[27], languageidx).msgType);
@@ -429,17 +421,17 @@ export default function TradeModal(props) {
         return false;
       }
 
-      else if(contractsCounts < 1){
-        if(currentAccount?.Broker === brokers.Tradovate){
+      else if (contractsCounts < 1) {
+        if (currentAccount?.Broker === brokers.Tradovate) {
           notifyToast(getMsg(messages, msgType.warnings, msgNumber[38], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[38], languageidx).msgType);
 
-         // notifyToast("Number of contracts must be above Zero.","warning");
+          // notifyToast("Number of contracts must be above Zero.","warning");
 
         }
-        else{
+        else {
           notifyToast(getMsg(messages, msgType.warnings, msgNumber[39], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[39], languageidx).msgType);
 
-        //  notifyToast("Quantity must be above Zero.","warning");
+          //  notifyToast("Quantity must be above Zero.","warning");
         }
         return false;
       }
@@ -540,306 +532,301 @@ export default function TradeModal(props) {
 
   return (
     // currentAccount?.Broker === brokers.Tradovate ?
-   <>
-   {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
-   
-    <Modal
-      open={props.openModal}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
- 
+    <>
+      {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
 
-      <Box sx={style} >
+      <Modal
+        open={props.openModal}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
 
 
-        <Stack direction="row" spacing={2} sx={{ marginBottom: '60px' }}>
+        <Box sx={style} >
+          <Stack direction="row" spacing={2} sx={{ marginBottom: '60px' }}>
+            <Box >
+              <Typography style={{ fontFamily: 'sans-serif', fontWeight: 'bolder', fontSize: '20px' }}> {isHebrew === false ? "New Trade" : "הוספת טרייד"}</Typography>
+            </Box>
+            {/* <LogoImage w = '350px' h= '280px'/> */}
+            <Box style={{ marginLeft: "678px" }}>
 
-          <Box >
+              <label htmlFor="file-input">
+                <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
+                  size="small"
+                  variant="outlined"
+                  component="span"
+                  startIcon={<Iconify icon={'eva:file-add-outline'} />}
+                  onClick={handleButtonClick}
+                >
+                  {isHebrew === false ?
+                    "Upload Image" :
+                    "העלאת תמונה"}
+                </Button>
+              </label>
 
-            <Typography style={{ fontFamily: 'sans-serif', fontWeight: 'bolder', fontSize: '20px' }}> {isHebrew === false ? "New Trade" : "הוספת טרייד"}</Typography>
-          </Box>
-          {/* <LogoImage w = '350px' h= '280px'/> */}
-          <Box style={{ marginLeft: "678px" }}>
+            </Box>
+          </Stack>
 
-            <label htmlFor="file-input">
-              <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
-              <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
-                size="small"
-                variant="outlined"
-                component="span"
-                startIcon={<Iconify icon={'eva:file-add-outline'} />}
-                onClick={handleButtonClick}
-              >
-                {isHebrew === false ?
-                  "Upload Image" :
-                  "העלאת תמונה"}
-              </Button>
-            </label>
+          <Stack direction="row" spacing={2} >
+            <Box sx={{ width: "300px", marginBottom: '20px' }}>
 
-          </Box>
-        </Stack>
+              <Stack spacing={2} >
+                <Box sx={{ marginBottom: '5px' }} >
+                  <TextField required="true"
+                    sx={{ width: "280px" }}
+                    value={positionDate}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
+                    label="Open Date" variant="standard" type="date" />
+                </Box >
 
-        <Stack direction="row" spacing={2} >
-          <Box sx={{ width: "300px", marginBottom: '20px' }}>
+                <Box>
 
-            <Stack spacing={2} >
-              <Box sx={{ marginBottom: '5px' }} >
-                <TextField required="true"
-                  sx={{ width: "280px" }}
-                  value={positionDate}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
-                  label="Open Date" variant="standard" type="date" />
-              </Box >
-
-              <Box>
-
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  required="true"
-                  options={activeTickers}
-                  value={positionSymbol}
-                  onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
-                  sx={{ width: "280px", marginBottom: '13px' }}
-                  renderInput={(params) => <TextField {...params} label={isHebrew === false ? "Symbol" : "סימן"}  value={positionSymbol} variant="standard" />}
-                  
-                />
-                 
-              </Box>
-
-              <Box>
-                <FormControl variant="standard" >
-                  <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ? "Status" : "סטטוס"}</InputLabel>
-                  <Select
-                    sx={{ width: "280px", marginBottom: '13px' }}
+                  <Autocomplete
                     disablePortal
                     id="combo-box-demo"
-                    value={positionStatus}
-                    onChange={(e) => handlePositionFieldInput(e, 'positionStatus')}
-                    label="Status"
                     required="true"
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={'Win'}>Win</MenuItem>
-                    <MenuItem value={'Loss'}>Loss</MenuItem>
-                    <MenuItem value={'BreakEven'}>Break Even</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
+                    options={activeTickers}
+                    value={positionSymbol}
+                    onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
+                    sx={{ width: "280px", marginBottom: '13px' }}
+                    renderInput={(params) => <TextField {...params} label={isHebrew === false ? "Symbol" : "סימן"} value={positionSymbol} variant="standard" />}
+
+                  />
+
+                </Box>
+                <Box>
+                  <FormControl variant="standard" >
+                    <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ? "Status" : "סטטוס"}</InputLabel>
+                    <Select
+                      sx={{ width: "280px", marginBottom: '13px' }}
+                      disablePortal
+                      id="combo-box-demo"
+                      value={positionStatus}
+                      onChange={(e) => handlePositionFieldInput(e, 'positionStatus')}
+                      label="Status"
+                      required="true"
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      <MenuItem value={'Win'}>Win</MenuItem>
+                      <MenuItem value={'Loss'}>Loss</MenuItem>
+                      <MenuItem value={'BreakEven'}>Break Even</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
 
 
-              <Box sx={{ marginBottom: '13px' }}>
+                <Box sx={{ marginBottom: '13px' }}>
 
-                <FormControl variant="standard" >
-                  <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ? "Type" : "סוג"}</InputLabel>
-                  <Select
+                  <FormControl variant="standard" >
+                    <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ? "Type" : "סוג"}</InputLabel>
+                    <Select
+                      sx={{ width: "280px" }}
+                      className="outlined-number"
+                      labelId="demo-simple-select-standard-label"
+                      id="demo-simple-select-standard"
+                      value={positionType}
+                      onChange={(e) => handlePositionFieldInput(e, 'positionType')}
+                      label="Type"
+                      required="true"
+                      InputLabelProps={{ shrink: true }}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      <MenuItem value={'Short'}>Short</MenuItem>
+                      <MenuItem value={'Long'}>Long</MenuItem>
+
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Stack>
+            </Box>
+            <Box sx={{ width: "300px" }}>
+              <Stack spacing={2} >
+                <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
+                  {' '}
+                  <TextField
                     sx={{ width: "280px" }}
                     className="outlined-number"
-                    labelId="demo-simple-select-standard-label"
-                    id="demo-simple-select-standard"
-                    value={positionType}
-                    onChange={(e) => handlePositionFieldInput(e, 'positionType')}
-                    label="Type"
+                    label={isHebrew === false ? "Entry Price" : "שער כניסה"}
+                    required="true"
+                    value={entryPrice}
+                    type="number"
+                    onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
+                    InputLabelProps={{ shrink: true }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Iconify icon={'eva:corner-up-right-outline'} />
+                        </InputAdornment>
+                      ),
+                    }}
+
+                  />
+                </Box>
+                <Box >
+                  <TextField
+                    className="outlined-number"
+                    sx={{ width: "280px" }}
+                    required="true"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Iconify icon={'eva:layers-outline'} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    label={currentAccount?.Broker === brokers.Tradovate ? (isHebrew === false ? "Contracts" : "חוזים") : (isHebrew === false ? "Quantity" : "כמות")}
+
+                    value={contractsCounts}
+                    onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
+
+                    type="number"
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Box>
+                <Box >
+                  <TextField
+                    sx={{ width: "280px" }}
+                    className="outlined-number"
+                    label={isHebrew === false ? "Stop loss" : "עצירת הפסד"}
+                    type="number"
+                    value={stopPrice}
+                    required="true"
+                    onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Iconify icon={'eva:close-square-outline'} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Box>
+                <Box sx={{ marginBottom: '30px' }}>
+                  <TextField
+                    className="outlined-number"
+
+                    sx={{ width: "280px" }}
+                    label={isHebrew === false ? "Take Profit" : "לקיחת רווחים"}
+                    value={exitPrice}
+                    onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
                     required="true"
                     InputLabelProps={{ shrink: true }}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={'Short'}>Short</MenuItem>
-                    <MenuItem value={'Long'}>Long</MenuItem>
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          {positionType === "Long" ?
+                            <Iconify icon={'eva:trending-up-outline'} /> :
+                            <Iconify icon={'eva:trending-down-outline'} />}
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
 
-                  </Select>
-                </FormControl>
-              </Box>
-            </Stack>
-          </Box>
-          <Box sx={{ width: "300px" }}>
-            <Stack spacing={2} >
-              <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
+                </Box>
+                <Box sx={{ marginBottom: '30px' }}>
+                </Box>
+              </Stack>
+            </Box>
+
+            <Box sx={{ width: "300px", border: darkMode === true ? '1px solid #121212' : '', }}>
+              <Stack spacing={2} >
+
+                <Box >
+                  <TextField
+                    className="outlined-number"
+                    sx={{ width: "280px" }}
+                    type="number"
+                    value={positionCommision}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
+                    label={isHebrew === false ? "Commission" : "עמלה"}
+                    InputLabelProps={{ shrink: true }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          $      -
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Box>
                 {' '}
-                <TextField
-                  sx={{ width: "280px" }}
-                  className="outlined-number"
-                  label={isHebrew === false ? "Entry Price" : "שער כניסה"}
-                  required="true"
-                  value={entryPrice}
-                  type="number"
-                  onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Iconify icon={'eva:corner-up-right-outline'} />
-                      </InputAdornment>
-                    ),
-                  }}
+                <Box >
+                  <TextField
+                    className="standard-basic"
+                    value={positionDuration}
+                    sx={{ width: "280px" }}
+                    onChange={(e) => handlePositionFieldInput(e, 'positionDuration')}
+                    label={isHebrew === false ? "Trade Duration" : "זמן עסקה"}
+                    InputLabelProps={{ shrink: true }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Iconify icon={'eva:clock-outline'} />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Box>
 
-                />
-              </Box>
-              <Box >
-                <TextField
-                  className="outlined-number"
-                  sx={{ width: "280px" }}
-                  required="true"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Iconify icon={'eva:layers-outline'} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  label={currentAccount?.Broker === brokers.Tradovate ? (isHebrew === false ? "Contracts" : "חוזים") : (isHebrew === false ? "Quantity" : "כמות")}
 
-                  value={contractsCounts}
-                  onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
+                <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
+                  {' '}
+                  <TextField
+                    className="outlined-number"
+                    required="true"
+                    sx={{ width: "280px" }}
+                    label={isHebrew === false ? "Net P&L" : "רווח/הפסד נטו"}
+                    value={netPnL}
+                    onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          $
+                        </InputAdornment>
+                      ),
+                    }}
+                    type="number"
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Box>
+              </Stack>
+            </Box>
 
-                  type="number"
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Box>
-              <Box >
-                <TextField
-                  sx={{ width: "280px" }}
-                  className="outlined-number"
-                  label={isHebrew === false ? "Stop loss" : "עצירת הפסד"}
-                  type="number"
-                  value={stopPrice}
-                  required="true"
-                  onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Iconify icon={'eva:close-square-outline'} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Box>
-              <Box sx={{ marginBottom: '30px' }}>
-                <TextField
-                  className="outlined-number"
+          </Stack>
 
-                  sx={{ width: "280px" }}
-                  label={isHebrew === false ? "Take Profit" : "לקיחת רווחים"}
-                  value={exitPrice}
-                  onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
-                  required="true"
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        {positionType === "Long"? 
-                        <Iconify icon={'eva:trending-up-outline'} />:
-                        <Iconify icon={'eva:trending-down-outline'}  /> }
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                
-              </Box>
-              <Box sx={{ marginBottom: '30px' }}>
-              </Box>
-            </Stack>
+          <Box style={{ marginBottom: "30px" }} >
+            <Typography>Notes<EditNoteIcon fontSize="large" /></Typography>
+
+            <TextField
+              id="filled-multiline-static"
+              sx={{
+                width: '930px', // Change the width as needed
+                border: darkMode === true ? '1px solid white' : '', // Add a white border
+              }}
+              multiline
+              rows={7}
+              value={comments}
+              variant="outlined"
+              onChange={(e) => handlePositionFieldInput(e, 'comments')}
+            />
           </Box>
 
-          <Box sx={{ width: "300px", border: darkMode === true ? '1px solid #121212' : '', }}>
-            <Stack spacing={2} >
+          <Box style={{ marginLeft: "780px" }} >
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} variant="contained" onClick={handleSaveTrade} > {isHebrew === false ? "Save" : "שמור"}</Button>
 
-              <Box >
-                <TextField
-                  className="outlined-number"
-                  sx={{ width: "280px" }}
-                  type="number"
-                  value={positionCommision}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
-                  label={isHebrew === false ? "Commission" : "עמלה"}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        $      -
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
-              {' '}
-              <Box >
-                <TextField
-                  className="standard-basic"
-                  value={positionDuration}
-                  sx={{ width: "280px" }}
-                  onChange={(e) => handlePositionFieldInput(e, 'positionDuration')}
-                  label={isHebrew === false ? "Trade Duration" : "זמן עסקה"}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Iconify icon={'eva:clock-outline'} />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Box>
-           
-
-              <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
-                {' '}
-                <TextField
-                  className="outlined-number"
-                  required="true"
-                  sx={{ width: "280px" }}
-                  label={isHebrew === false ? "Net P&L" : "רווח/הפסד נטו"}
-                  value={netPnL}
-                  onChange={(e) => handlePositionFieldInput(e, 'netPnL')}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        $
-                      </InputAdornment>
-                    ),
-                  }}
-                  type="number"
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Box>
-            </Stack>
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", marginLeft: "7px" }} variant="outlined" onClick={handleClose} > {isHebrew === false ? "Cancel" : "ביטול"}</Button>
           </Box>
 
-        </Stack>
-
-        <Box style={{ marginBottom: "30px" }} >
-          <Typography>Notes<EditNoteIcon fontSize="large" /></Typography>
-
-          <TextField
-            id="filled-multiline-static"
-            sx={{
-              width: '930px', // Change the width as needed
-              border: darkMode === true ? '1px solid white' : '', // Add a white border
-            }}
-            multiline
-            rows={7}
-            value={comments}
-            variant="outlined"
-            onChange={(e) => handlePositionFieldInput(e, 'comments')}
-          />
         </Box>
 
-        <Box style={{ marginLeft: "780px" }} >
-          <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} variant="contained" onClick={handleSaveTrade} > {isHebrew === false ? "Save" : "שמור"}</Button>
-
-          <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", marginLeft: "7px" }} variant="outlined" onClick={handleClose} > {isHebrew === false ? "Cancel" : "ביטול"}</Button>
-        </Box>
-
-      </Box>
-
-    </Modal >
+      </Modal >
     </>
   );
 

@@ -41,6 +41,7 @@ import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectTrade, setTrade } from '../redux-toolkit/tradeSlice';
 import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
 import TradesTable from '../components/Table/tradeTable';
+import { selectIsEditMode, selectTradeToEdit, setEditMode } from '../redux-toolkit/editTradeFormSlice';
 
 const sumPnL = (trades) => {
   let sum = 0;
@@ -57,7 +58,7 @@ const sumPnL = (trades) => {
 // export let globalAlert;
 
 
-export default function UserPage() {
+export default function Reports() {
 
   //---------------------------------------------------------handle currentAccount selected ----------------------------------------------------- //
   const currentAccount = useSelector(selectCurrentAccount);
@@ -77,6 +78,8 @@ export default function UserPage() {
   const isHebrew = useSelector(selectlanguage);
   const messages = useSelector(selectMessages);
   const currentTrade = useSelector(selectTrade);
+  const tradeToEdit = useSelector(selectTradeToEdit);
+  const isEditFormEnable = useSelector(selectIsEditMode);
 
 
   const [openCommend, setCommendOpen] = React.useState(false);
@@ -94,9 +97,6 @@ export default function UserPage() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  //edit modal States
-  // const [editTradeId, setEditTradeId] = useState(null);
-  const [editMode, setEditMode] = useState(false);
 
   //Image modal States
   const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -124,7 +124,6 @@ export default function UserPage() {
 
 
   const handleOpenModal = (tradeId) => {
-
     if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
       notifyToast(getMsg(messages, msgType.warnings, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[6], languageidx).msgType);
       //  notifyToast("before add trades you need create account", 'warning');
@@ -132,8 +131,6 @@ export default function UserPage() {
     else {
       setIsOpenmodal(true);
     }
-
-
   };
 
 
@@ -170,13 +167,32 @@ export default function UserPage() {
 
 
   //------------------------------------- handle dialogs  ------------------------------------------- //
-
-
   // Function to handle closing the dialog
   const handleCloseDialog = () => {
     setImageModalOpen(false);
     setImageData('');
   };
+
+
+  const editTradeBoolean = isEditFormEnable && Object.keys(tradeToEdit).length > 0;
+
+  const setOpenModalInEditMode = (editBoolean) => {
+    dispatch(setEditMode(editBoolean));
+  }
+
+  const EditTradeForm = () => {
+
+    return (
+      <AddTrade
+        key={tradeToEdit._id}
+        openModal={isEditFormEnable}
+        handleOpenModal={setOpenModalInEditMode}
+        tradeInfo={tradeToEdit}
+        notifyToast={notifyToast}
+        isEditMode={true}
+      />);
+  }
+
 
 
   return (
@@ -234,15 +250,7 @@ export default function UserPage() {
             </Button>
           </div>
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
-          {(openmodal && editMode && currentTrade !== null) === true ? <AddTrade
-            key={currentTrade._id}
-            openModal={openmodal}
-            handleOpenModal={setIsOpenmodal}
-            tradeInfo={currentTrade}
-            notifyToast={notifyToast}
-            isEditMode={true}
-            prevState={currentTrade.status}
-          /> : null}
+          {editTradeBoolean ? <EditTradeForm /> : null}
         </Stack>
         <Card>
           <Scrollbar>

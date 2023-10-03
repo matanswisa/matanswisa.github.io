@@ -36,6 +36,10 @@ import { Label } from '@mui/icons-material';
 import { sentenceCase } from 'sentence-case';
 import { useToast } from 'react-toastify';
 
+// import AddTrade from '../components/trades/addTrade/addTradeFormModal';
+import AddTrade from "../../../components/trades/addTrade/addTradeFormModal";
+import { setEditMode, setTradeForEdit } from '../../../redux-toolkit/editTradeFormSlice';
+
 const formatDate = (dateString) => {
     const options = {
         year: "numeric",
@@ -75,7 +79,6 @@ export default function TradeTableRow(props) {
     const user = useSelector(selectUser);
     const [basicModal, setBasicModal] = useState(false);
     const toggleShow = () => setBasicModal(!basicModal);
-    const [openmodal, setIsOpenmodal] = useState(false);
 
     //table config states:
     const [opendialog, setDialogOpen] = useState(false);
@@ -118,6 +121,10 @@ export default function TradeTableRow(props) {
         setDialogOpen(false);
     };
 
+    const handleEditTradeEvent = () => {
+        dispatch(setEditMode(true));
+        dispatch(setTradeForEdit(trade));
+    }
 
     const deleteTrade = async () => {
         const res = await api.post('/api/deleteTrade', { tradeId: trade._id, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
@@ -201,8 +208,7 @@ export default function TradeTableRow(props) {
                 <TableCell align="right">
                     <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
                         onClick={() => {
-                            setIsOpenmodal(true);
-                            dispatch(setTrade(trade));
+                            handleEditTradeEvent();
                         }}
                     >
                         ערוך
@@ -263,15 +269,11 @@ export default function TradeTableRow(props) {
                     <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
                     : ''}
 
-
-
-
             {isHebrew === false ?
                 <TableCell align="right">
                     <button style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}
                         onClick={() => {
-                            setIsOpenmodal(true);
-                            dispatch(setTrade(trade));
+                            handleEditTradeEvent();
                         }}
                     >
                         Edit
