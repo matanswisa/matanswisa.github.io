@@ -239,7 +239,7 @@ export default function DashboardLayout() {
 
 
       <Main>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-start', }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <img
               alt="United States"
@@ -256,17 +256,14 @@ export default function DashboardLayout() {
           {/* <Badge color="secondary" badgeContent={2} style={{ marginLeft: '92%' }} invisible>
             <MailIcon  />
           </Badge> */}
+       
+
+        
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end',marginTop:'50px' }}>
           <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', }}>
             <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
           </div>
-
-
-
-
-        </div>
 
 
         {/* {userAccounts.length > 0 && <MultipleSelectPlaceholder />} */}
