@@ -122,9 +122,41 @@ const Alerts = () => {
             // Handle the error as needed
           }
 
-          
+
     };
 
+
+
+    
+    //------------------------------------------------ handle reset condtion -----------------------------------------------------//
+    const handleSetAlert = async (index,value) => {
+        const data = {
+            userId: alerts._id,
+            indexofAlert : index,
+            condition: value,
+        };
+        console.log(data);
+        try {
+            const response = await api.put('/api/auth/setAlert', data, {
+              headers: { Authorization: "Bearer " + alerts._id.accessToken }
+            });
+        
+            if (response.status === 200) {
+              // Request was successful, you can take action here
+              console.log("Request was successful");
+              // You can also do other actions here if needed
+            } else {
+              // Handle other status codes, e.g., 400, 500, etc.
+              console.log("Request failed with status code:", response.status);
+            }
+          } catch (err) {
+            // Handle any exceptions that occurred during the request
+            console.error(err);
+            // Handle the error as needed
+          }
+
+
+    };
 
 
 
@@ -132,11 +164,11 @@ const Alerts = () => {
         const updatedAlertTitle = [...alertTitle];
         updatedAlertTitle[index].condition = 0;
         setAlertTitle(updatedAlertTitle);
-        handleResetCondition(index);
+
 
 
         ///update alert to 0 in db.
-
+        handleResetCondition(index);
     };
 
 
@@ -145,7 +177,8 @@ const Alerts = () => {
         if (validateForm(index)) {
 
 
-            // //     handleCreateAlert(index, inputFieldValues[index]);
+            //update condtion in db. 
+            handleSetAlert(index, inputFieldValues[index]);
 
             // // Create a copy of the inputFieldVisibility array
             // const updatedInputFieldVisibility = [...inputFieldVisibility];
