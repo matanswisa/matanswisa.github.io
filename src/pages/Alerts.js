@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { Button, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit'; // Import EditIcon
 import { useDispatch, useSelector } from 'react-redux';
-import {  selectUser } from '../redux-toolkit/userSlice';
+import { selectUser } from '../redux-toolkit/userSlice';
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
 import { number } from 'prop-types';
@@ -24,58 +24,53 @@ import api from '../api/api';
 
 
 
-function createData(name) {
-    return { name };
+function createData(name, condition) {
+    return { name, condition };
 }
 
 
 const Alerts = () => {
     const darkMode = useSelector(selectDarkMode);
     const isHebrew = useSelector(selectlanguage);
-    const user = useSelector(selectUser);
-    console.log(user);
+    const alerts = useSelector(selectUser);
 
     
-    // const [alerts, setAlerts] = useState(null);
-
-
-
-
-
-    let alertTitle = [
-        createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.'),
-        createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.'),
+    
+    
+    
+    // default values : 
+    let initialAlertTitle = [
+        createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.', 2),
+        createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.', 0),
         // createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),
     ];
-
+    
     let inputsTitle = [
         [isHebrew === true ? "מספר טריידים" : "Number of trades"],
         [isHebrew === true ? "מספר הפסדים" : "Number of losing"],
         // [isHebrew  === true ?"זמן בדקות":"Time in minutes"],
     ]
+    
+    let condition = 3;
+    
+    
+    
+    
+    // read alerts from db. if is enable show 0 in inputs.
+    if (condition != 0) {
+        initialAlertTitle = [
+            createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.', condition),
+            createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.', condition),
+            // createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),
+        ];
+    }
+    
+    const [alertTitle, setAlertTitle] = useState([...initialAlertTitle]);
+
+    
+
 
     const [inputFieldValues, setInputFieldValues] = useState(Array(alertTitle.length).fill(''));
-
-    // const handleCreateAlert = async (alertIndex , CondtionValue) => {
-
-
-    //       const data = { AccountName: accountName, Broker: broker, Label: selectedColor,   InitialBalance : balance };
-    //       await api
-    //         .post('/api/createAccount', { userId: user._id, data }, { headers: { Authorization: "Berear " + JSON.parse(localStorage.getItem('user')).accessToken } })
-    //         .then(async (res) => {
-    //           notifyToast(getMsg(messages, msgType.success, msgNumber[2], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[2], languageidx).msgType);
-    //           // notifyToast('Account added successfully', 'success');
-    //           props.handleOpenModal(false);
-    //           dispatch(updateAccountList(res.data))
-    //           dispatch(setCurrentAccount(res.data[res.data.length - 1]));
-    //         })
-    //         .catch((err) => {
-    //           notifyToast(getMsg(messages, msgType.errors, msgNumber[1], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[1], languageidx).msgType);
-    //           // notifyToast("Couldn't add Account", 'error');
-    //           return false;
-    //         });
-
-    //   };
 
 
     const validateForm = (index) => {
@@ -90,7 +85,7 @@ const Alerts = () => {
             return;
         }
 
-        if (isNaN(inputFieldValues[index]) || parseFloat(inputFieldValues[index]) < 0) {
+        if (isNaN(inputFieldValues[index]) || parseFloat(inputFieldValues[index]) < 1) {
             alert('Input must be a valid positive number'); // You can customize this message
             return;
         }
@@ -99,40 +94,49 @@ const Alerts = () => {
 
     }
 
-    // Initialize an array to track the visibility of input fields for each row
-    const [inputFieldVisibility, setInputFieldVisibility] = useState(
-        Array(alertTitle.length).fill(false)
+
+       const [inputFieldVisibility, setInputFieldVisibility] = useState(
+        alertTitle.map((row) => row.condition === 0)
     );
+
 
     // Initialize label state for each row
     const [labelState, setLabelState] = useState(
         Array(alertTitle.length).fill({ color: 'error', text: 'Off' })
     );
 
+
+    const handleEditClick = (index) => {
+        const updatedAlertTitle = [...alertTitle];
+    updatedAlertTitle[index].condition = 0;
+    setAlertTitle(updatedAlertTitle);
+    ///update alert to 0 in db.
+    }; 
+    
+
+    // after click save alert condtion in db. 
     const handleButtonClick = (index) => {
-
-
         if (validateForm(index)) {
 
 
-            //     handleCreateAlert(index, inputFieldValues[index]);
+            // //     handleCreateAlert(index, inputFieldValues[index]);
 
-            // Create a copy of the inputFieldVisibility array
-            const updatedInputFieldVisibility = [...inputFieldVisibility];
-            // Toggle the visibility for the clicked row
-            updatedInputFieldVisibility[index] = !updatedInputFieldVisibility[index];
+            // // Create a copy of the inputFieldVisibility array
+            // const updatedInputFieldVisibility = [...inputFieldVisibility];
+            // // Toggle the visibility for the clicked row
+            // updatedInputFieldVisibility[index] = !updatedInputFieldVisibility[index];
 
-            // Create a copy of the labelState array
-            const updatedLabelState = [...labelState];
-            // Toggle the label color and text
-            updatedLabelState[index] = {
-                color: updatedLabelState[index].color === 'error' ? 'success' : 'error',
-                text: updatedLabelState[index].text === 'Off' ? 'On' : 'Off',
-            };
+            // // Create a copy of the labelState array
+            // const updatedLabelState = [...labelState];
+            // // Toggle the label color and text
+            // updatedLabelState[index] = {
+            //     color: updatedLabelState[index].color === 'error' ? 'success' : 'error',
+            //     text: updatedLabelState[index].text === 'Off' ? 'On' : 'Off',
+            // };
 
-            // Update the state with the new arrays
-            setInputFieldVisibility(updatedInputFieldVisibility);
-            setLabelState(updatedLabelState);
+            // // Update the state with the new arrays
+            // setInputFieldVisibility(updatedInputFieldVisibility);
+            // setLabelState(updatedLabelState);
 
         }
     };
@@ -157,11 +161,11 @@ const Alerts = () => {
                             <TableCell component="th" scope="row">
                                 {row.name}
                             </TableCell>
+
+
                             <TableCell>
-                                {labelState[index].text === 'On' ? (
-                                    <Typography variant="body1">
-                                        {inputsTitle[index]}
-                                    </Typography>
+                                {row.condition !== 0 ? (
+                                    row.condition
                                 ) : (
                                     <TextField
                                         id="outlined-basic"
@@ -175,22 +179,40 @@ const Alerts = () => {
                                             setInputFieldValues(updatedInputFieldValues);
                                         }}
                                     />
-
                                 )}
                             </TableCell>
+
+
+
                             <TableCell>
-                                <Label color={labelState[index].color}>
-                                    {labelState[index].text}
-                                </Label>
+                                {row.condition !== 0 ? (
+                                    <Label color="success">On</Label>
+                                ) : (
+                                    <Label color="error">Off</Label>
+                                )}
                             </TableCell>
+
+
+
+
                             <TableCell>
-                                <Button onClick={() => handleButtonClick(index)}>{labelState[index].text === 'On' ? <IconButton aria-label="Edit">
-                                    <EditIcon />
-                                </IconButton> : isHebrew === true ? "שמור" : 'Save'}
-                                </Button>
+                                {row.condition !== 0 ? (
+
+                                    
+                                    <IconButton aria-label="Edit" onClick={() => handleEditClick(index)}>
+                                        <EditIcon />
+                                    </IconButton>
+                                ) : (
+
+
+                                    <Button onClick={() => handleButtonClick(index)}>
+                                        {isHebrew === true ? "שמור" : 'Save'}
+                                    </Button>
+                                )}
                             </TableCell>
                         </TableRow>
                     ))}
+
                 </TableBody>
             </Table>
         </TableContainer>
