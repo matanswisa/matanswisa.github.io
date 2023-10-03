@@ -137,7 +137,7 @@ export default function TradeTableRow(props) {
     return (
         <TableRow
             hover
-            key={trade.tradeId}
+            key={trade._id}
             tabIndex={-1}
             role="checkbox"
             selected={trade}

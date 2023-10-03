@@ -50,6 +50,7 @@ import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
 import { selectlanguage, selectidx } from '../../../redux-toolkit/languagesSlice';
 import LogoImage from '../../../components/logo/logoImage'
 import EditNoteIcon from '@mui/icons-material/EditNoteOutlined';
+import { selectTradeToEdit } from '../../../redux-toolkit/editTradeFormSlice';
 // import EditNoteIcon from '@mui/icons-material/EditNote';
 const style = {
   position: 'absolute',
@@ -94,6 +95,10 @@ export default function TradeFormModal(props) {
   const prevStatusState = props?.prevState;
   const reduxDispatch = useDispatch();
   const fileInputRef = React.useRef(null);
+
+
+  //selector
+  const editedTrade = useSelector(selectTradeToEdit);
 
 
 
@@ -263,6 +268,7 @@ export default function TradeFormModal(props) {
     let data = {};
 
     // if (currentAccount?.Broker === brokers.Tradovate) {
+
     data = {
       entryDate: positionDate,
       symbol: positionSymbol,
@@ -277,8 +283,6 @@ export default function TradeFormModal(props) {
       commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
       comments,
       netPnL: positionStatus == "Loss" ? netPnL * -1 : netPnL,
-      tradeId: tradeInfo?._id || '',
-
     }
     //  }
 
@@ -333,11 +337,12 @@ export default function TradeFormModal(props) {
       else if (editMode === true) {
         if (validateForm()) {
           data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
-          await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: 'Bearer ' + user.accessToken } })
+          // console.log(trade
+          await api.post('/api/editTrade', { tradeId: editedTrade._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: 'Bearer ' + user.accessToken } })
             .then((res) => {
               notifyToast(getMsg(messages, msgType.success, msgNumber[5], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[5], languageidx).msgType);
               //      notifyToast("Trade Edit succssfully", "success")
-              handleUploadTradeImage(tradeInfo?._id, user._id, currentAccount._id, selectedFile).then(response => response.json())
+              handleUploadTradeImage(editedTrade?._id, user._id, currentAccount._id, selectedFile).then(response => response.json())
                 .then(data => {
                   notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
                   // notifyToast("Trade image uploaded successfully", "success");
