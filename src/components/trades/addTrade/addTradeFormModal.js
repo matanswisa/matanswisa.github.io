@@ -174,7 +174,7 @@ export default function TradeFormModal(props) {
     };
 
     try {
-      const response = await api.put('/api/auth/toggleAlert', data, {
+      const response = await api.put('/api/auth/TurnAlertOn', data, {
         headers: { Authorization: "Bearer " + user.accessToken }
       });
 
