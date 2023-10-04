@@ -351,6 +351,7 @@ export default function TradeModal(props) {
             reduxDispatch(setCurrentAccount(res.data.account));  //update balance
             reduxDispatch(setTradesList(res.data.tradesWithImage));
 
+            console.log(currentAccount);
 
             notifyToast(getMsg(messages, msgType.success, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[4], languageidx).msgType);
             //  notifyToast("Trade added successfully", "success");
