@@ -199,6 +199,10 @@ export default function TradeTableRow(props) {
                     </Dialog>
                 </TableCell>}
 
+
+
+
+
             {isHebrew === false ?
                 <TableCell align="center">
                     <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
@@ -216,6 +220,17 @@ export default function TradeTableRow(props) {
                 </TableCell>}
 
 
+                <TableCell align="center">
+                    {trade.entryPrice}
+                </TableCell>     
+
+                <TableCell align="center">
+                    {trade.stopPrice}
+                </TableCell>     
+
+                <TableCell align="center">
+                    {trade.exitPrice}
+                </TableCell>     
 
 
             <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
