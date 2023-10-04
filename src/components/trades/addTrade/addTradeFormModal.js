@@ -155,6 +155,36 @@ export default function TradeModal(props) {
   };
 
 
+
+
+  const handleToggleAlert = async (index) => {
+    const data = {
+        userId: user._id,
+        indexofAlert : index,
+    };
+
+    try {
+        const response = await api.put('/api/auth/toggleAlert', data, {
+          headers: { Authorization: "Bearer " + user.accessToken }
+        });
+    
+        if (response.status === 200) {
+              console.log("ok"); 
+          // You can also do other actions here if needed
+        } else {
+          // Handle other status codes, e.g., 400, 500, etc.
+          console.log("Request failed with status code:", response.status);
+        }
+      } catch (err) {
+        // Handle any exceptions that occurred during the request
+        console.error(err);
+        // Handle the error as needed
+      }
+
+
+};
+
+
   function calculateRiskReward(EntryPrice, TakeProfit, StopLoss, Type) {
 
     if (EntryPrice === StopLoss) {
@@ -352,6 +382,14 @@ export default function TradeModal(props) {
             reduxDispatch(setTradesList(res.data.tradesWithImage));
 
             console.log(currentAccount);
+
+
+            handleToggleAlert(0);
+
+
+            
+
+
 
             notifyToast(getMsg(messages, msgType.success, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[4], languageidx).msgType);
             //  notifyToast("Trade added successfully", "success");
