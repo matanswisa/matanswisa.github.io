@@ -24,8 +24,8 @@ import api from '../api/api';
 
 
 
-function createData(name, condition) {
-    return { name, condition };
+function createData(type,name, condition) {
+    return { type,name, condition };
 }
 
 
@@ -49,8 +49,8 @@ const Alerts = () => {
 
     // default values : 
     let initialAlertTitle = [
-        createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.', 0),
-        createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.', 0),
+        createData("Over Trading",isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.', 0),
+        createData("Losses in a row",isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.', 0),
         // createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),
     ];
 
@@ -70,8 +70,8 @@ const Alerts = () => {
     // read alerts from db. if is enable show 0 in inputs.
     if (alerts) {
         initialAlertTitle = [
-            createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.',alerts[0].condition),
-            createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.',alerts[1].condition),
+            createData("Over Trading",isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.',alerts[0].condition),
+            createData("Losses in a row",isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.',alerts[1].condition),
             // createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),0
         ];
     }
@@ -191,7 +191,8 @@ const Alerts = () => {
             <Table sx={{ minWidth: 200 }} aria-label="simple table"  >
                 <TableHead>
                     <TableRow>
-                        <TableCell> {isHebrew === true ? "התראות" : "Alerts"}</TableCell>
+                    <TableCell> {isHebrew === true ? "סוג התראה" : "Alert Type"}</TableCell>
+                        <TableCell> {isHebrew === true ? "תיאור התראה" : "Alert Discription"}</TableCell>
                         <TableCell>{isHebrew === true ? "תנאי" : "Condtion"}</TableCell>
                         <TableCell>{isHebrew === true ? "סטטוס" : "Status"}</TableCell>
                         <TableCell>{isHebrew === true ? "פעולה" : "Action"}</TableCell>
@@ -203,6 +204,10 @@ const Alerts = () => {
                             key={row.name}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
+                              <TableCell component="th" scope="row">
+                                <h6>{row.type}</h6>
+                            </TableCell>
+
                             <TableCell component="th" scope="row">
                                 {row.name}
                             </TableCell>
