@@ -23,7 +23,6 @@ import { msgNumber } from '../../utils/msgNumbers.js';
 import { selectlanguage, selectidx } from '../../redux-toolkit/languagesSlice';
 
 import { selectDarkMode } from '../../redux-toolkit/darkModeSlice';
-import { AccountBalance } from '@mui/icons-material';
 //--------------------------------------------This component show Create account Modal -------------------------------------------//
 export default function AccountModal(props) {
 
@@ -72,20 +71,19 @@ export default function AccountModal(props) {
   //------------------------------------------------ handle create account -----------------------------------------------------//
   const handleCreateAccount = async () => {
     if (validateForm()) {
-      const data = { AccountName: accountName, Broker: broker, Label: selectedColor,   InitialBalance : balance };
+      const data = { AccountName: accountName, Broker: broker, Label: selectedColor, InitialBalance: balance };
       await api
-        .post('/api/createAccount', { userId: user._id, data }, { headers: { Authorization: "Berear " + JSON.parse(localStorage.getItem('user')).accessToken } })
+        .post('/api/createAccount', { userId: user._id, data }, { headers: { Authorization: "Berear " + user.accessToken } })
         .then(async (res) => {
           notifyToast(getMsg(messages, msgType.success, msgNumber[2], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[2], languageidx).msgType);
-          // notifyToast('Account added successfully', 'success');
           props.handleOpenModal(false);
+          console.log("create account", res.data);
           dispatch(updateAccountList(res.data))
           dispatch(setCurrentAccount(res.data[res.data.length - 1]));
         })
         .catch((err) => {
           notifyToast(getMsg(messages, msgType.errors, msgNumber[1], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[1], languageidx).msgType);
-          // notifyToast("Couldn't add Account", 'error');
-          return false;
+          console.error(err);
         });
     }
   };
@@ -94,28 +92,24 @@ export default function AccountModal(props) {
   //------------------------------------------------ handle edit account -----------------------------------------------------//
   const handleEditAccount = async () => {
     if (validateFormEdit()) {
+      
       const data = {
         accountId: accountInfo._id, // Include the _id property for updating the correct account
         AccountName: accountName,
         Broker: broker,
         Label: selectedColor,
-        
         userId: user._id,
       };
 
-      await api
-        .put('/api/editAccount', data, { headers: { Authorization: "Berear " + user.accessToken } }) // Use api.put and pass the account id in the URL
+      api.put('/api/editAccount', data, { headers: { Authorization: "Berear " + user.accessToken } }) // Use api.put and pass the account id in the URL
         .then((res) => {
-          // notifyToast('Account updated successfully', 'success');
           notifyToast(getMsg(messages, msgType.success, msgNumber[3], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[3], languageidx).msgType);
           dispatch(updateAccountList(res.data))
           dispatch(setCurrentAccount(res.data[res.data.length - 1]));
           props.handleOpenModal(false);
-
         })
         .catch((err) => {
           notifyToast(getMsg(messages, msgType.errors, msgNumber[3], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[3], languageidx).msgType);
-          // notifyToast("Couldn't update account", 'error');
         });
     }
   };
@@ -141,20 +135,18 @@ export default function AccountModal(props) {
 
   //------------------------------------------------ handle validateForm before create account -----------------------------------------------------//  
   const validateForm = () => {
-    if(balance <= 0){
+    if (balance <= 0) {
       notifyToast(getMsg(messages, msgType.warnings, msgNumber[33], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[1], languageidx).msgType);
       return false;
     }
 
     if (accountName === '') {
       notifyToast(getMsg(messages, msgType.warnings, msgNumber[1], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[1], languageidx).msgType);
-      // notifyToast('Account type is missing', 'warning');
       return false;
     }
 
     if (checkAccountExists(accounts, accountName)) {
       notifyToast(getMsg(messages, msgType.warnings, msgNumber[2], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[2], languageidx).msgType);
-      // notifyToast('Account already exist', 'warning');
       return false;
     }
     return true;
@@ -164,7 +156,6 @@ export default function AccountModal(props) {
   const validateFormEdit = () => {
     if (accountName === '') {
       notifyToast(getMsg(messages, msgType.warnings, msgNumber[1], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[1], languageidx).msgType);
-      // notifyToast('Account type is missing', 'warning');
       return false;
     }
     return true;
@@ -204,15 +195,11 @@ export default function AccountModal(props) {
         </Grid>
 
         {edit === false ?
-
-
           <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
             <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 }}>
               {isHebrew === false ? "Account Balance" : "מאזן חשבון"}
-
             </Typography>
             <TextField
-
               required
               id="outlined-required"
               value={balance}
@@ -221,9 +208,6 @@ export default function AccountModal(props) {
               onChange={(e) => setAccountBalance(e.target.value)}
             />
           </Grid> : null}
-
-
-
 
         {edit === false ? (
           <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
@@ -284,11 +268,11 @@ export default function AccountModal(props) {
         ) : null}
 
         <Grid sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }} >
-          <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2 , }}>
+          <Typography variant="h6" component="h3" sx={{ textAlign: 'left', marginTop: 2, }}>
             {isHebrew === false ? "Account Symbol" : "סמל חשבון"}
 
           </Typography>
-          <Select sx={{ mt: 3, ml: 2  ,marginBottom:'20px'}} size="small" value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
+          <Select sx={{ mt: 3, ml: 2, marginBottom: '20px' }} size="small" value={selectedColor} onChange={(event) => setSelectedColor(event.target.value)}>
             <MenuItem value={red[500]}></MenuItem>
             <MenuItem value={red[500]}>
               <ListItemIcon>

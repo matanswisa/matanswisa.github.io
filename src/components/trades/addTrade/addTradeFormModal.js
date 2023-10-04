@@ -30,7 +30,7 @@ import api from '../../../api/api';
 import Iconify from '../../iconify/Iconify';
 import './addTrade.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentAccount, selectUser, setTradesList, setCurrentAccount } from '../../../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, setTradesList, setCurrentAccount, selectCurrentAccountTrades, selectAlerts } from '../../../redux-toolkit/userSlice';
 import InputAdornment from '@mui/material/InputAdornment';
 
 
@@ -50,6 +50,9 @@ import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
 import { selectlanguage, selectidx } from '../../../redux-toolkit/languagesSlice';
 import LogoImage from '../../../components/logo/logoImage'
 import EditNoteIcon from '@mui/icons-material/EditNoteOutlined';
+import { selectTradeToEdit } from '../../../redux-toolkit/editTradeFormSlice';
+import { filterObjectsByCurrentDate } from '../../../utils/date';
+import { ALERTS_TYPE, AlertsMessages } from '../../../constants/alertsMessages';
 // import EditNoteIcon from '@mui/icons-material/EditNote';
 const style = {
   position: 'absolute',
@@ -73,13 +76,8 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 
-
-
-
-
-
 //--------------------------------------------This component show Addtrade Modal -------------------------------------------//
-export default function TradeModal(props) {
+export default function TradeFormModal(props) {
 
 
   //------------------------------------------------  States ----------------------------------------------------- //
@@ -99,10 +97,22 @@ export default function TradeModal(props) {
   const prevStatusState = props?.prevState;
   const reduxDispatch = useDispatch();
   const fileInputRef = React.useRef(null);
+  const trades = useSelector(selectCurrentAccountTrades);
+  const alerts = useSelector(selectAlerts);
 
 
+  //selector
+  const editedTrade = useSelector(selectTradeToEdit);
 
-
+  const checkOverTradingAlert = async (alerts, trades) => {
+    console.log("Over tading it is?");
+    const tradesOfToday = filterObjectsByCurrentDate(trades);
+    console.log(tradesOfToday);
+    if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition < tradesOfToday.length) {
+      console.log("Trigger over trading");
+      await handleToggleAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
+    }
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -159,30 +169,30 @@ export default function TradeModal(props) {
 
   const handleToggleAlert = async (index) => {
     const data = {
-        userId: user._id,
-        indexofAlert : index,
+      userId: user._id,
+      indexofAlert: index,
     };
 
     try {
-        const response = await api.put('/api/auth/toggleAlert', data, {
-          headers: { Authorization: "Bearer " + user.accessToken }
-        });
-    
-        if (response.status === 200) {
-              console.log("ok"); 
-          // You can also do other actions here if needed
-        } else {
-          // Handle other status codes, e.g., 400, 500, etc.
-          console.log("Request failed with status code:", response.status);
-        }
-      } catch (err) {
-        // Handle any exceptions that occurred during the request
-        console.error(err);
-        // Handle the error as needed
+      const response = await api.put('/api/auth/toggleAlert', data, {
+        headers: { Authorization: "Bearer " + user.accessToken }
+      });
+
+      if (response.status === 200) {
+        console.log("ok");
+        // You can also do other actions here if needed
+      } else {
+        // Handle other status codes, e.g., 400, 500, etc.
+        console.log("Request failed with status code:", response.status);
       }
+    } catch (err) {
+      // Handle any exceptions that occurred during the request
+      console.error(err);
+      // Handle the error as needed
+    }
 
 
-};
+  };
 
 
   function calculateRiskReward(EntryPrice, TakeProfit, StopLoss, Type) {
@@ -319,8 +329,6 @@ export default function TradeModal(props) {
   }, [positionType, contractsCounts, entryPrice, exitPrice, stopPrice, positionStatus]); // Listen for changes in positionType
 
 
-
-
   useEffect(() => {
     if (exitPrice && entryPrice && stopPrice && positionType) {
       setRiskReward(calculateRiskReward(entryPrice, exitPrice, stopPrice, positionType));
@@ -348,6 +356,7 @@ export default function TradeModal(props) {
     let data = {};
 
     // if (currentAccount?.Broker === brokers.Tradovate) {
+
     data = {
       entryDate: positionDate,
       symbol: positionSymbol,
@@ -362,9 +371,7 @@ export default function TradeModal(props) {
       commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
       comments,
       netPnL: positionStatus == "Loss" ? netPnL * -1 : netPnL,
-      riskReward:riskReward,
-      tradeId: tradeInfo?._id || '',
-
+      riskReward: riskReward,
     }
 
     //-------------------------------------------------------------- handle new trade adding -------------------------------------------------------------//
@@ -372,30 +379,20 @@ export default function TradeModal(props) {
 
       if (!editMode) {
         await api
-          .post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: "Berear " + user.accessToken } }).then((res) => {
+          .post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: "Berear " + user.accessToken } }).then(async (res) => {
             if (selectedFile !== null) {
               handleUpload(res.data.tradeId);
             }
-
-
             reduxDispatch(setCurrentAccount(res.data.account));  //update balance
             reduxDispatch(setTradesList(res.data.tradesWithImage));
 
-            console.log(currentAccount);
-
-
-            handleToggleAlert(0);
-
-
-            
-
-
-
+            await checkOverTradingAlert(alerts, trades);
             notifyToast(getMsg(messages, msgType.success, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[4], languageidx).msgType);
             //  notifyToast("Trade added successfully", "success");
             handleClose();
 
           }).catch((err) => {
+            console.error(err);
             notifyToast(getMsg(messages, msgType.errors, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[4], languageidx).msgType);
             //  notifyToast("Couldn't add trade", "error");
             handleClose();
@@ -406,11 +403,12 @@ export default function TradeModal(props) {
       else if (editMode === true) {
         if (validateForm()) {
           data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
-          await api.post('/api/editTrade', { tradeId: tradeInfo?._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: 'Bearer ' + user.accessToken } })
+          // console.log(trade
+          await api.post('/api/editTrade', { tradeId: editedTrade._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: 'Bearer ' + user.accessToken } })
             .then((res) => {
               notifyToast(getMsg(messages, msgType.success, msgNumber[5], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[5], languageidx).msgType);
               //      notifyToast("Trade Edit succssfully", "success")
-              handleUploadTradeImage(tradeInfo?._id, user._id, currentAccount._id, selectedFile).then(response => response.json())
+              handleUploadTradeImage(editedTrade?._id, user._id, currentAccount._id, selectedFile).then(response => response.json())
                 .then(data => {
                   notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
                   // notifyToast("Trade image uploaded successfully", "success");
@@ -673,7 +671,6 @@ export default function TradeModal(props) {
                   />
 
                 </Box>
-
                 <Box>
                   <FormControl variant="standard" >
                     <InputLabel id="demo-simple-select-standard-label"> {isHebrew === false ? "Status" : "סטטוס"}</InputLabel>
@@ -721,8 +718,8 @@ export default function TradeModal(props) {
                     </Select>
                   </FormControl>
                 </Box>
-              </Stack>
-            </Box>
+              </Stack >
+            </Box >
             <Box sx={{ width: "300px" }}>
               <Stack spacing={2} >
                 <Box style={{ backgroundColor: darkMode ? '#121212' : "", color: darkMode ? 'white' : "", }}>
@@ -883,15 +880,15 @@ export default function TradeModal(props) {
                     className="outlined-number"
                     disabled
                     sx={{ width: "280px" }}
-                    label={isHebrew === false ? "Risk/Reward" : "סיכון/סיכוי"}
+                    label={isHebrew === false ? "Risk/Reward" : "סיכון/סיכ  וי"}
                     value={riskReward}
                     InputLabelProps={{ shrink: true }}
                   />
                 </Box>
-              </Stack>
-            </Box>
+              </Stack >
+            </Box >
 
-          </Stack>
+          </Stack >
 
           <Box style={{ marginBottom: "30px" }} >
             <Typography>Notes<EditNoteIcon fontSize="large" /></Typography>
@@ -916,7 +913,7 @@ export default function TradeModal(props) {
             <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", marginLeft: "7px" }} variant="outlined" onClick={handleClose} > {isHebrew === false ? "Cancel" : "ביטול"}</Button>
           </Box>
 
-        </Box>
+        </Box >
 
       </Modal >
     </>

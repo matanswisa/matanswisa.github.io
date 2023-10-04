@@ -48,7 +48,9 @@ const authSlice = createSlice({
             state.user.accounts.push(action.payload);
         },
         updateAccountList(state, action) {
+            console.log("before", action.payload);
             state.user.accounts = action.payload;
+            console.log("after", state.user.accounts)
         },
         updateAccount(state, action) {
             const currAccounts = state.user.accounts.filter(account => account._id !== action.payload._id);
@@ -68,8 +70,9 @@ const authSlice = createSlice({
 export const { login, logout, selectIsAdmin, setCurrentAccount, addAccountToList, removeAccount, setTradesList, updateAccountList , setAlerts } = authSlice.actions;
 
 //Selectors
-export const selectUserAccounts = (state) => state.auth.user.accounts;
+export const selectUserAccounts = (state) => state.auth.user?.accounts;
 export const selectCurrentAccount = (state) => state.auth.currentAccount;
+export const selectCurrentAccountTrades = (state) => state.auth.currentAccount.trades;
 export const selectTradesOfCurrentAccount = (state) => state.auth.currentAccount.trades;
 export const selectUserName = (state) => state.auth.user?.username;
 export const selectUser = (state) => state.auth.user;

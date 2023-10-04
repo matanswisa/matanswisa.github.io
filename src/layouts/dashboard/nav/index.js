@@ -18,14 +18,13 @@ import InputAdornment from '@mui/material/InputAdornment';
 import navConfig from './config';
 import { useDispatch, useSelector } from 'react-redux';
 import SvgColor from '../../../components/svg-color';
-import { initializeUser, isUserAuthenticated, logout, selectIsAdmin, selectUser, selectUserAdmin } from '../../../redux-toolkit/userSlice';
+import { initializeUser, isUserAuthenticated, logout, selectIsAdmin, selectUser, selectUserAccounts, selectUserAdmin } from '../../../redux-toolkit/userSlice';
 import useTokenValidation from '../../../hooks/validateToken';
 import LogoImage from '../../../components/logo/logoImage'
 import { selectCurrentAccount, } from '../../../redux-toolkit/userSlice';
 import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
 import { selectDarkMode, toggleDarkMode } from '../../../redux-toolkit/darkModeSlice';
 import MultipleSelectPlaceholder from '../../../components/accounts/selectAccount';
-import { selectUserAccounts } from '../../../redux-toolkit/userSlice';
 
 // ----------------------------------------------------------------------
 
@@ -96,7 +95,24 @@ export default function Nav({ openNav, onCloseNav }) {
       },
     ]
   }
-  else if (!isAdmin && isAuthenticated) {
+  else if (!isAdmin && isAuthenticated && !userAccounts?.length) {
+    navConfig = [{
+      title: DashboardTitle,
+      path: '/dashboard/app',
+      icon: icon('dashboard'),
+    },
+    {
+      title: DailyStatsTitle,
+      path: '/dashboard/dailystatspage',
+      icon: icon('ic_analytics'),
+    },
+    {
+      title: SettingsTitle,
+      path: '/dashboard/manage-users',
+      icon: icon('settings')
+    },
+    ];
+  } else if (!isAdmin && isAuthenticated && userAccounts?.length) {
     navConfig = [{
       title: DashboardTitle,
       path: '/dashboard/app',
@@ -116,8 +132,7 @@ export default function Nav({ openNav, onCloseNav }) {
       title: SettingsTitle,
       path: '/dashboard/manage-users',
       icon: icon('settings')
-    },
-    ];
+    }]
   }
 
 
