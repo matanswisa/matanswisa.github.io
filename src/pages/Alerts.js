@@ -35,9 +35,16 @@ const Alerts = () => {
     const user = useSelector(selectUser);
     const alerts = useSelector(selectAlerts);
     const dispatch = useDispatch();
-    const [AlertState,setAlertsState] = useState(alerts)
-    
+    const [conditions, setConditions] = useState([]);
 
+    
+    useEffect(() => {
+        if (alerts) {
+            const initialConditions = alerts.map((alert) => alert.condition);
+            setConditions(initialConditions);
+        }
+    }, [alerts]);
+    
 
 
     // default values : 
@@ -61,10 +68,10 @@ const Alerts = () => {
 
 
     // read alerts from db. if is enable show 0 in inputs.
-    if (AlertState) {
+    if (alerts) {
         initialAlertTitle = [
-            createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.',AlertState[0].condition),
-            createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.',AlertState[1].condition),
+            createData(isHebrew === true ? "בצע התראה כאשר חרגתי מכמות הטריידים שהגבלתי" : 'Alert me when I exceed a certain limit trades per day.',alerts[0].condition),
+            createData(isHebrew === true ? "בצע התראה כאשר הפסדתי מספר הפסדים רצוף" : 'Alert me when I lose a certain number of times in a row.',alerts[1].condition),
             // createData(isHebrew  === true ? "בצע התראה לפני חדשות"  :'Alert before news.'),0
         ];
     }
@@ -111,8 +118,9 @@ const Alerts = () => {
             });
         
             if (response.status === 200) {
-              // Request was successful, you can take action here
-              console.log("Request was successful");
+             
+                dispatch(setAlerts(response.data));
+
               // You can also do other actions here if needed
             } else {
               // Handle other status codes, e.g., 400, 500, etc.
@@ -143,7 +151,7 @@ const Alerts = () => {
 
                 dispatch(setAlerts(response.data));
 
-                setAlertsState(response.data);
+                
               
               // You can also do other actions here if needed
             } else {
@@ -165,9 +173,6 @@ const Alerts = () => {
         const updatedAlertTitle = [...alertTitle];
         updatedAlertTitle[index].condition = 0;
         setAlertTitle(updatedAlertTitle);
-
-
-
         ///update alert to 0 in db.
         handleResetCondition(index);
     };
@@ -176,28 +181,8 @@ const Alerts = () => {
     // after click save new alert condtions in db.   and fetch to redux.
     const handleButtonClick = (index) => {
         if (validateForm(index)) {
-
-
-            //update condtion in db. 
+          //update condtion in db. 
             handleSetAlert(index, inputFieldValues[index]);
-
-            // // Create a copy of the inputFieldVisibility array
-            // const updatedInputFieldVisibility = [...inputFieldVisibility];
-            // // Toggle the visibility for the clicked row
-            // updatedInputFieldVisibility[index] = !updatedInputFieldVisibility[index];
-
-            // // Create a copy of the labelState array
-            // const updatedLabelState = [...labelState];
-            // // Toggle the label color and text
-            // updatedLabelState[index] = {
-            //     color: updatedLabelState[index].color === 'error' ? 'success' : 'error',
-            //     text: updatedLabelState[index].text === 'Off' ? 'On' : 'Off',
-            // };
-
-            // // Update the state with the new arrays
-            // setInputFieldVisibility(updatedInputFieldVisibility);
-            // setLabelState(updatedLabelState);
-
         }
     };
 
@@ -224,8 +209,8 @@ const Alerts = () => {
 
 
                             <TableCell>
-                                {row.condition !== 0 ? (
-                                    row.condition
+                                {conditions[index]  !== 0 ? (
+                                      conditions[index]
                                 ) : (
                                     <TextField
                                         id="outlined-basic"
@@ -244,7 +229,7 @@ const Alerts = () => {
 
 
                             <TableCell>
-                                {row.condition !== 0 ? (
+                                {  conditions[index] !== 0 ? (
                                     <Label color="success">On</Label>
                                 ) : (
                                     <Label color="error">Off</Label>
@@ -253,7 +238,7 @@ const Alerts = () => {
 
 
                             <TableCell>
-                                {row.condition !== 0 ? (
+                                {  conditions[index] !== 0 ? (
 
                                     <IconButton aria-label="Edit" onClick={() => handleEditClick(index)}>
                                         <EditIcon />
