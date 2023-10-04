@@ -51,7 +51,7 @@ import { selectlanguage, selectidx } from '../../../redux-toolkit/languagesSlice
 import LogoImage from '../../../components/logo/logoImage'
 import EditNoteIcon from '@mui/icons-material/EditNoteOutlined';
 import { selectTradeToEdit } from '../../../redux-toolkit/editTradeFormSlice';
-import { filterObjectsByCurrentDate } from '../../../utils/date';
+// import { filterObjectsByCurrentDate } from '../../../utils/date';
 import { ALERTS_TYPE, AlertsMessages } from '../../../constants/alertsMessages';
 // import EditNoteIcon from '@mui/icons-material/EditNote';
 const style = {
@@ -100,19 +100,46 @@ export default function TradeFormModal(props) {
   const trades = useSelector(selectCurrentAccountTrades);
   const alerts = useSelector(selectAlerts);
 
-
   //selector
   const editedTrade = useSelector(selectTradeToEdit);
 
-  const checkOverTradingAlert = async (alerts, trades) => {
-    console.log("Over tading it is?");
+
+
+
+  const checkOverTradingAlert = async (alerts) => {
+
+    
     const tradesOfToday = filterObjectsByCurrentDate(trades);
-    console.log(tradesOfToday);
-    if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition < tradesOfToday.length) {
-      console.log("Trigger over trading");
-      await handleToggleAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
-    }
+   
+   
+    // if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition < tradesOfToday.length) {
+    //   console.log("Trigger over trading");
+    //   await handleToggleAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
+    // }
   }
+
+
+  function filterObjectsByCurrentDate(trades) {
+    console.log(trades);
+    const currentDate = new Date(); // Get the current date and time
+  
+    const tradesOfToday = trades.filter((trade) => {
+      // Split the entryDate string by 'T' to get the date component
+      const entryDateParts = trade.entryDate.split('T');
+      
+      // Parse the date portion into a Date object
+      const entryDate = new Date(entryDateParts[0]);
+  
+      // Compare the entryDate with currentDate to check if it's from today or later
+      return entryDate.getTime() === currentDate.getTime();
+    });
+  
+    console.log(tradesOfToday);
+  }
+  
+
+
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -386,7 +413,7 @@ export default function TradeFormModal(props) {
             reduxDispatch(setCurrentAccount(res.data.account));  //update balance
             reduxDispatch(setTradesList(res.data.tradesWithImage));
 
-            await checkOverTradingAlert(alerts, trades);
+            await checkOverTradingAlert(alerts);
             notifyToast(getMsg(messages, msgType.success, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[4], languageidx).msgType);
             //  notifyToast("Trade added successfully", "success");
             handleClose();
