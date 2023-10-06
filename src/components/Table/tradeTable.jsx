@@ -70,7 +70,7 @@ export default function TradesTable(props) {
     //table config states:
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const filteredUsers = applySortFilter(trades, getComparator(order, orderBy), filterName);
+    const filteredUsers = trades?.length ? applySortFilter(trades, getComparator(order, orderBy), filterName) : [];
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - trades.length) : 0;
     const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -179,9 +179,9 @@ export default function TradesTable(props) {
             { id: 'entryDate', label: 'Open Date', alignRight: false },
             { id: 'symbol', label: 'Symbol', alignRight: false },
             { id: 'status', label: 'Status', alignRight: false },
-            { id: 'Entry price', label: 'Entry price', alignRight: false }, 
-            { id: 'Stop loss', label: 'Stop loss', alignRight: false }, 
-            { id: 'Take Profit', label: 'Take Profit', alignRight: false }, 
+            { id: 'Entry price', label: 'Entry price', alignRight: false },
+            { id: 'Stop loss', label: 'Stop loss', alignRight: false },
+            { id: 'Take Profit', label: 'Take Profit', alignRight: false },
             { id: 'netROI', label: 'Net ROI', alignRight: false },
             { id: 'longShort', label: 'Long / Short', alignRight: false },
             { id: 'contracts', label: 'Contracts', alignRight: false },
@@ -207,9 +207,9 @@ export default function TradesTable(props) {
             { id: 'חוזים', label: 'חוזים', alignRight: false },
             { id: 'לונג / שורט', label: 'לונג / שורט', alignRight: false },
             { id: 'רוי נקי', label: 'רוי נקי', alignRight: false },
-            { id: 'לקיחת רווח', label: 'לקיחת רווח', alignRight: false }, 
-            { id: 'סטופ לוס', label: 'סטופ לוס', alignRight: false }, 
-            { id: 'מחיר כניסה', label: 'מחיר כניסה', alignRight: false }, 
+            { id: 'לקיחת רווח', label: 'לקיחת רווח', alignRight: false },
+            { id: 'סטופ לוס', label: 'סטופ לוס', alignRight: false },
+            { id: 'מחיר כניסה', label: 'מחיר כניסה', alignRight: false },
             { id: 'סטטוס', label: 'סטטוס', alignRight: false },
             { id: 'סימן', label: 'סימן', alignRight: false },
             { id: 'תאריך כניסה', label: 'תאריך כניסה', alignRight: false },
@@ -226,9 +226,9 @@ export default function TradesTable(props) {
                 { id: 'entryDate', label: 'Open Date', alignRight: false },
                 { id: 'symbol', label: 'Symbol', alignRight: false },
                 { id: 'status', label: 'Status', alignRight: false },
-                { id: 'Entry price', label: 'Entry price', alignRight: false }, 
-                { id: 'Stop loss', label: 'Stop loss', alignRight: false }, 
-                { id: 'Take Profit', label: 'Take Profit', alignRight: false }, 
+                { id: 'Entry price', label: 'Entry price', alignRight: false },
+                { id: 'Stop loss', label: 'Stop loss', alignRight: false },
+                { id: 'Take Profit', label: 'Take Profit', alignRight: false },
                 { id: 'netROI', label: 'Net ROI', alignRight: false },
                 { id: 'longShort', label: 'Long / Short', alignRight: false },
                 { id: currentAccount?.Broker == brokers.Binance ? "Quantity " : 'Contracts', label: currentAccount?.Broker == brokers.Binance ? "Quantity " : 'Contracts', alignRight: false },
@@ -254,9 +254,9 @@ export default function TradesTable(props) {
                 { id: 'חוזים', label: 'חוזים', alignRight: false },
                 { id: 'לונג / שורט', label: 'לונג / שורט', alignRight: false },
                 { id: 'רוי נקי', label: 'רוי נקי', alignRight: false },
-                { id: 'לקיחת רווח', label: 'לקיחת רווח', alignRight: false }, 
-                { id: 'סטופ לוס', label: 'סטופ לוס', alignRight: false }, 
-                { id: 'מחיר כניסה', label: 'מחיר כניסה', alignRight: false }, 
+                { id: 'לקיחת רווח', label: 'לקיחת רווח', alignRight: false },
+                { id: 'סטופ לוס', label: 'סטופ לוס', alignRight: false },
+                { id: 'מחיר כניסה', label: 'מחיר כניסה', alignRight: false },
                 { id: 'סטטוס', label: 'סטטוס', alignRight: false },
                 { id: 'סימן', label: 'סימן', alignRight: false },
                 { id: 'תאריך כניסה', label: 'תאריך כניסה', alignRight: false },
@@ -303,7 +303,7 @@ export default function TradesTable(props) {
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((trade, indx) => {
                                 return (
-                                    <TradeTableRow trade={trade} handleOpenFarshelModal={handleOpenFarshelModal}/>
+                                    <TradeTableRow trade={trade} handleOpenFarshelModal={handleOpenFarshelModal} />
                                 );
                             })}
                         {emptyRows > 0 && (

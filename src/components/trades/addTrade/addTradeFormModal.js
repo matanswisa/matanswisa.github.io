@@ -30,7 +30,7 @@ import api from '../../../api/api';
 import Iconify from '../../iconify/Iconify';
 import './addTrade.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentAccount, selectUser, setTradesList, setCurrentAccount, selectCurrentAccountTrades, selectAlerts } from '../../../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, setTradesList, setCurrentAccount, selectCurrentAccountTrades, selectAlerts, setAlerts } from '../../../redux-toolkit/userSlice';
 import InputAdornment from '@mui/material/InputAdornment';
 
 
@@ -104,39 +104,53 @@ export default function TradeFormModal(props) {
   const editedTrade = useSelector(selectTradeToEdit);
 
 
-
+  // checkOverTradingAlert();
 
   const checkOverTradingAlert = async (alerts) => {
 
-    
     const tradesOfToday = filterObjectsByCurrentDate(trades);
-   
-   
-    // if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition < tradesOfToday.length) {
-    //   console.log("Trigger over trading");
-    //   await handleToggleAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
-    // }
+    console.log(tradesOfToday);
+
+    if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition <= tradesOfToday.length) {
+      console.log("Trigger over trading");
+      await turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
+    }
+  }
+
+
+  // Assuming entryDate and currentDate are Date objects
+  function areDatesEqual(entryDate, currentDate) {
+    const entryYear = entryDate.getFullYear();
+    const entryMonth = entryDate.getMonth();
+    const entryDay = entryDate.getDate();
+
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const currentDay = currentDate.getDate();
+
+    return entryYear === currentYear && entryMonth === currentMonth && entryDay === currentDay;
   }
 
 
   function filterObjectsByCurrentDate(trades) {
     console.log(trades);
     const currentDate = new Date(); // Get the current date and time
-  
+
     const tradesOfToday = trades.filter((trade) => {
       // Split the entryDate string by 'T' to get the date component
       const entryDateParts = trade.entryDate.split('T');
-      
+
       // Parse the date portion into a Date object
       const entryDate = new Date(entryDateParts[0]);
-  
+
       // Compare the entryDate with currentDate to check if it's from today or later
-      return entryDate.getTime() === currentDate.getTime();
+      console.log(entryDate.getTime());
+      return areDatesEqual(entryDate, currentDate);
     });
-  
-    console.log(tradesOfToday);
+
+    return tradesOfToday;
   }
-  
+
 
 
 
@@ -194,7 +208,7 @@ export default function TradeFormModal(props) {
 
 
 
-  const handleToggleAlert = async (index) => {
+  const turnOnAlert = async (index) => {
     const data = {
       userId: user._id,
       indexofAlert: index,
@@ -206,7 +220,7 @@ export default function TradeFormModal(props) {
       });
 
       if (response.status === 200) {
-        console.log("ok");
+        dispatch(setAlerts(response.data));
         // You can also do other actions here if needed
       } else {
         // Handle other status codes, e.g., 400, 500, etc.
@@ -217,8 +231,6 @@ export default function TradeFormModal(props) {
       console.error(err);
       // Handle the error as needed
     }
-
-
   };
 
 

@@ -34,6 +34,8 @@ const authSlice = createSlice({
         },
         setAlerts(state, action) {
             state.alerts = action.payload;
+            const temp = state.user;
+            localStorage.setItem(`user`, JSON.stringify(temp));
         },
         selectIsAuthenticated(state) {
             return state.isAuthenticated;
@@ -43,6 +45,8 @@ const authSlice = createSlice({
         },
         setCurrentAccount(state, action) {
             state.currentAccount = action.payload;
+            const temp = state.user;
+            localStorage.setItem(`user`, JSON.stringify(temp));
         },
         updateAccountList(state, action) {
             state.user.accounts = action.payload;
@@ -64,6 +68,8 @@ const authSlice = createSlice({
         },
         setTradesList(state, action) {
             state.currentAccount.trades = action.payload;
+            const temp = state.user;
+            localStorage.setItem(`user`, JSON.stringify(temp));
         },
     },
 });

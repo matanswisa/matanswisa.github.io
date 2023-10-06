@@ -17,7 +17,7 @@ export default function MultipleSelectPlaceholder(props) {
 
 
   //------------------------------------------------  States ----------------------------------------------------- //
-  const [selectedAccountName, setSelectedAccount] = useState(''); //refers to account name*
+  const [selectedAccountName, setSelectedAccountName] = useState(''); //refers to account name*
   const [selectedAccountColor, setSelectedAccountColor] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
@@ -25,6 +25,7 @@ export default function MultipleSelectPlaceholder(props) {
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
   const isHebrew = useSelector(selectlanguage);
+  const [selectedAccount, setSelectedAccount] = useState(currentAccount);
   // const accounts = useSelector(selectUserAccounts);
 
 
@@ -40,11 +41,12 @@ export default function MultipleSelectPlaceholder(props) {
       if (!isAccountInList) {
         dispatch(setCurrentAccount(account));
         setSelectedAccountColor(account.Label);
-        setSelectedAccount(account.AccountName);
+        setSelectedAccountName(account.AccountName);
       } else {
         // dispatch(setCurrentAccount(res.data));
+        setSelectedAccount(res.data);
         setSelectedAccountColor(res.data.Label);
-        setSelectedAccount(res.data.AccountName);
+        setSelectedAccountName(res.data.AccountName);
       }
     }).catch((err) => {
       console.log(err);
@@ -53,17 +55,16 @@ export default function MultipleSelectPlaceholder(props) {
   }
 
   //Responsible to intialize current account for user.
+
   useEffect(() => {
-    // const token = localStorage.getItem('token');
     fetchSelectedAccount();
   }, [])
 
-
   useEffect(() => {
-    fetchSelectedAccount();
-  }, [currentAccount]);
-
-
+    if (selectedAccount != null) {
+      dispatch(setCurrentAccount(selectedAccount));
+    }
+  }, [selectedAccount])
 
 
   //------------------------------------------------ handle update the new account choosen -----------------------------------------------------//
@@ -71,7 +72,7 @@ export default function MultipleSelectPlaceholder(props) {
     const accountId = event.target.value
     api.post('/api/setSelectedAccount', { userId: user._id, accountId }, { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
 
-      setSelectedAccount(res.data.AccountName)
+      setSelectedAccountName(res.data.AccountName)
       setSelectedAccountColor(res.data.Label);
       dispatch(setCurrentAccount(res.data));
       changeLoading();
