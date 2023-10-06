@@ -10,6 +10,9 @@ const initialState = {
     alerts: [],
 };
 
+// const updateUserLocalStorage = (user) => {
+//     loc
+// }
 const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -20,7 +23,7 @@ const authSlice = createSlice({
             state.isAuthenticated = true;
             state.isAdmin = action.payload.user.role === roles.admin;
             state.alerts = action.payload.user.alert;
-   
+
         },
         logout(state) {
             state.user = null;
@@ -29,9 +32,9 @@ const authSlice = createSlice({
             state.currentAccount = null;
             state.alerts = [];
         },
-        setAlerts(state,action){
+        setAlerts(state, action) {
             state.alerts = action.payload;
-        },  
+        },
         selectIsAuthenticated(state) {
             return state.isAuthenticated;
         },
@@ -41,25 +44,23 @@ const authSlice = createSlice({
         setCurrentAccount(state, action) {
             state.currentAccount = action.payload;
         },
-
-        addAccountToList(state, action) {
-            // state.
-            console.log(action.payload);
-            state.user.accounts.push(action.payload);
-        },
         updateAccountList(state, action) {
-            console.log("before", action.payload);
             state.user.accounts = action.payload;
-            console.log("after", state.user.accounts)
+            const temp = state.user;
+            localStorage.setItem(`user`, JSON.stringify(temp));
         },
         updateAccount(state, action) {
             const currAccounts = state.user.accounts.filter(account => account._id !== action.payload._id);
             currAccounts.push(action.payload);
             state.user.accounts = currAccounts;
+            const temp = state.user;
+            localStorage.setItem(`user`, JSON.stringify(temp));
         },
         removeAccount(state, action) {
             const currAccounts = state.user.accounts.filter(account => account._id !== action.payload.accountId);
             state.user.accounts = currAccounts;
+            const temp = state.user;
+            localStorage.setItem(`user`, JSON.stringify(temp));
         },
         setTradesList(state, action) {
             state.currentAccount.trades = action.payload;
@@ -67,7 +68,7 @@ const authSlice = createSlice({
     },
 });
 
-export const { login, logout, selectIsAdmin, setCurrentAccount, addAccountToList, removeAccount, setTradesList, updateAccountList , setAlerts } = authSlice.actions;
+export const { login, logout, selectIsAdmin, setCurrentAccount, removeAccount, setTradesList, updateAccountList, setAlerts } = authSlice.actions;
 
 //Selectors
 export const selectUserAccounts = (state) => state.auth.user?.accounts;
