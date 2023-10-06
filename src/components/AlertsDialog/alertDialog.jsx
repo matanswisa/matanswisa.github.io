@@ -1,6 +1,8 @@
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide, Typography, Button } from "@mui/material";
 import React from "react";
+import { useDispatch, useSelector } from 'react-redux';
 
+import { selectAlerts } from '../../redux-toolkit/userSlice';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -9,6 +11,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 export default function AlertDialog(props) {
+
+    const alerts = useSelector(selectAlerts);
+   
     const { alert, key } = props;
     const [open, setOpen] = React.useState(true);
 
@@ -51,14 +56,14 @@ export default function AlertDialog(props) {
                 <Typography id="number" style={{ marginTop: '25px' }}>
                     {AlertsMessages[alert.alertNumber].msgText}
                     <span style={{ display: 'inline-flex', alignItems: 'center', marginLeft: '5px' }}>
-                        <h5 style={{ margin: '0' }}>4</h5>
+                        <h5 style={{ margin: '0' }}></h5>
                     </span>
                 </Typography>
 
                 <Typography id="number" style={{ marginTop: '25px' }}>
                     {AlertsMessages[alert.alertNumber].limit}
                     <span style={{ display: 'inline-flex', alignItems: 'center', marginLeft: '5px' }}>
-                        <h5 style={{ margin: '0' }}>3</h5>
+                        <h5 style={{ margin: '0' }}>{alerts[alert.alertNumber].condition}</h5>
                     </span>
                 </Typography>
             </DialogContent>

@@ -104,7 +104,12 @@ export default function TradeFormModal(props) {
   const editedTrade = useSelector(selectTradeToEdit);
 
 
-  // checkOverTradingAlert();
+ 
+  const filterTradesWithLosses = (trades) =>{
+    const lossTrades = trades.filter((trade) => trade.status === 'Loss');
+  
+    return lossTrades.length;
+  }
 
   const checkOverTradingAlert = async (alerts) => {
 
@@ -116,6 +121,23 @@ export default function TradeFormModal(props) {
       await turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
     }
   }
+  
+
+  const checkLossesInRow = async (alerts) => {
+
+    const tradesOfToday = filterObjectsByCurrentDate(trades);
+    console.log(tradesOfToday);
+    const tradesWithLosses  = filterTradesWithLosses(trades);
+    console.log(tradesWithLosses);
+    console.log(alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition);
+    
+    if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <=tradesWithLosses) {
+      console.log("Trigger losses in a row");
+      await turnOnAlert(ALERTS_TYPE.LOSSING_TRADE_IN_ROW);
+    }
+  }
+
+  
 
 
   // Assuming entryDate and currentDate are Date objects
@@ -133,7 +155,7 @@ export default function TradeFormModal(props) {
 
 
   function filterObjectsByCurrentDate(trades) {
-    console.log(trades);
+   
     const currentDate = new Date(); // Get the current date and time
 
     const tradesOfToday = trades.filter((trade) => {
@@ -144,7 +166,6 @@ export default function TradeFormModal(props) {
       const entryDate = new Date(entryDateParts[0]);
 
       // Compare the entryDate with currentDate to check if it's from today or later
-      console.log(entryDate.getTime());
       return areDatesEqual(entryDate, currentDate);
     });
 
@@ -426,6 +447,7 @@ export default function TradeFormModal(props) {
             reduxDispatch(setTradesList(res.data.tradesWithImage));
 
             await checkOverTradingAlert(alerts);
+            await checkLossesInRow(alerts);
             notifyToast(getMsg(messages, msgType.success, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[4], languageidx).msgType);
             //  notifyToast("Trade added successfully", "success");
             handleClose();
