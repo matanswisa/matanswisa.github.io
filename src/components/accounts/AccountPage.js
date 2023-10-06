@@ -97,6 +97,7 @@ export default function BasicModal() {
                 const account = accounts.find(account => account._id == currentAccount._id);
 
                 if (!account && accounts.length > 0) {
+                    console.log("removing current account" , accounts);
                     dispatch(setCurrentAccount(accounts[0]));
                 } else {
                     dispatch(setCurrentAccount(null));

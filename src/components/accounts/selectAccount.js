@@ -11,7 +11,7 @@ import { selectCurrentAccount, selectUser, selectUserAccounts } from '../../redu
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentAccount } from '../../redux-toolkit/userSlice';
 import { selectlanguage } from '../../redux-toolkit/languagesSlice';
-import {toggleLoading} from '../../redux-toolkit/loadingSlice'
+import { toggleLoading } from '../../redux-toolkit/loadingSlice'
 //--------------------------------------------This component show Selected Account options on top left-------------------------------------------//
 export default function MultipleSelectPlaceholder(props) {
 
@@ -25,7 +25,7 @@ export default function MultipleSelectPlaceholder(props) {
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
   const isHebrew = useSelector(selectlanguage);
-
+  // const accounts = useSelector(selectUserAccounts);
 
 
   const changeLoading = () => {
@@ -33,32 +33,34 @@ export default function MultipleSelectPlaceholder(props) {
   }
 
 
-
+  const fetchSelectedAccount = () => {
+    api.post('/api/getSelectedAccount', { userId: user._id }, { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
+      const isAccountInList = accounts.find(acnt => acnt._id == res.data._id);
+      const account = accounts[accounts.length - 1];
+      if (!isAccountInList) {
+        dispatch(setCurrentAccount(account));
+        setSelectedAccountColor(account.Label);
+        setSelectedAccount(account.AccountName);
+      } else {
+        // dispatch(setCurrentAccount(res.data));
+        setSelectedAccountColor(res.data.Label);
+        setSelectedAccount(res.data.AccountName);
+      }
+    }).catch((err) => {
+      console.log(err);
+      // alert(err);
+    });
+  }
 
   //Responsible to intialize current account for user.
   useEffect(() => {
     // const token = localStorage.getItem('token');
-    api.post('/api/getSelectedAccount', { userId: user._id }, { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
-      dispatch(setCurrentAccount(res.data));
-      setSelectedAccountColor(res.data.Label);
-      setSelectedAccount(res.data.AccountName);
-    }).catch((err) => {
-      console.log(err);
-      // alert(err);
-    });
+    fetchSelectedAccount();
   }, [])
 
 
   useEffect(() => {
-    api.post('/api/getSelectedAccount', { userId: user._id }, { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
-      console.log(res.data);
-      // dispatch(setCurrentAccount(res.data));
-      setSelectedAccountColor(res.data.Label);
-      setSelectedAccount(res.data.AccountName);
-    }).catch((err) => {
-      console.log(err);
-      // alert(err);
-    });
+    fetchSelectedAccount();
   }, [currentAccount]);
 
 

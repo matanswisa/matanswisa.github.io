@@ -34,9 +34,6 @@ import { selectMessages } from '../redux-toolkit/messagesSlice';
 import { getMsg } from '../utils/messeageUtils';
 import { msgType } from '../utils/messagesEnum.js';
 import { msgNumber } from '../utils/msgNumbers.js';
-import { configAuth } from '../api/configAuth';
-import { brokers } from "../components/brokersNames/brokers.js";
-import { handleUploadTradeImage } from '../utils/uploadImage';
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectTrade, setTrade } from '../redux-toolkit/tradeSlice';
 import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
@@ -71,7 +68,6 @@ export default function Reports() {
     trades = [];
   }
 
-  console.log("trades", trades);
   //------------------------------------------------   States ----------------------------------------------------- //
   const languageidx = useSelector(selectidx);
   const darkMode = useSelector(selectDarkMode);

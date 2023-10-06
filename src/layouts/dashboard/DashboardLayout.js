@@ -174,29 +174,29 @@ export default function DashboardLayout() {
   const user = useSelector(selectUser);
 
   const createAxiosResponseInterceptor = () => {
-    api.interceptors.request.use((config) => {
-      let originalRequest = config
+    // api.interceptors.request.use((config) => {
+    //   let originalRequest = config
 
-      const decodedToken = jwt_decode(JSON.parse(localStorage.getItem('user')).accessToken);
+    //   const decodedToken = jwt_decode(JSON.parse(localStorage.getItem('user')).accessToken);
 
-      // Check if the request is for the '/refreshToken' endpoint
+    //   // Check if the request is for the '/refreshToken' endpoint
 
-      let currentDate = new Date();
-      //check if accessToken is invalid.
-      if (decodedToken.exp * 1000 < currentDate.getTime()) {
+    //   let currentDate = new Date();
+    //   //check if accessToken is invalid.
+    //   if (decodedToken.exp * 1000 < currentDate.getTime()) {
 
-        return refreshToken().then((response) => {
-          // localStorage.setItem('token', response.data.token)
+    //     return refreshToken().then((response) => {
+    //       // localStorage.setItem('token', response.data.token)
 
-          originalRequest.headers.Authorization = "Berear " + response.data.accessToken;
-          dispatch(login({ user, accessToken: response.data.accessToken }));
-          return Promise.resolve(originalRequest)
-        })
-      }
-      return config
-    }, (err) => {
-      return Promise.reject(err)
-    })
+    //       originalRequest.headers.Authorization = "Berear " + response.data.accessToken;
+    //       dispatch(login({ user, accessToken: response.data.accessToken }));
+    //       return Promise.resolve(originalRequest)
+    //     })
+    //   }
+    //   return config
+    // }, (err) => {
+    //   return Promise.reject(err)
+    // })
   }
 
   const refreshToken = async () => {
@@ -256,14 +256,14 @@ export default function DashboardLayout() {
           {/* <Badge color="secondary" badgeContent={2} style={{ marginLeft: '92%' }} invisible>
             <MailIcon  />
           </Badge> */}
-       
 
-        
+
+
         </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', }}>
-            <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
-          </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', }}>
+          <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
+        </div>
 
 
         {/* {userAccounts.length > 0 && <MultipleSelectPlaceholder />} */}

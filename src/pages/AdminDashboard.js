@@ -46,7 +46,7 @@ import { msgType } from '../utils/messagesEnum.js';
 import { msgNumber } from '../utils/msgNumbers.js';
 
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
-import { selectlanguage,selectidx } from '../redux-toolkit/languagesSlice';
+import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
 import { selectUser } from '../redux-toolkit/userSlice';
 
 const style = {
@@ -282,7 +282,7 @@ const UsersManagementPage = () => {
     const user = useSelector(selectUser);
 
 
-    
+
     useEffect(() => {
         fetchUsers(user);
     }, [openmodal])
@@ -310,7 +310,7 @@ const UsersManagementPage = () => {
                 data: { id }, // Make sure this is the correct format for the API
             });
             fetchUsers();
-            notifyToast(getMsg(messages, msgType.success, msgNumber[12],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[12],languageidx).msgType);
+            notifyToast(getMsg(messages, msgType.success, msgNumber[12], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[12], languageidx).msgType);
             // notifyToast("Delete user Successfully ", 'success');
 
             // Optionally, you can fetch the updated list of users after deletion
@@ -321,14 +321,14 @@ const UsersManagementPage = () => {
     };
 
 
-    
-  // this function create a msg of 2 types : "Trial" and "Regular"  , after create the msg struct , send email with this info of user properties to user created. 
-  const handleSendMailAfterEdit = async () => {
- 
-    let welcomeMessage;
-    let Editmsg = false;
-       
-      welcomeMessage = `Welcome to TradeExalt!
+
+    // this function create a msg of 2 types : "Trial" and "Regular"  , after create the msg struct , send email with this info of user properties to user created. 
+    const handleSendMailAfterEdit = async () => {
+
+        let welcomeMessage;
+        let Editmsg = false;
+
+        welcomeMessage = `Welcome to TradeExalt!
         Your account membership has renewd, with the same login credentials.
        
         License Expiration Date: ${licenseTime}
@@ -343,27 +343,27 @@ const UsersManagementPage = () => {
         
         ,Best regards 
         TradeExalt Team`;
-    
-    
-    const data = {
-      to: email,
-      subject: 'Welcome to TradeExalt!',
-      text: welcomeMessage,
-      isTrial: Editmsg,
+
+
+        const data = {
+            to: email,
+            subject: 'Welcome to TradeExalt!',
+            text: welcomeMessage,
+            isTrial: Editmsg,
+
+        }
+
+        await api.post('/api/sendEmail', data).then((res) => {
+            notifyToast(getMsg(messages, msgType.success, msgNumber[7], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[7], languageidx).msgType);
+            //   notifyToast("mail Send successfully", "success");
+        }).catch((err) => {
+            notifyToast(getMsg(messages, msgType.errors, msgNumber[8], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[8], languageidx).msgType);
+            // notifyToast("Mail not send", "error");
+            console.log(err);
+            return false;
+        })
 
     }
-
-    await api.post('/api/sendEmail', data).then((res) => {
-      notifyToast(getMsg(messages, msgType.success, msgNumber[7],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[7],languageidx).msgType);
-      //   notifyToast("mail Send successfully", "success");
-    }).catch((err) => {
-      notifyToast(getMsg(messages, msgType.errors, msgNumber[8],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[8],languageidx).msgType);
-      // notifyToast("Mail not send", "error");
-      console.log(err);
-      return false;
-    })
-
-  }
 
 
 
@@ -406,19 +406,19 @@ const UsersManagementPage = () => {
     const validateForm = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (email !== '' && !emailRegex.test(email)) {
-            notifyToast(getMsg(messages, msgType.warnings, msgNumber[12],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[12],languageidx).msgType);
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[12], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[12], languageidx).msgType);
             // notifyToast("Invalid email format", "warning");
             return false;
         }
 
         if (username.length < 8) {
-            notifyToast(getMsg(messages, msgType.warnings, msgNumber[11],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[11],languageidx).msgType);
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[11], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[11], languageidx).msgType);
             // notifyToast("user name less than 8 characters", "warning");
             return false;
         }
 
         if (!checkLicenseTime(licenseTime)) {
-            notifyToast(getMsg(messages, msgType.warnings, msgNumber[10],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[10],languageidx).msgType);
+            notifyToast(getMsg(messages, msgType.warnings, msgNumber[10], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[10], languageidx).msgType);
             // notifyToast("Invalid date! Please choose a future date.", "warning");
             return false;
         }
@@ -431,9 +431,9 @@ const UsersManagementPage = () => {
     const handleUpdateUser = async () => {
 
         let res = checkLicenseTime(licenseTime);
-      
+
         if (!res) {
-          
+
             notifyToast(getMsg(messages, msgType.errors, msgNumber[9], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[13], languageidx).msgType);
             return; // Don't proceed with the update
         } else {
@@ -452,18 +452,18 @@ const UsersManagementPage = () => {
             } catch (error) {
 
                 if (error.response && error.response.status === 400) {
-                notifyToast(getMsg(messages, msgType.errors, msgNumber[10], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[10], languageidx).msgType);
-                  } 
-            //    if (error.response && error.response.status === 400) {
-            //     const errorMessage = error.response.data; // This should contain the error message
-            //     console.log("Backend Error Message:", errorMessage);
-            //     // You can use this errorMessage as needed in your frontend
-            // }
+                    notifyToast(getMsg(messages, msgType.errors, msgNumber[10], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[10], languageidx).msgType);
+                }
+                //    if (error.response && error.response.status === 400) {
+                //     const errorMessage = error.response.data; // This should contain the error message
+                //     console.log("Backend Error Message:", errorMessage);
+                //     // You can use this errorMessage as needed in your frontend
+                // }
             }
 
         }
     }
-    
+
 
 
 
@@ -474,7 +474,8 @@ const UsersManagementPage = () => {
             .get('/api/auth/users', {
                 headers: {
                     Authorization: `Bearer ${user.accessToken}`,
-                }
+                },
+                user: user
             }).then((res) => {
 
                 setUsers([...res.data]);
