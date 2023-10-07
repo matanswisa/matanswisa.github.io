@@ -261,7 +261,7 @@ export default function Reports() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-        {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={handleCloseDialog} imageData={imageData} tradeComments={currentTrade.comments} />}
+      
         <Dialog open={openCommend} onClose={handleCloseCommend}>
           <DialogTitle> {isHebrew === false ? "Comment" : "הערות"}</DialogTitle>
           <DialogContent>{selectedComment}</DialogContent>

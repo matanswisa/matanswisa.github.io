@@ -99,15 +99,16 @@ export default function TradeFormModal(props) {
   const fileInputRef = React.useRef(null);
   const trades = useSelector(selectCurrentAccountTrades);
   const alerts = useSelector(selectAlerts);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   //selector
   const editedTrade = useSelector(selectTradeToEdit);
 
 
- 
-  const filterTradesWithLosses = (trades) =>{
+
+  const filterTradesWithLosses = (trades) => {
     const lossTrades = trades.filter((trade) => trade.status === 'Loss');
-  
+
     return lossTrades.length;
   }
 
@@ -121,23 +122,23 @@ export default function TradeFormModal(props) {
       await turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
     }
   }
-  
+
 
   const checkLossesInRow = async (alerts) => {
 
     const tradesOfToday = filterObjectsByCurrentDate(trades);
     console.log(tradesOfToday);
-    const tradesWithLosses  = filterTradesWithLosses(trades);
+    const tradesWithLosses = filterTradesWithLosses(trades);
     console.log(tradesWithLosses);
     console.log(alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition);
-    
-    if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <=tradesWithLosses) {
+
+    if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <= tradesWithLosses) {
       console.log("Trigger losses in a row");
       await turnOnAlert(ALERTS_TYPE.LOSSING_TRADE_IN_ROW);
     }
   }
 
-  
+
 
 
   // Assuming entryDate and currentDate are Date objects
@@ -155,7 +156,7 @@ export default function TradeFormModal(props) {
 
 
   function filterObjectsByCurrentDate(trades) {
-   
+
     const currentDate = new Date(); // Get the current date and time
 
     const tradesOfToday = trades.filter((trade) => {
@@ -374,9 +375,7 @@ export default function TradeFormModal(props) {
 
 
       }
-    }
-
-    else if (currentAccount?.Broker === brokers.Tradovate) { //// not work yet.
+    } else if (currentAccount?.Broker === brokers.Tradovate) { //// not work yet.
       if (positionType === "Short") {
         setNetPnL(2220);
 
@@ -396,6 +395,8 @@ export default function TradeFormModal(props) {
   }, [exitPrice, entryPrice, stopPrice, positionType]);
 
 
+
+
   // Inside your modal component, use state for netPnL
   const [netPnL, setNetPnL] = useState(0);
   const [riskReward, setRiskReward] = useState('0');
@@ -409,13 +410,35 @@ export default function TradeFormModal(props) {
     }
   };
 
+
+
+
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  }
+
+
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+
+  useEffect(() => {
+    if (selectedFile) {
+      console.log("selectedFile", selectedFile);
+    }
+  }, [selectedFile])
+
+
+
+
   //------------------------------------------------ handle check broker before save  new trade -----------------------------------------------------//
 
   // before add new trade this condition check which broker in selected account to Adjust the fields structs that come from the data 
   const handleSaveTrade = async () => {
     let data = {};
-
-    // if (currentAccount?.Broker === brokers.Tradovate) {
 
     data = {
       entryDate: positionDate,
@@ -438,57 +461,54 @@ export default function TradeFormModal(props) {
     if (validateForm()) {
 
       if (!editMode) {
-        await api
-          .post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: "Berear " + user.accessToken } }).then(async (res) => {
-            if (selectedFile !== null) {
-              handleUpload(res.data.tradeId);
-            }
-            reduxDispatch(setCurrentAccount(res.data.account));  //update balance
-            reduxDispatch(setTradesList(res.data.tradesWithImage));
+        api.post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: "Berear " + user.accessToken } }).then(async (res) => {
+          if (selectedFile !== null) {
+            handleUploadTradeImage(res.data.newTradeId, user, user._id, currentAccount._id, selectedFile).then((response) => {
+              console.log(response.status);
+              console.log(response.data);
+              console.log('upload image');
+            }).catch((err) => {
+              console.error(err);
+            });
+          }
+          reduxDispatch(setCurrentAccount(res.data.account));  //update balance
+          reduxDispatch(setTradesList(res.data.tradesWithImage));
 
-            await checkOverTradingAlert(alerts);
-            await checkLossesInRow(alerts);
-            notifyToast(getMsg(messages, msgType.success, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[4], languageidx).msgType);
-            //  notifyToast("Trade added successfully", "success");
-            handleClose();
+          await checkOverTradingAlert(alerts);
+          await checkLossesInRow(alerts);
+          notifyToast(getMsg(messages, msgType.success, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[4], languageidx).msgType);
+          //  notifyToast("Trade added successfully", "success");
+          handleClose();
 
-          }).catch((err) => {
-            console.error(err);
-            notifyToast(getMsg(messages, msgType.errors, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[4], languageidx).msgType);
-            //  notifyToast("Couldn't add trade", "error");
-            handleClose();
-          })
+        }).catch((err) => {
+          console.error(err);
+          notifyToast(getMsg(messages, msgType.errors, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[4], languageidx).msgType);
+          //  notifyToast("Couldn't add trade", "error");
+          handleClose();
+        })
       }
 
       //------------------------------------------------------- handle edit trade ----------------------------------------------------------------------------//
-      else if (editMode === true) {
-        if (validateForm()) {
-          data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
-          // console.log(trade
-          await api.post('/api/editTrade', { tradeId: editedTrade._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: 'Bearer ' + user.accessToken } })
-            .then((res) => {
-              notifyToast(getMsg(messages, msgType.success, msgNumber[5], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[5], languageidx).msgType);
-              //      notifyToast("Trade Edit succssfully", "success")
-              handleUploadTradeImage(editedTrade?._id, user._id, currentAccount._id, selectedFile).then(response => response.json())
-                .then(data => {
-                  notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
-                  // notifyToast("Trade image uploaded successfully", "success");
+      else if (editMode) {
+        data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
+        try {
+          const editTradeResponse = await api.post('/api/editTrade', { tradeId: editedTrade._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
+          notifyToast(getMsg(messages, msgType.success, msgNumber[5], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[5], languageidx).msgType);
+          console.log(selectedFile);
 
-                  dispatch(setTradesList(data));
-                })
-                .catch(error => {
-                  // notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
-                  // Handle any errors that occurred during the upload
-                  // notifyToast("Error uploading trade image", "error");
-                  console.error(error);
-                });
+          if (selectedFile) {
+            const uploadImageResult = await handleUploadTradeImage(editedTrade._id, user, user._id, currentAccount._id, selectedFile);
+            notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
+            reduxDispatch(setTradesList(uploadImageResult.data.tradesWithImage));
+          } else {
+            reduxDispatch(setTradesList(editTradeResponse.data.tradesWithImage));
+          }
 
-              reduxDispatch(setCurrentAccount(res.data.account));  //update balance
-              reduxDispatch(setTradesList(res.data.tradesWithImage));
-              handleClose();
-            });
+          reduxDispatch(setCurrentAccount(editTradeResponse.data.account));
+          handleClose();
+        } catch (e) {
+          console.error(e);
         }
-
       }
     }
   };
@@ -496,28 +516,20 @@ export default function TradeFormModal(props) {
 
   //------------------------------------------------ handle validation before add new trade -----------------------------------------------------//
   const validateForm = () => {
-
     const currentDate = new Date().toISOString().slice(0, 10); // Get today's date in the format "YYYY-MM-DD"
-
     if (positionDate > currentDate) {
-
       notifyToast(getMsg(messages, msgType.warnings, msgNumber[28], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[28], languageidx).msgType);
       // notifyToast(errorMessage, "warning");
       return false;
     }
 
-
-
     if (positionType === "Short") {
-
       if (positionStatus === "Win") {
         if (exitPrice >= entryPrice) {
           notifyToast(getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[35], languageidx).msgType);
           return false;
         }
-      }
-
-      else if (positionStatus === "Loss") {
+      } else if (positionStatus === "Loss") {
         if (stopPrice <= entryPrice) {
           notifyToast(getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[37], languageidx).msgType);
           return false;
@@ -610,83 +622,24 @@ export default function TradeFormModal(props) {
   };
 
 
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  }
-
-  const handleUpload = (tradeId) => {
-    console.log(editMode);
-    if (!selectedFile && editMode == false) {
-      notifyToast(getMsg(messages, msgType.errors, msgNumber[5], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[5], languageidx).msgType);
-      // notifyToast("Don't have image file to upload", "error"); 
-      return;
-
-    }
-    // Create a new FormData object
-    const formData = new FormData();
-    // Append the selected file to the FormData object
-    formData.append('file', selectedFile);
-    formData.append('tradeId', tradeId);
-    console.log(formData);
-    // Make a POST request to the server with the file data
-    fetch('http://localhost:8000/api/uploadTradeImage', {
-      method: 'POST',
-      body: formData
-    })
-      .then(response => response.json())
-      .then(data => {
-        // Handle the response from the server
-
-        //TODO: need to add here the function - dispatch(setTradeList(data))
-      })
-      .catch(error => {
-        // Handle any errors that occurred during the upload
-        console.error(error);
-      });
-  };
-
-
-
-  const handleButtonClick = () => {
-    fileInputRef.current.click();
-  };
-
-
-  useEffect(() => {
-    if (selectedFile) {
-      notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
-      //   notifyToast("Image successfully uploaded", "success");
-    }
-  }, [selectedFile])
-
 
   return (
     // currentAccount?.Broker === brokers.Tradovate ?
     <>
       {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
-
       <Modal
         open={props.openModal}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-
-
         <Box sx={style} >
-
-
           <Stack direction="row" spacing={2} sx={{ marginBottom: '60px' }}>
-
-            <Box >
-
+            <Box>
               <Typography style={{ fontFamily: 'sans-serif', fontWeight: 'bolder', fontSize: '20px' }}> {isHebrew === false ? "New Trade" : "הוספת טרייד"}</Typography>
             </Box>
             {/* <LogoImage w = '350px' h= '280px'/> */}
             <Box style={{ marginLeft: "678px" }}>
-
               <label htmlFor="file-input">
                 <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
                 <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
@@ -715,10 +668,8 @@ export default function TradeFormModal(props) {
                     value={positionDate}
                     onChange={(e) => handlePositionFieldInput(e, 'positionDate')}
                     label="Open Date" variant="standard" type="date" />
-                </Box >
-
+                </Box>
                 <Box>
-
                   <Autocomplete
                     disablePortal
                     id="combo-box-demo"
@@ -728,9 +679,7 @@ export default function TradeFormModal(props) {
                     onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
                     sx={{ width: "280px", marginBottom: '13px' }}
                     renderInput={(params) => <TextField {...params} label={isHebrew === false ? "Symbol" : "סימן"} value={positionSymbol} variant="standard" />}
-
                   />
-
                 </Box>
                 <Box>
                   <FormControl variant="standard" >

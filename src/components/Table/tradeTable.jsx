@@ -275,7 +275,7 @@ export default function TradesTable(props) {
                         order={orderCols}
                         orderBy={orderByCols}
                         headLabel={TABLE_HEAD}
-                        rowCount={trades.length}
+                        rowCount={trades?.length ? trades.length : 0}
                         onRequestSort={handleRequestSortCols}
                         onSelectAllClick={handleSelectAllClick}
                     />

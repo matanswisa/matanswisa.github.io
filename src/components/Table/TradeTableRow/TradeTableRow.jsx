@@ -35,6 +35,7 @@ import { getMsg } from '../../../utils/messeageUtils';
 import { Label } from '@mui/icons-material';
 import { sentenceCase } from 'sentence-case';
 import { useToast } from 'react-toastify';
+import ImageModal from '../../../components/ImageModal/ImageModal';
 
 // import AddTrade from '../components/trades/addTrade/addTradeFormModal';
 import AddTrade from "../../../components/trades/addTrade/addTradeFormModal";
@@ -79,6 +80,7 @@ export default function TradeTableRow(props) {
     const user = useSelector(selectUser);
     const [basicModal, setBasicModal] = useState(false);
     const toggleShow = () => setBasicModal(!basicModal);
+    const [imageModalOpen, setImageModalOpen] = useState(false);
 
     //table config states:
     const [opendialog, setDialogOpen] = useState(false);
@@ -132,6 +134,11 @@ export default function TradeTableRow(props) {
         // notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
         // notifyToast("Delete trade Successfully", 'success');
         toggleShow();
+    }
+
+    const openImageModal = () => {
+        setImageModalOpen(true);
+        console.log("openning modal");
     }
 
     return (
@@ -220,17 +227,17 @@ export default function TradeTableRow(props) {
                 </TableCell>}
 
 
-                <TableCell align="center">
-                    {trade.entryPrice}
-                </TableCell>     
+            <TableCell align="center">
+                {trade.entryPrice}
+            </TableCell>
 
-                <TableCell align="center">
-                    {trade.stopPrice}
-                </TableCell>     
+            <TableCell align="center">
+                {trade.stopPrice}
+            </TableCell>
 
-                <TableCell align="center">
-                    {trade.exitPrice}
-                </TableCell>     
+            <TableCell align="center">
+                {trade.exitPrice}
+            </TableCell>
 
 
             <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
@@ -275,7 +282,7 @@ export default function TradeTableRow(props) {
                 <TableCell align="center">
                     <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
                     {trade.image ? (
-                        <IconButton size="large" color="inherit" >
+                        <IconButton size="large" color="inherit" onClick={openImageModal} >
                             <Iconify icon={'eva:image-outline'} />
                         </IconButton>
                     ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
@@ -332,6 +339,7 @@ export default function TradeTableRow(props) {
                     </Dialog>
                 </TableCell> :
                 <TableCell align="center">{trade.symbol}</TableCell>}
+            {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={() => { setImageModalOpen(false) }} imageData={trade.image} tradeComments={trade.comments} />}
 
             {isHebrew === false ?
 
