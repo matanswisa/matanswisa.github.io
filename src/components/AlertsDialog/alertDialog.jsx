@@ -27,13 +27,13 @@ export default function AlertDialog(props) {
         {
             Title:"Over trading",
             ContentText: "you exceed your limit trades per day ",
-            msgText: "Number of trades for today:",
-            limit: "Your limit trades :"
+            msgText: "Total Trades:",
+            limit: "Your limit trades per day:"
         },
         {   Title:"Losses in a row",
             ContentText: "you lose a certain number of times in a row for today.",
             msgText: "Number of lose for today:",
-            limit: "Your lose limit trades:"
+            limit: "Your losses in a row limit trades per day:"
         },
     ];
 
@@ -72,19 +72,24 @@ export default function AlertDialog(props) {
       // Handle the error as needed
     }
   };
+
+  
+
+    const handleBackdropClick = (event) => {
+      // Prevent the dialog from closing when clicking on the backdrop
+      event.stopPropagation();
+    };
     
     return (
-        <Dialog 
-            key={key}
-            open={open}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={handleClose}
-            aria-describedby="alert-dialog-slide-description"
-        >
+        <Dialog
+        open={open}
+        onClose={() => handleClose(alert.alertNumber)}
+        onClick={handleBackdropClick}
+      >
             <DialogTitle>  <Alert severity="error"  style={{fontSize:'20px',fontFamily:'unset' ,width: '100%',}}> Alert - <span style={{fontSize:'20px', fontFamily:'unset'}}>{AlertsMessages[alert.alertNumber].Title}</span></Alert> </DialogTitle>
             <Divider variant="middle" />
             <DialogContent>
+
                 <DialogContentText id="alert-dialog-slide-description" style={{ fontFamily: 'unset',  fontSize: '18px', color: 'red' }}>
                     {AlertsMessages[alert.alertNumber].ContentText}
                 </DialogContentText>
