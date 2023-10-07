@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useToast from '../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
@@ -28,8 +28,7 @@ import Scrollbar from '../components/scrollbar';
 // mock
 import AddTrade from '../components/trades/addTrade/addTradeFormModal';
 import ImportTrade from '../components/trades/importTrade/importTrade'
-import ImageModal from '../components/ImageModal/ImageModal';
-import { selectCurrentAccount, selectUserAccounts } from '../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, selectUserAccounts, setTradesList } from '../redux-toolkit/userSlice';
 import { selectMessages } from '../redux-toolkit/messagesSlice';
 import { getMsg } from '../utils/messeageUtils';
 import { msgType } from '../utils/messagesEnum.js';
@@ -39,6 +38,7 @@ import { selectTrade, setTrade } from '../redux-toolkit/tradeSlice';
 import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
 import TradesTable from '../components/Table/tradeTable';
 import { selectIsEditMode, selectTradeToEdit, setEditMode } from '../redux-toolkit/editTradeFormSlice';
+import api from '../api/api';
 
 const sumPnL = (trades) => {
   let sum = 0;
@@ -57,18 +57,11 @@ const sumPnL = (trades) => {
 
 export default function Reports() {
 
-  //---------------------------------------------------------handle currentAccount selected ----------------------------------------------------- //
   const currentAccount = useSelector(selectCurrentAccount);
-  //------------------------------------------------handle trade by current account selected ----------------------------------------------------- //
-  let trades;
-  if (currentAccount?.trades) {
-    trades = currentAccount?.trades;
-  }
-  else {
-    trades = [];
-  }
+
 
   //------------------------------------------------   States ----------------------------------------------------- //
+  const [trades, setTrades] = useState(currentAccount.trades)
   const languageidx = useSelector(selectidx);
   const darkMode = useSelector(selectDarkMode);
   const isHebrew = useSelector(selectlanguage);
@@ -85,7 +78,7 @@ export default function Reports() {
   const [basicModal, setBasicModal] = useState(false);
   const [openmodal, setIsOpenmodal] = useState(false);
   const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);
-
+  const user = useSelector(selectUser);
   //search states
   const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
 
@@ -115,6 +108,18 @@ export default function Reports() {
   }
 
 
+  useEffect(() => {
+    const setTradesWithImages = async () => {
+      const response = await api.post('/api/fetchTrades', { userId: user._id, accountId: currentAccount._id }, {
+        headers: { Authorization: "Bearer " + user.accessToken }
+      })
+      dispatch(setTradesList(response.data.trades))
+    }
+
+    setTradesWithImages().then(() => {
+      console.log("fetch succeffully");
+    })
+  }, [])
 
   const dispatch = useDispatch();
 
@@ -261,7 +266,7 @@ export default function Reports() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-      
+
         <Dialog open={openCommend} onClose={handleCloseCommend}>
           <DialogTitle> {isHebrew === false ? "Comment" : "הערות"}</DialogTitle>
           <DialogContent>{selectedComment}</DialogContent>

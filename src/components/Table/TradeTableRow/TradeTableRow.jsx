@@ -62,8 +62,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function TradeTableRow(props) {
 
-    const { trade, } = props;
-
+    const { trade } = props;
+    console.log(trade.image);
     const [openmodalfarshel, setIsOpenFarshelmodal] = useState(false);
 
     //selectors

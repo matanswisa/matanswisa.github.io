@@ -67,9 +67,7 @@ const authSlice = createSlice({
             localStorage.setItem(`user`, JSON.stringify(temp));
         },
         setTradesList(state, action) {
-            console.log('before', action.payload);
             state.currentAccount.trades = action.payload;
-            console.log('after', state.currentAccount.trades);
             const temp = state.user;
             localStorage.setItem(`user`, JSON.stringify(temp));
         },

@@ -472,7 +472,7 @@ export default function TradeFormModal(props) {
             });
           }
           reduxDispatch(setCurrentAccount(res.data.account));  //update balance
-          reduxDispatch(setTradesList(res.data.tradesWithImage));
+          reduxDispatch(setTradesList(res.data.trades));
 
           await checkOverTradingAlert(alerts);
           await checkLossesInRow(alerts);
@@ -501,6 +501,7 @@ export default function TradeFormModal(props) {
             notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
             reduxDispatch(setTradesList(uploadImageResult.data.tradesWithImage));
           } else {
+            console.log(editTradeResponse.data.tradesWithImage);
             reduxDispatch(setTradesList(editTradeResponse.data.tradesWithImage));
           }
 
