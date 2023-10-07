@@ -24,7 +24,8 @@ import {
   IconButton,
   TextField,
   Input,
-  Stack
+  Stack,
+  duration
 } from '@mui/material';
 import api from '../../../api/api';
 import Iconify from '../../iconify/Iconify';
@@ -622,8 +623,35 @@ export default function TradeFormModal(props) {
     return true;
   };
 
+  const handleFieldFocus = (field) => {
+    switch (field) {
+      
+       
+      case 'positionDuration':
+        dispatch({ type: 'UPDATE_FIELD', field: 'positionDuration', value: '' });
+        break;
 
+      case 'positionCommision':
+        dispatch({ type: 'UPDATE_FIELD', field: 'positionCommision', value: '' });
+        break;
 
+      case 'contractsCounts':
+        dispatch({ type: 'UPDATE_FIELD', field: 'contractsCounts', value: '' });
+        break;
+      case 'entryPrice':
+        dispatch({ type: 'UPDATE_FIELD', field: 'entryPrice', value: '' });
+        break;
+      case 'stopPrice':
+        dispatch({ type: 'UPDATE_FIELD', field: 'stopPrice', value: '' });
+        break;
+      case 'exitPrice':
+        dispatch({ type: 'UPDATE_FIELD', field: 'exitPrice', value: '' });
+        break;
+      default:
+        break;
+    }
+  };
+  
   return (
     // currentAccount?.Broker === brokers.Tradovate ?
     <>
@@ -741,6 +769,7 @@ export default function TradeFormModal(props) {
                     label={isHebrew === false ? "Entry Price" : "שער כניסה"}
                     required="true"
                     value={entryPrice}
+                    onFocus={() => handleFieldFocus('entryPrice')}
                     type="number"
                     onChange={(e) => handlePositionFieldInput(e, 'entryPrice')}
                     InputLabelProps={{ shrink: true }}
@@ -767,7 +796,7 @@ export default function TradeFormModal(props) {
                       ),
                     }}
                     label={currentAccount?.Broker === brokers.Tradovate ? (isHebrew === false ? "Contracts" : "חוזים") : (isHebrew === false ? "Quantity" : "כמות")}
-
+                    onFocus={() => handleFieldFocus('contractsCounts')}
                     value={contractsCounts}
                     onChange={(e) => handlePositionFieldInput(e, 'contractsCounts')}
 
@@ -782,6 +811,7 @@ export default function TradeFormModal(props) {
                     label={isHebrew === false ? "Stop loss" : "עצירת הפסד"}
                     type="number"
                     value={stopPrice}
+                    onFocus={() => handleFieldFocus('stopPrice')}
                     required="true"
                     onChange={(e) => handlePositionFieldInput(e, 'stopPrice')}
                     InputProps={{
@@ -801,6 +831,7 @@ export default function TradeFormModal(props) {
                     sx={{ width: "280px" }}
                     label={isHebrew === false ? "Take Profit" : "לקיחת רווחים"}
                     value={exitPrice}
+                    onFocus={() => handleFieldFocus('exitPrice')}
                     onChange={(e) => handlePositionFieldInput(e, 'exitPrice')}
                     required="true"
                     InputLabelProps={{ shrink: true }}
@@ -833,6 +864,7 @@ export default function TradeFormModal(props) {
                     onChange={(e) => handlePositionFieldInput(e, 'positionCommision')}
                     label={isHebrew === false ? "Commission" : "עמלה"}
                     InputLabelProps={{ shrink: true }}
+                    onFocus={() => handleFieldFocus('positionCommision')}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -847,6 +879,7 @@ export default function TradeFormModal(props) {
                   <TextField
                     className="standard-basic"
                     value={positionDuration}
+                    onFocus={() => handleFieldFocus('positionDuration')}
                     sx={{ width: "280px" }}
                     onChange={(e) => handlePositionFieldInput(e, 'positionDuration')}
                     label={isHebrew === false ? "Trade Duration" : "זמן עסקה"}

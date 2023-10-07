@@ -97,7 +97,7 @@ export default function AlertDialog(props) {
                 <Typography id="number" style={{ marginTop: '25px' }}>
                     {AlertsMessages[alert.alertNumber].msgText}
                     <span style={{ display: 'inline-flex', alignItems: 'center', marginLeft: '5px' ,fontSize: '15px',  }}>
-                        <h5 style={{ margin: '0' }}></h5>
+                        <h5 style={{ margin: '0' }}>need be here calc of tardes from db.</h5>
                     </span>
                 </Typography>
 
