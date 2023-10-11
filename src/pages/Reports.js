@@ -82,10 +82,6 @@ export default function Reports() {
   //search states
   const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
 
-  //table config states:
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
 
   //Image modal States
   const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -154,24 +150,6 @@ export default function Reports() {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-  };
-
-  //------------------------- handle table pages view ------------------------------------------- //
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
-  };
-
-
-  //------------------------------------- handle dialogs  ------------------------------------------- //
-  // Function to handle closing the dialog
-  const handleCloseDialog = () => {
-    setImageModalOpen(false);
-    setImageData('');
   };
 
 
@@ -253,18 +231,7 @@ export default function Reports() {
           {editTradeBoolean ? <EditTradeForm /> : null}
         </Stack>
         <Card>
-          <Scrollbar>
-            <TradesTable trades={trades} />
-          </Scrollbar>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 15]}
-            component="div"
-            count={totalTrades}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          <TradesTable trades={trades} selectedDate={selectedDate} />
         </Card>
 
         <Dialog open={openCommend} onClose={handleCloseCommend}>

@@ -34,13 +34,14 @@ import React, { useState } from 'react';
 import { filter } from 'lodash';
 import { brokers } from '../brokersNames/brokers';
 import TradeTableRow from './TradeTableRow/TradeTableRow';
+import Scrollbar from '../scrollbar';
 
 
 
 
 export default function TradesTable(props) {
-    //props
-    // const { trades } = props;
+ 
+    const { selectedDate } = props;
 
 
     //selectors
@@ -64,7 +65,6 @@ export default function TradesTable(props) {
 
     //search states
     const [filterName, setFilterName] = useState('');
-    const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
     const [order, setOrder] = useState('asc');
 
     //table config states:
@@ -266,75 +266,103 @@ export default function TradesTable(props) {
     }
 
 
+    //Pagination Logic
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+
+    const handleChangeRowsPerPage = (event) => {
+        setPage(0);
+        setRowsPerPage(parseInt(event.target.value, 10));
+    };
+
 
     return (
         <>
             <TableContainer sx={{ minWidth: 800, maxWidth: 2000, }}>
-                <Table>
-                    <UserListHead
-                        order={orderCols}
-                        orderBy={orderByCols}
-                        headLabel={TABLE_HEAD}
-                        rowCount={trades?.length ? trades.length : 0}
-                        onRequestSort={handleRequestSortCols}
-                        onSelectAllClick={handleSelectAllClick}
-                    />
-                    <TableBody>
-                        {trades
-                            .filter((trade) => {
-                                // Check if there's a selected date and if it matches the trade's entry date
-                                return (
-                                    !selectedDate || // If no selected date, show all trades
-                                    new Date(trade.entryDate).toLocaleDateString('en-GB') ===
-                                    selectedDate.toLocaleDateString('en-GB')
-                                );
-                            })
-                            .sort((a, b) => {
-                                // Compare the rows based on the selected sorting column and order
-                                const aValue = a[orderByCols] || ''; // Use an empty string if aValue is undefined
-                                const bValue = b[orderByCols] || '';
-
-                                if (orderCols === 'asc') {
-                                    return aValue.localeCompare(bValue);
-                                } else {
-                                    return bValue.localeCompare(aValue);
-                                }
-                            })
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((trade, indx) => {
-                                return (
-                                    <TradeTableRow trade={trade} handleOpenFarshelModal={handleOpenFarshelModal} />
-                                );
-                            })}
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 53 * emptyRows }}>
-                                <TableCell colSpan={6} />
-                            </TableRow>
-                        )}
-                    </TableBody>
-                    {isNotFound && (
+                <Scrollbar>
+                    <Table style={{ border: '1px solid #e0e0e0', width: '100%' }}>
+                        <UserListHead
+                            order={orderCols}
+                            orderBy={orderByCols}
+                            headLabel={TABLE_HEAD}
+                            rowCount={trades?.length ? trades.length : 0}
+                            onRequestSort={handleRequestSortCols}
+                            onSelectAllClick={handleSelectAllClick}
+                        />
                         <TableBody>
-                            <TableRow>
-                                <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                                    <Paper
-                                        sx={{
-                                            textAlign: 'center',
-                                        }}
-                                    >
-                                        <Typography variant="h6" paragraph>
-                                            Not found
-                                        </Typography>
-                                        <Typography variant="body2">
-                                            No results found for &nbsp;
-                                            <strong>&quot;{filterName}&quot;</strong>.
-                                            <br /> Try checking for typos or using complete words.
-                                        </Typography>
-                                    </Paper>
-                                </TableCell>
-                            </TableRow>
+                            {trades
+                                .filter((trade) => {
+                                    // Check if there's a selected date and if it matches the trade's entry date
+                                    return (
+                                        !selectedDate || // If no selected date, show all trades
+                                        new Date(trade.entryDate).toLocaleDateString('en-GB') ===
+                                        selectedDate.toLocaleDateString('en-GB')
+                                    );
+                                })
+                                .sort((a, b) => {
+                                    // Compare the rows based on the selected sorting column and order
+                                    const aValue = a[orderByCols] || ''; // Use an empty string if aValue is undefined
+                                    const bValue = b[orderByCols] || '';
+
+                                    if (orderCols === 'asc') {
+                                        return aValue.localeCompare(bValue);
+                                    } else {
+                                        return bValue.localeCompare(aValue);
+                                    }
+                                })
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((trade, indx) => {
+                                    return (
+                                        <TradeTableRow trade={trade} handleOpenFarshelModal={handleOpenFarshelModal} />
+                                    );
+                                })}
+                            {emptyRows > 0 && (
+                                <TableRow style={{ height: 53 * emptyRows }}>
+                                    <TableCell colSpan={6} />
+                                </TableRow>
+                            )}
                         </TableBody>
-                    )}
-                </Table>
+                        {isNotFound && (
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                                        <Paper
+                                            sx={{
+                                                textAlign: 'center',
+                                            }}
+                                        >
+                                            <Typography variant="h6" paragraph>
+                                                Not found
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                No results found for &nbsp;
+                                                <strong>&quot;{filterName}&quot;</strong>.
+                                                <br /> Try checking for typos or using complete words.
+                                            </Typography>
+                                        </Paper>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        )}
+                    </Table>
+                </Scrollbar>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 15]}
+                    component="div"
+                    count={trades.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        padding: '16px' // Optional padding for spacing
+                    }}
+                />
             </TableContainer>
         </>
     );
