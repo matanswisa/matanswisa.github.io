@@ -100,9 +100,6 @@ export default function TradeTableRow(props) {
     };
     const fileInputRef = React.useRef(null);
 
-    const handleButtonClick = () => {
-        fileInputRef.current.click();
-    };
 
     const handleClickDialogOpen = (accountId) => {
         setAccountIdToDelete(accountId);
@@ -285,7 +282,7 @@ export default function TradeTableRow(props) {
                         <IconButton size="large" color="inherit" onClick={openImageModal} >
                             <Iconify icon={'eva:image-outline'} />
                         </IconButton>
-                    ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleButtonClick} />}
+                    ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleEditTradeEvent} />}
                 </TableCell> :
                 currentAccount.Broker == 1 ?
                     <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
