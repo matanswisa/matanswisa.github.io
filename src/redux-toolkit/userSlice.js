@@ -22,7 +22,7 @@ const authSlice = createSlice({
             state.user = action.payload.user;
             state.isAuthenticated = true;
             state.isAdmin = action.payload.user.role === roles.admin;
-            state.alerts = action.payload.user.alert;
+            state.alerts = action.payload.user.alerts;
 
         },
         logout(state) {
@@ -34,8 +34,9 @@ const authSlice = createSlice({
         },
         setAlerts(state, action) {
             state.alerts = action.payload;
-            const temp = state.user;
-            localStorage.setItem(`user`, JSON.stringify(temp));
+            state.user.alerts = action.payload;
+            console.log("inside setAlerts",action.payload)
+            localStorage.setItem(`user`, JSON.stringify(state.user));
         },
         selectIsAuthenticated(state) {
             return state.isAuthenticated;

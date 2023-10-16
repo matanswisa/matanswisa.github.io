@@ -54,6 +54,7 @@ import EditNoteIcon from '@mui/icons-material/EditNoteOutlined';
 import { selectTradeToEdit } from '../../../redux-toolkit/editTradeFormSlice';
 // import { filterObjectsByCurrentDate } from '../../../utils/date';
 import { ALERTS_TYPE, AlertsMessages } from '../../../constants/alertsMessages';
+import { filterObjectsByCurrentDate, filterTradesWithLosses } from '../../../utils/filterTrades';
 // import EditNoteIcon from '@mui/icons-material/EditNote';
 const style = {
   position: 'absolute',
@@ -107,11 +108,7 @@ export default function TradeFormModal(props) {
 
 
 
-  const filterTradesWithLosses = (trades) => {
-    const lossTrades = trades.filter((trade) => trade.status === 'Loss');
 
-    return lossTrades.length;
-  }
 
   const checkOverTradingAlert = async (alerts) => {
 
@@ -129,7 +126,7 @@ export default function TradeFormModal(props) {
 
     const tradesOfToday = filterObjectsByCurrentDate(trades);
     console.log(tradesOfToday);
-    const tradesWithLosses = filterTradesWithLosses(trades);
+    const tradesWithLosses = filterTradesWithLosses(tradesOfToday);
     console.log(tradesWithLosses);
     console.log(alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition);
 
@@ -143,36 +140,10 @@ export default function TradeFormModal(props) {
 
 
   // Assuming entryDate and currentDate are Date objects
-  function areDatesEqual(entryDate, currentDate) {
-    const entryYear = entryDate.getFullYear();
-    const entryMonth = entryDate.getMonth();
-    const entryDay = entryDate.getDate();
-
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-    const currentDay = currentDate.getDate();
-
-    return entryYear === currentYear && entryMonth === currentMonth && entryDay === currentDay;
-  }
 
 
-  function filterObjectsByCurrentDate(trades) {
 
-    const currentDate = new Date(); // Get the current date and time
 
-    const tradesOfToday = trades.filter((trade) => {
-      // Split the entryDate string by 'T' to get the date component
-      const entryDateParts = trade.entryDate.split('T');
-
-      // Parse the date portion into a Date object
-      const entryDate = new Date(entryDateParts[0]);
-
-      // Compare the entryDate with currentDate to check if it's from today or later
-      return areDatesEqual(entryDate, currentDate);
-    });
-
-    return tradesOfToday;
-  }
 
 
 
@@ -232,6 +203,7 @@ export default function TradeFormModal(props) {
 
 
   const turnOnAlert = async (index) => {
+
     const data = {
       userId: user._id,
       indexofAlert: index,
@@ -242,13 +214,9 @@ export default function TradeFormModal(props) {
         headers: { Authorization: "Bearer " + user.accessToken }
       });
 
-      if (response.status === 200) {
-        dispatch(setAlerts(response.data));
-        // You can also do other actions here if needed
-      } else {
-        // Handle other status codes, e.g., 400, 500, etc.
-        console.log("Request failed with status code:", response.status);
-      }
+      console.log("Turnon alert", response.data);
+      reduxDispatch(setAlerts(response.data));
+
     } catch (err) {
       // Handle any exceptions that occurred during the request
       console.error(err);
@@ -625,8 +593,8 @@ export default function TradeFormModal(props) {
 
   const handleFieldFocus = (field) => {
     switch (field) {
-      
-       
+
+
       case 'positionDuration':
         dispatch({ type: 'UPDATE_FIELD', field: 'positionDuration', value: '' });
         break;
@@ -651,7 +619,7 @@ export default function TradeFormModal(props) {
         break;
     }
   };
-  
+
   return (
     // currentAccount?.Broker === brokers.Tradovate ?
     <>

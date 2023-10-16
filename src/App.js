@@ -36,34 +36,13 @@ export default function App() {
 
 
   return (
-
-    <div className={isBlurActive ? 'reload' : ''}>
-      {isBlurActive ? (
-        <Box sx={{ display: 'flex' }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <>
-          <div>
-            {alerts.map((alert, indx) => {
-              return (
-                alert.showalert && <AlertDialog alert={alert} key={indx} />
-              );
-            })}
-
-          </div>
-          <HelmetProvider>
-            <BrowserRouter>
-              <ThemeProvider>
-                <ScrollToTop />
-                <StyledChart />
-                <Router />
-              </ThemeProvider>
-            </BrowserRouter>
-          </HelmetProvider>
-        </>
-      )}
-    </div>
+    <HelmetProvider>
+      <BrowserRouter>
+        <ThemeProvider>
+          <Router/>
+        </ThemeProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 
 

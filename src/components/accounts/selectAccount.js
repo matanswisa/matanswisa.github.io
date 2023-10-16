@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 import api from '../../api/api';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { useEffect, useState } from 'react';
-import { selectCurrentAccount, selectUser, selectUserAccounts , selectAlerts, setAlerts,selectCurrentAccountTrades} from '../../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, selectUserAccounts, selectAlerts, setAlerts, selectCurrentAccountTrades } from '../../redux-toolkit/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentAccount } from '../../redux-toolkit/userSlice';
 import { selectlanguage } from '../../redux-toolkit/languagesSlice';
@@ -32,16 +32,16 @@ export default function MultipleSelectPlaceholder(props) {
   const [selectedAccount, setSelectedAccount] = useState(currentAccount);
   // const accounts = useSelector(selectUserAccounts);
   const alerts = useSelector(selectAlerts);
-  
+
   let trades;
-  if(currentAccount?.trades) {
+  if (currentAccount?.trades) {
     // Inside this block, assign the value using useSelector
     trades = currentAccount?.trades;
   }
-  
 
-  
-  
+
+
+
 
   const changeLoading = () => {
     dispatch(toggleLoading());
@@ -80,42 +80,42 @@ export default function MultipleSelectPlaceholder(props) {
     }
   }, [selectedAccount])
 
-  
 
-  
-  const checkOverTradingAlert =  (alerts) => {
+
+
+  const checkOverTradingAlert = (alerts) => {
 
     const tradesOfToday = filterObjectsByCurrentDate(trades);
     console.log(tradesOfToday);
 
     if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition <= tradesOfToday.length) {
       console.log("Trigger over trading");
-       turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
+      turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
     }
   }
 
-  const checkLossesInRow =  (alerts) => {
+  const checkLossesInRow = (alerts) => {
 
     const tradesOfToday = filterObjectsByCurrentDate(trades);
-    
-    const tradesWithLosses  = filterTradesWithLosses(trades);
-   
-    
-    if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <=tradesWithLosses) {
+
+    const tradesWithLosses = filterTradesWithLosses(tradesOfToday);
+
+
+    if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <= tradesWithLosses) {
       console.log("Trigger losses in a row");
-       turnOnAlert(ALERTS_TYPE.LOSSING_TRADE_IN_ROW);
+      turnOnAlert(ALERTS_TYPE.LOSSING_TRADE_IN_ROW);
     }
   }
 
-  
-  const filterTradesWithLosses = (trades) =>{
+
+  const filterTradesWithLosses = (trades) => {
     const lossTrades = trades.filter((trade) => trade.status === 'Loss');
-  
+
     return lossTrades.length;
   }
 
 
-  
+
 
   const turnOnAlert = async (index) => {
     const data = {
@@ -159,7 +159,7 @@ export default function MultipleSelectPlaceholder(props) {
 
 
   function filterObjectsByCurrentDate(trades) {
-   
+
     const currentDate = new Date(); // Get the current date and time
 
     const tradesOfToday = trades.filter((trade) => {
@@ -185,9 +185,6 @@ export default function MultipleSelectPlaceholder(props) {
       setSelectedAccountName(res.data.AccountName)
       setSelectedAccountColor(res.data.Label);
       dispatch(setCurrentAccount(res.data));
-
-       checkOverTradingAlert(alerts);
-       checkLossesInRow(alerts);
       changeLoading();
     }).catch((err) => {
       console.error(err);
