@@ -221,7 +221,7 @@ export default function DashboardLayout() {
         ) : (
           <>
             <div>
-              {alerts.map((alert, indx) => {
+              {alerts?.map((alert, indx) => {
                 return (
                   alert.showalert && <AlertDialog alert={alert} key={indx} />
                 );

@@ -239,6 +239,8 @@ export default function TradeTableRow(props) {
 
             <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
 
+            <TableCell align="center">{trade.riskReward ? trade.riskReward : "0"}</TableCell>
+
 
             {isHebrew === false ?
                 <TableCell align="center">{trade.longShort}</TableCell> :

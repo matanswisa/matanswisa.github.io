@@ -40,7 +40,7 @@ import Scrollbar from '../scrollbar';
 
 
 export default function TradesTable(props) {
- 
+
     const { selectedDate } = props;
 
 
@@ -183,6 +183,7 @@ export default function TradesTable(props) {
             { id: 'Stop loss', label: 'Stop loss', alignRight: false },
             { id: 'Take Profit', label: 'Take Profit', alignRight: false },
             { id: 'netROI', label: 'Net ROI', alignRight: false },
+            { id: 'riskReward', label: 'Risk Reward Unite', alignRight: false },
             { id: 'longShort', label: 'Long / Short', alignRight: false },
             { id: 'contracts', label: 'Contracts', alignRight: false },
             { id: 'duration', label: 'Duration', alignRight: false },
@@ -206,7 +207,8 @@ export default function TradesTable(props) {
             { id: 'זמן עסקה', label: 'זמן עסקה', alignRight: false },
             { id: 'חוזים', label: 'חוזים', alignRight: false },
             { id: 'לונג / שורט', label: 'לונג / שורט', alignRight: false },
-            { id: 'רוי נקי', label: 'רוי נקי', alignRight: false },
+            { id: 'רווח נקי', label: 'רווח נקי', alignRight: false },
+            { id: 'יחידות סיכון', label: 'יחידות סיכון', alignRight: false },
             { id: 'לקיחת רווח', label: 'לקיחת רווח', alignRight: false },
             { id: 'סטופ לוס', label: 'סטופ לוס', alignRight: false },
             { id: 'מחיר כניסה', label: 'מחיר כניסה', alignRight: false },
@@ -230,6 +232,7 @@ export default function TradesTable(props) {
                 { id: 'Stop loss', label: 'Stop loss', alignRight: false },
                 { id: 'Take Profit', label: 'Take Profit', alignRight: false },
                 { id: 'netROI', label: 'Net ROI', alignRight: false },
+                { id: 'riskReward', label: 'Risk Reward Unite', alignRight: false },
                 { id: 'longShort', label: 'Long / Short', alignRight: false },
                 { id: currentAccount?.Broker == brokers.Binance ? "Quantity " : 'Contracts', label: currentAccount?.Broker == brokers.Binance ? "Quantity " : 'Contracts', alignRight: false },
                 { id: 'duration', label: 'Duration', alignRight: false },
@@ -252,8 +255,9 @@ export default function TradesTable(props) {
                 { id: 'עמלה', label: 'עמלה', alignRight: false },
                 { id: 'זמן עסקה', label: 'זמן עסקה', alignRight: false },
                 { id: 'חוזים', label: 'חוזים', alignRight: false },
+                { id: 'רוח נקי', label: 'רוח נקי', alignRight: false },
                 { id: 'לונג / שורט', label: 'לונג / שורט', alignRight: false },
-                { id: 'רוי נקי', label: 'רוי נקי', alignRight: false },
+                { id: 'יחידות סיכון', label: 'יחידות סיכון', alignRight: false },
                 { id: 'לקיחת רווח', label: 'לקיחת רווח', alignRight: false },
                 { id: 'סטופ לוס', label: 'סטופ לוס', alignRight: false },
                 { id: 'מחיר כניסה', label: 'מחיר כניסה', alignRight: false },
