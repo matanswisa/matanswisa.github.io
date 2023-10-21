@@ -39,6 +39,7 @@ import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
 import TradesTable from '../components/Table/tradeTable';
 import { selectIsEditMode, selectTradeToEdit, setEditMode } from '../redux-toolkit/editTradeFormSlice';
 import api from '../api/api';
+import { current } from '@reduxjs/toolkit';
 
 const sumPnL = (trades) => {
   let sum = 0;
@@ -94,7 +95,9 @@ export default function Reports() {
 
   //------------------------------------------------handle Upload image ----------------------------------------------------- //
 
-
+  // useEffect(()=>{
+  //   setTrades(currentAccount.trades)
+  // },[currentAccount.trades])
 
   //------------------------------------------------handle alert ----------------------------------------------------- //
   const showToast = useToast();
@@ -245,7 +248,7 @@ export default function Reports() {
       </Container >
 
       <Typography variant="h4" >
-        {isHebrew === false ? "Total PnL" : "רווח/הפסד כולל"} : {sumPnL(trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(trades)}$</span> : <span style={totalPlColor}>{sumPnL(trades)}$</span>}
+        {isHebrew === false ? "Total PnL" : "רווח/הפסד כולל"} : {sumPnL(currentAccount.trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(currentAccount.trades)}$</span> : <span style={totalPlColor}>{sumPnL(currentAccount.trades)}$</span>}
       </Typography>
     </>
   );

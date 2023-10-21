@@ -25,7 +25,7 @@ import AddFarshel from '../../trades/importTrade/AddFarshel';
 import React, { useState } from 'react';
 import { selectidx, selectlanguage } from '../../../redux-toolkit/languagesSlice';
 import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
-import { selectCurrentAccount, selectUser, selectUserAccounts, setTradesList } from '../../../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, selectUserAccounts, setCurrentAccount, setTradesList } from '../../../redux-toolkit/userSlice';
 import { selectMessages } from '../../../redux-toolkit/messagesSlice';
 import { selectTrade, setTrade } from '../../../redux-toolkit/tradeSlice';
 import api from '../../../api/api';
@@ -127,7 +127,8 @@ export default function TradeTableRow(props) {
 
     const deleteTrade = async () => {
         const res = await api.post('/api/deleteTrade', { tradeId: trade._id, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
-        dispatch(setTradesList(res.data))
+        dispatch(setTradesList(res.data.trades));
+        dispatch(setCurrentAccount(res.data.account));
         // notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
         // notifyToast("Delete trade Successfully", 'success');
         toggleShow();
