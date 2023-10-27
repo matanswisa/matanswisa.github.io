@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isUserAuthenticated, login, selectUserAccounts, selectUserAdmin } from './redux-toolkit/userSlice';
 import Tabs from './pages/settings';
 import { axiosAuth } from './api/api';
+import axiosInstance from './utils/axiosService';
 
 
 export default function Router() {
@@ -26,21 +27,24 @@ export default function Router() {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(isUserAuthenticated);
   const accounts = useSelector(selectUserAccounts);
-  useEffect(() => {
-    const checkIsUserLoggedInValid = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user && user.accessToken) {
-        const result = await axiosAuth.get("/api/auth/validate-token", { headers: { Authorization: "Bearer " + user.accessToken } });
-        if (result.status == 200) {
-          dispatch(login({ user: user }));
-        }
-      }
-    }
-    checkIsUserLoggedInValid().then(data => {
-      console.log("Successfully logged in");
-    })
 
-  }, [])
+
+  // useEffect(() => {
+  //   const checkIsUserLoggedInValid = async () => {
+  //     const user = JSON.parse(localStorage.getItem("user"));
+  //     if (user && user.accessToken) {
+  //       const result = await axiosAuth.get("/api/auth/validate-token", { headers: { Authorization: "Bearer " + user.accessToken } });
+  //       if (result.status == 200) {
+  //         dispatch(login({ user: user }));
+  //       }
+  //     }
+  //   }
+  //   checkIsUserLoggedInValid().then(data => {
+  //     console.log("Successfully logged in");
+  //   })
+
+  // }, [])
+
 
   const routes = useRoutes([
     {

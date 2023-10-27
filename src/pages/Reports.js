@@ -39,6 +39,7 @@ import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
 import TradesTable from '../components/Table/tradeTable';
 import { selectIsEditMode, selectTradeToEdit, setEditMode } from '../redux-toolkit/editTradeFormSlice';
 import api from '../api/api';
+import axiosInstance from '../utils/axiosService';
 
 const sumPnL = (trades) => {
   let sum = 0;
@@ -106,9 +107,7 @@ export default function Reports() {
 
   useEffect(() => {
     const setTradesWithImages = async () => {
-      const response = await api.post('/api/fetchTrades', { userId: user._id, accountId: currentAccount._id }, {
-        headers: { Authorization: "Bearer " + user.accessToken }
-      })
+      const response = await axiosInstance.post('/api/fetchTrades', { userId: user._id, accountId: currentAccount._id })
       dispatch(setTradesList(response.data.trades))
     }
 

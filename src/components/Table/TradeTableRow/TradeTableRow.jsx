@@ -40,6 +40,7 @@ import ImageModal from '../../../components/ImageModal/ImageModal';
 // import AddTrade from '../components/trades/addTrade/addTradeFormModal';
 import AddTrade from "../../../components/trades/addTrade/addTradeFormModal";
 import { setEditMode, setTradeForEdit } from '../../../redux-toolkit/editTradeFormSlice';
+import axiosInstance from '../../../utils/axiosService';
 
 const formatDate = (dateString) => {
     const options = {
@@ -126,7 +127,7 @@ export default function TradeTableRow(props) {
     }
 
     const deleteTrade = async () => {
-        const res = await api.post('/api/deleteTrade', { tradeId: trade._id, userId: user._id, accountId: currentAccount._id }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
+        const res = await axiosInstance.post('/api/deleteTrade', { tradeId: trade._id, userId: user._id, accountId: currentAccount._id });
         dispatch(setTradesList(res.data))
         // notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
         // notifyToast("Delete trade Successfully", 'success');

@@ -55,6 +55,7 @@ import { selectTradeToEdit } from '../../../redux-toolkit/editTradeFormSlice';
 // import { filterObjectsByCurrentDate } from '../../../utils/date';
 import { ALERTS_TYPE, AlertsMessages } from '../../../constants/alertsMessages';
 import { filterObjectsByCurrentDate, filterTradesWithLosses } from '../../../utils/filterTrades';
+import axiosInstance from '../../../utils/axiosService';
 // import EditNoteIcon from '@mui/icons-material/EditNote';
 const style = {
   position: 'absolute',
@@ -210,9 +211,7 @@ export default function TradeFormModal(props) {
     };
 
     try {
-      const response = await api.put('/api/auth/TurnAlertOn', data, {
-        headers: { Authorization: "Bearer " + user.accessToken }
-      });
+      const response = await axiosInstance.put('/api/auth/TurnAlertOn', data);
 
       console.log("Turnon alert", response.data);
       reduxDispatch(setAlerts(response.data));
@@ -430,7 +429,7 @@ export default function TradeFormModal(props) {
     if (validateForm()) {
 
       if (!editMode) {
-        api.post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: "Berear " + user.accessToken } }).then(async (res) => {
+        axiosInstance.post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }).then(async (res) => {
           if (selectedFile !== null) {
             handleUploadTradeImage(res.data.newTradeId, user, user._id, currentAccount._id, selectedFile).then((response) => {
               console.log(response.status);
@@ -461,7 +460,7 @@ export default function TradeFormModal(props) {
       else if (editMode) {
         data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
         try {
-          const editTradeResponse = await api.post('/api/editTrade', { tradeId: editedTrade._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
+          const editTradeResponse = await axiosInstance.post('/api/editTrade', { tradeId: editedTrade._id, userId: user._id, accountId: currentAccount._id, tradeData: data });
           notifyToast(getMsg(messages, msgType.success, msgNumber[5], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[5], languageidx).msgType);
           console.log(selectedFile);
 

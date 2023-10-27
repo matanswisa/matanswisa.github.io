@@ -12,7 +12,9 @@ const axiosInstance = axios.create({
 });
 
 const setAuthHeader = () => {
-    const token = localStorageService.get("token");
+    const token = localStorageService.get();
+    console.log("So tell me token", token)
+    console.log("inside setAuthHeader", token);
     if (token) {
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
@@ -28,7 +30,7 @@ axiosInstance.createEvent = (params) => {
     createEvent(params);
 }
 
-setAuthHeader();
+// setAuthHeader();
 
 axiosInstance.enableAuthHeader = () => {
     setAuthHeader();
@@ -44,12 +46,17 @@ axiosInstance.interceptors.response.use(
     },
     error => {
         if (error.response && error.response.status === 401) {
+            console.log(axiosInstance.defaults.headers)
             localStorageService.delete();
             axiosInstance.disableAuthHeader();
-            window.location.href = "/login";
+            // window.location.href = "/login";
         }
         return Promise.reject(error);
     }
 );
+
+
+
+setAuthHeader();
 
 export default axiosInstance;

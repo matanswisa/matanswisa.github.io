@@ -7,6 +7,7 @@ import Divider from '@mui/material/Divider';
 import MuiAlert from '@mui/material/Alert';
 import api from '../../api/api';
 import { filterObjectsByCurrentDate, filterTradesWithLosses } from "../../utils/filterTrades";
+import axiosInstance from "../../utils/axiosService";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -62,9 +63,7 @@ export default function AlertDialog(props) {
     };
 
     try {
-      const response = await api.put('/api/auth/TurnAlertOff', data, {
-        headers: { Authorization: "Bearer " + user.accessToken }
-      });
+      const response = await axiosInstance.put('/api/auth/TurnAlertOff', data);
       console.log("Turning off alerts", response.data);
       reduxDispatch(setAlerts(response.data));
       if (response.status === 200 || response.status === 201) {

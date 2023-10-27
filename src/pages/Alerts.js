@@ -21,6 +21,7 @@ import { selectlanguage } from '../redux-toolkit/languagesSlice';
 import { number } from 'prop-types';
 import { useEffect } from 'react';
 import api from '../api/api';
+import axiosInstance from '../utils/axiosService';
 
 
 
@@ -113,9 +114,7 @@ const Alerts = () => {
         };
 
         try {
-            const response = await api.put('/api/auth/resetAlert', data, {
-                headers: { Authorization: "Bearer " + user.accessToken }
-            });
+            const response = await axiosInstance.put('/api/auth/resetAlert', data);
 
             if (response.status === 200) {
 
@@ -143,9 +142,7 @@ const Alerts = () => {
         };
         console.log(data);
         try {
-            const response = await api.put('/api/auth/setAlert', data, {
-                headers: { Authorization: "Bearer " + user.accessToken }
-            });
+            const response = await axiosInstance.put('/api/auth/setAlert', data);
 
             if (response.status === 200) {
 

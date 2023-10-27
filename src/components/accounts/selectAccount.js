@@ -13,6 +13,7 @@ import { setCurrentAccount } from '../../redux-toolkit/userSlice';
 import { selectlanguage } from '../../redux-toolkit/languagesSlice';
 import { toggleLoading } from '../../redux-toolkit/loadingSlice'
 import { ALERTS_TYPE, AlertsMessages } from '../../constants/alertsMessages';
+import axiosInstance from '../../utils/axiosService';
 
 
 //--------------------------------------------This component show Selected Account options on top left-------------------------------------------//
@@ -49,7 +50,7 @@ export default function MultipleSelectPlaceholder(props) {
 
 
   const fetchSelectedAccount = () => {
-    api.post('/api/getSelectedAccount', { userId: user._id }, { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
+    axiosInstance.post('/api/getSelectedAccount', { userId: user._id }).then((res) => {
       const isAccountInList = accounts.find(acnt => acnt._id == res.data._id);
       const account = accounts[accounts.length - 1];
       if (!isAccountInList) {
@@ -124,9 +125,7 @@ export default function MultipleSelectPlaceholder(props) {
     };
 
     try {
-      const response = await api.put('/api/auth/TurnAlertOn', data, {
-        headers: { Authorization: "Bearer " + user.accessToken }
-      });
+      const response = await axiosInstance.put('/api/auth/TurnAlertOn', data);
 
       if (response.status === 200) {
         dispatch(setAlerts(response.data));
@@ -180,7 +179,7 @@ export default function MultipleSelectPlaceholder(props) {
   //------------------------------------------------ handle update the new account choosen -----------------------------------------------------//
   const handleChange = (event) => {
     const accountId = event.target.value
-    api.post('/api/setSelectedAccount', { userId: user._id, accountId }, { headers: { Authorization: `Berear ${user.accessToken}` } }).then((res) => {
+    axiosInstance.post('/api/setSelectedAccount', { userId: user._id, accountId }).then((res) => {
 
       setSelectedAccountName(res.data.AccountName)
       setSelectedAccountColor(res.data.Label);

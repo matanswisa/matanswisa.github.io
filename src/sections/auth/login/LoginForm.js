@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import { Stack, IconButton, InputAdornment, TextField, Typography, } from '@mui/material';
@@ -6,7 +6,7 @@ import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
 import api, { axiosAuth, axiosNoAuth } from '../../../api/api';
-import { login } from '../../../redux-toolkit/userSlice';
+import { isUserAuthenticated, login } from '../../../redux-toolkit/userSlice';
 import { useDispatch } from 'react-redux';
 import useToast from '../../../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
@@ -23,7 +23,10 @@ import { Button } from 'rsuite';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import {toggleLoading} from '../../../redux-toolkit/loadingSlice'
+import { toggleLoading } from '../../../redux-toolkit/loadingSlice'
+import localStorageService from '../../../utils/localStorageService';
+import jwtDecode from 'jwt-decode';
+import axiosInstance from '../../../utils/axiosService';
 
 
 // ----------------------------------------------------------------------
@@ -35,6 +38,9 @@ export default function LoginForm(props) {
 
     showToast(Msg, Type);
   }
+
+  const isAuthenticated = useSelector(isUserAuthenticated);
+
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -53,7 +59,7 @@ export default function LoginForm(props) {
   const messages = useSelector(selectMessages);
 
 
-  
+
   const changeLoading = () => {
     dispatch(toggleLoading());
   }
@@ -65,9 +71,9 @@ export default function LoginForm(props) {
   const handleLoginForm = () => {
     if (!username || !password) return;
 
-    axiosAuth.post('/api/auth/login', { username, password }).then((res) => {
+    axiosInstance.post('/api/auth/login', { username, password }).then((res) => {
 
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      localStorageService.store(res.data, 'user');
       dispatch(login(res.data));
       navigate('/dashboard/app', { replace: true });
       changeLoading();
@@ -144,7 +150,7 @@ export default function LoginForm(props) {
     const onetimepassword = document.getElementById('input-with-icon-textfield-change-password-1timepassword').value;
     console.log(onetimepassword);
 
-    axiosAuth
+    axiosInstance
       .post('/api/auth/validate-otp', {
         otp: onetimepassword,
       })
@@ -182,7 +188,7 @@ export default function LoginForm(props) {
 
 
 
-    axiosAuth
+    axiosInstance
       .post('/api/auth/checkUserExist', {
         info: usernameOrEmail,
 
@@ -207,6 +213,73 @@ export default function LoginForm(props) {
 
 
   };
+
+
+  /**
+   * Responsible to check if token is valid
+   */
+  useEffect(() => {
+    function isTokenExpired(token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+
+        if (decodedToken.exp < currentTime) {
+          return true;
+        }
+        return false;
+      } catch (e) {
+        console.error("Invalid token", e);
+        localStorageService.delete();
+        return false;
+      }
+    }
+
+
+
+    const token = localStorageService.get("token");
+    if (token && !isTokenExpired(token)) {
+      axiosInstance.enableAuthHeader();
+      const user = localStorageService.get();
+      dispatch(login({ user: user }));
+
+      navigate("/dashboard");
+    }
+
+
+  }, []);
+
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      function isTokenExpired(token) {
+        try {
+          const decodedToken = jwtDecode(token);
+          const currentTime = Date.now() / 1000;
+
+          if (decodedToken.exp < currentTime) {
+            return true;
+          }
+          return false;
+        } catch (e) {
+          console.error("Invalid token", e);
+          localStorageService.delete();
+          return false;
+        }
+      }
+
+
+
+      const token = localStorageService.get()?.token;
+      if (token && !isTokenExpired(token)) {
+        const user = localStorageService.get();
+        dispatch(login({ user: user }));
+
+        axiosInstance.enableAuthHeader();
+        navigate("/dashboard");
+      }
+    }
+  }, [isAuthenticated])
 
   return (
     <>
@@ -378,14 +451,14 @@ export default function LoginForm(props) {
 
                 <ToastContainer />
                 <TextField inputProps={{ style: { color: 'black' } }} name="User Name" value={username} onChange={(e) => setUsername(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <AccountCircleIcon />
-                    </InputAdornment>
-                  ),
-                  style: { color: 'black' },
-                }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <AccountCircleIcon />
+                      </InputAdornment>
+                    ),
+                    style: { color: 'black' },
+                  }}
                 />
 
                 <TextField InputLabelProps={{

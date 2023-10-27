@@ -28,6 +28,7 @@ import { Box, CircularProgress } from '@mui/material';
 import AlertDialog from '../../components/AlertsDialog/alertDialog';
 import ScrollToTop from '../../components/scroll-to-top/ScrollToTop';
 import { StyledChart } from '../../components/chart';
+import axiosInstance from '../../utils/axiosService';
 
 // ----------------------------------------------------------------------
 
@@ -189,7 +190,7 @@ export default function DashboardLayout() {
 
   // const dispatch = useDispatch();
   useEffect(() => {
-    api.get('/api/messages', { headers: { Authorization: `Berear ${JSON.parse(localStorage.getItem('user')).accessToken}` } }).then((res) => {
+    axiosInstance.get('/api/messages').then((res) => {
       dispatch(setMessages(res.data));
 
     })

@@ -27,6 +27,7 @@ import { Colors } from '../components/color-utils/Colors';
 
 import { selectCurrentAccount, selectUser } from '../redux-toolkit/userSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
+import axiosInstance from '../utils/axiosService';
 // ----------------------------------------------------------------------
 
 
@@ -178,7 +179,7 @@ export default function DashboardAppPage() {
       const winAndLossTotalTimePromise = new Promise(async (resolve, reject) => {
 
         // this post handle "Winning % By Trades" cake.
-        const result = await api.post('/api/WinAndLossTotalTime', { trades: Alltrades }, configHeaders);
+        const result = await axiosInstance.post('/api/WinAndLossTotalTime', { trades: Alltrades });
         if (result.status == 200 || result.status == 201) {
           for (const index in result.data) {
             if (index === "lossCount") {
@@ -202,7 +203,7 @@ export default function DashboardAppPage() {
 
       const ShowInfoByDatesPromise = new Promise(async (resolve, reject) => {
         // this post handle  "Winning % By Days" cake. 
-        const result = await api.post('/api/ShowInfoByDates', { trades: Alltrades }, configHeaders);
+        const result = await axiosInstance.post('/api/ShowInfoByDates', { trades: Alltrades });
         if (result.status == 200 || result.status == 201) {
           setDailyNetCumulative(result.data)
 
@@ -231,7 +232,7 @@ export default function DashboardAppPage() {
       const updateCalenderDisplayPromiseObject = new Promise(async (resolve, reject) => {
 
         //this post request responsible to update the calender display.
-        const result = await api.post("/api/ShowNumOfTradeTotalPnlInfoByDates", { trades: Alltrades }, configHeaders)
+        const result = await axiosInstance.post("/api/ShowNumOfTradeTotalPnlInfoByDates", { trades: Alltrades })
         if (result.status == 200 || result.status == 201) {
           setCalendarTrades(result.data)
           resolve(result.data);
@@ -327,8 +328,8 @@ export default function DashboardAppPage() {
             <Grid container spacing={3}>
 
               <Grid item xs={12}>
-                <div style={{ display: 'grid', gridTemplateColumns: ' auto'  ,}}>
-                 
+                <div style={{ display: 'grid', gridTemplateColumns: ' auto', }}>
+
                   <AppCurrentVisits
                     title={isHebrew === false ? "Winning % By Trades" : "אחוזי ניצחון בעסקאות"}
                     chartData={[
@@ -340,26 +341,26 @@ export default function DashboardAppPage() {
                   />
 
                   {/* for version 2 or 1 ?? */}
- {/* <Button variant="contained" color="primary" style={buttonStyle}>
+                  {/* <Button variant="contained" color="primary" style={buttonStyle}>
                   Winning % By Trades History
                   </Button> */}
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: ' auto'  ,}}>
-                <AppCurrentVisits
-                  title={isHebrew === false ? "Winning % By Days" : "אחוזי ניצחון בימים"}
-                  chartData={[
-                    { label: isHebrew === false ? 'Winners' : "נצחונות", value: winningTradesInDays },
-                    { label: isHebrew === false ? 'Losers' : "הפסדים", value: losingTradesInDays },
-                  ]}
-                  chartColors={[Colors.green, Colors.red]}
-                />
+                <div style={{ display: 'grid', gridTemplateColumns: ' auto', }}>
+                  <AppCurrentVisits
+                    title={isHebrew === false ? "Winning % By Days" : "אחוזי ניצחון בימים"}
+                    chartData={[
+                      { label: isHebrew === false ? 'Winners' : "נצחונות", value: winningTradesInDays },
+                      { label: isHebrew === false ? 'Losers' : "הפסדים", value: losingTradesInDays },
+                    ]}
+                    chartColors={[Colors.green, Colors.red]}
+                  />
 
-                        {/* for version 2 or 1 ?? */}
- {/* <Button variant="contained" color="primary" style={buttonStyle}>
+                  {/* for version 2 or 1 ?? */}
+                  {/* <Button variant="contained" color="primary" style={buttonStyle}>
                  Winning % By Days History
                   </Button> */}
-  </div>
+                </div>
 
               </Grid>
 
@@ -384,7 +385,7 @@ export default function DashboardAppPage() {
 const buttonStyle = {
   fontSize: '12px', // Adjust the font size to make the button smaller
   padding: '1px 3px', // Adjust padding to control the button's size
-  color:'black',
+  color: 'black',
   backgroundColor: 'white', // Set the background color to white
 };
 

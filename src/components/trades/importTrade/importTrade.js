@@ -33,6 +33,7 @@ import { msgType } from '../../../utils/messagesEnum.js';
 import { msgNumber } from '../../../utils/msgNumbers.js';
 import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
 import { selectlanguage, selectidx } from '../../../redux-toolkit/languagesSlice';
+import axiosInstance from '../../../utils/axiosService';
 
 
 
@@ -219,7 +220,7 @@ export default function BasicModal(props) {
         }, 2000);
 
 
-        const response = await api.post('/api/importTrades', formData, headersForImportTrades);
+        const response = await axiosInstance.post('/api/importTrades', formData, headersForImportTrades);
 
         clearInterval(timer); // Clear the timer when upload is complete
         setProcessDuration(3000); // Reset process duration

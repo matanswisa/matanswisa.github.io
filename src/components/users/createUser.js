@@ -18,6 +18,7 @@ import { msgNumber } from '../../utils/msgNumbers.js';
 
 import { selectlanguage,selectidx } from '../../redux-toolkit/languagesSlice';
 import { selectDarkMode } from '../../redux-toolkit/darkModeSlice';
+import axiosInstance from '../../utils/axiosService';
 
 const style = {
   position: 'absolute',
@@ -232,7 +233,7 @@ function BasicModal(props) {
 
     }
 
-    await api.post('/api/sendEmail', data).then((res) => {
+    await axiosInstance.post('/api/sendEmail', data).then((res) => {
       notifyToast(getMsg(messages, msgType.success, msgNumber[7],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[7],languageidx).msgType);
       //   notifyToast("mail Send successfully", "success");
     }).catch((err) => {
