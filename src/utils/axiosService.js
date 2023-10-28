@@ -13,7 +13,7 @@ const axiosInstance = axios.create({
 
 const setAuthHeader = () => {
     const token = localStorageService.get('token');
-    
+
     if (token) {
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
@@ -44,6 +44,7 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     error => {
+        //TODO: Need to check if status code is 403 if it's we need to force user to logout , with a modal message.
         if (error.response && error.response.status === 401) {
             console.log(axiosInstance.defaults.headers)
             localStorageService.delete();
