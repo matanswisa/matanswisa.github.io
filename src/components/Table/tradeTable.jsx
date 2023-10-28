@@ -285,9 +285,9 @@ export default function TradesTable(props) {
 
     return (
         <>
-            <TableContainer sx={{ minWidth: 800, maxWidth: 2000, }}>
+        <TableContainer sx={{ maxWidth: 2500, width: '2000px' }}>
                 <Scrollbar>
-                    <Table style={{ border: '1px solid #e0e0e0', width: '100%' }}>
+                    <Table style={{ border: '1px solid #e0e0e0', width: '1500px',maxWidth: 2000,  }}>
                         <UserListHead
                             order={orderCols}
                             orderBy={orderByCols}
