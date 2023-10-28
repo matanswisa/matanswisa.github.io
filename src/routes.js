@@ -20,6 +20,8 @@ import { isUserAuthenticated, login, selectUserAccounts, selectUserAdmin } from 
 import Tabs from './pages/settings';
 import { axiosAuth } from './api/api';
 import axiosInstance from './utils/axiosService';
+import jwtDecode from 'jwt-decode';
+import localStorageService from './utils/localStorageService';
 
 
 export default function Router() {
@@ -44,34 +46,54 @@ export default function Router() {
   //   })
 
   // }, [])
+  const token = localStorageService.get("token");
+
+  function isTokenExpired(token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+
+      if (decodedToken.exp < currentTime) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error("Invalid token", e);
+      localStorageService.delete();
+      return false;
+    }
+  }
+
+  const userAuthenticated = !token || isTokenExpired(token) ? false : true;
+
 
 
   const routes = useRoutes([
     {
       path: '/dashboard',
-      element: isAuthenticated ? <DashboardLayout /> : <Navigate to="/login" replace />,
+      element: userAuthenticated ? <DashboardLayout /> : <Navigate to="/login" replace />,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
 
-        { path: 'app', element: isAuthenticated ? <DashboardAppPage /> : <Navigate to="/login" replace /> },
-        { path: 'dailystatspage', element: isAuthenticated ? <DailyStatsPage /> : <Navigate to="/login" replace /> },
-        { path: 'manage-users', element: isAuthenticated ? <Tabs /> : <Navigate to="/login" replace /> },
-        { path: 'reports', element: isAuthenticated && accounts?.length ? <Reports /> : <Navigate to="/login" replace /> },
+        { path: 'app', element: userAuthenticated ? <DashboardAppPage /> : <Navigate to="/login" replace /> },
+        { path: 'dailystatspage', element: userAuthenticated ? <DailyStatsPage /> : <Navigate to="/login" replace /> },
+        { path: 'manage-users', element: userAuthenticated ? <Tabs /> : <Navigate to="/login" replace /> },
+        { path: 'reports', element: userAuthenticated && accounts?.length ? <Reports /> : <Navigate to="/login" replace /> },
 
       ],
     },
     {
       path: 'login',
-      element: isAuthenticated ? <Navigate to="/dashboard/app" replace /> : <LoginPage />,
+      element: userAuthenticated ? <Navigate to="/dashboard/app" replace /> : <LoginPage />,
     },
 
     {
       path: 'signout',
-      element: isAuthenticated ? <Navigate to="/dashboard/app" replace /> : <LoginPage />,
+      element: userAuthenticated ? <Navigate to="/dashboard/app" replace /> : <LoginPage />,
     },
 
     {
-      element: isAuthenticated ? <Tabs /> : <Navigate to="/login" replace />,
+      element: userAuthenticated ? <Tabs /> : <Navigate to="/login" replace />,
     },
     {
       path: '404',

@@ -73,7 +73,9 @@ export default function LoginForm(props) {
 
     axiosInstance.post('/api/auth/login', { username, password }).then((res) => {
 
-      localStorageService.store(res.data, 'user');
+      localStorageService.store(res.data.user);
+      localStorageService.store(res.data.user.token, 'token');
+      localStorageService.store(res.data.user.role, 'role');
       dispatch(login(res.data));
       navigate('/dashboard/app', { replace: true });
       changeLoading();
@@ -235,9 +237,8 @@ export default function LoginForm(props) {
       }
     }
 
-
-
     const token = localStorageService.get("token");
+    console.log("token", token);
     if (token && !isTokenExpired(token)) {
       axiosInstance.enableAuthHeader();
       const user = localStorageService.get();
@@ -250,36 +251,6 @@ export default function LoginForm(props) {
   }, []);
 
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      function isTokenExpired(token) {
-        try {
-          const decodedToken = jwtDecode(token);
-          const currentTime = Date.now() / 1000;
-
-          if (decodedToken.exp < currentTime) {
-            return true;
-          }
-          return false;
-        } catch (e) {
-          console.error("Invalid token", e);
-          localStorageService.delete();
-          return false;
-        }
-      }
-
-
-
-      const token = localStorageService.get()?.token;
-      if (token && !isTokenExpired(token)) {
-        const user = localStorageService.get();
-        dispatch(login({ user: user }));
-
-        axiosInstance.enableAuthHeader();
-        navigate("/dashboard");
-      }
-    }
-  }, [isAuthenticated])
 
   return (
     <>

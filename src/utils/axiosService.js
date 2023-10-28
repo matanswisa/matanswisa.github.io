@@ -12,9 +12,8 @@ const axiosInstance = axios.create({
 });
 
 const setAuthHeader = () => {
-    const token = localStorageService.get();
-    console.log("So tell me token", token)
-    console.log("inside setAuthHeader", token);
+    const token = localStorageService.get('token');
+
     if (token) {
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }

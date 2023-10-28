@@ -462,13 +462,8 @@ const UsersManagementPage = () => {
 
 
     function fetchUsers() {
-        api
-            .get('/api/auth/users', {
-                headers: {
-                    Authorization: `Bearer ${user.accessToken}`,
-                },
-                user: user
-            }).then((res) => {
+        axiosInstance
+            .get('/api/auth/users').then((res) => {
 
                 setUsers([...res.data]);
 

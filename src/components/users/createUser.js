@@ -16,7 +16,7 @@ import { getMsg } from '../../utils/messeageUtils';
 import { msgType } from '../../utils/messagesEnum.js';
 import { msgNumber } from '../../utils/msgNumbers.js';
 
-import { selectlanguage,selectidx } from '../../redux-toolkit/languagesSlice';
+import { selectlanguage, selectidx } from '../../redux-toolkit/languagesSlice';
 import { selectDarkMode } from '../../redux-toolkit/darkModeSlice';
 import axiosInstance from '../../utils/axiosService';
 
@@ -78,24 +78,6 @@ function BasicModal(props) {
   };
 
 
-  // function fetchUsers() {
-  //   api.get('/api/auth/users', {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   }).then((res) => {
-  //     setUsers(res.data);
-  //   }).catch((error) => {
-  //     // Handle error if necessary
-  //   });
-  // }
-
-
-  // useEffect(() => {
-  //   fetchUsers(); // Call the fetchUsers function to fetch data and update the users state
-  // }, []);
-
-
   // before create user check if username not exist.
   function checkUsernameExist(username) {
     return users.some(user => user.username === username);
@@ -113,13 +95,13 @@ function BasicModal(props) {
   //validation form before create user.
   const validateForm = () => {
     if (checkUsernameExist(username)) {
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[19],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[19],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[19], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[19], languageidx).msgType);
       // notifyToast("Username already exist", "warning");
       return false;
     }
 
     if (checkEmailExist(email)) {
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[18],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[18],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[18], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[18], languageidx).msgType);
       // notifyToast("Email already exist", "warning");
       return false;
     }
@@ -131,27 +113,27 @@ function BasicModal(props) {
     if (password === '' || email === '' || username === '') {
 
       if (password === '')
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[17],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[17],languageidx).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[17], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[17], languageidx).msgType);
       //notifyToast("Password is missing", "warning");
 
       if (email === '')
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[16],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[16],languageidx).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[16], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[16], languageidx).msgType);
       //  notifyToast("Email is missing", "warning");
 
 
       if (username === '')
-        notifyToast(getMsg(messages, msgType.warnings, msgNumber[15],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[15],languageidx).msgType);
+        notifyToast(getMsg(messages, msgType.warnings, msgNumber[15], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[15], languageidx).msgType);
       // notifyToast("Username is missing", "warning");
       return false;
 
     }
 
     if (password.length < 6) {
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[8],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[8],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[8], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[8], languageidx).msgType);
       // notifyToast("Password less than 6 characters", "warning");
       return false;
     } else if (!emailRegex.test(email)) {
-      notifyToast(getMsg(messages, msgType.warnings, msgNumber[13],languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[13],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[13], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[13], languageidx).msgType);
       // notifyToast("Invalid email format", "warning");
       return false;
     } else {
@@ -234,10 +216,10 @@ function BasicModal(props) {
     }
 
     await axiosInstance.post('/api/sendEmail', data).then((res) => {
-      notifyToast(getMsg(messages, msgType.success, msgNumber[7],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[7],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.success, msgNumber[7], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[7], languageidx).msgType);
       //   notifyToast("mail Send successfully", "success");
     }).catch((err) => {
-      notifyToast(getMsg(messages, msgType.errors, msgNumber[8],languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[8],languageidx).msgType);
+      notifyToast(getMsg(messages, msgType.errors, msgNumber[8], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[8], languageidx).msgType);
       // notifyToast("Mail not send", "error");
       console.log(err);
       return false;
@@ -260,12 +242,12 @@ function BasicModal(props) {
         .then(async (response) => {
           handleSendMail();
           await props.handleOpenModal(false);
-          await notifyToast(getMsg(messages, msgType.success, msgNumber[8],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[8],languageidx).msgType);
+          await notifyToast(getMsg(messages, msgType.success, msgNumber[8], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[8], languageidx).msgType);
           // notifyToast("User added successfully", "success");
-        
+
         })
         .catch((error) => {
-            notifyToast(error.response.data ,'error');
+          notifyToast(error.response.data, 'error');
         });
     }
   };
