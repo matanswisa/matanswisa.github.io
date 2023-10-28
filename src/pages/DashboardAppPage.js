@@ -167,17 +167,13 @@ export default function DashboardAppPage() {
   }
 
 
-
-  const user = useSelector(selectUser);
   //-----------------------------------------------handle "Winning % By Trades" cake. --------------------------------------------------------------
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      const configHeaders = { headers: { Authorization: "Berear " + user.accessToken } };
 
 
       const winAndLossTotalTimePromise = new Promise(async (resolve, reject) => {
-
         // this post handle "Winning % By Trades" cake.
         const result = await axiosInstance.post('/api/WinAndLossTotalTime', { trades: Alltrades });
         if (result.status == 200 || result.status == 201) {

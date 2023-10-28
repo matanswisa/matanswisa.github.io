@@ -15,7 +15,7 @@ import api, { axiosAuth } from '../../api/api';
 import Badge from '@mui/material/Badge';
 import MailIcon from '@mui/icons-material/Mail';
 import { configAuth } from '../../api/configAuth';
-import { setCurrentAccount, selectUserAccounts, selectUser, login, logout, selectAlerts } from '../../redux-toolkit/userSlice';
+import { selectUserAccounts, selectUser, logout, selectAlerts } from '../../redux-toolkit/userSlice';
 
 import { useDispatch, useSelector } from 'react-redux';
 import Switch from '@mui/material/Switch';

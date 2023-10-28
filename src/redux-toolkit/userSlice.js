@@ -33,11 +33,11 @@ const authSlice = createSlice({
         setAlerts(state, action) {
             state.alerts = action.payload;
             state.user.alerts = action.payload;
-            console.log("inside setAlerts",action.payload)
+            console.log("inside setAlerts", action.payload)
             localStorage.setItem(`user`, JSON.stringify(state.user));
         },
-        selectIsAuthenticated(state) {
-            return state.isAuthenticated;
+        setIsAuthenticated(state, action) {
+            state.isAuthenticated = action.payload;
         },
         selectIsAdmin(state) {
             return state.isAdmin;
@@ -73,7 +73,7 @@ const authSlice = createSlice({
     },
 });
 
-export const { login, logout, selectIsAdmin, setCurrentAccount, removeAccount, setTradesList, updateAccountList, setAlerts } = authSlice.actions;
+export const { setIsAuthenticated, login, logout, selectIsAdmin, setCurrentAccount, removeAccount, setTradesList, updateAccountList, setAlerts } = authSlice.actions;
 
 //Selectors
 export const selectUserAccounts = (state) => state.auth.user?.accounts;

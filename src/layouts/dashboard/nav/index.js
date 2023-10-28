@@ -166,7 +166,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
 
       <div style={{ marginBottom: '40px', marginLeft: '45px' }}>
-        {userAccounts.length > 0 && (
+        {userAccounts?.length > 0 && (
           <div style={{ width: '100%' }}>
             <MultipleSelectPlaceholder />
           </div>

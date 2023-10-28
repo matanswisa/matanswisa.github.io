@@ -28,7 +28,6 @@ export default function MultipleSelectPlaceholder(props) {
   const accounts = useSelector(selectUserAccounts);
   const user = useSelector(selectUser);
   const currentAccount = useSelector(selectCurrentAccount);
-  console.log(currentAccount);
   const isHebrew = useSelector(selectlanguage);
   const [selectedAccount, setSelectedAccount] = useState(currentAccount);
   // const accounts = useSelector(selectUserAccounts);

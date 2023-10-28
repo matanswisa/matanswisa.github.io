@@ -72,10 +72,12 @@ export default function LoginForm(props) {
     if (!username || !password) return;
 
     axiosInstance.post('/api/auth/login', { username, password }).then((res) => {
-
       localStorageService.store(res.data.user);
       localStorageService.store(res.data.user.token, 'token');
       localStorageService.store(res.data.user.role, 'role');
+
+      //Enable JWT Token to headers
+      axiosInstance.enableAuthHeader();
       dispatch(login(res.data));
       navigate('/dashboard/app', { replace: true });
       changeLoading();
