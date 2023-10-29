@@ -83,29 +83,29 @@ export default function MultipleSelectPlaceholder(props) {
 
 
 
-  const checkOverTradingAlert = (alerts) => {
+  // const checkOverTradingAlert = (alerts) => {
 
-    const tradesOfToday = filterObjectsByCurrentDate(trades);
-    console.log(tradesOfToday);
+  //   const tradesOfToday = filterObjectsByCurrentDate(trades);
+  //   console.log(tradesOfToday);
 
-    if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition <= tradesOfToday.length) {
-      console.log("Trigger over trading");
-      turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
-    }
-  }
+  //   if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition <= tradesOfToday.length) {
+  //     console.log("Trigger over trading");
+  //     turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
+  //   }
+  // }
 
-  const checkLossesInRow = (alerts) => {
+  // const checkLossesInRow = (alerts) => {
 
-    const tradesOfToday = filterObjectsByCurrentDate(trades);
+  //   const tradesOfToday = filterObjectsByCurrentDate(trades);
 
-    const tradesWithLosses = filterTradesWithLosses(tradesOfToday);
+  //   const tradesWithLosses = filterTradesWithLosses(tradesOfToday);
 
 
-    if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <= tradesWithLosses) {
-      console.log("Trigger losses in a row");
-      turnOnAlert(ALERTS_TYPE.LOSSING_TRADE_IN_ROW);
-    }
-  }
+  //   if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <= tradesWithLosses) {
+  //     console.log("Trigger losses in a row");
+  //     turnOnAlert(ALERTS_TYPE.LOSSING_TRADE_IN_ROW);
+  //   }
+  // }
 
 
   const filterTradesWithLosses = (trades) => {

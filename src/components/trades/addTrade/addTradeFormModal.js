@@ -408,9 +408,10 @@ export default function TradeFormModal(props) {
   // before add new trade this condition check which broker in selected account to Adjust the fields structs that come from the data 
   const handleSaveTrade = async () => {
     let data = {};
-
+    const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false }); // Get the current time in "HH:mm:ss" format
+    const positionDateTime = positionDate + ' ' + currentTime; // Combine positionDate and currentTime
     data = {
-      entryDate: positionDate,
+      entryDate: positionDateTime ,
       symbol: positionSymbol,
       status: positionStatus,
       netROI,
