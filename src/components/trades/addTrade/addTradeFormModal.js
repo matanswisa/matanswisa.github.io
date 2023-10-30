@@ -460,7 +460,7 @@ export default function TradeFormModal(props) {
 
       //------------------------------------------------------- handle edit trade ----------------------------------------------------------------------------//
       else if (editMode) {
-        data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
+        // data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
         try {
           const editTradeResponse = await api.post('/api/editTrade', { tradeId: editedTrade._id, userId: user._id, accountId: currentAccount._id, tradeData: data }, { headers: { Authorization: 'Bearer ' + user.accessToken } });
           notifyToast(getMsg(messages, msgType.success, msgNumber[5], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[5], languageidx).msgType);
