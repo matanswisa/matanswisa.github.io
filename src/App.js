@@ -12,11 +12,8 @@ import './pages/blur.css';
 import { useState } from 'react';
 import { selectLoading } from './redux-toolkit/loadingSlice';
 import { useSelector } from 'react-redux';
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 import * as React from 'react';
 import { selectAlerts } from './redux-toolkit/userSlice';
-import AlertDialog from './components/AlertsDialog/alertDialog';
 
 
 
