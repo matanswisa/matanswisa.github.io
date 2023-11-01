@@ -48,6 +48,7 @@ import { msgNumber } from '../utils/msgNumbers.js';
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
 import { selectUser } from '../redux-toolkit/userSlice';
+import axiosInstance from '../utils/axiosService';
 
 const style = {
     position: 'absolute',
@@ -303,12 +304,7 @@ const UsersManagementPage = () => {
     const handleDeleteUser = async (id) => {
         try {
             // Assuming the correct endpoint is '/api/auth/deleteUser'
-            await api.delete('/api/auth/deleteUser', {
-                headers: {
-                    Authorization: `Bearer ${user.accessToken}`,
-                },
-                data: { id }, // Make sure this is the correct format for the API
-            });
+            await axiosInstance.delete('/api/auth/deleteUser');
             fetchUsers();
             notifyToast(getMsg(messages, msgType.success, msgNumber[12], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[12], languageidx).msgType);
             // notifyToast("Delete user Successfully ", 'success');
@@ -353,7 +349,7 @@ const UsersManagementPage = () => {
 
         }
 
-        await api.post('/api/sendEmail', data).then((res) => {
+        await axiosInstance.post('/api/sendEmail', data).then((res) => {
             notifyToast(getMsg(messages, msgType.success, msgNumber[7], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[7], languageidx).msgType);
             //   notifyToast("mail Send successfully", "success");
         }).catch((err) => {
@@ -438,12 +434,8 @@ const UsersManagementPage = () => {
             return; // Don't proceed with the update
         } else {
             try {
-                await api.put('/api/auth/updateUser', {
+                await axiosInstance.put('/api/auth/updateUser', {
                     data: { userId, username, email, licenseTime },
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${user.accessToken}`,
-                    }
                 });
                 fetchUsers();
                 handleSendMailAfterEdit();
@@ -470,13 +462,8 @@ const UsersManagementPage = () => {
 
 
     function fetchUsers() {
-        api
-            .get('/api/auth/users', {
-                headers: {
-                    Authorization: `Bearer ${user.accessToken}`,
-                },
-                user: user
-            }).then((res) => {
+        axiosInstance
+            .get('/api/auth/users').then((res) => {
 
                 setUsers([...res.data]);
 

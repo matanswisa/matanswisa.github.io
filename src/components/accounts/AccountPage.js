@@ -26,7 +26,6 @@ import { useState, useRef, useEffect } from 'react';
 import Iconify from '../../components/iconify/Iconify';
 import useToast from '../../hooks/alert';
 import 'react-toastify/dist/ReactToastify.css';
-import api from '../../api/api';
 import { ToastContainer, } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentAccount, selectUser, selectUserAccounts, setCurrentAccount, updateAccountList } from '../../redux-toolkit/userSlice';
@@ -36,8 +35,9 @@ import { getMsg } from '../../utils/messeageUtils';
 import { msgType } from '../../utils/messagesEnum.js';
 import { msgNumber } from '../../utils/msgNumbers.js';
 
-import { selectlanguage , selectidx} from '../../redux-toolkit/languagesSlice';
+import { selectlanguage, selectidx } from '../../redux-toolkit/languagesSlice';
 import { selectDarkMode } from '../../redux-toolkit/darkModeSlice';
+import axiosInstance from '../../utils/axiosService';
 //Related to dialog error - has to be outside of the component
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -52,7 +52,7 @@ export default function BasicModal() {
     //------------------------------------------------   States ----------------------------------------------------- //
     const isHebrew = useSelector(selectlanguage);
     const languageidx = useSelector(selectidx);
-   
+
     const darkMode = useSelector(selectDarkMode);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [editMode, setEditMode] = React.useState(false);
@@ -83,10 +83,7 @@ export default function BasicModal() {
             };
 
             // Send the DELETE request with the data in the request body and authorization header
-            const response = await api.delete('/api/deleteAccount', {
-                headers: {
-                    Authorization: `Bearer ${user.accessToken}`,
-                },
+            const response = await axiosInstance.delete('/api/deleteAccount', {
                 data: requestData,
             });
             const accounts = response.data;
@@ -97,7 +94,7 @@ export default function BasicModal() {
                 const account = accounts.find(account => account._id == currentAccount._id);
 
                 if (!account && accounts.length > 0) {
-                    console.log("removing current account" , accounts);
+                    console.log("removing current account", accounts);
                     dispatch(setCurrentAccount(accounts[0]));
                 } else {
                     dispatch(setCurrentAccount(null));
@@ -108,8 +105,8 @@ export default function BasicModal() {
 
 
             // Notify and fetch accounts
-            console.log( getMsg(messages, msgType.success, msgNumber[1],1).msgType);
-            notifyToast(getMsg(messages, msgType.success, msgNumber[1],languageidx).msgText, getMsg(messages, msgType.success, msgNumber[1],languageidx).msgType);
+            console.log(getMsg(messages, msgType.success, msgNumber[1], 1).msgType);
+            notifyToast(getMsg(messages, msgType.success, msgNumber[1], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[1], languageidx).msgType);
             setAnchorEl(null);
         } catch (error) {
             // Handle errors if any

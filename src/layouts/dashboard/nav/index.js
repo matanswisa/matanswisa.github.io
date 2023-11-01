@@ -25,6 +25,7 @@ import { selectCurrentAccount, } from '../../../redux-toolkit/userSlice';
 import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
 import { selectDarkMode, toggleDarkMode } from '../../../redux-toolkit/darkModeSlice';
 import MultipleSelectPlaceholder from '../../../components/accounts/selectAccount';
+import localStorageService from '../../../utils/localStorageService';
 
 // ----------------------------------------------------------------------
 
@@ -137,15 +138,9 @@ export default function Nav({ openNav, onCloseNav }) {
 
 
   const handleLogout = (e) => {
-    // if(darkMode === true){
-    //   dispatch(toggleDarkMode());
-    // }
-
-
     e.preventDefault();
-    console.log(e);
 
-    // localStorage.removeItem('token');
+    localStorageService.delete();
     dispatch(logout());
   }
 
@@ -171,7 +166,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
 
       <div style={{ marginBottom: '40px', marginLeft: '45px' }}>
-        {userAccounts.length > 0 && (
+        {userAccounts?.length > 0 && (
           <div style={{ width: '100%' }}>
             <MultipleSelectPlaceholder />
           </div>

@@ -22,6 +22,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { brokers } from '../../brokersNames/brokers.js'
 import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
 import { selectlanguage } from '../../../redux-toolkit/languagesSlice';
+import axiosInstance from '../../../utils/axiosService';
+
 
 
 const ProfitFactor = (trade) => {
@@ -296,7 +298,7 @@ export default function Diveder(props) {
   });
 
   useEffect(() => {
-    api.post('/api/ShowInfoBySpecificDate', { trades: currentAccount.trades, date: date }, { headers: { Authorization: "Berear " + user.accessToken } })
+    axiosInstance.post('/api/ShowInfoBySpecificDate', { trades: currentAccount.trades, date: date })
       .then((res) => {
         setTrades(res.data);
 

@@ -23,6 +23,7 @@ import { msgNumber } from '../../utils/msgNumbers.js';
 import { selectlanguage, selectidx } from '../../redux-toolkit/languagesSlice';
 
 import { selectDarkMode } from '../../redux-toolkit/darkModeSlice';
+import axiosInstance from '../../utils/axiosService';
 //--------------------------------------------This component show Create account Modal -------------------------------------------//
 export default function AccountModal(props) {
 
@@ -102,7 +103,7 @@ export default function AccountModal(props) {
         userId: user._id,
       };
 
-      api.put('/api/editAccount', data, { headers: { Authorization: "Berear " + user.accessToken } }) // Use api.put and pass the account id in the URL
+      axiosInstance.put('/api/editAccount', data) // Use api.put and pass the account id in the URL
         .then((res) => {
           notifyToast(getMsg(messages, msgType.success, msgNumber[3], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[3], languageidx).msgType);
           dispatch(updateAccountList(res.data))

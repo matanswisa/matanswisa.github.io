@@ -16,31 +16,50 @@ import DashboardAppPage from './pages/DashboardAppPage';
 
 import useTokenValidation from './hooks/validateToken';
 import { useDispatch, useSelector } from 'react-redux';
-import { isUserAuthenticated, login, selectUserAccounts, selectUserAdmin } from './redux-toolkit/userSlice';
+import { isUserAuthenticated, login, selectUserAccounts } from './redux-toolkit/userSlice';
 import Tabs from './pages/settings';
 import { axiosAuth } from './api/api';
+import axiosInstance from './utils/axiosService';
+import jwtDecode from 'jwt-decode';
+import localStorageService from './utils/localStorageService';
 
 
 export default function Router() {
 
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector(isUserAuthenticated);
   const accounts = useSelector(selectUserAccounts);
+  const isAuthenticated = useSelector(isUserAuthenticated)
+
   useEffect(() => {
-    const checkIsUserLoggedInValid = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (user && user.accessToken) {
-        const result = await axiosAuth.get("/api/auth/validate-token", { headers: { Authorization: "Bearer " + user.accessToken } });
-        if (result.status == 200) {
-          dispatch(login({ user: user }));
+    const token = localStorageService.get('token');
+    const user = JSON.stringify(localStorageService.get());
+    async function isTokenExpired(token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+
+        if (decodedToken.exp < currentTime) {
+          const response = await axiosInstance.get('/api/auth/validate-token');
+          console.log("response", response);
+          if (response.status === 200 || response.status === 201) return false;
+          return true;
         }
+
+        return false;
+      } catch (e) {
+        console.error("Invalid token", e);
+        localStorageService.delete();
+        return false;
       }
     }
-    checkIsUserLoggedInValid().then(data => {
-      console.log("Successfully logged in");
-    })
 
+    const userAuthenticated = !token || isTokenExpired(token) ? false : true;
+    if (userAuthenticated & user) {
+
+      dispatch(login(user))
+    }
   }, [])
+
 
   const routes = useRoutes([
     {

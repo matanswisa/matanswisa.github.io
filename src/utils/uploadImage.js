@@ -1,4 +1,5 @@
 import api from "../api/api";
+import axiosInstance from "./axiosService";
 
 
 //TODO: This code not finished yet need to match it by the new messages object.
@@ -11,7 +12,7 @@ export const handleUploadTradeImage = async (tradeId, reduxUser, userId, account
     formData.append('accountId', accountId)
     console.log("formData", formData);
     // Make a POST request to the server with the file data
-    const response = await api.post('http://localhost:8000/api/uploadTradeImage', formData, { headers: { Authorization: 'Berear ' + reduxUser.accessToken, 'Content-Type': 'multipart/form-data' } })
+    const response = await axiosInstance.post('http://localhost:8000/api/uploadTradeImage', formData)
     // .then(response => response.json())
     // .then(data => {
     //     notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);

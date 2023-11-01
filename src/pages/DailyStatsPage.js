@@ -12,10 +12,11 @@ import {
 } from '@mui/material';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import  { selectCurrentAccount, selectUser } from '../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser } from '../redux-toolkit/userSlice';
 import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage } from '../redux-toolkit/languagesSlice';
 import api from '../api/api';
+import axiosInstance from '../utils/axiosService';
 
 
 
@@ -33,10 +34,10 @@ export default function DailyStatsPage() {
 
   useEffect(() => {
     console.log("Current account has changed!!!")
-    
+
     // Check if currentAccount and currentAccount.trades are not null/undefined
     if (currentAccount?.trades) {
-      api.post('/api/DailyStatsInfo', { trades: currentAccount.trades }, { headers: { Authorization: "Bearer " + user.accessToken } })
+      axiosInstance.post('/api/DailyStatsInfo', { trades: currentAccount.trades })
         .then((res) => {
           setTrades(res.data);
         })
