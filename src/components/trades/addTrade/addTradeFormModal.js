@@ -407,9 +407,10 @@ export default function TradeFormModal(props) {
   // before add new trade this condition check which broker in selected account to Adjust the fields structs that come from the data 
   const handleSaveTrade = async () => {
     let data = {};
-
+    const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false }); // Get the current time in "HH:mm:ss" format
+    const positionDateTime = positionDate + ' ' + currentTime; // Combine positionDate and currentTime
     data = {
-      entryDate: positionDate,
+      entryDate: positionDateTime ,
       symbol: positionSymbol,
       status: positionStatus,
       netROI,
@@ -458,7 +459,7 @@ export default function TradeFormModal(props) {
 
       //------------------------------------------------------- handle edit trade ----------------------------------------------------------------------------//
       else if (editMode) {
-        data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
+        // data.netPnL = data.status !== prevStatusState ? data.netPnL * -1 : data.netPnL;
         try {
           const editTradeResponse = await axiosInstance.post('/api/editTrade', { tradeId: editedTrade._id, userId: user._id, accountId: currentAccount._id, tradeData: data });
           notifyToast(getMsg(messages, msgType.success, msgNumber[5], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[5], languageidx).msgType);

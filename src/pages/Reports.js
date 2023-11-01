@@ -95,7 +95,9 @@ export default function Reports() {
 
   //------------------------------------------------handle Upload image ----------------------------------------------------- //
 
-
+  // useEffect(()=>{
+  //   setTrades(currentAccount.trades)
+  // },[currentAccount.trades])
 
   //------------------------------------------------handle alert ----------------------------------------------------- //
   const showToast = useToast();
@@ -244,7 +246,7 @@ export default function Reports() {
       </Container >
 
       <Typography variant="h4" >
-        {isHebrew === false ? "Total PnL" : "רווח/הפסד כולל"} : {sumPnL(trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(trades)}$</span> : <span style={totalPlColor}>{sumPnL(trades)}$</span>}
+        {isHebrew === false ? "Total PnL" : "רווח/הפסד כולל"} : {sumPnL(currentAccount.trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(currentAccount.trades)}$</span> : <span style={totalPlColor}>{sumPnL(currentAccount.trades)}$</span>}
       </Typography>
     </>
   );

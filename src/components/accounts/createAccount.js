@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { Select, MenuItem, ListItemIcon, Alert } from '@mui/material';
 import { red, blue, green, yellow, orange, purple, pink, cyan, brown, lightGreen, lime, blueGrey, } from '@mui/material/colors';
 import { Grid } from 'rsuite';
-import { selectUser, setCurrentAccount, updateAccountList, selectUserAccounts } from '../../redux-toolkit/userSlice';
+import { selectUser, setCurrentAccount, updateAccountList, selectUserAccounts, selectCurrentAccount } from '../../redux-toolkit/userSlice';
 import BinanceIcon from '../brokersIcons/binance.svg'
 import TradeovateIcon from '../brokersIcons/Tradovate.svg'
 import TradeovateWhiteIcon from '../brokersIcons/TradovateWhite.svg'
@@ -31,6 +31,7 @@ export default function AccountModal(props) {
   const isHebrew = useSelector(selectlanguage);
   const languageidx = useSelector(selectidx);
   const accounts = useSelector(selectUserAccounts);
+  const currentAccount = useSelector(selectCurrentAccount);
   const handleOpen = () => props.handleOpenModal(true);
   const handleClose = () => props.handleOpenModal(false);
   const [accountName, setAccountName] = useState('');
@@ -106,7 +107,11 @@ export default function AccountModal(props) {
         .then((res) => {
           notifyToast(getMsg(messages, msgType.success, msgNumber[3], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[3], languageidx).msgType);
           dispatch(updateAccountList(res.data))
-          dispatch(setCurrentAccount(res.data[res.data.length - 1]));
+          if (currentAccount._id == accountInfo._id) {
+            dispatch(setCurrentAccount({ ...data, trades: currentAccount.trades }));
+          } else {
+            dispatch(setCurrentAccount(res.data[res.data.length - 1]));
+          }
           props.handleOpenModal(false);
         })
         .catch((err) => {

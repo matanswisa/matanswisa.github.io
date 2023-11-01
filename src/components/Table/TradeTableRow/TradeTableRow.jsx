@@ -25,7 +25,7 @@ import AddFarshel from '../../trades/importTrade/AddFarshel';
 import React, { useState } from 'react';
 import { selectidx, selectlanguage } from '../../../redux-toolkit/languagesSlice';
 import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
-import { selectCurrentAccount, selectUser, selectUserAccounts, setTradesList } from '../../../redux-toolkit/userSlice';
+import { selectCurrentAccount, selectUser, selectUserAccounts, setCurrentAccount, setTradesList } from '../../../redux-toolkit/userSlice';
 import { selectMessages } from '../../../redux-toolkit/messagesSlice';
 import { selectTrade, setTrade } from '../../../redux-toolkit/tradeSlice';
 import api from '../../../api/api';
@@ -129,6 +129,7 @@ export default function TradeTableRow(props) {
     const deleteTrade = async () => {
         const res = await axiosInstance.post('/api/deleteTrade', { tradeId: trade._id, userId: user._id, accountId: currentAccount._id });
         dispatch(setTradesList(res.data))
+        dispatch(setCurrentAccount(res.data.account));
         // notifyToast(getMsg(messages, msgType.success, msgNumber[14], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[14], languageidx).msgType);
         // notifyToast("Delete trade Successfully", 'success');
         toggleShow();
@@ -224,37 +225,44 @@ export default function TradeTableRow(props) {
                     </button>
                 </TableCell>}
 
-
+            
+         {isHebrew === false ?                    
             <TableCell align="center">
                 {trade.entryPrice}
-            </TableCell>
+            </TableCell>:
+             <TableCell align="center">
+             <input ref={fileInputRef} name="file" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+             {trade.image ? (
+                 <IconButton size="large" color="inherit" onClick={openImageModal} >
+                     <Iconify icon={'eva:image-outline'} />
+                 </IconButton>
+             ) : <Iconify style={{ cursor: "pointer" }} icon={'eva:plus-square-outline'} onClick={handleEditTradeEvent} />}
+         </TableCell>
+            }
 
+
+        {isHebrew === false ?          
             <TableCell align="center">
                 {trade.stopPrice}
-            </TableCell>
-
-            <TableCell align="center">
-                {trade.exitPrice}
-            </TableCell>
+            </TableCell>:
+              <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
+           }
 
 
+
+        {isHebrew === false ?          
+        <TableCell align="center">
+              {trade.exitPrice}
+         </TableCell>:
+             <TableCell align="center">
+             {trade.commission ? trade.commission + "$" : "לא זמין"}
+         </TableCell>}
+
+        
+         {isHebrew === false ?     
             <TableCell align="center">{trade.netROI ? trade.netROI + "%" : "0.00" + "%"}</TableCell>
-
-            <TableCell align="center">{trade.riskReward ? trade.riskReward : "0"}</TableCell>
-
-
-            {isHebrew === false ?
-                <TableCell align="center">{trade.longShort}</TableCell> :
-                <TableCell align="center">{trade.netPnL}$</TableCell>}
-
-            {isHebrew === false ?
-                <TableCell align="center">{trade.contracts}</TableCell> :
+                :
                 <TableCell align="center">
-                    {trade.commission ? trade.commission + "$" : "לא זמין"}
-                </TableCell>}
-
-
-            <TableCell align="center">
                 {trade.duration !== undefined && trade.duration > 0 ? (
                     <React.Fragment>
                         {trade.duration >= 60 && `${Math.floor(trade.duration / 60)} Hr `}
@@ -265,17 +273,56 @@ export default function TradeTableRow(props) {
                     "N/A"
                 )}
             </TableCell>
+                
+                }
+
+
+            {isHebrew === false ?
+            <TableCell align="center">{trade.riskReward ? trade.riskReward : "0"}</TableCell>
+
+                : <TableCell align="center">{trade.contracts}</TableCell>}
+
+
+
+
+
+            {isHebrew === false ?
+                <TableCell align="center">{trade.longShort}</TableCell> :
+                <TableCell align="center">{trade.netPnL}$</TableCell>}
+
+
+
+
+            {isHebrew === false ?
+                <TableCell align="center">{trade.contracts}</TableCell> :
+                <TableCell align="center">{trade.longShort}</TableCell>}
+
+{isHebrew === false ?
+            <TableCell align="center">
+                {trade.duration !== undefined && trade.duration > 0 ? (
+                    <React.Fragment>
+                        {trade.duration >= 60 && `${Math.floor(trade.duration / 60)} Hr `}
+                        {Math.floor(trade.duration % 60) > 0 && `${Math.floor(trade.duration % 60)} Min `}
+                        {Math.floor((trade.duration % 1) * 60) > 0 && `${Math.floor((trade.duration % 1) * 60)} Sec`}
+                    </React.Fragment>
+                ) : (
+                    "N/A"
+                )}
+            </TableCell>:
+            <TableCell align="center">{trade.riskReward ? trade.riskReward : "0"}</TableCell>}
 
 
             {isHebrew === false ?
                 <TableCell align="center">
                     {trade.commission ? trade.commission + "$" : "N/A"}
                 </TableCell> :
-                <TableCell align="center">{trade.contracts}</TableCell>}
+                   <TableCell align="center">
+                   {trade.exitPrice}
+                   </TableCell>}
 
             {isHebrew === false ?
                 <TableCell align="center">{trade.netPnL}$</TableCell> :
-                <TableCell align="center">{trade.longShort}</TableCell>}
+                <TableCell align="center">{trade.stopPrice}</TableCell>}
 
 
             {isHebrew === false ?
@@ -301,11 +348,10 @@ export default function TradeTableRow(props) {
                         Edit
                     </button>
                 </TableCell> :
-                <TableCell align="center">
-                    <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
-                        {sentenceCase(trade.status)}
-                    </Label>
-                </TableCell>}
+                  <TableCell align="center">
+                  {trade.entryPrice}
+              </TableCell>}
+              
 
             {isHebrew === false ?
                 <TableCell align="right">
@@ -338,17 +384,34 @@ export default function TradeTableRow(props) {
                         </DialogActions>
                     </Dialog>
                 </TableCell> :
-                <TableCell align="center">{trade.symbol}</TableCell>}
+                <TableCell align="center">
+                <Label color={(trade.status === 'Loss' && 'error') || (trade.stauts === 'Break Even' && 'warning') || (trade.status === 'Win' ? 'success' : 'warning')}>
+                    {sentenceCase(trade.status)}
+                </Label>
+            </TableCell>}
             {imageModalOpen && <ImageModal open={imageModalOpen} handleClose={() => { setImageModalOpen(false) }} imageData={trade.image} tradeComments={trade.comments} />}
 
             {isHebrew === false ?
 
                 <TableCell onClick={handleCellClick("comments", trade?.comments)} align="center">{trade?.comments?.length !== 0 ? trade?.comments?.length > 20 ? `${trade?.comments?.substring(0, 20)}...` : trade?.comments : "N/A"}</TableCell>
-                : <TableCell component="th" scope="row" padding="none">
-                    <Stack direction="row" alignItems="center" spacing={2}>
-                        {formatDate(trade.entryDate)}
-                    </Stack>
-                </TableCell>}
+                :   <TableCell align="center">{trade.symbol}</TableCell>}
+
+
+                
+        {isHebrew === true ?
+           
+            <TableCell component="th" scope="row" padding="none">
+            <Stack direction="row" alignItems="center" spacing={2}>
+            {formatDate(trade.entryDate)}
+            </Stack>
+            </TableCell> :""}
         </TableRow>
+
+
+
+
     );
 }
+
+
+
