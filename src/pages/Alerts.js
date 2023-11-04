@@ -78,10 +78,6 @@ const Alerts = () => {
     }
 
     const [alertTitle, setAlertTitle] = useState([...initialAlertTitle]);
-
-
-
-
     const [inputFieldValues, setInputFieldValues] = useState(Array(alertTitle.length).fill(''));
 
 
@@ -100,10 +96,6 @@ const Alerts = () => {
         }
         return true;
     }
-
-
-
-
 
 
     //------------------------------------------------ handle reset condtion -----------------------------------------------------//
@@ -166,11 +158,17 @@ const Alerts = () => {
 
 
 
+    // const handleEditClick = (index) => {
+    //     const updatedAlertTitle = [...alertTitle];
+    //     updatedAlertTitle[index].condition = 0;
+    //     setAlertTitle(updatedAlertTitle);
+    //     ///update alert to 0 in db.
+    //     handleResetCondition(index);
+    // };
+
     const handleEditClick = (index) => {
-        const updatedAlertTitle = [...alertTitle];
-        updatedAlertTitle[index].condition = 0;
-        setAlertTitle(updatedAlertTitle);
-        ///update alert to 0 in db.
+        const updatedInputFieldValues = inputFieldValues.map((value, i) => (i === index ? '0' : value));
+        setInputFieldValues(updatedInputFieldValues);
         handleResetCondition(index);
     };
 

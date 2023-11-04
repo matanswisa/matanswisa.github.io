@@ -283,6 +283,18 @@ export default function TradesTable(props) {
     };
 
 
+    const handleSortByOpenDate = () => {
+        if (orderByCols === 'entryDate') {
+            // If the same column is clicked again, toggle the order
+            setOrderCols((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+        } else {
+            // If a different column is clicked, set it as the new sorting column in ascending order
+            setOrderByCols('entryDate');
+            setOrderCols('asc');
+        }
+    };
+
+
     return (
         <>
         <TableContainer sx={{  width: '900px' }}>
@@ -295,6 +307,7 @@ export default function TradesTable(props) {
                             rowCount={trades?.length ? trades.length : 0}
                             onRequestSort={handleRequestSortCols}
                             onSelectAllClick={handleSelectAllClick}
+                            onSortByOpenDate={handleSortByOpenDate}
                         />
                         <TableBody>
                             {trades
