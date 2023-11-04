@@ -115,6 +115,9 @@ export default function TradeFormModal(props) {
 
     const tradesOfToday = filterObjectsByCurrentDate(trades);
     console.log(tradesOfToday);
+    console.log("alerts", alerts);
+    console.log(alerts[ALERTS_TYPE.OVER_TRADING_ALERT]);
+
 
     if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition <= tradesOfToday.length) {
       console.log("Trigger over trading");
