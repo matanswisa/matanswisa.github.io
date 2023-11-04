@@ -20,14 +20,18 @@ import axiosInstance from '../../utils/axiosService';
 export default function MultipleSelectPlaceholder(props) {
 
 
+
+  //selectors
+  const currentAccount = useSelector(selectCurrentAccount);
+
+
   //------------------------------------------------  States ----------------------------------------------------- //
-  const [selectedAccountName, setSelectedAccountName] = useState(''); //refers to account name*
-  const [selectedAccountColor, setSelectedAccountColor] = useState('');
+  const [selectedAccountName, setSelectedAccountName] = useState(currentAccount?.AccountName || ''); //refers to account name*
+  const [selectedAccountColor, setSelectedAccountColor] = useState(currentAccount?.Label || '');
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const accounts = useSelector(selectUserAccounts);
   const user = useSelector(selectUser);
-  const currentAccount = useSelector(selectCurrentAccount);
   const isHebrew = useSelector(selectlanguage);
   const [selectedAccount, setSelectedAccount] = useState(currentAccount);
   // const accounts = useSelector(selectUserAccounts);
@@ -69,13 +73,20 @@ export default function MultipleSelectPlaceholder(props) {
   }
 
   //Responsible to intialize current account for user.
+  useEffect(() => {
+    if (selectedAccount?.AccountName !== currentAccount?.AccountName) {
+      setSelectedAccount(currentAccount);
+      setSelectedAccountColor(currentAccount.Label);
+      setSelectedAccountName(currentAccount.AccountName);
+    }
+  }, [currentAccount])
 
   useEffect(() => {
     fetchSelectedAccount();
   }, [])
 
   useEffect(() => {
-    if (selectedAccount != null) {
+    if (selectedAccount?.AccountName != currentAccount?.AccountName) {
       dispatch(setCurrentAccount(selectedAccount));
     }
   }, [selectedAccount])

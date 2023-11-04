@@ -73,8 +73,8 @@ export default function AccountModal(props) {
   const handleCreateAccount = async () => {
     if (validateForm()) {
       const data = { AccountName: accountName, Broker: broker, Label: selectedColor, InitialBalance: balance };
-      await api
-        .post('/api/createAccount', { userId: user._id, data }, { headers: { Authorization: "Berear " + user.accessToken } })
+      await axiosInstance
+        .post('/api/createAccount', { userId: user._id, data })
         .then(async (res) => {
           notifyToast(getMsg(messages, msgType.success, msgNumber[2], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[2], languageidx).msgType);
           props.handleOpenModal(false);
