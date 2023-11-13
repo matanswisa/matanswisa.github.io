@@ -103,13 +103,10 @@ export default function TradeFormModal(props) {
   const trades = useSelector(selectCurrentAccountTrades);
   const alerts = useSelector(selectAlerts);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [contract, setContract] = useState(null);
 
   //selector
   const editedTrade = useSelector(selectTradeToEdit);
-
-
-
-
 
   const checkOverTradingAlert = async (alerts) => {
 
@@ -141,29 +138,14 @@ export default function TradeFormModal(props) {
   }
 
 
-
-
-  // Assuming entryDate and currentDate are Date objects
-
-
-
-
-
-
-
-
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
   const activeTickers = tickerArrays[value];
 
 
-  const labelStyle = {
-    minWidth: 0, // Adjust as needed
-    fontSize: '14px', // Adjust font size as needed
-    padding: '6px 12px', // Adjust padding as needed
-  };
+  // const labelStyle = {
+  //   minWidth: 0, // Adjust as needed
+  //   fontSize: '14px', // Adjust font size as needed
+  //   padding: '6px 12px', // Adjust padding as needed
+  // };
 
 
   const initialState = {
@@ -329,6 +311,12 @@ export default function TradeFormModal(props) {
 
   }
 
+  function calculateNetPNLTradovate(contract, Qty, EntryPrice, TakeProfit) {
+    const { contract_size, tick_size } = contract;
+    console.log("result = ", (TakeProfit - EntryPrice) * Qty * contract_size * tick_size)
+    return (TakeProfit - EntryPrice) * Qty * contract_size * tick_size;
+  }
+
   const [formState, dispatch] = useReducer(formReducer, initialState);
   const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netROI, positionDate, stopPrice, positionSymbol } = formState;
 
@@ -346,17 +334,13 @@ export default function TradeFormModal(props) {
 
 
       }
-    } else if (currentAccount?.Broker === brokers.Tradovate) { //// not work yet.
-      if (positionType === "Short") {
-        setNetPnL(2220);
+    } else if (currentAccount?.Broker === brokers.Tradovate && contract !== null) { //// not work yet.
+      console.log("myResult=", calculateNetPNLTradovate(contract, contractsCounts, entryPrice, exitPrice));
+      setNetPnL(calculateNetPNLTradovate(contract, contractsCounts, entryPrice, exitPrice));
 
-      } else if (positionType === "Long") {
-        // You might want to set a default value when positionType is not "Short"
-        setNetPnL(2220);
 
-      }
     }
-  }, [positionType, contractsCounts, entryPrice, exitPrice, stopPrice, positionStatus]); // Listen for changes in positionType
+  }, [positionType, contractsCounts, entryPrice, exitPrice, stopPrice, positionStatus, contract]); // Listen for changes in positionType
 
 
   useEffect(() => {
@@ -376,13 +360,14 @@ export default function TradeFormModal(props) {
     if (field === 'positionSymbol' && event !== null) {
       dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.year });
     } else if (event !== null) {
-
       dispatch({ type: 'UPDATE_FIELD', field: `${field}`, value: event.target.value });
     }
   };
 
 
-
+  useEffect(() => {
+    console.log("contract", contract);
+  }, [contract])
 
 
   const handleFileChange = (event) => {
@@ -413,7 +398,7 @@ export default function TradeFormModal(props) {
     const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false }); // Get the current time in "HH:mm:ss" format
     const positionDateTime = positionDate + ' ' + currentTime; // Combine positionDate and currentTime
     data = {
-      entryDate: positionDateTime ,
+      entryDate: positionDateTime,
       symbol: positionSymbol,
       status: positionStatus,
       netROI,
@@ -676,7 +661,7 @@ export default function TradeFormModal(props) {
                     required="true"
                     options={activeTickers}
                     value={positionSymbol}
-                    onChange={(e, newValue) => { handlePositionFieldInput(newValue, 'positionSymbol') }}
+                    onChange={(e, newValue) => { setContract(newValue); handlePositionFieldInput(newValue, 'positionSymbol'); }}
                     sx={{ width: "280px", marginBottom: '13px' }}
                     renderInput={(params) => <TextField {...params} label={isHebrew === false ? "Symbol" : "סימן"} value={positionSymbol} variant="standard" />}
                   />
