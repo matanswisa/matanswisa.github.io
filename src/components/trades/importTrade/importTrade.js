@@ -211,12 +211,11 @@ export default function BasicModal(props) {
         const headersForImportTrades = {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${user.accessToken}`,
           },
         }
 
         const timer = setInterval(() => {
-          setProcessDuration((prevDuration) => Math.min(prevDuration + 2000, 10000)); // Cap at 10 seconds
+          setProcessDuration((prevDuration) => Math.min(prevDuration + 2000, 10000)); // Caip at 10 seconds
         }, 2000);
 
 
@@ -224,7 +223,7 @@ export default function BasicModal(props) {
 
         clearInterval(timer); // Clear the timer when upload is complete
         setProcessDuration(3000); // Reset process duration
-        dispatch(setTradesList(response.data.trades));
+        dispatch(setTradesList(response.data));
         if (response.data.isAllUploaded) {
           notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
 

@@ -1,24 +1,49 @@
 // -------------------------------------------- select options tickers appear in manual add trade --------------------------------------------------
 export const tickerArrays = [
   [
-    { label: 'E-mini S&P 500 Futures', year: 'ES' },
-    { label: 'E-mini Nasdaq 100 Futures', year: 'NQ' },
-    { label: 'E-mini Dow Jones Futures', year: 'YM' },
-    { label: 'Crude Oil Futures', year: 'CL' },
-    { label: 'Gold Futures', year: 'GC' },
-    { label: 'Silver Futures', year: 'SI' },
-    { label: 'Natural Gas Futures', year: 'NG' },
-    { label: 'Euro FX Futures', year: '6E' },
-    { label: 'British Pound Futures', year: '6B' },
-    { label: 'Japanese Yen Futures', year: '6J' },
-    { label: 'Eurodollar Futures', year: 'GE' },
-    { label: 'Russell 2000 E-Mini Futures', year: 'RTY' },
-    { label: 'Australian Dollar Futures', year: '6A' },
-    { label: 'Canadian Dollar Futures', year: '6C' },
-    { label: 'Cocoa Futures', year: 'CC' },
-    { label: 'Coffee Futures', year: 'KC' },
-  
-  
+
+    { "label": "E-mini S&P 500 Futures", "year": "ES", "contract_size": 50, "tick_size": 0.25 },
+    { "label": "E-mini Nasdaq 100 Futures", "year": "NQ", "contract_size": 20, "tick_size": 0.25 },
+    { "label": "E-mini Dow Jones Futures", "year": "YM", "contract_size": 5, "tick_size": 1 },
+    { "label": "Crude Oil Futures", "year": "CL", "contract_size": 1000, "tick_size": 0.01 },
+    { "label": "Gold Futures", "year": "GC", "contract_size": 100, "tick_size": 0.10 },
+    { "label": "Silver Futures", "year": "SI", "contract_size": 5000, "tick_size": 0.005 },
+    { "label": "Natural Gas Futures", "year": "NG", "contract_size": 10000, "tick_size": 0.001 },
+    { "label": "Euro FX Futures", "year": "6E", "contract_size": 125000, "tick_size": 0.0001 },
+    { "label": "British Pound Futures", "year": "6B", "contract_size": 62500, "tick_size": 0.0001 },
+    { "label": "Japanese Yen Futures", "year": "6J", "contract_size": 12500000, "tick_size": 0.000001 },
+    { "label": "Eurodollar Futures", "year": "GE", "contract_size": 1000000, "tick_size": 0.0025 },
+    { "label": "Russell 2000 E-Mini Futures", "year": "RTY", "contract_size": 50, "tick_size": 0.10 },
+    { "label": "Australian Dollar Futures", "year": "6A", "contract_size": 100000, "tick_size": 0.0001 },
+    { "label": "Canadian Dollar Futures", "year": "6C", "contract_size": 100000, "tick_size": 0.0001 },
+    { "label": "Cocoa Futures", "year": "CC", "contract_size": 10, "tick_size": 1 },
+    { "label": "Coffee Futures", "year": "KC", "contract_size": 37500, "tick_size": 0.05 },
+    { "label": "Corn Futures", "year": "ZC", "contract_size": 5000, "tick_size": 0.25 },
+    { "label": "Wheat Futures", "year": "ZW", "contract_size": 5000, "tick_size": 0.25 },
+    { "label": "Soybeans Futures", "year": "ZS", "contract_size": 5000, "tick_size": 0.25 },
+    { "label": "Soybean Oil Futures", "year": "ZL", "contract_size": 60000, "tick_size": 0.01 },
+    { "label": "Soybean Meal Futures", "year": "ZM", "contract_size": 100, "tick_size": 0.10 },
+    { "label": "Live Cattle Futures", "year": "LE", "contract_size": 40000, "tick_size": 0.025 },
+    { "label": "Lean Hogs Futures", "year": "HE", "contract_size": 40000, "tick_size": 0.025 },
+    { "label": "Coffee 'C' Futures", "year": "KC", "contract_size": 37500, "tick_size": 0.05 },
+    { "label": "Cotton No. 2 Futures", "year": "CT", "contract_size": 50000, "tick_size": 0.01 },
+    { "label": "Cocoa Futures", "year": "CC", "contract_size": 10, "tick_size": 1 },
+    { "label": "Sugar No. 11 Futures", "year": "SB", "contract_size": 112000, "tick_size": 0.01 },
+    { "label": "U.S. Dollar Index Futures", "year": "DX", "contract_size": 1000, "tick_size": 0.005 },
+    { "label": "Swiss Franc Futures", "year": "6S", "contract_size": 125000, "tick_size": 0.0001 },
+    { "label": "New Zealand Dollar Futures", "year": "6N", "contract_size": 100000, "tick_size": 0.0001 },
+    { "label": "Copper Futures", "year": "HG", "contract_size": 25000, "tick_size": 0.0005 },
+    { "label": "Palladium Futures", "year": "PA", "contract_size": 100, "tick_size": 0.05 },
+    { "label": "Platinum Futures", "year": "PL", "contract_size": 50, "tick_size": 0.10 },
+    { "label": "Gasoline Futures", "year": "RB", "contract_size": 42000, "tick_size": 0.0001 },
+    { "label": "Heating Oil Futures", "year": "HO", "contract_size": 42000, "tick_size": 0.0001 },
+    { "label": "Copper Futures", "year": "HG", "contract_size": 25000, "tick_size": 0.0005 },
+    { "label": "Palladium Futures", "year": "PA", "contract_size": 100, "tick_size": 0.05 },
+    { "label": "Platinum Futures", "year": "PL", "contract_size": 50, "tick_size": 0.10 },
+    { "label": "Gasoline Futures", "year": "RB", "contract_size": 42000, "tick_size": 0.0001 },
+    { "label": "Heating Oil Futures", "year": "HO", "contract_size": 42000, "tick_size": 0.0001 },
+
+
     { label: 'Apple Inc.', year: 'AAPL' },
     { label: 'Microsoft Corporation', year: 'MSFT' },
     { label: 'Amazon.com Inc.', year: 'AMZN' },
@@ -50,7 +75,7 @@ export const tickerArrays = [
     { label: 'Walmart Inc.', year: 'WMT' },
     { label: 'The Home Depot Inc.', year: 'HD' },
     { label: 'Intel Corporation', year: 'INTC' },
-  
+
     { label: 'Bitcoin', year: 'BTC' },
     { label: 'Ethereum', year: 'ETH' },
     { label: 'Binance Coin', year: 'BNB' },
@@ -118,7 +143,7 @@ export const tickerArrays = [
     { label: 'Holo', year: 'HOT' },
     // ... (add more crypto names and symbols)
   ]
-  
+
 ];
 
 

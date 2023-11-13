@@ -75,7 +75,6 @@ export default function Reports() {
   const [openCommend, setCommendOpen] = React.useState(false);
   const [selectedComment, setSelectedComment] = useState('');
   const userAccounts = useSelector(selectUserAccounts);
-  const totalTrades = Object.keys(trades).length;
   const [basicModal, setBasicModal] = useState(false);
   const [openmodal, setIsOpenmodal] = useState(false);
   const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);

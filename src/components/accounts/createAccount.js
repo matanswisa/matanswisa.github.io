@@ -80,7 +80,8 @@ export default function AccountModal(props) {
           notifyToast(getMsg(messages, msgType.success, msgNumber[2], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[2], languageidx).msgType);
           props.handleOpenModal(false);
           console.log("create account", res.data);
-          dispatch(updateAccountList(res.data))
+          dispatch(updateAccountList(res.data));
+          console.log(res.data[res.data.length - 1])
           dispatch(setCurrentAccount(res.data[res.data.length - 1]));
         })
         .catch((err) => {
