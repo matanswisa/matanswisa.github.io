@@ -185,7 +185,7 @@ export default function Reports() {
         </Helmet>
 
       }
-      <Container>
+      <Container style={{ maxWidth: 'none' }}>
 
         <div style={{ marginRight: "10px" }}>
           <DatePicker
@@ -212,7 +212,7 @@ export default function Reports() {
         </div>
         <ToastContainer />
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={6}>
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="h4">
             {isHebrew === false ?
               "Trades" : "טריידים"}
           </Typography>
@@ -230,9 +230,9 @@ export default function Reports() {
           {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
           {editTradeBoolean ? <EditTradeForm /> : null}
         </Stack>
-        <Card>
-          <TradesTable trades={trades} selectedDate={selectedDate} />
-        </Card>
+        {/* <Card> */}
+        <TradesTable trades={trades} selectedDate={selectedDate} />
+        {/* </Card> */}
 
         <Dialog open={openCommend} onClose={handleCloseCommend}>
           <DialogTitle> {isHebrew === false ? "Comment" : "הערות"}</DialogTitle>
@@ -241,12 +241,12 @@ export default function Reports() {
             <Button onClick={handleCloseCommend} color="primary">{isHebrew === false ? "Close" : "סגירה"}</Button>
           </DialogActions>
         </Dialog>
+        <Typography variant="h4" >
+          {isHebrew === false ? "Total PnL" : "רווח/הפסד כולל"} : {sumPnL(currentAccount.trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(currentAccount.trades)}$</span> : <span style={totalPlColor}>{sumPnL(currentAccount.trades)}$</span>}
+        </Typography>
 
       </Container >
 
-      <Typography variant="h4" >
-        {isHebrew === false ? "Total PnL" : "רווח/הפסד כולל"} : {sumPnL(currentAccount.trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(currentAccount.trades)}$</span> : <span style={totalPlColor}>{sumPnL(currentAccount.trades)}$</span>}
-      </Typography>
     </>
   );
 }
