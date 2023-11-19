@@ -181,14 +181,6 @@ export default function DashboardLayout() {
   const darkMode = useSelector(selectDarkMode);
   const isHebrew = useSelector(selectlanguage);
 
-  const user = useSelector(selectUser);
-
-  const createAxiosResponseInterceptor = () => {
-  }
-
-
-
-  // const dispatch = useDispatch();
   useEffect(() => {
     axiosInstance.get('/api/messages').then((res) => {
       dispatch(setMessages(res.data));
@@ -197,12 +189,7 @@ export default function DashboardLayout() {
   }, [])
 
 
-
-
   //Loading logic 
-
-
-
   useEffect(() => {
     setIsBlurActive(true);
     setTimeout(() => {
@@ -212,83 +199,57 @@ export default function DashboardLayout() {
 
 
   return (
+    <div className={isBlurActive ? 'reload' : ''}>
+      {isBlurActive ? (
+        <Box sx={{ display: 'flex' }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <div>
+            {alerts?.map((alert, indx) => {
+              return (
+                alert.showalert && <AlertDialog alert={alert} key={indx} />
+              );
+            })}
 
-    <>
-      <div className={isBlurActive ? 'reload' : ''}>
-        {isBlurActive ? (
-          <Box sx={{ display: 'flex' }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            <div>
-              {alerts?.map((alert, indx) => {
-                return (
-                  alert.showalert && <AlertDialog alert={alert} key={indx} />
-                );
-              })}
+          </div>
+          <ScrollToTop />
+          <StyledChart />
+          <StyledRoot>
 
-            </div>
-
-
-            <ScrollToTop />
-            <StyledChart />
-
-            <StyledRoot>
+            <Header onOpenNav={() => setOpen(true)} />
+            <Nav openNav={open} onCloseNav={() => setOpen(false)} />
 
 
-              <Header onOpenNav={() => setOpen(true)} />
+            <Main>
+              <div style={{ display: 'flex', justifyContent: 'flex-start', }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <img
+                    alt="United States"
+                    src="http://purecatamphetamine.github.io/country-flag-icons/1x1/US.svg"
+                    style={{ width: '30px', height: '20px' }} />
+                  <AntSwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} checked={isHebrew} onClick={changeLanguage} />
+                  <img
+                    alt="Israel"
+                    src="http://purecatamphetamine.github.io/country-flag-icons/1x1/IL.svg"
+                    style={{ width: '30px', height: '20px' }}
 
-              <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+                  />
+                </Stack>
+              </div>
 
+              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', }}>
+                <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
+              </div>
+              <AppBar />
+              <Outlet />
+            </Main>
+          </StyledRoot>
 
-              <Main>
-                <div style={{ display: 'flex', justifyContent: 'flex-start', }}>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <img
-                      alt="United States"
-                      src="http://purecatamphetamine.github.io/country-flag-icons/1x1/US.svg"
-                      style={{ width: '30px', height: '20px' }} />
-                    <AntSwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} checked={isHebrew} onClick={changeLanguage} />
-                    <img
-                      alt="Israel"
-                      src="http://purecatamphetamine.github.io/country-flag-icons/1x1/IL.svg"
-                      style={{ width: '30px', height: '20px' }}
-
-                    />
-                  </Stack>
-                  {/* <Badge color="secondary" badgeContent={2} style={{ marginLeft: '92%' }} invisible>
-    <MailIcon  />
-  </Badge> */}
-
-
-
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', }}>
-                  <MaterialUISwitch checked={darkMode} onClick={changeDarkMode} />
-                </div>
-
-
-                {/* {userAccounts.length > 0 && <MultipleSelectPlaceholder />} */}
-
-
-                {/* <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
-  <AntSwitch checked={isHebrew} onClick={changeLanguage} />
-</div> */}
-
-
-                <AppBar />
-                <Outlet />
-              </Main>
-            </StyledRoot>
-
-          </>
-        )}
-      </div>
-
-
-    </>
+        </>
+      )}
+    </div>
 
   );
 }

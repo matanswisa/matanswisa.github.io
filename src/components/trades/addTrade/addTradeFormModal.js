@@ -302,14 +302,36 @@ export default function TradeFormModal(props) {
 
   }
 
-  function calculateNetPNLTradovate(contract, Qty, EntryPrice, TakeProfit) {
+  function calculateNetPNLTradovate(contract, Qty, EntryPrice, TakeProfit, StopLoss, longShort, positionStatus) {
     const { contract_size, tick_size } = contract;
-    return (TakeProfit - EntryPrice) * Qty * contract_size * tick_size;
+    let pnl;
+
+    if (positionStatus === 'Win') {
+      pnl = (TakeProfit - EntryPrice) * Qty * contract_size * tick_size;
+    } else {
+      // Calculate loss based on the stop-loss price
+      pnl = (StopLoss - EntryPrice) * Qty * contract_size * tick_size;
+    }
+
+    pnl = longShort === 'Long' ? pnl : -pnl;
+    return pnl;
   }
 
-  function calculateStocksPnL(entryPrice, exitPrice, numContracts) {
-    return (exitPrice - entryPrice) * numContracts;
+
+  function calculateStocksPnL(entryPrice, exitPrice, stopLoss, numContracts, longShort, positionStatus) {
+    let pnl;
+
+    if (positionStatus === 'Win') {
+      pnl = (exitPrice - entryPrice) * numContracts;
+    } else {
+      // Calculate loss based on the stop-loss price
+      pnl = (stopLoss - entryPrice) * numContracts;
+    }
+
+    pnl = longShort === 'Long' ? pnl : -pnl;
+    return pnl;
   }
+
 
   const [formState, dispatch] = useReducer(formReducer, initialState);
   const { comments, positionDuration, positionType, positionStatus, positionCommision, entryPrice, exitPrice, contractsCounts, netROI, positionDate, stopPrice, positionSymbol } = formState;
@@ -318,22 +340,18 @@ export default function TradeFormModal(props) {
   useEffect(() => {
     if (currentAccount?.Broker === brokers.Binance) {
       if (positionType === "Short") {
-
         setNetPnL(calculateNetPNLBinance("Short", contractsCounts, entryPrice, exitPrice, stopPrice, positionStatus));
-
-
 
       } else if (positionType === "Long") {
         setNetPnL(calculateNetPNLBinance("Long", contractsCounts, entryPrice, exitPrice, stopPrice, positionStatus));
 
-
       }
     } else if (currentAccount?.Broker === brokers.Tradovate && contract !== null) { //// not work yet.
-      setNetPnL(calculateNetPNLTradovate(contract, contractsCounts, entryPrice, exitPrice));
+      setNetPnL(calculateNetPNLTradovate(contract, contractsCounts, entryPrice, exitPrice, stopPrice, positionType, positionStatus));
 
 
     } else if (currentAccount?.Broker === brokers.interactiveBrokers && contract !== null) {
-      setNetPnL(calculateStocksPnL(entryPrice, exitPrice, contractsCounts));
+      setNetPnL(calculateStocksPnL(entryPrice, exitPrice, stopPrice, contractsCounts, positionType, positionStatus));
     }
   }, [positionType, contractsCounts, entryPrice, exitPrice, stopPrice, positionStatus, contract]); // Listen for changes in positionType
 
@@ -353,30 +371,13 @@ export default function TradeFormModal(props) {
     }
   };
 
-
-  useEffect(() => {
-    console.log("contract", contract);
-  }, [contract])
-
-
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   }
 
-
-
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
-
-
-  useEffect(() => {
-    if (selectedFile) {
-      console.log("selectedFile", selectedFile);
-    }
-  }, [selectedFile])
-
-
 
 
   //------------------------------------------------ handle check broker before save  new trade -----------------------------------------------------//

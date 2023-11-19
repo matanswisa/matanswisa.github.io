@@ -26,7 +26,7 @@ export default function AlertDialog(props) {
   const { alert, key } = props;
   const [open, setOpen] = React.useState(true);
   const reduxDispatch = useDispatch()
-  const totalTradesOfToday = filterObjectsByCurrentDate(currentAccount.trades);
+  const totalTradesOfToday = filterObjectsByCurrentDate(currentAccount?.trades || []);
   const totalLossesOfToday = filterTradesWithLosses(totalTradesOfToday)
 
   const AlertsMessages = [

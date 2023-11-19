@@ -6,7 +6,7 @@ import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../../components/iconify';
 import api, { axiosAuth, axiosNoAuth } from '../../../api/api';
-import { isUserAuthenticated, login } from '../../../redux-toolkit/userSlice';
+import { isUserAuthenticated, login, setCurrentAccount } from '../../../redux-toolkit/userSlice';
 import { useDispatch } from 'react-redux';
 import useToast from '../../../hooks/alert';
 import { ToastContainer, } from 'react-toastify';
@@ -75,6 +75,9 @@ export default function LoginForm(props) {
       localStorageService.store(res.data.user);
       localStorageService.store(res.data.user.token, 'token');
       localStorageService.store(res.data.user.role, 'role');
+
+      if (res.data.user.accounts.length)
+        dispatch(setCurrentAccount(res.data.user.accounts[0]));
 
       //Enable JWT Token to headers
       axiosInstance.enableAuthHeader();
