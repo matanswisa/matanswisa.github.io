@@ -46,10 +46,9 @@ axiosInstance.interceptors.response.use(
     error => {
         //TODO: Need to check if status code is 403 if it's we need to force user to logout , with a modal message.
         if (error.response && error.response.status === 401) {
-            console.log(axiosInstance.defaults.headers)
             localStorageService.delete();
             axiosInstance.disableAuthHeader();
-            // window.location.href = "/login";
+            window.location.href = "/login";
         }
         return Promise.reject(error);
     }

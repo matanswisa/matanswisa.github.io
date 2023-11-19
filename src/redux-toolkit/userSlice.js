@@ -44,32 +44,21 @@ const authSlice = createSlice({
         },
         setCurrentAccount(state, action) {
             state.currentAccount = action.payload;
-            const temp = state.user;
-            localStorage.setItem(`user`, JSON.stringify(temp));
         },
         updateAccountList(state, action) {
             state.user.accounts = action.payload;
-            const temp = state.user;
-            localStorage.setItem(`user`, JSON.stringify(temp));
         },
         updateAccount(state, action) {
             const currAccounts = state.user.accounts.filter(account => account._id !== action.payload._id);
             currAccounts.push(action.payload);
             state.user.accounts = currAccounts;
-            const temp = state.user;
-            localStorage.setItem(`user`, JSON.stringify(temp));
         },
         removeAccount(state, action) {
             const currAccounts = state.user.accounts.filter(account => account._id !== action.payload.accountId);
             state.user.accounts = currAccounts;
-            const temp = state.user;
-            localStorage.setItem(`user`, JSON.stringify(temp));
         },
         setTradesList(state, action) {
-            console.log("lets go", action.payload)
             state.currentAccount.trades = action.payload;
-            const temp = state.user;
-            localStorage.setItem(`user`, JSON.stringify(temp));
         },
     },
 });

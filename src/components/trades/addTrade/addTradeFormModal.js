@@ -12,20 +12,14 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { styled } from '@mui/material/styles';
 import Autocomplete from '@mui/material/Autocomplete';
-import Grid from '@mui/material/Grid';
 import { useEffect, useState, useReducer } from 'react';
 import { tickerArrays } from '../tickers/Tickers';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 // @mui
 import {
   Paper,
   Button,
-  IconButton,
   TextField,
-  Input,
   Stack,
-  duration
 } from '@mui/material';
 import api from '../../../api/api';
 import Iconify from '../../iconify/Iconify';
@@ -104,6 +98,8 @@ export default function TradeFormModal(props) {
   const alerts = useSelector(selectAlerts);
   const [selectedFile, setSelectedFile] = useState(null);
   const [contract, setContract] = useState(null);
+  const [netPnL, setNetPnL] = useState(0);
+  const [riskReward, setRiskReward] = useState('0');
 
   //selector
   const editedTrade = useSelector(selectTradeToEdit);
@@ -138,14 +134,9 @@ export default function TradeFormModal(props) {
   }
 
 
-  const activeTickers = tickerArrays[value];
 
 
-  // const labelStyle = {
-  //   minWidth: 0, // Adjust as needed
-  //   fontSize: '14px', // Adjust font size as needed
-  //   padding: '6px 12px', // Adjust padding as needed
-  // };
+  const activeTickers = tickerArrays[currentAccount.Broker - 1]; // indx 0 = futures , 1 = stocks , 2 = crypto
 
 
   const initialState = {
@@ -313,8 +304,11 @@ export default function TradeFormModal(props) {
 
   function calculateNetPNLTradovate(contract, Qty, EntryPrice, TakeProfit) {
     const { contract_size, tick_size } = contract;
-    console.log("result = ", (TakeProfit - EntryPrice) * Qty * contract_size * tick_size)
     return (TakeProfit - EntryPrice) * Qty * contract_size * tick_size;
+  }
+
+  function calculateStocksPnL(entryPrice, exitPrice, numContracts) {
+    return (exitPrice - entryPrice) * numContracts;
   }
 
   const [formState, dispatch] = useReducer(formReducer, initialState);
@@ -335,10 +329,11 @@ export default function TradeFormModal(props) {
 
       }
     } else if (currentAccount?.Broker === brokers.Tradovate && contract !== null) { //// not work yet.
-      console.log("myResult=", calculateNetPNLTradovate(contract, contractsCounts, entryPrice, exitPrice));
       setNetPnL(calculateNetPNLTradovate(contract, contractsCounts, entryPrice, exitPrice));
 
 
+    } else if (currentAccount?.Broker === brokers.interactiveBrokers && contract !== null) {
+      setNetPnL(calculateStocksPnL(entryPrice, exitPrice, contractsCounts));
     }
   }, [positionType, contractsCounts, entryPrice, exitPrice, stopPrice, positionStatus, contract]); // Listen for changes in positionType
 
@@ -349,12 +344,6 @@ export default function TradeFormModal(props) {
     }
   }, [exitPrice, entryPrice, stopPrice, positionType]);
 
-
-
-
-  // Inside your modal component, use state for netPnL
-  const [netPnL, setNetPnL] = useState(0);
-  const [riskReward, setRiskReward] = useState('0');
 
   const handlePositionFieldInput = (event, field) => {
     if (field === 'positionSymbol' && event !== null) {
@@ -421,9 +410,6 @@ export default function TradeFormModal(props) {
         axiosInstance.post('/api/addTrade', { userId: user._id, accountId: currentAccount._id, tradeData: data }).then(async (res) => {
           if (selectedFile !== null) {
             handleUploadTradeImage(res.data.newTradeId, user, user._id, currentAccount._id, selectedFile).then((response) => {
-              console.log(response.status);
-              console.log(response.data);
-              console.log('upload image');
             }).catch((err) => {
               console.error(err);
             });

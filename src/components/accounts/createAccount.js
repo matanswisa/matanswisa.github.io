@@ -11,7 +11,9 @@ import { Select, MenuItem, ListItemIcon, Alert } from '@mui/material';
 import { red, blue, green, yellow, orange, purple, pink, cyan, brown, lightGreen, lime, blueGrey, } from '@mui/material/colors';
 import { Grid } from 'rsuite';
 import { selectUser, setCurrentAccount, updateAccountList, selectUserAccounts, selectCurrentAccount } from '../../redux-toolkit/userSlice';
-import BinanceIcon from '../brokersIcons/binance.svg'
+import BinanceIcon from '../brokersIcons/binance.svg';
+import InteractiveBrokersIcon from '../brokersIcons/interactive-brokers-stacked-light.svg';
+import InteractiveBrokersIconDarkMode from '../brokersIcons/interactive-brokers-stacked-inverse-dark.svg';
 import TradeovateIcon from '../brokersIcons/Tradovate.svg'
 import TradeovateWhiteIcon from '../brokersIcons/TradovateWhite.svg'
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,6 +26,7 @@ import { selectlanguage, selectidx } from '../../redux-toolkit/languagesSlice';
 
 import { selectDarkMode } from '../../redux-toolkit/darkModeSlice';
 import axiosInstance from '../../utils/axiosService';
+import { brokers } from '../brokersNames/brokers.js';
 //--------------------------------------------This component show Create account Modal -------------------------------------------//
 export default function AccountModal(props) {
 
@@ -37,7 +40,7 @@ export default function AccountModal(props) {
   const [accountName, setAccountName] = useState('');
   const [balance, setAccountBalance] = useState(0);
   const [selectedColor, setSelectedColor] = useState(red[500]);
-  const [broker, setBroker] = React.useState(1);
+  const [broker, setBroker] = React.useState(brokers.Tradovate);
   const messages = useSelector(selectMessages);
   const { notifyToast } = props;
   const { edit } = props;
@@ -236,7 +239,7 @@ export default function AccountModal(props) {
                 id: 'uncontrolled-native',
               }}
             >
-              <MenuItem value={1}>
+              <MenuItem value={brokers.Tradovate}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   {darkMode === true ? (
                     <img
@@ -257,7 +260,7 @@ export default function AccountModal(props) {
                   )}
                 </div>
               </MenuItem>
-              <MenuItem value={2}>
+              <MenuItem value={brokers.Binance}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <img
                     src={BinanceIcon} // Use the imported SVG component here
@@ -268,8 +271,27 @@ export default function AccountModal(props) {
                   />
                 </div>
               </MenuItem>
-              {/* Commented out option */}
-              {/* <MenuItem value={3}>Interactiv</MenuItem> */}
+              <MenuItem value={brokers.interactiveBrokers}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  {darkMode == true ?
+                    <img
+                      src={InteractiveBrokersIconDarkMode} // Use the imported SVG component here
+                      alt="Stocks"
+                      width={100}
+                      height={30}
+                      style={{ marginRight: '8px' }}
+                    /> :
+                    <img
+                      src={InteractiveBrokersIcon} // Use the imported SVG component here
+                      alt="Stocks"
+                      width={100}
+                      height={30}
+                      style={{ marginRight: '8px' }}
+                    />
+                  }
+
+                </div>
+              </MenuItem>
             </Select>
           </Grid>
         ) : null}

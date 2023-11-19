@@ -1,1 +1,1 @@
-export const brokers = { Tradovate: 1, Binance: 2 };
+export const brokers = { Tradovate: 1, Binance: 2, interactiveBrokers: 3 };
