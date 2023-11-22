@@ -112,8 +112,8 @@ export default function TradeFormModal(props) {
     console.log(alerts[ALERTS_TYPE.OVER_TRADING_ALERT]);
 
 
-    if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition <= tradesOfToday.length) {
-      console.log("Trigger over trading");
+    if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition <= tradesOfToday.length && alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition != 0) {
+      console.log("Trigger over trading"); 
       await turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
     }
   }
@@ -127,7 +127,7 @@ export default function TradeFormModal(props) {
     console.log(tradesWithLosses);
     console.log(alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition);
 
-    if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <= tradesWithLosses) {
+    if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <= tradesWithLosses && alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition!= 0 ) {
       console.log("Trigger losses in a row");
       await turnOnAlert(ALERTS_TYPE.LOSSING_TRADE_IN_ROW);
     }
@@ -186,6 +186,7 @@ export default function TradeFormModal(props) {
       indexofAlert: index,
     };
 
+    console.log("call turn on alert");
     try {
       const response = await axiosInstance.put('/api/auth/TurnAlertOn', data);
 
