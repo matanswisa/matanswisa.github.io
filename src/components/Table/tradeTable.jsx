@@ -310,8 +310,8 @@ export default function TradesTable(props) {
                     onSortByOpenDate={handleSortByOpenDate}
                 />
                 <TableBody>
-                    {trades
-                        .filter((trade) => {
+                    {(trades && trades.length) && trades
+                        ?.filter((trade) => {
                             // Check if there's a selected date and if it matches the trade's entry date
                             return (
                                 !selectedDate || // If no selected date, show all trades

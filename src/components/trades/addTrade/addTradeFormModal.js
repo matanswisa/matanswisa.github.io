@@ -73,10 +73,16 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 
+const fetchContratDataByTicker = (desiredTicker, tickers) => {
+  if (!desiredTicker) return null;
+  return tickers.find((ticker) => desiredTicker.symbol === ticker.symbol);
+}
+
 //--------------------------------------------This component show Addtrade Modal -------------------------------------------//
 export default function TradeFormModal(props) {
 
 
+  // activeTickers
   //------------------------------------------------  States ----------------------------------------------------- //
   const [errorMessage, setErrorMessage] = useState(null);
   const languageidx = useSelector(selectidx);
@@ -97,10 +103,13 @@ export default function TradeFormModal(props) {
   const trades = useSelector(selectCurrentAccountTrades);
   const alerts = useSelector(selectAlerts);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [contract, setContract] = useState(null);
-  const [netPnL, setNetPnL] = useState(0);
+  const [netPnL, setNetPnL] = useState(tradeInfo?.netPnL || 0);
   const [riskReward, setRiskReward] = useState('0');
-
+  //tickers list based on account type
+  const activeTickers = tickerArrays[currentAccount.Broker - 1]; // indx 0 = futures , 1 = stocks , 2 = crypto
+  //if modal opened in edit mode it fetch the desired ticker data
+  const currentTicker = fetchContratDataByTicker(tradeInfo?.symbol, activeTickers);
+  const [contract, setContract] = useState(currentTicker || null);
   //selector
   const editedTrade = useSelector(selectTradeToEdit);
 
@@ -136,7 +145,6 @@ export default function TradeFormModal(props) {
 
 
 
-  const activeTickers = tickerArrays[currentAccount.Broker - 1]; // indx 0 = futures , 1 = stocks , 2 = crypto
 
 
   const initialState = {
@@ -338,6 +346,7 @@ export default function TradeFormModal(props) {
 
 
   useEffect(() => {
+    console.log("What is going on here ", contract, currentAccount?.Broker)
     if (currentAccount?.Broker === brokers.Binance) {
       if (positionType === "Short") {
         setNetPnL(calculateNetPNLBinance("Short", contractsCounts, entryPrice, exitPrice, stopPrice, positionStatus));
@@ -347,7 +356,10 @@ export default function TradeFormModal(props) {
 
       }
     } else if (currentAccount?.Broker === brokers.Tradovate && contract !== null) { //// not work yet.
-      setNetPnL(calculateNetPNLTradovate(contract, contractsCounts, entryPrice, exitPrice, stopPrice, positionType, positionStatus));
+      console.log('calculating tradovate', contract, contractsCounts, entryPrice, exitPrice, stopPrice, positionType, positionStatus);
+      const pnlTradoVate = calculateNetPNLTradovate(contract, contractsCounts, entryPrice, exitPrice, stopPrice, positionType, positionStatus);
+      console.log(pnlTradoVate);
+      setNetPnL(pnlTradoVate);
 
 
     } else if (currentAccount?.Broker === brokers.interactiveBrokers && contract !== null) {

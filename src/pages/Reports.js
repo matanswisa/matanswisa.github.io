@@ -43,11 +43,13 @@ import axiosInstance from '../utils/axiosService';
 
 const sumPnL = (trades) => {
   let sum = 0;
-  trades.forEach((trade) => {
-    if (trade && trade?.netPnL !== null) {
-      sum += trade.netPnL
-    }
-  });
+  if (trades !== null && trades.length > 0) {
+    trades?.forEach((trade) => {
+      if (trade && trade?.netPnL !== null) {
+        sum += trade.netPnL
+      }
+    });
+  }
   return sum.toFixed(2);
 }
 
