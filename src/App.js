@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { selectLoading } from './redux-toolkit/loadingSlice';
 import { useSelector } from 'react-redux';
 import * as React from 'react';
-import { selectAlerts } from './redux-toolkit/userSlice';
+import { selectAlerts, selectUser } from './redux-toolkit/userSlice';
 
 
 
@@ -21,7 +21,7 @@ export default function App() {
   const alerts = useSelector(selectAlerts);
   const loading = useSelector(selectLoading);
   const [isBlurActive, setIsBlurActive] = useState(false);
-
+  const user = useSelector(selectUser);
 
   useEffect(() => {
     setIsBlurActive(true);
@@ -31,9 +31,9 @@ export default function App() {
   }, [loading]);
 
 
-  useEffect(()=>{
-    
-  })
+  useEffect(() => {
+    localStorage.setItem('user', JSON.stringify(user));
+  }, [user])
 
 
 
@@ -41,7 +41,7 @@ export default function App() {
     <HelmetProvider>
       <BrowserRouter>
         <ThemeProvider>
-          <Router/>
+          <Router />
         </ThemeProvider>
       </BrowserRouter>
     </HelmetProvider>
