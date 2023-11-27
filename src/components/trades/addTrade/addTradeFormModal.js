@@ -122,7 +122,7 @@ export default function TradeFormModal(props) {
 
 
     if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition <= tradesOfToday.length && alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition != 0) {
-      console.log("Trigger over trading"); 
+      console.log("Trigger over trading");
       await turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
     }
   }
@@ -136,7 +136,7 @@ export default function TradeFormModal(props) {
     console.log(tradesWithLosses);
     console.log(alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition);
 
-    if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <= tradesWithLosses && alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition!= 0 ) {
+    if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <= tradesWithLosses && alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition != 0) {
       console.log("Trigger losses in a row");
       await turnOnAlert(ALERTS_TYPE.LOSSING_TRADE_IN_ROW);
     }
@@ -413,9 +413,10 @@ export default function TradeFormModal(props) {
       duration: positionDuration,
       commission: positionCommision > 0 ? positionCommision * -1 : positionCommision,
       comments,
-      netPnL: positionStatus == "Loss" ? netPnL * -1 : netPnL,
+      netPnL: netPnL,
       riskReward: riskReward,
     }
+    console.log(data);
 
     //-------------------------------------------------------------- handle new trade adding -------------------------------------------------------------//
     if (validateForm()) {

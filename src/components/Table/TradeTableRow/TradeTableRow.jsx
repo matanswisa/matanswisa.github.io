@@ -1,17 +1,9 @@
 import {
-    Card,
-    Table,
     Stack,
-    Paper,
     Button,
     TableRow,
-    TableBody,
     TableCell,
-    Container,
-    Typography,
     IconButton,
-    TableContainer,
-    TablePagination,
     Dialog,
     DialogTitle,
     DialogContent,
@@ -26,19 +18,11 @@ import React, { useState } from 'react';
 import { selectidx, selectlanguage } from '../../../redux-toolkit/languagesSlice';
 import { selectDarkMode } from '../../../redux-toolkit/darkModeSlice';
 import { selectCurrentAccount, selectUser, selectUserAccounts, setCurrentAccount, setTradesList } from '../../../redux-toolkit/userSlice';
-import { selectMessages } from '../../../redux-toolkit/messagesSlice';
 import { selectTrade, setTrade } from '../../../redux-toolkit/tradeSlice';
-import api from '../../../api/api';
-import { msgType } from '../../../utils/messagesEnum';
-import { msgNumber } from '../../../utils/msgNumbers';
-import { getMsg } from '../../../utils/messeageUtils';
 import { Label } from '@mui/icons-material';
 import { sentenceCase } from 'sentence-case';
-import { useToast } from 'react-toastify';
 import ImageModal from '../../../components/ImageModal/ImageModal';
 
-// import AddTrade from '../components/trades/addTrade/addTradeFormModal';
-import AddTrade from "../../../components/trades/addTrade/addTradeFormModal";
 import { setEditMode, setTradeForEdit } from '../../../redux-toolkit/editTradeFormSlice';
 import axiosInstance from '../../../utils/axiosService';
 
