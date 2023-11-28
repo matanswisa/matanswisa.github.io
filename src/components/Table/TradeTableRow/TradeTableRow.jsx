@@ -112,7 +112,9 @@ export default function TradeTableRow(props) {
 
     const deleteTrade = async () => {
         const res = await axiosInstance.post('/api/deleteTrade', { tradeId: trade._id, userId: user._id, accountId: currentAccount._id });
-        dispatch(setTradesList(res.data))
+
+        console.log("res.data.trades = ", res.data.trades, "account:", res.data.account);
+        dispatch(setTradesList(res.data.trades))
         dispatch(setCurrentAccount(res.data.account));
 
         toggleShow();
