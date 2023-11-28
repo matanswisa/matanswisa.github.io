@@ -11,19 +11,19 @@ export const handleUploadTradeImage = async (tradeId, reduxUser, userId, account
     formData.append('userId', userId)
     formData.append('accountId', accountId)
     console.log("formData", formData);
-    // Make a POST request to the server with the file data
-    const response = await axiosInstance.post('http://localhost:8000/api/uploadTradeImage', formData)
-    // .then(response => response.json())
-    // .then(data => {
-    //     notifyToast(getMsg(messages, msgType.success, msgNumber[6]).msgText, getMsg(messages, msgType.success, msgNumber[6]).msgType);
-    //     // notifyToast("Trade image uploaded successfully", "success");
-    //     dispatch(setTradesList(data));
-    // })
-    // .catch(error => {
-    //     notifyToast(getMsg(messages, msgType.errors, msgNumber[10]).msgText, getMsg(messages, msgType.errors, msgNumber[10]).msgType);
-    //     // Handle any errors that occurred during the upload
-
-    //     console.error(error);
-    // });
-    return response;
+    try {
+        const response = await axiosInstance.post('http://localhost:8000/api/uploadTradeImage', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        // Handle success
+        console.log('Upload success:', response.data);
+        // return response.data;
+        return response;
+    } catch (error) {
+        // Handle error
+        console.error('Error uploading trade image:', error);
+        throw error; // You might want to handle this error in the calling code
+    }
 };

@@ -29,8 +29,6 @@ axiosInstance.createEvent = (params) => {
     createEvent(params);
 }
 
-// setAuthHeader();
-
 axiosInstance.enableAuthHeader = () => {
     setAuthHeader();
 };

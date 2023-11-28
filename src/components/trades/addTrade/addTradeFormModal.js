@@ -385,6 +385,7 @@ export default function TradeFormModal(props) {
   };
 
   const handleFileChange = (event) => {
+    console.log(event.target.files[0])
     setSelectedFile(event.target.files[0]);
   }
 
@@ -452,9 +453,9 @@ export default function TradeFormModal(props) {
         try {
           const editTradeResponse = await axiosInstance.post('/api/editTrade', { tradeId: editedTrade._id, userId: user._id, accountId: currentAccount._id, tradeData: data });
           notifyToast(getMsg(messages, msgType.success, msgNumber[5], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[5], languageidx).msgType);
-          console.log(selectedFile);
 
           if (selectedFile) {
+            console.log(selectedFile);
             const uploadImageResult = await handleUploadTradeImage(editedTrade._id, user, user._id, currentAccount._id, selectedFile);
             notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
             reduxDispatch(setTradesList(uploadImageResult.data.tradesWithImage));
