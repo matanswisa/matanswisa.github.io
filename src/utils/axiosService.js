@@ -21,7 +21,7 @@ const setAuthHeader = () => {
 
 const createEvent = (params) => {
     axiosInstance.post('/api/event', params)
-        .then(res => { console.log(res) })
+        .then(res => { })
         .catch(err => { console.log(err.message) });
 }
 

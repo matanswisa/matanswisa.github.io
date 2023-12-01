@@ -31,7 +31,6 @@ function filterObjectsByCurrentDate(trades) {
 
 const filterTradesWithLosses = (trades) => {
     const lossTrades = trades.filter((trade) => trade.status === 'Loss');
-    console.log("lossTrades", lossTrades);
     return lossTrades.length;
 }
 

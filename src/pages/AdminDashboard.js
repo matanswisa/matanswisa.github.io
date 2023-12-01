@@ -355,7 +355,6 @@ const UsersManagementPage = () => {
         }).catch((err) => {
             notifyToast(getMsg(messages, msgType.errors, msgNumber[8], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[8], languageidx).msgType);
             // notifyToast("Mail not send", "error");
-            console.log(err);
             return false;
         })
 

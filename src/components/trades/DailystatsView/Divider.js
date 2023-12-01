@@ -304,7 +304,6 @@ export default function Diveder(props) {
 
       })
       .catch((error) => {
-        console.log(error);
       });
   }, []);
 

@@ -115,7 +115,6 @@ const Alerts = () => {
                 // You can also do other actions here if needed
             } else {
                 // Handle other status codes, e.g., 400, 500, etc.
-                console.log("Request failed with status code:", response.status);
             }
         } catch (err) {
             // Handle any exceptions that occurred during the request
@@ -132,7 +131,6 @@ const Alerts = () => {
             indexofAlert: index,
             condition: value,
         };
-        console.log(data);
         try {
             const response = await axiosInstance.put('/api/auth/setAlert', data);
 
@@ -145,11 +143,9 @@ const Alerts = () => {
                 // You can also do other actions here if needed
             } else {
                 // Handle other status codes, e.g., 400, 500, etc.
-                console.log("Request failed with status code:", response.status);
             }
         } catch (err) {
             // Handle any exceptions that occurred during the request
-            console.error(err);
             // Handle the error as needed
         }
 

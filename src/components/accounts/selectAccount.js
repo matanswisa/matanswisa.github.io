@@ -67,7 +67,6 @@ export default function MultipleSelectPlaceholder(props) {
         setSelectedAccountName(res.data.AccountName);
       }
     }).catch((err) => {
-      console.log(err);
       // alert(err);
     });
   }
@@ -90,66 +89,6 @@ export default function MultipleSelectPlaceholder(props) {
       dispatch(setCurrentAccount(selectedAccount));
     }
   }, [selectedAccount])
-
-
-
-
-  // const checkOverTradingAlert = (alerts) => {
-
-  //   const tradesOfToday = filterObjectsByCurrentDate(trades);
-  //   console.log(tradesOfToday);
-
-  //   if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition <= tradesOfToday.length) {
-  //     console.log("Trigger over trading");
-  //     turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
-  //   }
-  // }
-
-  // const checkLossesInRow = (alerts) => {
-
-  //   const tradesOfToday = filterObjectsByCurrentDate(trades);
-
-  //   const tradesWithLosses = filterTradesWithLosses(tradesOfToday);
-
-
-  //   if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <= tradesWithLosses) {
-  //     console.log("Trigger losses in a row");
-  //     turnOnAlert(ALERTS_TYPE.LOSSING_TRADE_IN_ROW);
-  //   }
-  // }
-
-
-  const filterTradesWithLosses = (trades) => {
-    const lossTrades = trades.filter((trade) => trade.status === 'Loss');
-
-    return lossTrades.length;
-  }
-
-
-
-
-  const turnOnAlert = async (index) => {
-    const data = {
-      userId: user._id,
-      indexofAlert: index,
-    };
-
-    try {
-      const response = await axiosInstance.put('/api/auth/TurnAlertOn', data);
-
-      if (response.status === 200) {
-        dispatch(setAlerts(response.data));
-        // You can also do other actions here if needed
-      } else {
-        // Handle other status codes, e.g., 400, 500, etc.
-        console.log("Request failed with status code:", response.status);
-      }
-    } catch (err) {
-      // Handle any exceptions that occurred during the request
-      console.error(err);
-      // Handle the error as needed
-    }
-  };
 
 
 
@@ -196,8 +135,6 @@ export default function MultipleSelectPlaceholder(props) {
       dispatch(setCurrentAccount(res.data));
       changeLoading();
     }).catch((err) => {
-      console.error(err);
-      // alert('Error: ' + err);
     });
 
   };

@@ -48,7 +48,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function TradeTableRow(props) {
 
     const { trade } = props;
-    console.log(trade.image);
     const [openmodalfarshel, setIsOpenFarshelmodal] = useState(false);
 
     //selectors
@@ -113,7 +112,6 @@ export default function TradeTableRow(props) {
     const deleteTrade = async () => {
         const res = await axiosInstance.post('/api/deleteTrade', { tradeId: trade._id, userId: user._id, accountId: currentAccount._id });
 
-        console.log("res.data.trades = ", res.data.trades, "account:", res.data.account);
         dispatch(setTradesList(res.data.trades))
         dispatch(setCurrentAccount(res.data.account));
 
@@ -122,7 +120,6 @@ export default function TradeTableRow(props) {
 
     const openImageModal = () => {
         setImageModalOpen(true);
-        console.log("openning modal");
     }
 
     return (

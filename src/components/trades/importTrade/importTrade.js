@@ -206,7 +206,6 @@ export default function BasicModal(props) {
         formData.append('file', file);
         formData.append('userId', user._id);
         formData.append('accountId', currentAccount._id);
-        console.log(formData);
         // const token = localStorage.getItem('token');
         const headersForImportTrades = {
           headers: {

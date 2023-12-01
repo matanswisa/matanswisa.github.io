@@ -51,9 +51,6 @@ export default function LoginPage() {
 
 
 
-  // const mode = useSelector(selectMode);
-  // console.log("$$$$$$$",mode);
-
   const mdUp = useResponsive('up', 'md');
 
   return (
@@ -66,7 +63,7 @@ export default function LoginPage() {
 
         {mdUp && (
           <StyledSection>
-            <LogoImage loginpage = 'true' w='500px' h='400px' />
+            <LogoImage loginpage='true' w='500px' h='400px' />
 
           </StyledSection>
         )}

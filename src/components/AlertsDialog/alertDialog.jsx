@@ -64,15 +64,7 @@ export default function AlertDialog(props) {
 
     try {
       const response = await axiosInstance.put('/api/auth/TurnAlertOff', data);
-      console.log("Turning off alerts", response.data);
       reduxDispatch(setAlerts(response.data));
-      if (response.status === 200 || response.status === 201) {
-
-        // You can also do other actions here if needed
-      } else {
-        // Handle other status codes, e.g., 400, 500, etc.
-        console.log("Request failed with status code:", response.status);
-      }
     } catch (err) {
       // Handle any exceptions that occurred during the request
       console.error(err);

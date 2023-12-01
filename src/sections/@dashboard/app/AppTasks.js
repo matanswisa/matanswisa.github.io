@@ -99,7 +99,6 @@ function TaskItem({ task, checked, onChange }) {
 
   const handleDelete = () => {
     handleCloseMenu();
-    console.log('DELETE', task.id);
   };
 
   return (

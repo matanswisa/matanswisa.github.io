@@ -65,9 +65,6 @@ export default function LoginForm(props) {
   }
 
 
-
-
-  console.log(messages);
   const handleLoginForm = () => {
     if (!username || !password) return;
 
@@ -155,7 +152,6 @@ export default function LoginForm(props) {
   //function check if the 1time password input fro, user eql to genreated 1 time password when its eql need show "change new password form".
   const validate1TimePassword = () => {
     const onetimepassword = document.getElementById('input-with-icon-textfield-change-password-1timepassword').value;
-    console.log(onetimepassword);
 
     axiosInstance
       .post('/api/auth/validate-otp', {
@@ -173,7 +169,6 @@ export default function LoginForm(props) {
 
       })
       .catch((error) => {
-        console.error('user not exist:', error);
         setErrorMessage("1 time password not correct");
 
       });
@@ -213,7 +208,6 @@ export default function LoginForm(props) {
 
       })
       .catch((error) => {
-        console.error('user not exist:', error);
         setErrorMessage("please conantct with site serivce");
 
       });
@@ -243,7 +237,6 @@ export default function LoginForm(props) {
     }
 
     const token = localStorageService.get("token");
-    console.log("token", token);
     if (token && !isTokenExpired(token)) {
       axiosInstance.enableAuthHeader();
       const user = localStorageService.get();

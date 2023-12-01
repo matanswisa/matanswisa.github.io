@@ -115,7 +115,6 @@ export default function Reports() {
     }
 
     setTradesWithImages().then(() => {
-      console.log("fetch succeffully");
     })
   }, [])
 

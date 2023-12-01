@@ -40,14 +40,12 @@ export default function Router() {
 
         if (decodedToken.exp < currentTime) {
           const response = await axiosInstance.get('/api/auth/validate-token');
-          console.log("response", response);
           if (response.status === 200 || response.status === 201) return false;
           return true;
         }
 
         return false;
       } catch (e) {
-        console.error("Invalid token", e);
         localStorageService.delete();
         return false;
       }

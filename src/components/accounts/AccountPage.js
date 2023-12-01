@@ -94,7 +94,6 @@ export default function BasicModal() {
                 const account = accounts.find(account => account._id == currentAccount._id);
 
                 if (!account && accounts.length > 0) {
-                    console.log("removing current account", accounts);
                     dispatch(setCurrentAccount(accounts[0]));
                 } else {
                     dispatch(setCurrentAccount(null));
@@ -105,7 +104,6 @@ export default function BasicModal() {
 
 
             // Notify and fetch accounts
-            console.log(getMsg(messages, msgType.success, msgNumber[1], 1).msgType);
             notifyToast(getMsg(messages, msgType.success, msgNumber[1], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[1], languageidx).msgType);
             setAnchorEl(null);
         } catch (error) {

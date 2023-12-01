@@ -10,7 +10,6 @@ export const handleUploadTradeImage = async (tradeId, reduxUser, userId, account
     formData.append('tradeId', tradeId);
     formData.append('userId', userId)
     formData.append('accountId', accountId)
-    console.log("formData", formData);
     try {
         const response = await axiosInstance.post('http://localhost:8000/api/uploadTradeImage', formData, {
             headers: {
@@ -18,12 +17,10 @@ export const handleUploadTradeImage = async (tradeId, reduxUser, userId, account
             },
         });
         // Handle success
-        console.log('Upload success:', response.data);
         // return response.data;
         return response;
     } catch (error) {
         // Handle error
-        console.error('Error uploading trade image:', error);
-        throw error; // You might want to handle this error in the calling code
+        throw error; // You might want tnpmo handle this error in the calling code
     }
 };

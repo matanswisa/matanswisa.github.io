@@ -33,7 +33,6 @@ const authSlice = createSlice({
         setAlerts(state, action) {
             state.alerts = action.payload;
             state.user.alerts = action.payload;
-            console.log("inside setAlerts", action.payload)
             localStorage.setItem(`user`, JSON.stringify(state.user));
         },
         setIsAuthenticated(state, action) {

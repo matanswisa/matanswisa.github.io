@@ -116,13 +116,9 @@ export default function TradeFormModal(props) {
   const checkOverTradingAlert = async (alerts) => {
 
     const tradesOfToday = filterObjectsByCurrentDate(trades);
-    console.log(tradesOfToday);
-    console.log("alerts", alerts);
-    console.log(alerts[ALERTS_TYPE.OVER_TRADING_ALERT]);
 
 
     if (alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition <= tradesOfToday.length && alerts[ALERTS_TYPE.OVER_TRADING_ALERT].condition != 0) {
-      console.log("Trigger over trading");
       await turnOnAlert(ALERTS_TYPE.OVER_TRADING_ALERT);
     }
   }
@@ -131,13 +127,9 @@ export default function TradeFormModal(props) {
   const checkLossesInRow = async (alerts) => {
 
     const tradesOfToday = filterObjectsByCurrentDate(trades);
-    console.log(tradesOfToday);
     const tradesWithLosses = filterTradesWithLosses(tradesOfToday);
-    console.log(tradesWithLosses);
-    console.log(alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition);
 
     if (alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition <= tradesWithLosses && alerts[ALERTS_TYPE.LOSSING_TRADE_IN_ROW].condition != 0) {
-      console.log("Trigger losses in a row");
       await turnOnAlert(ALERTS_TYPE.LOSSING_TRADE_IN_ROW);
     }
   }
@@ -194,16 +186,13 @@ export default function TradeFormModal(props) {
       indexofAlert: index,
     };
 
-    console.log("call turn on alert");
     try {
       const response = await axiosInstance.put('/api/auth/TurnAlertOn', data);
 
-      console.log("Turnon alert", response.data);
       reduxDispatch(setAlerts(response.data));
 
     } catch (err) {
       // Handle any exceptions that occurred during the request
-      console.error(err);
       // Handle the error as needed
     }
   };
@@ -347,7 +336,6 @@ export default function TradeFormModal(props) {
 
 
   useEffect(() => {
-    console.log("What is going on here ", contract, currentAccount?.Broker)
     if (currentAccount?.Broker === brokers.Binance) {
       if (positionType === "Short") {
         setNetPnL(calculateNetPNLBinance("Short", contractsCounts, entryPrice, exitPrice, stopPrice, positionStatus));
@@ -357,9 +345,7 @@ export default function TradeFormModal(props) {
 
       }
     } else if (currentAccount?.Broker === brokers.Tradovate && contract !== null) { //// not work yet.
-      console.log('calculating tradovate', contract, contractsCounts, entryPrice, exitPrice, stopPrice, positionType, positionStatus);
       const pnlTradoVate = calculateNetPNLTradovate(contract, contractsCounts, entryPrice, exitPrice, stopPrice, positionType, positionStatus);
-      console.log(pnlTradoVate);
       setNetPnL(pnlTradoVate);
 
 
@@ -385,7 +371,6 @@ export default function TradeFormModal(props) {
   };
 
   const handleFileChange = (event) => {
-    console.log(event.target.files[0])
     setSelectedFile(event.target.files[0]);
   }
 
@@ -417,7 +402,6 @@ export default function TradeFormModal(props) {
       netPnL: netPnL,
       riskReward: riskReward,
     }
-    console.log(data);
 
     //-------------------------------------------------------------- handle new trade adding -------------------------------------------------------------//
     if (validateForm()) {
@@ -427,7 +411,6 @@ export default function TradeFormModal(props) {
           if (selectedFile !== null) {
             handleUploadTradeImage(res.data.newTradeId, user, user._id, currentAccount._id, selectedFile).then((response) => {
             }).catch((err) => {
-              console.error(err);
             });
           }
           reduxDispatch(setCurrentAccount(res.data.account));  //update balance
@@ -440,7 +423,6 @@ export default function TradeFormModal(props) {
           handleClose();
 
         }).catch((err) => {
-          console.error(err);
           notifyToast(getMsg(messages, msgType.errors, msgNumber[4], languageidx).msgText, getMsg(messages, msgType.errors, msgNumber[4], languageidx).msgType);
           //  notifyToast("Couldn't add trade", "error");
           handleClose();
@@ -455,19 +437,16 @@ export default function TradeFormModal(props) {
           notifyToast(getMsg(messages, msgType.success, msgNumber[5], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[5], languageidx).msgType);
 
           if (selectedFile) {
-            console.log(selectedFile);
             const uploadImageResult = await handleUploadTradeImage(editedTrade._id, user, user._id, currentAccount._id, selectedFile);
             notifyToast(getMsg(messages, msgType.success, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[6], languageidx).msgType);
             reduxDispatch(setTradesList(uploadImageResult.data.tradesWithImage));
           } else {
-            console.log(editTradeResponse.data.tradesWithImage);
             reduxDispatch(setTradesList(editTradeResponse.data.tradesWithImage));
           }
 
           reduxDispatch(setCurrentAccount(editTradeResponse.data.account));
           handleClose();
         } catch (e) {
-          console.error(e);
         }
       }
     }

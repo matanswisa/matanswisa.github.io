@@ -208,7 +208,6 @@ export default function AddFarshel(props) {
 
     }
 
-    console.log(trade);
     if (trade?.tradesHistory && trade.tradesHistory.length == 0) {
         rows = [transformTrade(trade)];
     }
@@ -241,7 +240,6 @@ export default function AddFarshel(props) {
             }
 
             //  if (currentAccount?.Broker === brokers.Tradovate) {
-            console.log(trade.contracts);
             return {
                 id: indx,
                 time: trade.entryDate.split('T')[0],

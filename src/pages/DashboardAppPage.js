@@ -241,7 +241,7 @@ export default function DashboardAppPage() {
     }
 
     fetchDashboardData().then(data => {
-      Promise.allSettled(data).then((results) => results.forEach((result) => console.log(result)))
+      Promise.allSettled(data).then((results) => results)
     })
 
 
@@ -376,17 +376,3 @@ export default function DashboardAppPage() {
   );
 
 }
-
-
-const buttonStyle = {
-  fontSize: '12px', // Adjust the font size to make the button smaller
-  padding: '1px 3px', // Adjust padding to control the button's size
-  color: 'black',
-  backgroundColor: 'white', // Set the background color to white
-};
-
-const containerStyle = {
-  display: 'flex',
-  flexDirection: 'column', // Arrange items vertically
-  alignItems: 'flex-start', // Align items to the start (top)
-};

@@ -33,7 +33,6 @@ export default function DailyStatsPage() {
   const user = useSelector(selectUser);
 
   useEffect(() => {
-    console.log("Current account has changed!!!")
 
     // Check if currentAccount and currentAccount.trades are not null/undefined
     if (currentAccount?.trades) {
@@ -42,7 +41,6 @@ export default function DailyStatsPage() {
           setTrades(res.data);
         })
         .catch((error) => {
-          console.log(error);
         });
     }
   }, [currentAccount?.trades]);
