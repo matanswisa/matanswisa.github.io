@@ -1,159 +1,378 @@
 import { Helmet } from 'react-helmet-async';
-import { faker } from '@faker-js/faker';
+
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography } from '@mui/material';
-
+import { Grid, Container, Typography, Button } from '@mui/material';
+import { useState, useEffect } from 'react';
+import Calendar from '../components/Calendar/calendar';
 // components
-import Iconify from '../components/iconify';
 
+import { useSelector } from 'react-redux';
+// import { getTrades, getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
+// import {}
 // sections
 import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
+
   AppCurrentVisits,
   AppWebsiteVisits,
-  AppTrafficBySite,
+
   AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
+
 } from '../sections/@dashboard/app';
 
-
-import { ReactComponent as dollarLogo } from '../icons/dollar-symbol.svg';
+import api from '../api/api';
 
 import { Colors } from '../components/color-utils/Colors';
 
+
+import { selectCurrentAccount, selectUser } from '../redux-toolkit/userSlice';
+import { selectlanguage } from '../redux-toolkit/languagesSlice';
+import axiosInstance from '../utils/axiosService';
 // ----------------------------------------------------------------------
 
+
+const sumPnL = (trades) => {
+  let sum = 0;
+  trades.forEach((trade) => {
+    if (trade !== null && trade?.netPnL !== null) sum += trade.netPnL
+  });
+  return sum;
+}
+
+const avgLosingTrades = (trades) => {
+  let sum = 0;
+  let countTrades = 0;
+  trades.forEach((trade) => {
+    if (trade && trade?.netPnL < 0) {
+      sum += trade.netPnL;
+      countTrades++;
+    }
+  });
+  return sum / countTrades;
+
+}
+
+
+
+const avgWinningTrades = (trades) => {
+  let sum = 0;
+  let countTrades = 0;
+  trades.forEach((trade) => {
+    if (trade && trade.netPnL > 0) {
+      sum += trade.netPnL;
+      countTrades++;
+    }
+  });
+  return sum / countTrades;
+
+}
+
+
+const ProfitFactor = (trades) => {
+  let SumWin = 0;
+  let SumLoss = 0;
+  trades.forEach((trade) => {
+    if (trade && trade?.netPnL > 0) {
+      SumWin += trade.netPnL;
+
+    }
+    else if (trade && trade?.netPnL < 0) {
+      SumLoss += trade.netPnL;
+    }
+  });
+
+  if (SumWin == 0 || SumLoss == 0) return 0;
+
+
+  return SumWin / SumLoss < 0 ? SumWin / SumLoss * -1 : SumWin / SumLoss;
+}
+
+
+
 export default function DashboardAppPage() {
-  const theme = useTheme();
+  //------------------------------------------------   States ----------------------------------------------------------------------------------
+  const isHebrew = useSelector(selectlanguage);
+  const [losingTrades, setLosingTrades] = useState(0);
+  const [winningTrades, setWinningTrades] = useState(0);
+  const [breakEvenTrades, setbreakEvenTrades] = useState(0);
+  const [losingTradesInDays, setLosingTradesInDays] = useState(0);
+  const [winningTradesInDays, setWinningTradesInDays] = useState(0);
+  const [calendarTrades, setCalendarTrades] = useState([]);
+  const [trades, setTrades] = useState([]);
+  const [dailyNetCumulative, setDailyNetCumulative] = useState([]);
+  const currentAccount = useSelector(selectCurrentAccount)
+
+  //------------------------------------------------handle trade by current account selected -----------------------------------------------------
+  let Alltrades;
+  if (currentAccount?.trades) {
+
+    Alltrades = currentAccount?.trades;
+  }
+  else {
+    Alltrades = [];
+  }
+
+  // ------------------------------------------handle "Daily Net "Daily Net Cumulative Profit"-----------------------------------------------------
+
+  /*This function save Date for each day with profit and show the dates on the graph -> "Daily Net Cumulative Profit" */
+  const DailyNetCumulativeDateProfit = () => {
+    const WinTradesDates = [];
+
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL > 0) {
+        WinTradesDates.push(trade._id);
+      }
+    });
+    return WinTradesDates;
+  }
+
+  /*This function save Profit for each day with profit and show the Profits on the graph -> "Daily Net Cumulative Profit" */
+  const DailyNetCumulativePnlProfit = () => {
+    const WinTrades = [];
+
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL > 0) {
+        WinTrades.push(trade.totalPnL);
+      }
+    });
+
+    return WinTrades;
+  }
+
+  // -----------------------------------------------handle "Daily Net Cumulative Loss" -------------------------------------------------------------
+
+  /*This function save Date for each day with Losses and show the dates on the graph -> "Daily Net Cumulative Loss"*/
+  const DailyNetCumulativeDateLoss = () => {
+    const LossTradesDates = [];
+
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL < 0) {
+        LossTradesDates.push(trade._id);
+      }
+    });
+    return LossTradesDates;
+  }
+
+  /*This function save Losses for each day with Loss and show the Losses on the graph ->  "Daily Net Cumulative Loss" */
+  const DailyNetCumulativePnlLoss = () => {
+    const LossTrades = [];
+
+    dailyNetCumulative.forEach((trade) => {
+      if (trade.totalPnL < 0) {
+        LossTrades.push(trade.totalPnL);
+      }
+    });
+
+    return LossTrades;
+  }
+
+
+  //-----------------------------------------------handle "Winning % By Trades" cake. --------------------------------------------------------------
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+
+
+      const winAndLossTotalTimePromise = new Promise(async (resolve, reject) => {
+        // this post handle "Winning % By Trades" cake.
+        const result = await axiosInstance.post('/api/WinAndLossTotalTime', { trades: Alltrades });
+        if (result.status == 200 || result.status == 201) {
+          for (const index in result.data) {
+            if (index === "lossCount") {
+              setLosingTrades(result.data["lossCount"]);
+            }
+            else if (index === "breakEvenCount") {
+
+              setbreakEvenTrades(result.data["breakEvenCount"]);
+            }
+            else {
+              setWinningTrades(result.data["winCount"]);
+            }
+
+          }
+          resolve(result.data);
+        } else {
+          reject(`Failed ${result.status} `);
+        }
+
+      });
+
+      const ShowInfoByDatesPromise = new Promise(async (resolve, reject) => {
+        // this post handle  "Winning % By Days" cake. 
+        const result = await axiosInstance.post('/api/ShowInfoByDates', { trades: Alltrades });
+        if (result.status == 200 || result.status == 201) {
+          setDailyNetCumulative(result.data)
+
+          if (!result.data.length) {
+            setLosingTradesInDays(0);
+            setWinningTradesInDays(0)
+          }
+
+          for (const index in result.data) {
+
+            if (result.data[index]["totalPnL"] < 1) {  //when in some day we have a lose day(P&L < 0) inc variable  
+              setLosingTradesInDays(prevState => prevState + 1);
+            }
+
+            else { //when in some day we have a win day(P&L > 0) inc variable  
+              setWinningTradesInDays(prevState => prevState + 1);
+            }
+          }
+          resolve(result.data);
+        } else {
+          reject(`Failed ${result.status} when try to fetch info by dates`);
+        }
+
+      });
+
+      const updateCalenderDisplayPromiseObject = new Promise(async (resolve, reject) => {
+
+        //this post request responsible to update the calender display.
+        const result = await axiosInstance.post("/api/ShowNumOfTradeTotalPnlInfoByDates", { trades: Alltrades })
+        if (result.status == 200 || result.status == 201) {
+          setCalendarTrades(result.data)
+          resolve(result.data);
+        } else {
+          reject("Rejected with status , fetching calender trades data" + result.status);
+        }
+      });
+
+      return [winAndLossTotalTimePromise, ShowInfoByDatesPromise, updateCalenderDisplayPromiseObject];
+    }
+
+    fetchDashboardData().then(data => {
+      Promise.allSettled(data).then((results) => results)
+    })
+
+
+  }, [currentAccount])
+
+
+
 
 
   return (
     <>
       <Helmet>
-        <title> Dashboard </title>
+        <title>Dashboard</title>
       </Helmet>
 
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 3 }}>
-          Hi, Welcome back
-        </Typography>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0px', marginRight: '3px' }}>
+          {/* Your SelectAccount component content goes here */}
 
+
+        </div>
 
 
         <Grid container spacing={3}>
-
-
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title=" Total Net P&L " total={10000} color="secondary" icon={dollarLogo} />
+            <AppWidgetSummary title={isHebrew === false ? "Total Net P&L" : "רווח/הפסד טוטאל"} total={sumPnL(Alltrades)} icon={'eva:pie-chart-outline'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Profit Factor" total={1352831} color="secondary" />
+            <AppWidgetSummary title={isHebrew === false ? "Profit Factor" : "פקטור רווח"} total={ProfitFactor(Alltrades)} icon={'eva:grid-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Average Winning Trade" total={1723315} color="secondary" />
+            <AppWidgetSummary title={isHebrew === false ? "Average Winning Trade" : "ממוצע לטרייד מנצח"} total={avgWinningTrades(Alltrades)} icon={'eva:bar-chart-2-outline'} color="secondary" />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Average Losing Trade" total={234} color="secondary" />
+            <AppWidgetSummary title={isHebrew === false ? "Average Losing Trade" : "ממוצע לטרייד מפסיד"} total={avgLosingTrades(Alltrades)} icon={'eva:bar-chart-outline'} color="secondary" />
           </Grid>
+        </Grid>
 
+        <Grid container spacing={5}>
           <Grid item xs={12} md={6} lg={8}>
-            <AppWebsiteVisits
-              title="Daily Net Cumulative P&L"
-              subheader=""
-              chartLabels={[
-                '01/01/2003',
-                '02/05/2200',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
-              ]}
-              chartData={[
-
-                {
-                  name: 'Team B',
-                  type: 'area',
-                  fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-                  color: Colors.green
-                },
-
-              ]}
-            />
-
-
+            <Grid container spacing={6}>
+              <Grid item xs={12}>
+                <AppWebsiteVisits
+                  title={isHebrew === false ? "Daily Net Cumulative Profit" : "רווח יומי נקי מצטבר"}
+                  subheader=""
+                  chartLabels={DailyNetCumulativeDateProfit()}
+                  chartData={[
+                    {
+                      name: '',
+                      type: 'area',
+                      fill: 'gradient',
+                      data: DailyNetCumulativePnlProfit(),
+                      color: Colors.green
+                    },
+                  ]}
+                />
+                <AppWebsiteVisits
+                  title={isHebrew === false ? "Daily Net Cumulative Loss" : "הפסד יומי נקי מצטבר"}
+                  subheader=""
+                  chartLabels={DailyNetCumulativeDateLoss()}
+                  chartData={[
+                    {
+                      name: '',
+                      type: 'area',
+                      fill: 'gradient',
+                      data: DailyNetCumulativePnlLoss(),
+                      color: Colors.red
+                    },
+                  ]}
+                />
+              </Grid>
+            </Grid>
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits
-              title="Winning % By Trades"
-              chartData={[
-                { label: 'Winners', value: 5435 },
-                { label: 'Lossers', value: 4224 },
 
-              ]}
-              chartColors={[
-                Colors.green,
-                Colors.red,
-              ]}
-            />
+            <Grid container spacing={3}>
 
+              <Grid item xs={12}>
+                <div style={{ display: 'grid', gridTemplateColumns: ' auto', }}>
 
+                  <AppCurrentVisits
+                    title={isHebrew === false ? "Winning % By Trades" : "אחוזי ניצחון בעסקאות"}
+                    chartData={[
+                      { label: isHebrew === false ? 'Winners' : "נצחונות", value: winningTrades },
+                      { label: isHebrew === false ? 'Losers' : "הפסדים", value: losingTrades },
+                      { label: isHebrew === false ? 'Break Even' : "ברייק איוון", value: breakEvenTrades },
+                    ]}
+                    chartColors={[Colors.green, Colors.red]}
+                  />
+
+                  {/* for version 2 or 1 ?? */}
+                  {/* <Button variant="contained" color="primary" style={buttonStyle}>
+                  Winning % By Trades History
+                  </Button> */}
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: ' auto', }}>
+                  <AppCurrentVisits
+                    title={isHebrew === false ? "Winning % By Days" : "אחוזי ניצחון בימים"}
+                    chartData={[
+                      { label: isHebrew === false ? 'Winners' : "נצחונות", value: winningTradesInDays },
+                      { label: isHebrew === false ? 'Losers' : "הפסדים", value: losingTradesInDays },
+                    ]}
+                    chartColors={[Colors.green, Colors.red]}
+                  />
+
+                  {/* for version 2 or 1 ?? */}
+                  {/* <Button variant="contained" color="primary" style={buttonStyle}>
+                 Winning % By Days History
+                  </Button> */}
+                </div>
+
+              </Grid>
+
+            </Grid>
 
           </Grid>
-
-
-
-          <Grid item xs={12} md={6} lg={7}>
-            <h2>calender </h2>
-          </Grid>
-
-
-          <Grid item s={12} md={6} lg={5}>
-
-            <AppCurrentVisits
-              title="Winning % By Days"
-              chartData={[
-                { label: 'Winners', value: 4224 },
-                { label: 'Lossers', value: 5435 },
-              ]}
-              chartColors={[
-                Colors.green,
-                Colors.red,
-
-              ]}
-            />
-
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentSubject
-              title="Score"
-              chartLabels={['Win %', 'Avg win/loss', 'Profit Factor']}
-              chartData={[
-                { name: 'Series 1', data: [80, 50, 30] },
-
-
-              ]}
-              chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
-            />
-          </Grid>
-
 
         </Grid>
-      </Container>
+
+        <Grid container spacing={4}>
+          <Grid item xs={12}>
+            <Calendar calendarTrades={calendarTrades} />
+          </Grid>
+        </Grid>
+      </Container >
     </>
   );
+
 }

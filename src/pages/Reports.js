@@ -1,444 +1,262 @@
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTradesList, setTrades as setTradesRedux } from '../redux-toolkit/tradesSlice';
-
-
+import useToast from '../hooks/alert';
+import { ToastContainer, } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useState } from 'react';
 // @mui
 import {
   Card,
-  Table,
   Stack,
-  Paper,
-  Avatar,
   Button,
-  Popover,
-  Checkbox,
-  TableRow,
-  MenuItem,
-  TableBody,
-  TableCell,
   Container,
   Typography,
-  IconButton,
-  TableContainer,
   TablePagination,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
-
-
-
-
-import {
-  MDBBtn,
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalHeader,
-  MDBModalTitle,
-  MDBModalBody,
-  MDBModalFooter,
-} from 'mdb-react-ui-kit';
-
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import Slide from '@mui/material/Slide';
 // components
-import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
+import AddTrade from '../components/trades/addTrade/addTradeFormModal';
+import ImportTrade from '../components/trades/importTrade/importTrade'
+import { selectCurrentAccount, selectUser, selectUserAccounts, setTradesList } from '../redux-toolkit/userSlice';
+import { selectMessages } from '../redux-toolkit/messagesSlice';
+import { getMsg } from '../utils/messeageUtils';
+import { msgType } from '../utils/messagesEnum.js';
+import { msgNumber } from '../utils/msgNumbers.js';
+import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
+import { selectTrade, setTrade } from '../redux-toolkit/tradeSlice';
+import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
+import TradesTable from '../components/Table/tradeTable';
+import { selectIsEditMode, selectTradeToEdit, setEditMode } from '../redux-toolkit/editTradeFormSlice';
 import api from '../api/api';
-import Colors from '../components/color-utils/Colors'
-import AddTrade from '../components/addTrade/addTradeFormModal';
-// ----------------------------------------------------------------------
-
-
-const TABLE_HEAD = [
-  { id: 'entryDate', label: 'Open Date', alignRight: false },
-  { id: 'symbol', label: 'Symbol', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-  { id: 'netROI', label: 'Net ROI', alignRight: false },
-  { id: 'longShort', label: 'Long / Short', alignRight: false },
-  { id: 'contracts', label: 'Contracts', alignRight: false },
-  { id: 'entryPrice', label: 'Entry Price', alignRight: false },
-  { id: 'stopPrice', label: 'Stop Price', alignRight: false },
-  { id: 'exitPrice', label: 'Exit Price', alignRight: false },
-  { id: 'duration', label: 'Duration', alignRight: false },
-  { id: 'commission', label: 'Commission', alignRight: false },
-  { id: 'netPnL', label: 'Net P&L', alignRight: false },
-  { id: 'image', label: 'Image', alignRight: false },
-  { id: 'edit', label: 'Edit', alignRight: false },
-  { id: 'comments', label: 'comments', alignRight: false }
-];
-
-
-
+import axiosInstance from '../utils/axiosService';
 
 const sumPnL = (trades) => {
   let sum = 0;
-  trades.forEach((trade) => {
-    sum += trade.netPnL
-  });
-  return sum;
-}
-
-
-
-
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
+  if (trades !== null && trades.length > 0) {
+    trades?.forEach((trade) => {
+      if (trade && trade?.netPnL !== null) {
+        sum += trade.netPnL
+      }
+    });
   }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
+  return sum.toFixed(2);
 }
 
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
 
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
-}
 
-const fetchTrades = async () => {
-  const result = await api.get('/api/fetchTrades');
-  return result;
-}
+// export let globalAlert;
 
-export default function UserPage() {
 
+export default function Reports() {
+
+  const currentAccount = useSelector(selectCurrentAccount);
+
+
+  //------------------------------------------------   States ----------------------------------------------------- //
+  const [trades, setTrades] = useState(currentAccount.trades)
+  const languageidx = useSelector(selectidx);
+  const darkMode = useSelector(selectDarkMode);
+  const isHebrew = useSelector(selectlanguage);
+  const messages = useSelector(selectMessages);
+  const currentTrade = useSelector(selectTrade);
+  const tradeToEdit = useSelector(selectTradeToEdit);
+  const isEditFormEnable = useSelector(selectIsEditMode);
+
+
+  const [openCommend, setCommendOpen] = React.useState(false);
+  const [selectedComment, setSelectedComment] = useState('');
+  const userAccounts = useSelector(selectUserAccounts);
   const [basicModal, setBasicModal] = useState(false);
-  const toggleShow = () => setBasicModal(!basicModal);
-
   const [openmodal, setIsOpenmodal] = useState(false);
-  const dispatch = useDispatch();
+  const [openmodalImportTrades, setIsOpenmodalImportTrades] = useState(false);
+  const user = useSelector(selectUser);
+  //search states
+  const [selectedDate, setSelectedDate] = useState(null); // New state for the selected date
 
-  const setTradesList = (trades) => {
-    console.log(trades);
-    dispatch(setTradesRedux(trades));
+
+  //Image modal States
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [imageData, setImageData] = useState('');
+
+
+  const handleCloseCommend = () => {
+    setCommendOpen(false);
+  };
+
+  //------------------------------------------------handle Upload image ----------------------------------------------------- //
+
+  // useEffect(()=>{
+  //   setTrades(currentAccount.trades)
+  // },[currentAccount.trades])
+
+  //------------------------------------------------handle alert ----------------------------------------------------- //
+  const showToast = useToast();
+  const notifyToast = (Msg, Type) => {
+
+    showToast(Msg, Type);
   }
 
-  const handleOpenModal = () => {
-    setIsOpenmodal(true);
-  }
 
   useEffect(() => {
+    const setTradesWithImages = async () => {
+      const response = await axiosInstance.post('/api/fetchTrades', { userId: user._id, accountId: currentAccount._id })
+      dispatch(setTradesList(response.data.trades))
+    }
 
-
-    fetchTrades().then((res) => {
-      if (res.data) setTrades(res.data);
-      setTradesList(res.data);
-    }).catch((err) => {
-      console.error(err);
+    setTradesWithImages().then(() => {
     })
   }, [])
 
+  const dispatch = useDispatch();
 
 
-
-  const [open, setOpen] = useState(null);
-
-  const [page, setPage] = useState(0);
-
-  const [order, setOrder] = useState('asc');
-
-  const [selected, setSelected] = useState([]);
-
-  const [orderBy, setOrderBy] = useState('name');
-
-  const [filterName, setFilterName] = useState('');
-
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const [trades, setTrades] = useState([]);
-
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
+  const handleOpenModal = (tradeId) => {
+    if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[6], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[6], languageidx).msgType);
+      //  notifyToast("before add trades you need create account", 'warning');
     }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    else {
+      setIsOpenmodal(true);
     }
-    setSelected(newSelected);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+
+  const handleOpenModalImportTrades = (tradeId) => {
+
+    if (userAccounts.length == 0) { //before open modal check if have any account and alert to user when no account
+      notifyToast(getMsg(messages, msgType.warnings, msgNumber[7], languageidx).msgText, getMsg(messages, msgType.warnings, msgNumber[7], languageidx).msgType);
+      // notifyToast("before import trades you need create account", 'warning');
+    }
+    else {
+      setIsOpenmodalImportTrades(true);
+    }
+
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
+
+  const handleClearDate = () => {
+    setSelectedDate(null);
   };
 
-  const handleFilterByName = (event) => {
-    setPage(0);
-    setFilterName(event.target.value);
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const editTradeBoolean = isEditFormEnable && Object.keys(tradeToEdit).length > 0;
 
-  const isNotFound = !filteredUsers.length && !!filterName;
-
-  const deleteTrade = async (tradeId) => {
-    console.log('Delete trade - ', tradeId);
-    await api.delete('/api/deleteTrade', { data: { tradeId } });
-    const trades = await fetchTrades();
-    setTrades(trades.data);
+  const setOpenModalInEditMode = (editBoolean) => {
+    dispatch(setEditMode(editBoolean));
   }
+
+  const EditTradeForm = () => {
+    return (
+      <AddTrade
+        key={tradeToEdit._id}
+        openModal={isEditFormEnable}
+        handleOpenModal={setOpenModalInEditMode}
+        tradeInfo={tradeToEdit}
+        notifyToast={notifyToast}
+        isEditMode={true}
+      />);
+  }
+
+
+
   return (
     <>
-      <Helmet>
-        <title> Reports </title>
 
-      </Helmet>
-      <Container>
+      {isHebrew === false ?
+        <Helmet>
+          <title>All Trades</title>
+        </Helmet>
+        : <Helmet>
+          <title>כול הטריידים</title>
+        </Helmet>
 
+      }
+      <Container style={{ maxWidth: 'none' }}>
 
-
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Reports
-          </Typography>
-          <Button onClick={handleOpenModal} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            Add New Trade
-          </Button>
-          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} />}
-        </Stack>
-
-
-        <Card>
-
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {trades.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((trade, indx) => {
-
-
-                    return (
-                      <TableRow hover key={trade._id} tabIndex={-1} role="checkbox" selected={trade}>
-
-                        <TableCell>
-                          { }
-                        </TableCell>
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-
-                            {new Date(trade.entryDate).toString().substring(0, 24)}
-
-                          </Stack>
-                        </TableCell>
-                        <TableCell align="center">{trade.symbol}</TableCell>
-
-                        <TableCell align="center">
-                          <Label color={(trade.status === 'Loss' && 'error') || 'success'}>{sentenceCase(trade.status)}</Label>
-                        </TableCell>
-
-
-
-                        <TableCell align="center">{trade.netROI}%</TableCell>
-
-                        <TableCell align="center">{trade.longShort}</TableCell>
-
-                        <TableCell align="center">{trade.contracts}</TableCell>
-
-
-                        <TableCell align="center">{trade.entryPrice}$</TableCell>
-                        <TableCell align="center">{trade.stopPrice}$</TableCell>
-
-
-                        <TableCell align="center">{trade.exitPrice}$</TableCell>
-
-                        <TableCell align="center">{trade.duration}Min</TableCell>
-
-
-
-                        <TableCell align="center">{trade.commission}$</TableCell>
-
-                        <TableCell align="center">{trade.status === "Loss" ? trade.netPnL * -1 : trade.netPnL}$</TableCell>
-
-
-                        <TableCell align="center"><IconButton size="large" color="inherit" >
-                          <Iconify icon={'eva:image-outline'} />
-                        </IconButton>{trade.image}</TableCell>   {/* COLNAME: image, VALUES: image of trade */}
-
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        </TableCell>
-                        <TableCell align="center">{trade.comments}</TableCell>
-                        <Popover
-                          open={Boolean(open)}
-                          anchorEl={open}
-                          onClose={handleCloseMenu}
-                          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                          PaperProps={{
-                            sx: {
-                              p: 1,
-                              width: 140,
-                              '& .MuiMenuItem-root': {
-                                px: 1,
-                                typography: 'body2',
-                                borderRadius: 0.75,
-                              },
-                            },
-                          }}
-                        >
-
-                          <MenuItem>
-
-                            <MDBModal show={basicModal} setShow={setBasicModal} tabIndex='-1'>
-                              <MDBModalDialog>
-                                <MDBModalContent>
-                                  <MDBModalHeader>
-                                    <MDBModalTitle>Remove Trade</MDBModalTitle>
-                                    <MDBBtn className='btn-close' color='none' onClick={toggleShow}> </MDBBtn>
-                                  </MDBModalHeader>
-                                  <MDBModalBody>You sure you want to remove this Trade?</MDBModalBody>
-
-                                  <MDBModalFooter>
-                                    <MDBBtn color='secondary' onClick={toggleShow}>
-                                      Close
-                                    </MDBBtn>
-                                    <MDBBtn onClick={() => deleteTrade(trade._id)}>Remove</MDBBtn>
-                                  </MDBModalFooter>
-                                </MDBModalContent>
-                              </MDBModalDialog>
-                            </MDBModal>
-
-                            <Iconify onClick={handleOpenModal} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                            Edit
-                            {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} tradeInfo={trade} isEditMode />}
-
-                          </MenuItem >
-
-                          <MenuItem sx={{ color: 'error.main' }}>
-                            <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} onClick={() => toggleShow()} />
-                            <button style={buttonStyle} onClick={() => toggleShow()}>
-                              Delete
-                            </button>
-                          </MenuItem>
-                        </Popover >
-                      </TableRow >
-
-
-                    );
-                  })}
-                  {
-                    emptyRows > 0 && (
-                      <TableRow style={{ height: 53 * emptyRows }}>
-                        <TableCell colSpan={6} />
-                      </TableRow>
-                    )
-                  }
-                </TableBody >
-
-                {isNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <Paper
-                          sx={{
-                            textAlign: 'center',
-                          }}
-                        >
-                          <Typography variant="h6" paragraph>
-                            Not found
-                          </Typography>
-
-                          <Typography variant="body2">
-                            No results found for &nbsp;
-                            <strong>&quot;{filterName}&quot;</strong>.
-                            <br /> Try checking for typos or using complete words.
-                          </Typography>
-                        </Paper>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table >
-            </TableContainer >
-          </Scrollbar >
-
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={USERLIST.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+        <div style={{ marginRight: "10px" }}>
+          <DatePicker
+            selected={selectedDate}
+            onChange={handleDateChange}
+            dateFormat="E, MMM d, yyyy"
+            placeholderText={isHebrew === false ? "Select a date" : "בחר תאריך"}
           />
-        </Card >
+          {isHebrew === false ?
+            <Button
+              variant="contained"
+              onClick={handleClearDate}
+              style={{ fontSize: "12px", minWidth: "80px", backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
+
+            >
+              Clear
+            </Button> : <Button
+              variant="contained"
+              onClick={handleClearDate}
+              style={{ fontSize: "12px", minWidth: "80px", backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }}
+            >
+              נקה
+            </Button>}
+        </div>
+        <ToastContainer />
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={6}>
+          <Typography variant="h4">
+            {isHebrew === false ?
+              "Trades" : "טריידים"}
+          </Typography>
+          <div>
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={handleOpenModalImportTrades} variant="contained" startIcon={<Iconify icon="eva:corner-up-left-outline" />} sx={{ marginRight: 2 }}>
+              {isHebrew === false ?
+                "Import Trades" : "ייבוא טרידיים"}
+            </Button>
+            {openmodalImportTrades && <ImportTrade openModal={openmodalImportTrades} handleOpenModal={setIsOpenmodalImportTrades} notifyToast={notifyToast} />}
+
+            <Button style={{ backgroundColor: darkMode ? '#1ba6dc' : "", color: darkMode ? 'white' : "", }} onClick={() => { handleOpenModal() }} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              {isHebrew === false ? "Add New Trade" : "הוסף טרייד חדש"}
+            </Button>
+          </div>
+          {openmodal && <AddTrade openModal={openmodal} handleOpenModal={setIsOpenmodal} notifyToast={notifyToast} />}
+          {editTradeBoolean ? <EditTradeForm /> : null}
+        </Stack>
+        {/* <Card> */}
+        <TradesTable trades={trades} selectedDate={selectedDate} />
+        {/* </Card> */}
+
+        <Dialog open={openCommend} onClose={handleCloseCommend}>
+          <DialogTitle> {isHebrew === false ? "Comment" : "הערות"}</DialogTitle>
+          <DialogContent>{selectedComment}</DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseCommend} color="primary">{isHebrew === false ? "Close" : "סגירה"}</Button>
+          </DialogActions>
+        </Dialog>
+        <Typography variant="h4" >
+          {isHebrew === false ? "Total PnL" : "רווח/הפסד כולל"} : {sumPnL(currentAccount.trades) < 0 ? <span style={totalPlRedColor}>{sumPnL(currentAccount.trades)}$</span> : <span style={totalPlColor}>{sumPnL(currentAccount.trades)}$</span>}
+        </Typography>
+
       </Container >
-
-      <h1 style={totalPlColor}>Total P&L </h1>
-      <h2 style={totalPlColor}>{sumPnL(trades)}$</h2>
-
 
     </>
   );
 }
 
+const totalPlRedColor = {
+
+  color: '#d16c71', // Replace with the desired text color
+
+};
 
 
 const totalPlColor = {

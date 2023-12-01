@@ -1,0 +1,8 @@
+.table-pagination {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    /* Adjust the left and right properties as needed to center the element horizontally */
+    /* This will position the bottomElement at the bottom center of the container */
+  }
