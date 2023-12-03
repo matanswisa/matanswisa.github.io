@@ -49,6 +49,13 @@ import { selectDarkMode } from '../redux-toolkit/darkModeSlice';
 import { selectlanguage, selectidx } from '../redux-toolkit/languagesSlice';
 import { selectUser } from '../redux-toolkit/userSlice';
 import axiosInstance from '../utils/axiosService';
+import { UsersList } from '../components/UsersList/UsersList.jsx';
+
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
 
 const style = {
     position: 'absolute',
@@ -61,202 +68,6 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
-};
-
-
-//Related to dialog error - has to be outside of the component
-const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
-
-
-const UsersList = ({ users, onDelete, onUpdate }) => {
-    const darkMode = useSelector(selectDarkMode);
-    const isHebrew = useSelector(selectlanguage);
-    const convertDate = (dateString) => {
-        const date = new Date(dateString);
-        const day = date.getDate();
-        const month = date.getMonth() + 1; // Months are zero-indexed, so we add 1.
-        const year = date.getFullYear();
-
-        return `${day}/${month}/${year}`;
-    };
-
-
-    const [opendialog, setDialogOpen] = useState(false);
-
-    const handleClickDialogOpen = () => {
-        setDialogOpen(true);
-    };
-
-
-    const handleDialogClose = () => {
-        setDialogOpen(false);
-    };
-
-    return (
-
-
-        <TableContainer component={Paper} sx={{ mt: 3 }}>
-            {isHebrew === false ?
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                    Username
-                                </Typography>
-
-                            </TableCell>
-                            <TableCell>
-                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                    Email
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                    License
-
-                                </Typography></TableCell>
-                            <TableCell>
-                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                    Actions
-                                </Typography></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {users.map((user) => (
-                            <TableRow key={user.id}>
-
-                                <TableCell>
-
-
-                                    {user.username}
-
-
-                                </TableCell>
-                                <TableCell>{user.email}</TableCell>
-                                <TableCell>{convertDate(user.license)}</TableCell>
-                                <TableCell>
-                                    <IconButton aria-label="Delete">
-                                        <DeleteIcon onClick={handleClickDialogOpen} />
-                                    </IconButton>
-
-
-                                    <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
-                                        <EditIcon />
-                                    </IconButton>
-                                    <Dialog
-                                        open={opendialog}
-                                        TransitionComponent={Transition}
-
-                                        onClose={handleDialogClose}
-                                        aria-describedby="alert-dialog-slide-description"
-                                    >
-                                        <DialogTitle>{isHebrew === false ? "Confirm Deletion" : "אישור מחיקה"}</DialogTitle>
-                                        <DialogContent>
-                                            <DialogContentText id="alert-dialog-slide-description">
-                                                {isHebrew === false ? "  Are you sure you want to delete this user?" : "האם אתה בטוח שברצונך למחוק משתמש זה?"}
-
-                                            </DialogContentText>
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={handleDialogClose}>  {isHebrew === false ? "Cancel" : "ביטול"}   </Button>
-                                            <Button onClick={() => {
-                                                onDelete(user._id);
-
-                                                handleDialogClose(); // Close the dialog first
-                                            }} color="primary">
-                                                {isHebrew === false ? "Confirm" : "אישור"}
-                                            </Button>
-                                        </DialogActions>
-                                    </Dialog>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table> :
-
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                    פעולות  </Typography>
-
-                            </TableCell>
-                            <TableCell>
-                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                    רישיון
-
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                    אימייל
-
-                                </Typography></TableCell>
-                            <TableCell>
-                                <Typography style={{ color: darkMode ? '#fff' : '#000', }} variant="subtitle1" fontWeight="bold">
-                                    שם משתמש
-                                </Typography></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {users.map((user) => (
-                            <TableRow key={user.id}>
-
-
-
-
-                                <TableCell>
-                                    <IconButton aria-label="Delete">
-                                        <DeleteIcon onClick={handleClickDialogOpen} />
-                                    </IconButton>
-
-
-                                    <IconButton onClick={() => onUpdate(user._id)} aria-label="Edit">
-                                        <EditIcon />
-                                    </IconButton>
-                                    <Dialog
-                                        open={opendialog}
-                                        TransitionComponent={Transition}
-
-                                        onClose={handleDialogClose}
-                                        aria-describedby="alert-dialog-slide-description"
-                                    >
-                                        <DialogTitle>{isHebrew === false ? "Confirm Deletion" : "אישור מחיקה"}</DialogTitle>
-                                        <DialogContent>
-                                            <DialogContentText id="alert-dialog-slide-description">
-                                                {isHebrew === false ? "  Are you sure you want to delete this user?" : "האם אתה בטוח שברצונך למחוק משתמש זה?"}
-
-                                            </DialogContentText>
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={handleDialogClose}>  {isHebrew === false ? "Cancel" : "ביטול"}   </Button>
-                                            <Button onClick={() => {
-                                                onDelete(user._id);
-
-                                                handleDialogClose(); // Close the dialog first
-                                            }} color="primary">
-                                                {isHebrew === false ? "Confirm" : "אישור"}
-                                            </Button>
-                                        </DialogActions>
-                                    </Dialog>
-                                </TableCell>
-                                <TableCell>{convertDate(user.license)}</TableCell>
-                                <TableCell>{user.email}</TableCell>
-                                <TableCell>
-                                    {user.username}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>}
-
-
-        </TableContainer>
-    );
 };
 
 // Main component for Users Management Page
@@ -277,6 +88,7 @@ const UsersManagementPage = () => {
     const [licenseTime, setLicenseTime] = useState(1);
 
     const [open, setOpen] = React.useState(false);
+    const [openDeletedialog, setOpenDeletedialog] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -303,9 +115,11 @@ const UsersManagementPage = () => {
 
     const handleDeleteUser = async (id) => {
         try {
+            console.log(id)
             // Assuming the correct endpoint is '/api/auth/deleteUser'
-            await axiosInstance.delete('/api/auth/deleteUser');
-            fetchUsers();
+            await axiosInstance.delete('/api/auth/deleteUser', { data: { userId: id } });
+
+            await fetchUsers();
             notifyToast(getMsg(messages, msgType.success, msgNumber[12], languageidx).msgText, getMsg(messages, msgType.success, msgNumber[12], languageidx).msgType);
             // notifyToast("Delete user Successfully ", 'success');
 
@@ -384,10 +198,8 @@ const UsersManagementPage = () => {
     const checkLicenseTime = (licenseTime) => {
         // Get the current date
         const currentDate = new Date();
-
         // Convert the input date to a Date object
         const inputDate = new Date(licenseTime);
-
         // Compare the input date with the current date
         if (inputDate <= currentDate) {
             // If the input date is in the past or is the same as the current date, return false
@@ -457,9 +269,6 @@ const UsersManagementPage = () => {
 
 
 
-
-
-
     function fetchUsers() {
         axiosInstance
             .get('/api/auth/users').then((res) => {
@@ -473,6 +282,17 @@ const UsersManagementPage = () => {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+    };
+
+    const handleDeleteUserDialogOpen = (userId) => {
+        setUserId(userId)
+        setOpenDeletedialog(true);
+
+    }
+
+
+    const handleDeleteUserDialogClose = () => {
+        setOpenDeletedialog(false);
     };
 
     return (
@@ -502,7 +322,7 @@ const UsersManagementPage = () => {
 
             <Divider sx={{ my: 3, backgroundColor: 'grey' }} />
             <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                <UsersList users={users} onDelete={handleDeleteUser} onUpdate={handleopenEditUser} />
+                <UsersList users={users} onDelete={handleDeleteUserDialogOpen} onUpdate={handleopenEditUser} />
             </div>
             <Modal
                 open={open}
@@ -561,6 +381,38 @@ const UsersManagementPage = () => {
 
                     </div>
                 </Box>
+            </Modal>
+
+            <Modal
+                open={openDeletedialog}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Dialog
+                    open={openDeletedialog}
+                    TransitionComponent={Transition}
+                    onClose={handleDeleteUserDialogClose}
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle>{isHebrew === false ? "Confirm Deletion" : "אישור מחיקה"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                            {isHebrew === false ? "  Are you sure you want to delete this user?" : "האם אתה בטוח שברצונך למחוק משתמש זה?"}
+
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleDeleteUserDialogClose}>  {isHebrew === false ? "Cancel" : "ביטול"}   </Button>
+                        <Button onClick={() => {
+                            handleDeleteUser(userId);
+                            handleDeleteUserDialogClose(); // Close the dialog first
+                        }} color="primary">
+                            {isHebrew === false ? "Confirm" : "אישור"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
             </Modal>
         </Container >
     );
