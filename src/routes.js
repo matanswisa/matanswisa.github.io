@@ -84,7 +84,8 @@ export default function Router() {
     },
 
     {
-      element: isAuthenticated ? <Tabs /> : <Navigate to="/login" replace />,
+      path: '/',
+      element: isAuthenticated ? <Navigate to="/dashboard/app" replace /> : <Navigate to="/login" replace />,
     },
     {
       path: '404',
