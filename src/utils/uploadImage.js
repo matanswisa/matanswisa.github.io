@@ -11,7 +11,7 @@ export const handleUploadTradeImage = async (tradeId, reduxUser, userId, account
     formData.append('userId', userId)
     formData.append('accountId', accountId)
     try {
-        const response = await axiosInstance.post('http://localhost:8000/api/uploadTradeImage', formData, {
+        const response = await axiosInstance.post('https://www.tradeexalt.online/api/uploadTradeImage', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
