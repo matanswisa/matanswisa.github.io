@@ -420,6 +420,7 @@ export default function LoginForm(props) {
 
                 <ToastContainer />
                 <TextField inputProps={{ style: { color: 'black' } }} name="User Name" value={username} onChange={(e) => setUsername(e.target.value)}
+                  label="username"
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -434,7 +435,7 @@ export default function LoginForm(props) {
                   style: { color: 'black' }, // Set the label color to black
                 }}
                   name="password"
-                  label="Password"
+                  label="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
