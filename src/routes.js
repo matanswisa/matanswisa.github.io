@@ -85,7 +85,7 @@ export default function Router() {
 
     {
       path: '/',
-      element: isAuthenticated ? <Navigate to="/dashboard/app" replace /> : <LoginPage />,
+      element: isAuthenticated ? <Navigate to="/dashboard/app" replace /> : <Navigate to="/login" replace />,
     },
     {
       path: '404',
