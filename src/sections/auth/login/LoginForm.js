@@ -419,7 +419,7 @@ export default function LoginForm(props) {
               <Stack spacing={3}>
 
                 <ToastContainer />
-                <TextField inputProps={{ style: { color: 'black' } }} name="User Name" value={username} onChange={(e) => setUsername(e.target.value)}
+                <TextField inputProps={{ style: { color: 'black' } }} name="User Name" label="Username" value={username} onChange={(e) => setUsername(e.target.value)}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
