@@ -229,7 +229,7 @@ function BasicModal(props) {
   //this function call after user click on  "Create" Button. 
   const handleCreateUser = () => {
     if (validateForm()) {
-      api
+      axiosInstance
         .post('/api/auth/register', {
           username: username,
           email: email,
