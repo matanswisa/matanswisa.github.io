@@ -41,6 +41,17 @@ export const tickerArrays = [
     { "label": "Platinum Futures", "year": "PL", "contract_size": 50, "tick_size": 0.10 },
     { "label": "Gasoline Futures", "year": "RB", "contract_size": 42000, "tick_size": 0.0001 },
     { "label": "Heating Oil Futures", "year": "HO", "contract_size": 42000, "tick_size": 0.0001 },
+    //micro
+    { "label": "Micro E-mini S&P 500 Futures", "year": "MES", "contract_size": 1, "tick_size": 0.25 },
+    { "label": "Micro E-mini Nasdaq 100 Futures", "year": "MNQ", "contract_size": 1, "tick_size": 0.25 },
+    { "label": "Micro E-mini Dow Jones Futures", "year": "MYM", "contract_size": 1, "tick_size": 1 },
+    { "label": "Micro Crude Oil Futures", "year": "MCL", "contract_size": 100, "tick_size": 0.01 },
+    { "label": "Micro Gold Futures", "year": "MGC", "contract_size": 10, "tick_size": 0.10 },
+    { "label": "Micro Silver Futures", "year": "MSI", "contract_size": 1000, "tick_size": 0.005 },
+    { "label": "Micro Natural Gas Futures", "year": "MNG", "contract_size": 1000, "tick_size": 0.001 },
+    { "label": "Micro Euro FX Futures", "year": "M6E", "contract_size": 12500, "tick_size": 0.0001 },
+    { "label": "Micro British Pound Futures", "year": "M6B", "contract_size": 6250, "tick_size": 0.0001 },
+    { "label": "Micro Japanese Yen Futures", "year": "M6J", "contract_size": 12500000, "tick_size": 0.000001 }
   ],
   [ // Crypto
     { label: 'Bitcoin', year: 'BTC' },
