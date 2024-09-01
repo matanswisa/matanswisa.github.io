@@ -4,7 +4,7 @@ import localStorageService from "./localStorageService";
 
 //TODO: Make all logic match to server logic.
 const axiosInstance = axios.create({
-    baseURL: "https://www.tradeexalt.online",
+    baseURL: "https://trading-journal-client.onrender.com",
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
